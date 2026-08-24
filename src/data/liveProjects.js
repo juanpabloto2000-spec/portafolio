@@ -1,29 +1,16 @@
 export const LIVE_PROJECTS = [
   {
     id: "live-andicas",
-    nicheId: "hostales", // Also visible in Todos and Turismo/Hostales
+    nicheId: "hostales",
     nicheLabel: "Turismo & Ecoparque Temático",
     title: "Bioparque Temático Andicas",
     client: "Bioparque Andicas",
     url: "andicas.vercel.app/#/",
     liveUrl: "https://andicas.vercel.app/#/",
-    isFlagship: true, // Flagship project - displayed first and prominently
+    isFlagship: true, // Flagship project - prominent top position
     tagline: "Plataforma ecoturística y reservas del bioparque temático más grande de la región",
-    description: "Desarrollo web interactivo para experiencia turística inmersiva, exhibición de especies y hábitats, mapas de senderos y gestión de entradas y pasadías.",
+    description: "Desarrollo web interactivo para experiencia turística inmersiva, exhibición de hábitats, mapas de senderos y gestión de entradas y pasadías.",
     previewImage: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80"
-  },
-  {
-    id: "live-lumidonto",
-    nicheId: "dentales",
-    nicheLabel: "Clínicas Odontológicas",
-    title: "Clínica Odontológica LumiDonto",
-    client: "LumiDonto Odontología",
-    url: "odontolumidonto.netlify.app",
-    liveUrl: "https://odontolumidonto.netlify.app/",
-    isFlagship: false,
-    tagline: "Portal clínico integral para odontología especializada y diseño de sonrisa",
-    description: "Experiencia web con triaje de tratamientos odontológicos, consulta guiada por síntomas y agendamiento clínico directo.",
-    previewImage: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1200&q=80"
   },
   {
     id: "live-lorenaterranova",
@@ -39,32 +26,6 @@ export const LIVE_PROJECTS = [
     previewImage: "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1200&q=80"
   },
   {
-    id: "live-menupremium-bellavista",
-    nicheId: "variado",
-    nicheLabel: "Gastronomía & Restaurantes",
-    title: "Bella Vista Restaurante | Menú Premium",
-    client: "Restaurante Bella Vista",
-    url: "menupremium.netlify.app",
-    liveUrl: "https://menupremium.netlify.app",
-    isFlagship: false,
-    tagline: "Carta táctil interactiva de alta retención para restaurante gastronómico",
-    description: "Menú digital inmersivo para comensales en mesa, fotografía gastronómica de alta definición, categorización de platos y experiencia táctil fluida.",
-    previewImage: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80"
-  },
-  {
-    id: "live-kaldiscobar",
-    nicheId: "variado",
-    nicheLabel: "Bares & Vida Nocturna",
-    title: "Kal Disco & Gastrobar",
-    client: "Kal Disco Bar",
-    url: "kaldiscobar.netlify.app",
-    liveUrl: "https://kaldiscobar.netlify.app",
-    isFlagship: false,
-    tagline: "Menú interactivo de mixología de autor, coctelería y botellas premium",
-    description: "Carta digital optimizada para discotecas y gastrobares con visualización rápida en ambientes de fiesta y pedidos directos.",
-    previewImage: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1200&q=80"
-  },
-  {
     id: "live-dym-store",
     nicheId: "variado",
     nicheLabel: "Comercio & Retail",
@@ -76,5 +37,46 @@ export const LIVE_PROJECTS = [
     tagline: "Catálogo interactivo de productos con flujo de compra rápida",
     description: "Plataforma digital para exhibición ágil de productos variados, filtros dinámicos y redirección optimizada para cierre de ventas.",
     previewImage: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=1200&q=80"
+  },
+  {
+    id: "live-luminous",
+    nicheId: "dentales",
+    nicheLabel: "Clínicas Odontológicas",
+    title: "Clínica Odontológica Luminous",
+    client: "Luminous Odontología",
+    url: "luminus-six.vercel.app",
+    liveUrl: "https://luminus-six.vercel.app/",
+    isFlagship: true, // Rendered prominently across full width or featured
+    tagline: "Portal clínico integral para odontología de alta especialidad y diseño de sonrisa",
+    description: "Experiencia web moderna con triaje de tratamientos odontológicos, consulta guiada por síntomas y agendamiento clínico directo.",
+    previewImage: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1200&q=80"
+  },
+  {
+    id: "live-menupremium-bellavista",
+    nicheId: "variado",
+    nicheLabel: "Menús Interactivos & Gastronomía",
+    title: "Bella Vista Restaurante | Menú Premium",
+    client: "Restaurante Bella Vista",
+    url: "menupremium.netlify.app",
+    liveUrl: "https://menupremium.netlify.app",
+    isFlagship: false,
+    isMenu: true,
+    tagline: "Carta táctil interactiva de alta retención para restaurante gastronómico",
+    description: "Menú digital inmersivo para comensales en mesa, fotografía gastronómica de alta definición, categorización de platos y experiencia táctil fluida.",
+    previewImage: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80"
+  },
+  {
+    id: "live-kaldiscobar",
+    nicheId: "variado",
+    nicheLabel: "Menús Interactivos & Bares",
+    title: "Kal Disco & Gastrobar",
+    client: "Kal Disco Bar",
+    url: "kaldiscobar.netlify.app",
+    liveUrl: "https://kaldiscobar.netlify.app",
+    isFlagship: false,
+    isMenu: true,
+    tagline: "Menú interactivo de mixología de autor, coctelería y botellas premium",
+    description: "Carta digital nocturna optimizada para discotecas y gastrobares con visualización rápida en ambientes de fiesta y pedidos directos.",
+    previewImage: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1200&q=80"
   }
 ];

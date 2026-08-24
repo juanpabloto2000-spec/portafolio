@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { ArrowLeft, ArrowUpRight } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight, UtensilsCrossed } from 'lucide-react';
 import { LIVE_PROJECTS } from '../../data/liveProjects';
 import { NICHE_CATEGORIES } from '../../data/projects';
 import MagneticButton from '../ui/MagneticButton';
@@ -34,7 +34,7 @@ function LiveWebsiteFrame({ url, title, isFeatured }) {
           sandbox="allow-scripts allow-same-origin"
         />
 
-        {/* Loading / Placeholder shimmer state */}
+        {/* Loading placeholder */}
         {!iframeLoaded && (
           <div className="absolute inset-0 flex items-center justify-center bg-zinc-950">
             <div className="flex flex-col items-center gap-2 text-zinc-500">
@@ -109,12 +109,12 @@ function LiveProjectCard({ project, index, isFeatured = false }) {
         isFeatured ? 'col-span-1 md:col-span-2' : 'col-span-1'
       }`}
     >
-      {/* Outer Shell (rounded-2xl) with Dynamic Spotlight */}
+      {/* Outer Shell (rounded-2xl) */}
       <div className={`relative p-2.5 sm:p-3.5 rounded-2xl bg-gradient-to-b from-white/[0.08] to-white/[0.02] border border-white/10 shadow-xl transition-all duration-500 group-hover:border-white/25 flex flex-col justify-between h-full overflow-hidden ${
         isFeatured ? 'shadow-[0_25px_60px_rgba(0,0,0,0.9),0_0_30px_rgba(255,255,255,0.05)]' : ''
       }`}>
         
-        {/* Dynamic Cursor-Following Spotlight Glow */}
+        {/* Cursor-Following Spotlight Glow */}
         {isHovered && (
           <motion.div
             className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-300"
@@ -159,7 +159,7 @@ function LiveProjectCard({ project, index, isFeatured = false }) {
               </p>
             </div>
 
-            {/* Actions Bar (Clean, zero noisy URL tags) */}
+            {/* Actions Bar */}
             <div className="pt-4 border-t border-white/10 flex items-center justify-end">
               <a
                 href={project.liveUrl}
@@ -258,7 +258,12 @@ export default function LiveProjectsPage({ onBackToHome, onOpenContact }) {
         </motion.div>
       </div>
 
-      {/* Projects Grid with Live Iframe Previews */}
+      {/* Projects Grid:
+          1. Bioparque Andicas (Featured Full Width)
+          2. Lorena Terranova (Left) & DYM Store (Right)
+          3. Clínica Odontológica Luminous (Featured Full Width)
+          4. Menús Interactivos: Bella Vista & Kal Discobar
+      */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <AnimatePresence mode="popLayout">
           {filteredProjects.map((project, index) => {
