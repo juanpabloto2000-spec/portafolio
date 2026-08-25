@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Calendar, Bot, LayoutDashboard, Palette, LogOut, Globe, 
@@ -9,6 +9,7 @@ import AppointmentsManager from './AppointmentsManager';
 import AgentBrainSettings from './AgentBrainSettings';
 import AgentDashboard from './AgentDashboard';
 import PageContentEditor from './PageContentEditor';
+import logoImg from '/logo.jpeg';
 
 export default function AdminLayout() {
   const { 
@@ -19,6 +20,8 @@ export default function AdminLayout() {
     auth,
     metrics
   } = useApp();
+
+  const [imgError, setImgError] = useState(false);
 
   const navItems = [
     {
@@ -64,16 +67,25 @@ export default function AdminLayout() {
         <div>
           {/* Studio Brand Header */}
           <div className="flex items-center gap-3 mb-8 p-2.5 rounded-2xl bg-white/[0.02] border border-white/5 shadow-inner">
-            <div className="w-10 h-10 rounded-xl bg-black border border-white/15 overflow-hidden flex items-center justify-center shadow-inner">
-              <img src="/logo.jpeg" alt="Dynamind" className="w-full h-full object-cover" />
+            <div className="w-10 h-10 rounded-xl bg-black border border-white/15 overflow-hidden flex items-center justify-center shadow-inner shrink-0 relative">
+              {!imgError ? (
+                <img 
+                  src={logoImg} 
+                  alt="Dynamind Studios Logo" 
+                  onError={() => setImgError(true)}
+                  className="w-full h-full object-cover" 
+                />
+              ) : (
+                <span className="font-bold font-heading-luxury text-sm text-white">D</span>
+              )}
             </div>
             <div>
-              <h1 className="text-sm font-bold font-heading-luxury text-white">Dynamind Studios</h1>
+              <h1 className="text-sm font-bold font-heading-luxury text-white leading-tight">Dynamind Studios</h1>
               <p className="text-[10px] text-zinc-400 font-mono">Control Central</p>
             </div>
           </div>
 
-          {/* Navigation Buttons */}
+          {/* Navigation Buttons (4 items: Agendas, Cerebro IA, Dashboard, Editar Página) */}
           <div className="space-y-2">
             {navItems.map((item) => {
               const isActive = activeAdminTab === item.id;
@@ -89,7 +101,7 @@ export default function AdminLayout() {
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-base">{item.emoji}</span>
+                    <span className="text-base shrink-0">{item.emoji}</span>
                     <div>
                       <div className="text-xs font-bold leading-tight">{item.label}</div>
                       <div className={`text-[10px] font-light mt-0.5 ${isActive ? 'text-zinc-700' : 'text-zinc-500'}`}>

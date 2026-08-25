@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Lock, Key, ArrowRight, AlertCircle, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import logoImg from '/logo.jpeg';
 
 export default function SecretAdminLogin() {
   const { login } = useApp();
@@ -9,6 +10,7 @@ export default function SecretAdminLogin() {
   const [password, setPassword] = useState('dynamind2026');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -55,7 +57,16 @@ export default function SecretAdminLogin() {
         {/* Monogram Logo */}
         <div className="flex flex-col items-center text-center mb-8">
           <div className="w-14 h-14 rounded-2xl bg-black border border-white/20 overflow-hidden flex items-center justify-center p-0.5 shadow-2xl mb-4">
-            <img src="/logo.jpeg" alt="Dynamind" className="w-full h-full object-cover rounded-xl" />
+            {!imgError ? (
+              <img 
+                src={logoImg} 
+                alt="Dynamind" 
+                onError={() => setImgError(true)}
+                className="w-full h-full object-cover rounded-xl" 
+              />
+            ) : (
+              <span className="font-bold font-heading-luxury text-xl text-white">D</span>
+            )}
           </div>
           <h2 className="text-xl font-bold font-heading-luxury text-white">
             Dynamind Control Hub
