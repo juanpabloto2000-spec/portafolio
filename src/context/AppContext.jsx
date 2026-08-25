@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { DEFAULT_AGENT_CONFIG } from '../data/defaultAgentConfig';
 import { INITIAL_APPOINTMENTS, INITIAL_CONVERSATIONS, INITIAL_METRICS } from '../data/initialAppointments';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 const AppContext = createContext(null);
 
@@ -58,11 +59,48 @@ export function AppProvider({ children }) {
     return saved ? JSON.parse(saved) : INITIAL_APPOINTMENTS;
   });
 
+  // Sync to Supabase if configured
+  useEffect(() => {
+    if (isSupabaseConfigured && supabase) {
+      const fetchSupabaseData = async () => {
+        try {
+          const { data, error } = await supabase
+            .from('appointments')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+          if (!error && data && data.length > 0) {
+            setAppointments(data.map(d => ({
+              id: d.id,
+              clientName: d.client_name,
+              businessName: d.business_name,
+              phone: d.phone,
+              email: d.email,
+              niche: d.niche,
+              services: d.services || [],
+              date: d.date,
+              time: d.time,
+              duration: d.duration || '45 min',
+              status: d.status,
+              bottleneck: d.bottleneck,
+              meetLink: d.meet_link,
+              createdAt: d.created_at,
+              agentNotes: d.agent_notes
+            })));
+          }
+        } catch (err) {
+          console.log("Using local state for appointments");
+        }
+      };
+      fetchSupabaseData();
+    }
+  }, []);
+
   useEffect(() => {
     localStorage.setItem('dynamind_appointments', JSON.stringify(appointments));
   }, [appointments]);
 
-  const addAppointment = (newAptData) => {
+  const addAppointment = async (newAptData) => {
     const id = `apt-${Date.now().toString().slice(-4)}`;
     const randomMeetCode = Math.random().toString(36).substring(2, 5) + "-" + Math.random().toString(36).substring(2, 6);
     
@@ -86,7 +124,32 @@ export function AppProvider({ children }) {
 
     setAppointments(prev => [newApt, ...prev]);
 
-    // Also add to conversations list for the AI agent
+    // Push to Supabase if configured
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('appointments').insert({
+          id: newApt.id,
+          client_name: newApt.clientName,
+          business_name: newApt.businessName,
+          phone: newApt.phone,
+          email: newApt.email,
+          niche: newApt.niche,
+          services: newApt.services,
+          date: newApt.date,
+          time: newApt.time,
+          duration: newApt.duration,
+          status: newApt.status,
+          bottleneck: newApt.bottleneck,
+          meet_link: newApt.meetLink,
+          agent_notes: newApt.agentNotes,
+          created_at: newApt.createdAt
+        });
+      } catch (e) {
+        console.error("Supabase insert error:", e);
+      }
+    }
+
+    // Add to conversations list for the AI agent
     const newChat = {
       id: `chat-${id}`,
       clientName: newApt.clientName,
@@ -111,7 +174,8 @@ export function AppProvider({ children }) {
     return newApt;
   };
 
-  const updateAppointmentStatus = (id, newStatus, customNotes = null) => {
+  const updateAppointmentStatus = async (id, newStatus, customNotes = null) => {
+    let noteToSave = "";
     setAppointments(prev => prev.map(apt => {
       if (apt.id === id) {
         let defaultNote = apt.agentNotes;
@@ -120,18 +184,37 @@ export function AppProvider({ children }) {
         } else if (newStatus === 'cancelado') {
           defaultNote = "Cancelado por el cliente / administrador.";
         }
+        noteToSave = customNotes || defaultNote;
         return {
           ...apt,
           status: newStatus,
-          agentNotes: customNotes || defaultNote
+          agentNotes: noteToSave
         };
       }
       return apt;
     }));
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase
+          .from('appointments')
+          .update({ status: newStatus, agent_notes: noteToSave })
+          .eq('id', id);
+      } catch (e) {
+        console.error("Supabase update error:", e);
+      }
+    }
   };
 
-  const deleteAppointment = (id) => {
+  const deleteAppointment = async (id) => {
     setAppointments(prev => prev.filter(a => a.id !== id));
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('appointments').delete().eq('id', id);
+      } catch (e) {
+        console.error("Supabase delete error:", e);
+      }
+    }
   };
 
   // 5. Agent Configuration State ("El Cerebro")
@@ -141,14 +224,55 @@ export function AppProvider({ children }) {
   });
 
   useEffect(() => {
+    if (isSupabaseConfigured && supabase) {
+      const fetchAgentConfig = async () => {
+        try {
+          const { data, error } = await supabase
+            .from('agent_config')
+            .select('*')
+            .eq('id', 'default')
+            .single();
+
+          if (!error && data) {
+            setAgentConfig({
+              systemPrompt: data.system_prompt,
+              businessInfo: data.business_info,
+              businessHours: data.business_hours,
+              services: data.services,
+              messageSettings: data.message_settings
+            });
+          }
+        } catch (e) {
+          console.log("Using local agent config");
+        }
+      };
+      fetchAgentConfig();
+    }
+  }, []);
+
+  useEffect(() => {
     localStorage.setItem('dynamind_agent_config', JSON.stringify(agentConfig));
   }, [agentConfig]);
 
-  const updateAgentConfig = (updates) => {
-    setAgentConfig(prev => ({
-      ...prev,
-      ...updates
-    }));
+  const updateAgentConfig = async (updates) => {
+    const merged = { ...agentConfig, ...updates };
+    setAgentConfig(merged);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('agent_config').upsert({
+          id: 'default',
+          system_prompt: merged.systemPrompt,
+          business_info: merged.businessInfo,
+          business_hours: merged.businessHours,
+          services: merged.services,
+          message_settings: merged.messageSettings,
+          updated_at: new Date().toISOString()
+        });
+      } catch (e) {
+        console.error("Supabase agent_config upsert error:", e);
+      }
+    }
   };
 
   // 6. Conversations & Human Control State
@@ -170,12 +294,12 @@ export function AppProvider({ children }) {
     localStorage.setItem('dynamind_human_interventions', humanInterventionsCount.toString());
   }, [humanInterventionsCount]);
 
-  const toggleHumanControl = (chatId) => {
+  const toggleHumanControl = async (chatId) => {
+    let nextState = false;
     setConversations(prev => prev.map(chat => {
       if (chat.id === chatId) {
-        const nextState = !chat.isHumanControlActive;
+        nextState = !chat.isHumanControlActive;
         if (nextState) {
-          // Increment counter when human pauses the bot
           setHumanInterventionsCount(c => c + 1);
         }
         return {
@@ -193,32 +317,55 @@ export function AppProvider({ children }) {
       }
       return chat;
     }));
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase
+          .from('conversations')
+          .update({ is_human_control_active: nextState })
+          .eq('id', chatId);
+      } catch (e) {
+        console.error("Supabase toggle human control error:", e);
+      }
+    }
   };
 
-  const sendChatMessage = (chatId, text, sender = "human") => {
+  const sendChatMessage = async (chatId, text, sender = "human") => {
+    let updatedMessages = [];
     setConversations(prev => prev.map(chat => {
       if (chat.id === chatId) {
+        updatedMessages = [
+          ...chat.messages,
+          {
+            sender,
+            text,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          }
+        ];
         return {
           ...chat,
           lastMessageTime: "Ahora",
-          messages: [
-            ...chat.messages,
-            {
-              sender,
-              text,
-              time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-            }
-          ]
+          messages: updatedMessages
         };
       }
       return chat;
     }));
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase
+          .from('conversations')
+          .update({ messages: updatedMessages, updated_at: new Date().toISOString() })
+          .eq('id', chatId);
+      } catch (e) {
+        console.error("Supabase message update error:", e);
+      }
+    }
   };
 
   // 7. Computed Dynamic Metrics
   const todayStr = new Date().toISOString().split('T')[0];
   
-  // Calculate start and end of current week
   const curr = new Date();
   const firstDay = curr.getDate() - curr.getDay() + (curr.getDay() === 0 ? -6 : 1);
   const startOfWeek = new Date(curr.setDate(firstDay)).toISOString().split('T')[0];
@@ -235,6 +382,7 @@ export function AppProvider({ children }) {
     pendingCount: appointments.filter(a => a.status === 'pendiente').length,
     confirmedCount: appointments.filter(a => a.status === 'agendado').length,
     canceledCount: appointments.filter(a => a.status === 'cancelado').length,
+    isSupabaseConnected: isSupabaseConfigured
   };
 
   return (
@@ -270,8 +418,9 @@ export function AppProvider({ children }) {
         toggleHumanControl,
         sendChatMessage,
 
-        // Metrics
-        metrics
+        // Metrics & DB Status
+        metrics,
+        isSupabaseConfigured
       }}
     >
       {children}
