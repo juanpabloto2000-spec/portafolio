@@ -1,12 +1,12 @@
 import React, { useRef } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { Globe, Play, ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import MagneticButton from '../ui/MagneticButton';
 import TypewriterText from '../ui/TypewriterText';
 import ShaderHeroBackground from '../ui/ShaderHeroBackground';
 import { useApp } from '../../context/AppContext';
 
-export default function Hero({ onExploreDemos, onExploreLiveProjects, onOpenContact }) {
+export default function Hero({ onOpenContact }) {
   const { siteContent } = useApp();
   const heroData = siteContent?.hero || {};
   const branding = siteContent?.branding || {};
@@ -41,7 +41,7 @@ export default function Hero({ onExploreDemos, onExploreLiveProjects, onOpenCont
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative min-h-[90vh] flex flex-col items-center justify-center px-4 sm:px-6 pt-32 pb-24 overflow-hidden select-none"
+      className="relative min-h-[85vh] flex flex-col items-center justify-center px-4 sm:px-6 pt-32 pb-24 overflow-hidden select-none"
     >
       {/* Interactive Liquid Shader Mesh Background */}
       <ShaderHeroBackground theme={bgTheme} />
@@ -103,38 +103,18 @@ export default function Hero({ onExploreDemos, onExploreLiveProjects, onOpenCont
           {heroData.description || "Desarrollamos plataformas a medida y menús interactivos con sistemas autónomos de agendamiento, validación de depósitos para reservas y flujos comerciales sin fricción."}
         </motion.p>
 
-        {/* Clean Luxury CTAs */}
+        {/* Focused Single Conversion CTA */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.95, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-col sm:flex-row items-center gap-3.5"
+          className="flex items-center justify-center"
         >
           <MagneticButton 
-            onClick={onExploreDemos}
+            onClick={onOpenContact}
             variant="primary" 
             size="lg"
-            className="w-full sm:w-auto"
-            icon={Play}
-          >
-            {heroData.ctaDemos || "Explorar Demos Interactivas"}
-          </MagneticButton>
-
-          <MagneticButton 
-            onClick={onExploreLiveProjects}
-            variant="secondary" 
-            size="lg"
-            className="w-full sm:w-auto"
-            icon={Globe}
-          >
-            {heroData.ctaLive || "Ver Proyectos en Vivo"}
-          </MagneticButton>
-
-          <MagneticButton 
-            onClick={onOpenContact}
-            variant="outline" 
-            size="lg"
-            className="w-full sm:w-auto"
+            className="px-8 py-4 text-sm font-semibold shadow-[0_0_30px_rgba(255,255,255,0.2)]"
             icon={ArrowUpRight}
           >
             {heroData.ctaContact || "Agendar Diagnóstico"}

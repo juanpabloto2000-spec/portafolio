@@ -129,8 +129,6 @@ export default function App() {
         {currentView === 'home' ? (
           <>
             <Hero 
-              onExploreDemos={handleScrollToDemos}
-              onExploreLiveProjects={() => handleNavigate('live-projects')}
               onOpenContact={() => setIsBookingModalOpen(true)} 
             />
 
