@@ -61,7 +61,7 @@ export default function Navbar({ currentPage, onNavigate, onOpenContact }) {
               : 'bg-[#0d0d10]/70 border-white/10 backdrop-blur-xl shadow-lg'
           }`}
         >
-          {/* Logo & Brand Identity (Clean Transparent Logo without box) */}
+          {/* Logo & Brand Identity (Clean Transparent Logo) */}
           <button 
             onClick={() => handleLinkClick('home', 'top')} 
             className="flex items-center gap-3 group text-left focus:outline-none"
@@ -93,11 +93,11 @@ export default function Navbar({ currentPage, onNavigate, onOpenContact }) {
                   onClick={item.action}
                   className={`relative px-4 py-2 rounded-lg text-xs font-medium transition-all duration-300 flex items-center gap-2 select-none ${
                     item.isActive 
-                      ? 'text-white bg-white/10 shadow-sm border border-white/10' 
-                      : 'text-zinc-400 hover:text-white hover:bg-white/[0.04]'
+                      ? 'text-white bg-white/[0.08] backdrop-blur-xl border border-white/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] font-semibold' 
+                      : 'text-zinc-400 hover:text-white hover:bg-white/[0.03]'
                   }`}
                 >
-                  <Icon className="w-3.5 h-3.5 opacity-70" />
+                  <Icon className="w-3.5 h-3.5 opacity-80" />
                   <span>{item.label}</span>
                 </button>
               );
@@ -159,7 +159,7 @@ export default function Navbar({ currentPage, onNavigate, onOpenContact }) {
                     onClick={item.action}
                     className={`text-sm font-medium text-left py-3 px-3 rounded-xl border transition-colors flex items-center justify-between ${
                       item.isActive 
-                        ? 'bg-white/10 border-white/20 text-white' 
+                        ? 'bg-white/[0.08] border-white/20 text-white font-semibold backdrop-blur-md' 
                         : 'border-white/5 text-zinc-300 hover:text-white hover:bg-white/5'
                     }`}
                   >
