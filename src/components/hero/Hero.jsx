@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { ArrowDown, Globe, ShieldCheck, Play, Utensils, Calendar, ArrowUpRight } from 'lucide-react';
+import { Globe, Play, ArrowUpRight } from 'lucide-react';
 import MagneticButton from '../ui/MagneticButton';
 import TypewriterText from '../ui/TypewriterText';
 import { useApp } from '../../context/AppContext';
@@ -39,7 +39,7 @@ export default function Hero({ onExploreDemos, onExploreLiveProjects, onOpenCont
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative min-h-[95vh] flex flex-col items-center justify-center px-4 sm:px-6 pt-28 pb-16 overflow-hidden select-none"
+      className="relative min-h-[85vh] flex flex-col items-center justify-center px-4 sm:px-6 pt-32 pb-20 overflow-hidden select-none"
     >
       {/* Background Interactive Ambient Glow */}
       <motion.div 
@@ -87,8 +87,8 @@ export default function Hero({ onExploreDemos, onExploreLiveProjects, onOpenCont
           </span>
         </motion.div>
 
-        {/* Typewriter Title */}
-        <h1 className="font-display-luxury text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.1] mb-6 max-w-4xl min-h-[80px]">
+        {/* Typewriter Metallic Title */}
+        <h1 className="font-display-luxury text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 max-w-4xl min-h-[80px]">
           <TypewriterText 
             key={heroData.title}
             text={heroData.title || "Experiencias web que convierten y resuelven cuellos de botella."}
@@ -108,12 +108,12 @@ export default function Hero({ onExploreDemos, onExploreLiveProjects, onOpenCont
           {heroData.description || "Desarrollamos plataformas a medida y menús interactivos con sistemas autónomos de agendamiento, validación de depósitos para reservas y flujos comerciales sin fricción."}
         </motion.p>
 
-        {/* CTAs */}
+        {/* Clean CTAs */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.95, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-col sm:flex-row items-center gap-3.5 mb-16"
+          className="flex flex-col sm:flex-row items-center gap-3.5"
         >
           <MagneticButton 
             onClick={onExploreDemos}
@@ -146,40 +146,7 @@ export default function Hero({ onExploreDemos, onExploreLiveProjects, onOpenCont
           </MagneticButton>
         </motion.div>
 
-        {/* Value Pillars Strip */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.1 }}
-          className="w-full grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-6 border-t border-white/10 max-w-3xl text-left"
-        >
-          {(heroData.pillars || []).map((pillar, i) => {
-            const icons = [Calendar, ShieldCheck, Utensils];
-            const Icon = icons[i % icons.length];
-            return (
-              <div key={i} className="p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/15 transition-colors">
-                <div className="flex items-center gap-2 mb-1.5">
-                  <Icon className="w-4 h-4 text-slate-300 shrink-0" />
-                  <h3 className="text-xs font-semibold text-white">{pillar.title}</h3>
-                </div>
-                <p className="text-[11px] text-zinc-400 font-light leading-snug">{pillar.description}</p>
-              </div>
-            );
-          })}
-        </motion.div>
-
       </div>
-
-      {/* Down Arrow */}
-      <motion.div
-        animate={{ y: [0, 5, 0] }}
-        transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut" }}
-        className="absolute bottom-4 left-1/2 -translate-x-1/2 text-zinc-500 flex flex-col items-center gap-1 cursor-pointer"
-        onClick={onExploreDemos}
-      >
-        <span className="text-[9px] tracking-super-wide uppercase text-zinc-500 font-medium">Demos</span>
-        <ArrowDown className="w-3 h-3 text-zinc-500" />
-      </motion.div>
     </section>
   );
 }
