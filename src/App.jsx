@@ -110,7 +110,7 @@ export default function App() {
 
   // 2. PUBLIC PORTFOLIO WEBSITE (Zero admin buttons, 100% clean)
   return (
-    <div className={`min-h-screen ${themeClasses} relative overflow-x-hidden transition-colors duration-500`}>
+    <div className={`min-h-screen ${themeClasses} relative overflow-x-clip transition-colors duration-500`}>
       {/* Luxury Cinematic Preloader */}
       <Preloader />
 
