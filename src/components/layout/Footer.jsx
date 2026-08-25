@@ -2,8 +2,13 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Instagram, ArrowUpRight, MessageCircle, Globe, Play, Layers } from 'lucide-react';
 import MagneticButton from '../ui/MagneticButton';
+import { useApp } from '../../context/AppContext';
 
 export default function Footer({ onNavigate, onOpenContact }) {
+  const { siteContent } = useApp();
+  const footerData = siteContent?.footer || {};
+  const branding = siteContent?.branding || {};
+
   return (
     <footer className="relative border-t border-white/10 bg-[#050505] pt-20 pb-12 px-4 sm:px-6 overflow-hidden">
       
@@ -15,10 +20,10 @@ export default function Footer({ onNavigate, onOpenContact }) {
         {/* Top Call to Action Banner (rounded-2xl) */}
         <div className="p-8 sm:p-12 rounded-2xl bg-gradient-to-b from-white/[0.06] to-white/[0.01] border border-white/10 shadow-2xl mb-16 text-center flex flex-col items-center">
           <h2 className="font-display-luxury text-2xl sm:text-4xl md:text-5xl font-bold text-white max-w-3xl mb-4">
-            ¿Listo para digitalizar tu negocio con arquitectura de <span className="text-metallic">alta conversión</span>?
+            {footerData.headline || "¿Listo para digitalizar tu negocio con arquitectura de alta conversión?"}
           </h2>
           <p className="text-sm text-zinc-400 max-w-xl font-light leading-relaxed mb-8">
-            Diseñamos experiencias digitales sin fricciones operativas. Agendamientos automáticos, validación de pagos y cartas interactivas.
+            {footerData.description || "Diseñamos experiencias digitales sin fricciones operativas. Agendamientos automáticos, validación de pagos y cartas interactivas."}
           </p>
 
           <div className="flex flex-col sm:flex-row items-center gap-3.5">
@@ -32,7 +37,7 @@ export default function Footer({ onNavigate, onOpenContact }) {
             </MagneticButton>
 
             <a
-              href="https://www.instagram.com/dynamind.studios?igsi=emhhenE5bjA4ZzNw"
+              href={branding.instagramUrl || "https://www.instagram.com/dynamind.studios?igsi=emhhenE5bjA4ZzNw"}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-6 py-3.5 rounded-xl border border-white/20 text-xs font-semibold text-zinc-300 hover:text-white hover:border-white/50 transition-colors"
@@ -50,14 +55,14 @@ export default function Footer({ onNavigate, onOpenContact }) {
           <div className="md:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-xl overflow-hidden border border-white/20 bg-black">
-                <img src="/logo.jpeg" alt="Dynamind Studios Logo" className="w-full h-full object-cover" />
+                <img src={branding.logoUrl || "/logo.jpeg"} alt="Dynamind Studios Logo" className="w-full h-full object-cover" />
               </div>
               <div className="flex flex-col">
                 <span className="font-heading-luxury font-bold text-sm tracking-wider text-white">
-                  DYNAMIND
+                  {branding.studioName || "DYNAMIND"}
                 </span>
                 <span className="text-[8px] uppercase tracking-super-wide text-zinc-400 font-medium">
-                  STUDIOS
+                  {branding.studioSubtitle || "STUDIOS"}
                 </span>
               </div>
             </div>

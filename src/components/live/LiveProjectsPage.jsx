@@ -5,6 +5,7 @@ import { LIVE_PROJECTS } from '../../data/liveProjects';
 import { NICHE_CATEGORIES } from '../../data/projects';
 import MagneticButton from '../ui/MagneticButton';
 import TypewriterText from '../ui/TypewriterText';
+import { useApp } from '../../context/AppContext';
 
 function LiveWebsiteFrame({ url, title, isFeatured }) {
   const [iframeLoaded, setIframeLoaded] = useState(false);
@@ -138,61 +139,83 @@ function LiveProjectCard({ project, index, isFeatured = false }) {
             />
           </div>
 
-          {/* Right / Bottom: Clean Editorial Content */}
+          {/* Right / Bottom: Editorial Project Details */}
           <div className={`flex flex-col justify-between ${isFeatured ? 'w-full lg:w-2/5' : 'w-full'}`}>
             <div>
-              {/* Title & Tagline */}
-              <div className="mb-3">
-                <h3 className={`font-bold font-heading-luxury text-white group-hover:text-slate-100 transition-colors ${
-                  isFeatured ? 'text-2xl sm:text-3xl' : 'text-xl'
-                }`}>
-                  {project.title}
-                </h3>
-                <p className="text-xs text-slate-300 font-medium mt-1">
-                  {project.tagline}
-                </p>
+              {/* Niche & Type badge */}
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                  {project.niche}
+                </span>
+                {project.isFlagship && (
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-amber-300 font-semibold px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20">
+                    ★ Destacado
+                  </span>
+                )}
               </div>
 
-              {/* Description */}
-              <p className="text-xs text-zinc-400 font-light leading-relaxed mb-6">
+              {/* Title & Tagline */}
+              <h3 className="font-heading-luxury text-xl sm:text-2xl font-bold text-white mb-1.5 group-hover:text-slate-200 transition-colors">
+                {project.title}
+              </h3>
+              <p className="text-xs text-zinc-400 font-light mb-4">
+                {project.tagline}
+              </p>
+
+              {/* Narrative Story Description */}
+              <p className="text-xs text-zinc-300 font-light leading-relaxed mb-6">
                 {project.description}
               </p>
+
+              {/* Solved Bottleneck Pill */}
+              <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 mb-6">
+                <div className="text-[10px] uppercase font-mono text-zinc-400 mb-1">
+                  Cuello de Botella Resuelto
+                </div>
+                <div className="text-xs text-white font-medium">
+                  {project.bottleneckSolved}
+                </div>
+              </div>
             </div>
 
-            {/* Actions Bar */}
-            <div className="pt-4 border-t border-white/10 flex items-center justify-end">
+            {/* Direct Link Action */}
+            <div className="pt-2 border-t border-white/5 flex items-center justify-between">
               <a
                 href={project.liveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-5 py-2.5 rounded-xl bg-white text-black font-semibold text-xs flex items-center gap-1.5 hover:bg-slate-200 transition-colors shadow-sm"
+                className="inline-flex items-center gap-2 text-xs font-semibold text-white hover:text-emerald-300 transition-colors group/link"
               >
-                <span>Visitar Página Web</span>
-                <ArrowUpRight className="w-3.5 h-3.5" />
+                <span>Explorar Sitio en Producción</span>
+                <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
               </a>
+
+              <span className="text-[10px] font-mono text-zinc-400">En Vivo</span>
             </div>
           </div>
 
         </div>
-
       </div>
     </motion.div>
   );
 }
 
 export default function LiveProjectsPage({ onBackToHome, onOpenContact }) {
+  const { siteContent } = useApp();
+  const liveProjectsList = siteContent?.customLiveProjects || LIVE_PROJECTS;
+
   const [activeNiche, setActiveNiche] = useState('todos');
 
-  const filteredProjects = activeNiche === 'todos'
-    ? LIVE_PROJECTS
-    : LIVE_PROJECTS.filter(p => p.nicheId === activeNiche);
+  const filteredProjects = activeNiche === 'todos' 
+    ? liveProjectsList 
+    : liveProjectsList.filter(p => p.nicheId === activeNiche);
 
   return (
-    <div className="min-h-screen pt-28 pb-20 px-4 sm:px-6 max-w-7xl mx-auto text-white overflow-hidden">
+    <div className="relative min-h-screen py-24 px-4 sm:px-6 max-w-7xl mx-auto overflow-hidden">
       
-      {/* Back to Demos */}
+      {/* Back to Home Button */}
       <motion.div 
-        initial={{ opacity: 0, x: -15 }}
+        initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5 }}
         className="mb-8"
@@ -258,12 +281,7 @@ export default function LiveProjectsPage({ onBackToHome, onOpenContact }) {
         </motion.div>
       </div>
 
-      {/* Projects Grid:
-          1. Bioparque Andicas (Featured Full Width)
-          2. Lorena Terranova (Left) & DYM Store (Right)
-          3. Clínica Odontológica Luminous (Featured Full Width)
-          4. Menús Interactivos: Bella Vista & Kal Discobar
-      */}
+      {/* Projects Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <AnimatePresence mode="popLayout">
           {filteredProjects.map((project, index) => {

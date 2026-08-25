@@ -3,8 +3,13 @@ import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { ArrowDown, Globe, ShieldCheck, Play, Utensils, Calendar, ArrowUpRight } from 'lucide-react';
 import MagneticButton from '../ui/MagneticButton';
 import TypewriterText from '../ui/TypewriterText';
+import { useApp } from '../../context/AppContext';
 
 export default function Hero({ onExploreDemos, onExploreLiveProjects, onOpenContact }) {
+  const { siteContent } = useApp();
+  const heroData = siteContent?.hero || {};
+  const branding = siteContent?.branding || {};
+
   const containerRef = useRef(null);
 
   // Mouse tilt tracking for the 3D Monogram Logo
@@ -64,7 +69,7 @@ export default function Hero({ onExploreDemos, onExploreLiveProjects, onOpenCont
           <div className="p-2 rounded-2xl bg-gradient-to-b from-white/10 via-white/5 to-transparent border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.8),0_0_30px_rgba(255,255,255,0.06)] backdrop-blur-md transition-all duration-500 group-hover:border-white/30 group-hover:shadow-[0_25px_60px_rgba(0,0,0,0.9),0_0_40px_rgba(255,255,255,0.12)]">
             <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden bg-black flex items-center justify-center relative shadow-inner">
               <img 
-                src="/logo.jpeg" 
+                src={branding.logoUrl || "/logo.jpeg"} 
                 alt="Dynamind Studios Logo" 
                 className="w-full h-full object-cover select-none transition-transform duration-500 group-hover:scale-105"
               />
@@ -81,15 +86,16 @@ export default function Hero({ onExploreDemos, onExploreLiveProjects, onOpenCont
           className="mb-4"
         >
           <span className="text-[11px] sm:text-xs font-semibold tracking-super-wide text-zinc-400 uppercase">
-            Estudio de Ingeniería Web & Sistemas de Conversión
+            {heroData.badgeText || "Estudio de Ingeniería Web & Sistemas de Conversión"}
           </span>
         </motion.div>
 
         {/* Typewriter Title */}
         <h1 className="font-display-luxury text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-[1.1] mb-6 max-w-4xl min-h-[80px]">
           <TypewriterText 
-            text="Experiencias web que convierten y resuelven cuellos de botella."
-            highlightWords={["convierten"]}
+            key={heroData.title}
+            text={heroData.title || "Experiencias web que convierten y resuelven cuellos de botella."}
+            highlightWords={[heroData.highlightWord || "convierten"]}
             speed={0.035}
             delay={0.2}
           />
@@ -102,7 +108,7 @@ export default function Hero({ onExploreDemos, onExploreLiveProjects, onOpenCont
           transition={{ duration: 0.8, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className="text-zinc-400 text-sm sm:text-base md:text-lg max-w-2xl font-light leading-relaxed mb-10"
         >
-          Desarrollamos plataformas a medida y menús interactivos con sistemas autónomos de agendamiento, validación de depósitos para reservas y flujos comerciales sin fricción.
+          {heroData.description || "Desarrollamos plataformas a medida y menús interactivos con sistemas autónomos de agendamiento, validación de depósitos para reservas y flujos comerciales sin fricción."}
         </motion.p>
 
         {/* CTAs */}
@@ -119,7 +125,7 @@ export default function Hero({ onExploreDemos, onExploreLiveProjects, onOpenCont
             className="w-full sm:w-auto"
             icon={Play}
           >
-            Explorar Demos Interactivas
+            {heroData.ctaDemos || "Explorar Demos Interactivas"}
           </MagneticButton>
 
           <MagneticButton 
@@ -129,7 +135,7 @@ export default function Hero({ onExploreDemos, onExploreLiveProjects, onOpenCont
             className="w-full sm:w-auto"
             icon={Globe}
           >
-            Ver Proyectos en Vivo
+            {heroData.ctaLive || "Ver Proyectos en Vivo"}
           </MagneticButton>
 
           <MagneticButton 
@@ -139,7 +145,7 @@ export default function Hero({ onExploreDemos, onExploreLiveProjects, onOpenCont
             className="w-full sm:w-auto"
             icon={ArrowUpRight}
           >
-            Agendar Diagnóstico
+            {heroData.ctaContact || "Agendar Diagnóstico"}
           </MagneticButton>
         </motion.div>
 
@@ -150,29 +156,19 @@ export default function Hero({ onExploreDemos, onExploreLiveProjects, onOpenCont
           transition={{ duration: 0.8, delay: 1.1 }}
           className="w-full grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-6 border-t border-white/10 max-w-3xl text-left"
         >
-          <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/15 transition-colors">
-            <div className="flex items-center gap-2 mb-1.5">
-              <Calendar className="w-4 h-4 text-slate-300 shrink-0" />
-              <h3 className="text-xs font-semibold text-white">Agendamiento Autónomo</h3>
-            </div>
-            <p className="text-[11px] text-zinc-400 font-light leading-snug">Disponibilidad en tiempo real sin cadenas de chat manuales.</p>
-          </div>
-
-          <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/15 transition-colors">
-            <div className="flex items-center gap-2 mb-1.5">
-              <ShieldCheck className="w-4 h-4 text-slate-300 shrink-0" />
-              <h3 className="text-xs font-semibold text-white">Validación de Depósitos</h3>
-            </div>
-            <p className="text-[11px] text-zinc-400 font-light leading-snug">Elimina ausencias imprevistas y asegura turnos con anticipo.</p>
-          </div>
-
-          <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/15 transition-colors">
-            <div className="flex items-center gap-2 mb-1.5">
-              <Utensils className="w-4 h-4 text-slate-300 shrink-0" />
-              <h3 className="text-xs font-semibold text-white">Menús Táctiles</h3>
-            </div>
-            <p className="text-[11px] text-zinc-400 font-light leading-snug">Mayor retención visual y aumento del ticket promedio.</p>
-          </div>
+          {(heroData.pillars || []).map((pillar, i) => {
+            const icons = [Calendar, ShieldCheck, Utensils];
+            const Icon = icons[i % icons.length];
+            return (
+              <div key={i} className="p-4 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/15 transition-colors">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <Icon className="w-4 h-4 text-slate-300 shrink-0" />
+                  <h3 className="text-xs font-semibold text-white">{pillar.title}</h3>
+                </div>
+                <p className="text-[11px] text-zinc-400 font-light leading-snug">{pillar.description}</p>
+              </div>
+            );
+          })}
         </motion.div>
 
       </div>

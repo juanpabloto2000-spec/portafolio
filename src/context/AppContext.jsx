@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { DEFAULT_AGENT_CONFIG } from '../data/defaultAgentConfig';
 import { INITIAL_APPOINTMENTS, INITIAL_CONVERSATIONS, INITIAL_METRICS } from '../data/initialAppointments';
+import { DEFAULT_SITE_CONTENT } from '../data/defaultSiteContent';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 const AppContext = createContext(null);
@@ -9,7 +10,7 @@ export function AppProvider({ children }) {
   // 1. Navigation & View State
   const [currentView, setCurrentView] = useState('home'); // 'home' | 'live' | 'admin'
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
-  const [activeAdminTab, setActiveAdminTab] = useState('appointments'); // 'appointments' | 'agent-brain' | 'dashboard'
+  const [activeAdminTab, setActiveAdminTab] = useState('appointments'); // 'appointments' | 'agent-brain' | 'dashboard' | 'page-editor'
   
   // 2. Active simulated appointment for WhatsApp confirmation demo
   const [activeSimAppointment, setActiveSimAppointment] = useState(null);
@@ -275,7 +276,60 @@ export function AppProvider({ children }) {
     }
   };
 
-  // 6. Conversations & Human Control State
+  // 6. Site Dynamic Content State ("Editar Página")
+  const [siteContent, setSiteContent] = useState(() => {
+    const saved = localStorage.getItem('dynamind_site_content');
+    return saved ? JSON.parse(saved) : DEFAULT_SITE_CONTENT;
+  });
+
+  useEffect(() => {
+    if (isSupabaseConfigured && supabase) {
+      const fetchSiteContent = async () => {
+        try {
+          const { data, error } = await supabase
+            .from('site_content')
+            .select('*')
+            .eq('id', 'default')
+            .single();
+
+          if (!error && data && data.content) {
+            setSiteContent(data.content);
+          }
+        } catch (e) {
+          console.log("Using local site content");
+        }
+      };
+      fetchSiteContent();
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('dynamind_site_content', JSON.stringify(siteContent));
+  }, [siteContent]);
+
+  const updateSiteContent = async (updates) => {
+    const merged = { ...siteContent, ...updates };
+    setSiteContent(merged);
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('site_content').upsert({
+          id: 'default',
+          content: merged,
+          updated_at: new Date().toISOString()
+        });
+      } catch (e) {
+        console.error("Supabase site_content upsert error:", e);
+      }
+    }
+  };
+
+  const resetSiteContent = () => {
+    setSiteContent(DEFAULT_SITE_CONTENT);
+    localStorage.setItem('dynamind_site_content', JSON.stringify(DEFAULT_SITE_CONTENT));
+  };
+
+  // 7. Conversations & Human Control State
   const [conversations, setConversations] = useState(() => {
     const saved = localStorage.getItem('dynamind_conversations');
     return saved ? JSON.parse(saved) : INITIAL_CONVERSATIONS;
@@ -363,7 +417,7 @@ export function AppProvider({ children }) {
     }
   };
 
-  // 7. Computed Dynamic Metrics
+  // 8. Computed Dynamic Metrics
   const todayStr = new Date().toISOString().split('T')[0];
   
   const curr = new Date();
@@ -412,6 +466,11 @@ export function AppProvider({ children }) {
         // Agent Config
         agentConfig,
         updateAgentConfig,
+
+        // Site Content Editor (CMS)
+        siteContent,
+        updateSiteContent,
+        resetSiteContent,
 
         // Conversations & Human Control
         conversations,

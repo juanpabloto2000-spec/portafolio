@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { motion, useMotionValue } from 'framer-motion';
 import { Calendar, ShieldCheck, UtensilsCrossed, CheckCircle2 } from 'lucide-react';
 import TypewriterText from '../ui/TypewriterText';
+import { useApp } from '../../context/AppContext';
 
 function BentoCard({ icon: Icon, title, description, benefits, delay }) {
   const cardRef = useRef(null);
@@ -68,6 +69,9 @@ function BentoCard({ icon: Icon, title, description, benefits, delay }) {
 }
 
 export default function SystemsBento() {
+  const { siteContent } = useApp();
+  const systemsHeader = siteContent?.systemsSection || {};
+
   const systems = [
     {
       icon: Calendar,
@@ -107,14 +111,15 @@ export default function SystemsBento() {
       <div className="text-center max-w-3xl mx-auto mb-16">
         <h2 className="font-display-luxury text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
           <TypewriterText 
-            text="Eliminamos los Cuellos de Botella de tu Negocio"
-            highlightWords={["Botella", "Negocio"]}
+            key={systemsHeader.title}
+            text={systemsHeader.title || "Eliminamos los Cuellos de Botella de tu Negocio"}
+            highlightWords={[systemsHeader.highlightWord || "Negocio"]}
             speed={0.035}
             delay={0.1}
           />
         </h2>
         <p className="text-sm sm:text-base text-zinc-400 font-light leading-relaxed">
-          En Dynamind Studios diseñamos sistemas operativos de venta y atención que trabajan 24/7 para tu marca.
+          {systemsHeader.description || "En Dynamind Studios diseñamos sistemas operativos de venta y atención que trabajan 24/7 para tu marca."}
         </p>
       </div>
 
