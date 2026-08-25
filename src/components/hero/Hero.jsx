@@ -3,12 +3,14 @@ import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { Globe, Play, ArrowUpRight } from 'lucide-react';
 import MagneticButton from '../ui/MagneticButton';
 import TypewriterText from '../ui/TypewriterText';
+import ShaderHeroBackground from '../ui/ShaderHeroBackground';
 import { useApp } from '../../context/AppContext';
 
 export default function Hero({ onExploreDemos, onExploreLiveProjects, onOpenContact }) {
   const { siteContent } = useApp();
   const heroData = siteContent?.hero || {};
   const branding = siteContent?.branding || {};
+  const bgTheme = siteContent?.styles?.bgTheme || 'pure-black';
 
   const containerRef = useRef(null);
 
@@ -39,17 +41,10 @@ export default function Hero({ onExploreDemos, onExploreLiveProjects, onOpenCont
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative min-h-[85vh] flex flex-col items-center justify-center px-4 sm:px-6 pt-32 pb-20 overflow-hidden select-none"
+      className="relative min-h-[90vh] flex flex-col items-center justify-center px-4 sm:px-6 pt-32 pb-24 overflow-hidden select-none"
     >
-      {/* Background Interactive Ambient Glow */}
-      <motion.div 
-        animate={{
-          scale: [1, 1.08, 1],
-          opacity: [0.03, 0.06, 0.03],
-        }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-slate-200 rounded-full blur-[150px] pointer-events-none" 
-      />
+      {/* Interactive Liquid Shader Mesh Background */}
+      <ShaderHeroBackground theme={bgTheme} />
 
       {/* Main Container */}
       <div className="relative z-10 max-w-5xl mx-auto text-center flex flex-col items-center">
@@ -70,7 +65,7 @@ export default function Hero({ onExploreDemos, onExploreLiveProjects, onOpenCont
             <img 
               src={branding.logoUrl || "/logo-transparent.png"} 
               alt="Dynamind Studios Logo" 
-              className="w-full h-full object-contain filter drop-shadow-[0_20px_35px_rgba(255,255,255,0.08)] select-none transition-transform duration-500 group-hover:scale-110"
+              className="w-full h-full object-contain filter drop-shadow-[0_20px_35px_rgba(255,255,255,0.1)] select-none transition-transform duration-500 group-hover:scale-110"
             />
           </div>
         </motion.div>
@@ -108,7 +103,7 @@ export default function Hero({ onExploreDemos, onExploreLiveProjects, onOpenCont
           {heroData.description || "Desarrollamos plataformas a medida y menús interactivos con sistemas autónomos de agendamiento, validación de depósitos para reservas y flujos comerciales sin fricción."}
         </motion.p>
 
-        {/* Clean CTAs */}
+        {/* Clean Luxury CTAs */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
