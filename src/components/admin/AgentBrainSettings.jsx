@@ -5,14 +5,41 @@ import {
   Plus, Trash2, Save, Check, RotateCcw, AlertTriangle, ShieldCheck 
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { DEFAULT_AGENT_CONFIG } from '../../data/defaultAgentConfig';
 import confetti from 'canvas-confetti';
 
 export default function AgentBrainSettings() {
   const { agentConfig, updateAgentConfig } = useApp();
-  const [form, setForm] = useState(agentConfig);
+  const [form, setForm] = useState(() => ({
+    ...DEFAULT_AGENT_CONFIG,
+    ...agentConfig,
+    businessHours: Array.isArray(agentConfig?.businessHours)
+      ? agentConfig.businessHours
+      : (agentConfig?.businessHours?.schedule || DEFAULT_AGENT_CONFIG.businessHours),
+    businessInfo: {
+      ...DEFAULT_AGENT_CONFIG.businessInfo,
+      ...(agentConfig?.businessInfo || {}),
+      knowledgeBase: agentConfig?.businessInfo?.knowledgeBase || DEFAULT_AGENT_CONFIG.businessInfo.knowledgeBase
+    },
+    systemPrompt: {
+      ...DEFAULT_AGENT_CONFIG.systemPrompt,
+      ...(agentConfig?.systemPrompt || {}),
+      behavioralRules: agentConfig?.systemPrompt?.behavioralRules || DEFAULT_AGENT_CONFIG.systemPrompt.behavioralRules
+    },
+    services: agentConfig?.services || DEFAULT_AGENT_CONFIG.services,
+    messageSettings: {
+      ...DEFAULT_AGENT_CONFIG.messageSettings,
+      ...(agentConfig?.messageSettings || {})
+    }
+  }));
+
   const [activeSubTab, setActiveSubTab] = useState('prompt'); // 'prompt' | 'business' | 'hours' | 'services' | 'messages'
   const [newRule, setNewRule] = useState('');
   const [savedFeedback, setSavedFeedback] = useState(false);
+
+  const scheduleList = Array.isArray(form?.businessHours)
+    ? form.businessHours
+    : (form?.businessHours?.schedule || DEFAULT_AGENT_CONFIG.businessHours);
 
   const handleSave = () => {
     updateAgentConfig(form);
@@ -27,7 +54,7 @@ export default function AgentBrainSettings() {
         ...prev,
         systemPrompt: {
           ...prev.systemPrompt,
-          behavioralRules: [...prev.systemPrompt.behavioralRules, newRule.trim()]
+          behavioralRules: [...(prev.systemPrompt?.behavioralRules || []), newRule.trim()]
         }
       }));
       setNewRule('');
@@ -39,8 +66,17 @@ export default function AgentBrainSettings() {
       ...prev,
       systemPrompt: {
         ...prev.systemPrompt,
-        behavioralRules: prev.systemPrompt.behavioralRules.filter((_, i) => i !== index)
+        behavioralRules: (prev.systemPrompt?.behavioralRules || []).filter((_, i) => i !== index)
       }
+    }));
+  };
+
+  const handleScheduleChange = (idx, field, value) => {
+    const updated = [...scheduleList];
+    updated[idx] = { ...updated[idx], [field]: value };
+    setForm(prev => ({
+      ...prev,
+      businessHours: updated
     }));
   };
 
@@ -118,17 +154,16 @@ export default function AgentBrainSettings() {
             </h3>
             <textarea
               rows="3"
-              value={form.systemPrompt.roleAndTone}
+              value={form.systemPrompt?.roleAndTone || ""}
               onChange={(e) => setForm({
                 ...form,
                 systemPrompt: { ...form.systemPrompt, roleAndTone: e.target.value }
               })}
-              className="w-full bg-black/60 border border-white/15 rounded-xl p-3 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-white/40 leading-relaxed font-sans"
-              placeholder="Ejemplo: Eres el Asistente Ejecutivo de Dynamind Studios, amable, profesional y enfocado en resolver dudas..."
+              className="w-full bg-black/60 border border-white/15 rounded-xl p-3 text-xs text-white leading-relaxed focus:outline-none focus:border-white/40"
             />
           </div>
 
-          {/* Strict Behavioral Rules */}
+          {/* Behavioral Rules */}
           <div className="p-6 rounded-2xl bg-[#09090c] border border-white/10 space-y-4">
             <h3 className="text-sm font-bold text-white flex items-center gap-2 font-heading-luxury">
               <span>🛡️</span>
@@ -136,15 +171,15 @@ export default function AgentBrainSettings() {
             </h3>
 
             <div className="space-y-2">
-              {form.systemPrompt.behavioralRules.map((rule, idx) => (
-                <div key={idx} className="flex items-center justify-between gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5 text-xs text-zinc-300">
+              {(form.systemPrompt?.behavioralRules || []).map((rule, idx) => (
+                <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/5 text-xs text-zinc-300">
                   <div className="flex items-center gap-2.5">
-                    <span className="text-emerald-400">✓</span>
+                    <span className="text-zinc-500 font-mono text-[11px]">{idx + 1}.</span>
                     <span>{rule}</span>
                   </div>
                   <button
                     onClick={() => handleRemoveRule(idx)}
-                    className="text-zinc-500 hover:text-red-400 p-1 rounded transition-colors"
+                    className="p-1 text-zinc-500 hover:text-red-400 transition-colors"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -152,66 +187,23 @@ export default function AgentBrainSettings() {
               ))}
             </div>
 
-            {/* Add new rule */}
-            <div className="flex items-center gap-2 pt-2">
+            {/* Add rule */}
+            <div className="flex gap-2 pt-2">
               <input
                 type="text"
-                placeholder="Añadir una nueva restricción o regla obligatoria..."
+                placeholder="Añadir nueva regla de conducta (ej: Nunca ofrecer descuentos no autorizados)..."
                 value={newRule}
                 onChange={(e) => setNewRule(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleAddRule()}
-                className="flex-1 bg-black/60 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-white/40"
+                className="flex-1 bg-black/60 border border-white/15 rounded-xl px-3.5 py-2 text-xs text-white placeholder-zinc-600 focus:outline-none focus:border-white/40"
               />
               <button
-                type="button"
                 onClick={handleAddRule}
-                className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-xs text-white font-medium flex items-center gap-1.5 transition-colors"
               >
                 <Plus className="w-3.5 h-3.5" />
-                <span>Añadir</span>
+                <span>Agregar</span>
               </button>
-            </div>
-          </div>
-
-          {/* User Logic (New vs Recurring) */}
-          <div className="p-6 rounded-2xl bg-[#09090c] border border-white/10 space-y-4">
-            <h3 className="text-sm font-bold text-white flex items-center gap-2 font-heading-luxury">
-              <span>👥</span>
-              <span>Lógica para Clientes Nuevos vs. Recurrentes</span>
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-              <div className="space-y-1.5">
-                <label className="text-zinc-400 font-medium">Protocolo Cliente Nuevo</label>
-                <textarea
-                  rows="3"
-                  value={form.systemPrompt.userLogic.newClientProtocol}
-                  onChange={(e) => setForm({
-                    ...form,
-                    systemPrompt: {
-                      ...form.systemPrompt,
-                      userLogic: { ...form.systemPrompt.userLogic, newClientProtocol: e.target.value }
-                    }
-                  })}
-                  className="w-full bg-black/60 border border-white/15 rounded-xl p-3 text-white leading-relaxed"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-zinc-400 font-medium">Protocolo Cliente Recurrente</label>
-                <textarea
-                  rows="3"
-                  value={form.systemPrompt.userLogic.recurringClientProtocol}
-                  onChange={(e) => setForm({
-                    ...form,
-                    systemPrompt: {
-                      ...form.systemPrompt,
-                      userLogic: { ...form.systemPrompt.userLogic, recurringClientProtocol: e.target.value }
-                    }
-                  })}
-                  className="w-full bg-black/60 border border-white/15 rounded-xl p-3 text-white leading-relaxed"
-                />
-              </div>
             </div>
           </div>
 
@@ -222,11 +214,11 @@ export default function AgentBrainSettings() {
       {activeSubTab === 'business' && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
           
-          {/* Static Business Data */}
+          {/* General Business Data */}
           <div className="p-6 rounded-2xl bg-[#09090c] border border-white/10 space-y-4 text-xs">
             <h3 className="text-sm font-bold text-white flex items-center gap-2 font-heading-luxury">
               <span>🏢</span>
-              <span>Datos Estáticos de la Empresa</span>
+              <span>Datos Oficiales de la Empresa</span>
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -234,7 +226,7 @@ export default function AgentBrainSettings() {
                 <label className="text-zinc-400 block mb-1">Nombre Comercial</label>
                 <input
                   type="text"
-                  value={form.businessInfo.businessName}
+                  value={form.businessInfo?.businessName || ""}
                   onChange={(e) => setForm({
                     ...form,
                     businessInfo: { ...form.businessInfo, businessName: e.target.value }
@@ -247,7 +239,7 @@ export default function AgentBrainSettings() {
                 <label className="text-zinc-400 block mb-1">Teléfono de Soporte</label>
                 <input
                   type="text"
-                  value={form.businessInfo.phone}
+                  value={form.businessInfo?.phone || ""}
                   onChange={(e) => setForm({
                     ...form,
                     businessInfo: { ...form.businessInfo, phone: e.target.value }
@@ -260,7 +252,7 @@ export default function AgentBrainSettings() {
                 <label className="text-zinc-400 block mb-1">Dirección Física</label>
                 <input
                   type="text"
-                  value={form.businessInfo.physicalAddress}
+                  value={form.businessInfo?.physicalAddress || ""}
                   onChange={(e) => setForm({
                     ...form,
                     businessInfo: { ...form.businessInfo, physicalAddress: e.target.value }
@@ -279,14 +271,14 @@ export default function AgentBrainSettings() {
             </h3>
 
             <div className="space-y-3">
-              {form.businessInfo.knowledgeBase.map((faq, idx) => (
-                <div key={faq.id} className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-2 text-xs">
+              {(form.businessInfo?.knowledgeBase || []).map((faq, idx) => (
+                <div key={faq.id || idx} className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-2 text-xs">
                   <div className="flex items-center justify-between">
                     <input
                       type="text"
                       value={faq.question}
                       onChange={(e) => {
-                        const newKb = [...form.businessInfo.knowledgeBase];
+                        const newKb = [...(form.businessInfo?.knowledgeBase || [])];
                         newKb[idx] = { ...newKb[idx], question: e.target.value };
                         setForm({
                           ...form,
@@ -304,7 +296,7 @@ export default function AgentBrainSettings() {
                     rows="2"
                     value={faq.answer}
                     onChange={(e) => {
-                      const newKb = [...form.businessInfo.knowledgeBase];
+                      const newKb = [...(form.businessInfo?.knowledgeBase || [])];
                       newKb[idx] = { ...newKb[idx], answer: e.target.value };
                       setForm({
                         ...form,
@@ -321,7 +313,7 @@ export default function AgentBrainSettings() {
         </motion.div>
       )}
 
-      {/* 3. BUSINESS HOURS */}
+      {/* 3. BUSINESS HOURS (100% Null Safe) */}
       {activeSubTab === 'hours' && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
           
@@ -335,9 +327,9 @@ export default function AgentBrainSettings() {
             </p>
 
             <div className="space-y-2 text-xs">
-              {form.businessHours.schedule.map((item, idx) => (
+              {scheduleList.map((item, idx) => (
                 <div 
-                  key={item.day}
+                  key={item.day || idx}
                   className={`p-3.5 rounded-xl border flex items-center justify-between transition-colors ${
                     item.active 
                       ? 'bg-white/[0.02] border-white/10 text-white' 
@@ -347,15 +339,8 @@ export default function AgentBrainSettings() {
                   <div className="flex items-center gap-3">
                     <input
                       type="checkbox"
-                      checked={item.active}
-                      onChange={(e) => {
-                        const newSched = [...form.businessHours.schedule];
-                        newSched[idx] = { ...newSched[idx], active: e.target.checked };
-                        setForm({
-                          ...form,
-                          businessHours: { ...form.businessHours, schedule: newSched }
-                        });
-                      }}
+                      checked={Boolean(item.active)}
+                      onChange={(e) => handleScheduleChange(idx, 'active', e.target.checked)}
                       className="w-4 h-4 rounded bg-black border-white/20 accent-white"
                     />
                     <span className="font-semibold text-xs w-24">{item.day}</span>
@@ -365,22 +350,20 @@ export default function AgentBrainSettings() {
                     <div className="flex items-center gap-2 font-mono text-[11px]">
                       <input
                         type="time"
-                        value={item.open}
+                        value={item.openTime || item.open || "08:00"}
                         onChange={(e) => {
-                          const newSched = [...form.businessHours.schedule];
-                          newSched[idx] = { ...newSched[idx], open: e.target.value };
-                          setForm({ ...form, businessHours: { ...form.businessHours, schedule: newSched } });
+                          handleScheduleChange(idx, 'openTime', e.target.value);
+                          handleScheduleChange(idx, 'open', e.target.value);
                         }}
                         className="bg-black/60 border border-white/15 rounded-lg px-2 py-1 text-white"
                       />
                       <span className="text-zinc-500">hasta</span>
                       <input
                         type="time"
-                        value={item.close}
+                        value={item.closeTime || item.close || "18:00"}
                         onChange={(e) => {
-                          const newSched = [...form.businessHours.schedule];
-                          newSched[idx] = { ...newSched[idx], close: e.target.value };
-                          setForm({ ...form, businessHours: { ...form.businessHours, schedule: newSched } });
+                          handleScheduleChange(idx, 'closeTime', e.target.value);
+                          handleScheduleChange(idx, 'close', e.target.value);
                         }}
                         className="bg-black/60 border border-white/15 rounded-lg px-2 py-1 text-white"
                       />
@@ -407,14 +390,14 @@ export default function AgentBrainSettings() {
             </h3>
 
             <div className="space-y-3">
-              {form.services.map((svc, idx) => (
-                <div key={svc.id} className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-2.5 text-xs">
+              {(form.services || []).map((svc, idx) => (
+                <div key={svc.id || idx} className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-2.5 text-xs">
                   <div className="flex items-center justify-between">
                     <input
                       type="text"
                       value={svc.name}
                       onChange={(e) => {
-                        const newSvcs = [...form.services];
+                        const newSvcs = [...(form.services || [])];
                         newSvcs[idx] = { ...newSvcs[idx], name: e.target.value };
                         setForm({ ...form, services: newSvcs });
                       }}
@@ -430,7 +413,7 @@ export default function AgentBrainSettings() {
                     rows="2"
                     value={svc.description}
                     onChange={(e) => {
-                      const newSvcs = [...form.services];
+                      const newSvcs = [...(form.services || [])];
                       newSvcs[idx] = { ...newSvcs[idx], description: e.target.value };
                       setForm({ ...form, services: newSvcs });
                     }}
@@ -459,7 +442,7 @@ export default function AgentBrainSettings() {
                 <label className="text-zinc-400 font-medium block mb-1.5">👋 Saludo Inicial Automático</label>
                 <textarea
                   rows="3"
-                  value={form.messageSettings.initialGreeting}
+                  value={form.messageSettings?.initialGreeting || ""}
                   onChange={(e) => setForm({
                     ...form,
                     messageSettings: { ...form.messageSettings, initialGreeting: e.target.value }
@@ -472,7 +455,7 @@ export default function AgentBrainSettings() {
                 <label className="text-zinc-400 font-medium block mb-1.5">🤝 Mensaje de Handover (Transferencia a Asesor Real)</label>
                 <textarea
                   rows="3"
-                  value={form.messageSettings.handoverMessage}
+                  value={form.messageSettings?.handoverMessage || ""}
                   onChange={(e) => setForm({
                     ...form,
                     messageSettings: { ...form.messageSettings, handoverMessage: e.target.value }

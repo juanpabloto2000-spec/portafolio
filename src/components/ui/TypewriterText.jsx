@@ -1,80 +1,74 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
 
 export default function TypewriterText({ 
   text = "", 
   highlightWords = [],
   className = "text-metallic",
   highlightClassName = "text-metallic-glow font-black",
-  speed = 35, // ms per character
-  delay = 250 // ms before start
+  speed = 0.022,
+  delay = 0.2
 }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-40px" });
+  if (!text) return null;
 
-  const [displayedText, setDisplayedText] = useState("");
-  const [isTypingComplete, setIsTypingComplete] = useState(false);
+  const words = text.split(" ");
 
-  useEffect(() => {
-    if (!isInView || !text) return;
+  const containerVariants = {
+    hidden: { opacity: 1 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: speed,
+        delayChildren: delay,
+      },
+    },
+  };
 
-    let currentIndex = 0;
-    setDisplayedText("");
-    setIsTypingComplete(false);
-
-    const startTimer = setTimeout(() => {
-      const interval = setInterval(() => {
-        currentIndex++;
-        setDisplayedText(text.slice(0, currentIndex));
-
-        if (currentIndex >= text.length) {
-          clearInterval(interval);
-          setTimeout(() => setIsTypingComplete(true), 1200);
-        }
-      }, speed);
-
-      return () => clearInterval(interval);
-    }, delay);
-
-    return () => clearTimeout(startTimer);
-  }, [isInView, text, speed, delay]);
-
-  // Helper to parse and render text with highlight words
-  const renderFormattedText = (fullString) => {
-    if (!fullString) return null;
-
-    const words = fullString.split(" ");
-    return words.map((word, wIdx) => {
-      const cleanWord = word.replace(/[,.:;¿?¡!]/g, "").toLowerCase();
-      const isHighlight = highlightWords.some(hw => hw.toLowerCase() === cleanWord);
-
-      return (
-        <span 
-          key={wIdx} 
-          className={`inline ${isHighlight ? highlightClassName : ''}`}
-        >
-          {word}
-          {wIdx < words.length - 1 ? " " : ""}
-        </span>
-      );
-    });
+  const charVariants = {
+    hidden: { 
+      opacity: 0, 
+      y: 8,
+      filter: "blur(6px)",
+      scale: 0.95
+    },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      filter: "blur(0px)",
+      scale: 1,
+      transition: {
+        duration: 0.45,
+        ease: [0.16, 1, 0.3, 1]
+      }
+    },
   };
 
   return (
-    <span ref={ref} className={`inline-block ${className}`}>
-      {renderFormattedText(displayedText)}
+    <motion.span
+      variants={containerVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-50px" }}
+      className={`inline-block ${className}`}
+    >
+      {words.map((word, wordIndex) => {
+        const cleanWord = word.replace(/[,.:;¿?¡!]/g, "").toLowerCase();
+        const isHighlight = highlightWords.some(hw => hw.toLowerCase() === cleanWord);
 
-      {/* Blinking Typewriter Cursor */}
-      {!isTypingComplete && (
-        <motion.span
-          animate={{ opacity: [1, 0, 1] }}
-          transition={{ duration: 0.65, repeat: Infinity, ease: "easeInOut" }}
-          className="inline-block ml-0.5 font-mono font-light text-white select-none not-italic"
-          style={{ WebkitTextFillColor: '#ffffff' }}
-        >
-          |
-        </motion.span>
-      )}
-    </span>
+        return (
+          <span key={wordIndex} className="inline-block whitespace-nowrap mr-[0.28em]">
+            {Array.from(word).map((char, charIndex) => (
+              <motion.span
+                key={charIndex}
+                variants={charVariants}
+                className={`inline-block ${isHighlight ? highlightClassName : ''}`}
+              >
+                {char}
+              </motion.span>
+            ))}
+          </span>
+        );
+      })}
+    </motion.span>
   );
 }

@@ -65,70 +65,70 @@ export default function ProjectCard({ project, onOpenDemo, index }) {
           />
         )}
 
-        {/* Inner Core: Clean Centered & Informative Layout */}
-        <div className="relative z-10 rounded-xl bg-[#09090c] border border-white/5 overflow-hidden p-5 sm:p-7 flex flex-col items-center text-center">
+        {/* Inner Core: Two Column Layout */}
+        <div className="relative z-10 rounded-xl bg-[#09090c] border border-white/5 overflow-hidden p-5 sm:p-7 flex flex-col lg:flex-row items-center gap-6 sm:gap-8">
           
-          {/* Centered High-Resolution Image Preview */}
-          <div 
-            onClick={() => onOpenDemo(project)}
-            className="relative aspect-[16/9] w-full rounded-xl overflow-hidden cursor-pointer bg-zinc-950 border border-white/10 group/img shadow-md mb-6"
-          >
-            <img
-              src={imgSrc}
-              alt={project.title}
-              onError={() => setImgSrc(FALLBACK_IMAGES[project.nicheId] || FALLBACK_IMAGES.hostales)}
-              className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover/img:scale-105"
-            />
+          {/* Left: Interactive Visual Preview */}
+          <div className="w-full lg:w-1/2 shrink-0">
+            <div 
+              onClick={() => onOpenDemo(project)}
+              className="relative aspect-[16/10] w-full rounded-xl overflow-hidden cursor-pointer bg-zinc-950 border border-white/10 group/img shadow-md"
+            >
+              <img
+                src={imgSrc}
+                alt={project.title}
+                onError={() => setImgSrc(FALLBACK_IMAGES[project.nicheId] || FALLBACK_IMAGES.hostales)}
+                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover/img:scale-105"
+              />
 
-            {/* Overlay Gradient */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-80 group-hover/img:opacity-50 transition-opacity duration-300" />
+              {/* Overlay Gradient */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-75 group-hover/img:opacity-40 transition-opacity duration-300" />
 
-            {/* Center Hover Play Icon */}
-            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 backdrop-blur-[2px] bg-black/40">
-              <div className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-black font-semibold text-xs shadow-2xl scale-95 group-hover/img:scale-100 transition-transform duration-300">
-                <Play className="w-3.5 h-3.5 fill-black" />
-                <span>Ver Demo</span>
+              {/* Hover Launch Trigger */}
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 backdrop-blur-[2px] bg-black/40">
+                <div className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-black font-semibold text-xs shadow-2xl scale-95 group-hover/img:scale-100 transition-transform duration-300">
+                  <Play className="w-3.5 h-3.5 fill-black" />
+                  <span>Ver Demo</span>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Centered Title & Main Description */}
-          <div className="max-w-2xl mx-auto space-y-2 mb-5">
-            <h3 className="font-heading-luxury text-xl sm:text-2xl font-bold text-white tracking-tight">
-              {project.title}
-            </h3>
+          {/* Right: Narrative & Clean Bullet Features */}
+          <div className="w-full lg:w-1/2 flex flex-col justify-between space-y-4 text-left">
+            <div>
+              <h3 className="font-heading-luxury text-xl sm:text-2xl font-bold text-white tracking-tight mb-2">
+                {project.title}
+              </h3>
 
-            <p className="text-xs sm:text-sm text-zinc-400 font-light leading-relaxed">
-              {project.concept}
-            </p>
-          </div>
-
-          {/* Información Clara de lo que hace el Sistema (Sin etiquetas ni tags) */}
-          {project.features && project.features.length > 0 && (
-            <div className="w-full max-w-2xl mx-auto mb-6 grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-left">
-              {project.features.map((feat, fIdx) => (
-                <div 
-                  key={fIdx} 
-                  className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors"
-                >
-                  <div className="flex items-start gap-2 text-xs text-zinc-300 font-light leading-snug">
-                    <span className="text-zinc-500 font-mono text-[10px] mt-0.5 select-none shrink-0">✦</span>
-                    <span>{feat}</span>
-                  </div>
-                </div>
-              ))}
+              <p className="text-xs sm:text-sm text-zinc-400 font-light leading-relaxed">
+                {project.concept}
+              </p>
             </div>
-          )}
 
-          {/* Minimalist Centered "Ver Demo" Button */}
-          <div className="w-full max-w-xs mx-auto">
-            <MagneticButton 
-              onClick={() => onOpenDemo(project)}
-              className="w-full py-3 px-6 rounded-xl bg-white text-black font-semibold text-xs flex items-center justify-center gap-2 hover:bg-slate-200 transition-all shadow-[0_0_25px_rgba(255,255,255,0.18)] active:scale-95 group/btn"
-            >
-              <Play className="w-3.5 h-3.5 fill-black transition-transform group-hover/btn:scale-110" />
-              <span>Ver Demo</span>
-            </MagneticButton>
+            {/* Clean Feature List (Sin tarjetas ni cajas internas) */}
+            {project.features && project.features.length > 0 && (
+              <div className="space-y-2 py-2 border-y border-white/5 text-xs text-zinc-300 font-light">
+                {project.features.map((feat, fIdx) => (
+                  <div key={fIdx} className="flex items-start gap-2">
+                    <span className="text-zinc-500 font-mono text-[10px] mt-0.5 select-none shrink-0">✦</span>
+                    <span className="leading-snug text-zinc-300">{feat}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Clean "Ver Demo" Button */}
+            <div className="pt-2">
+              <MagneticButton 
+                onClick={() => onOpenDemo(project)}
+                className="w-full sm:w-auto py-3 px-7 rounded-xl bg-white text-black font-semibold text-xs inline-flex items-center justify-center gap-2 hover:bg-slate-200 transition-all shadow-[0_0_20px_rgba(255,255,255,0.15)] active:scale-95 group/btn"
+              >
+                <Play className="w-3.5 h-3.5 fill-black transition-transform group-hover/btn:scale-110" />
+                <span>Ver Demo</span>
+              </MagneticButton>
+            </div>
+
           </div>
 
         </div>

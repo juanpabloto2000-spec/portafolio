@@ -221,7 +221,36 @@ export function AppProvider({ children }) {
   // 5. Agent Configuration State ("El Cerebro")
   const [agentConfig, setAgentConfig] = useState(() => {
     const saved = localStorage.getItem('dynamind_agent_config');
-    return saved ? JSON.parse(saved) : DEFAULT_AGENT_CONFIG;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        return {
+          ...DEFAULT_AGENT_CONFIG,
+          ...parsed,
+          businessHours: Array.isArray(parsed.businessHours)
+            ? parsed.businessHours
+            : (parsed.businessHours?.schedule || DEFAULT_AGENT_CONFIG.businessHours),
+          businessInfo: {
+            ...DEFAULT_AGENT_CONFIG.businessInfo,
+            ...(parsed.businessInfo || {}),
+            knowledgeBase: parsed.businessInfo?.knowledgeBase || DEFAULT_AGENT_CONFIG.businessInfo.knowledgeBase
+          },
+          systemPrompt: {
+            ...DEFAULT_AGENT_CONFIG.systemPrompt,
+            ...(parsed.systemPrompt || {}),
+            behavioralRules: parsed.systemPrompt?.behavioralRules || DEFAULT_AGENT_CONFIG.systemPrompt.behavioralRules
+          },
+          services: parsed.services || DEFAULT_AGENT_CONFIG.services,
+          messageSettings: {
+            ...DEFAULT_AGENT_CONFIG.messageSettings,
+            ...(parsed.messageSettings || {})
+          }
+        };
+      } catch (e) {
+        return DEFAULT_AGENT_CONFIG;
+      }
+    }
+    return DEFAULT_AGENT_CONFIG;
   });
 
   useEffect(() => {
@@ -236,11 +265,14 @@ export function AppProvider({ children }) {
 
           if (!error && data) {
             setAgentConfig({
-              systemPrompt: data.system_prompt,
-              businessInfo: data.business_info,
-              businessHours: data.business_hours,
-              services: data.services,
-              messageSettings: data.message_settings
+              ...DEFAULT_AGENT_CONFIG,
+              systemPrompt: data.system_prompt || DEFAULT_AGENT_CONFIG.systemPrompt,
+              businessInfo: data.business_info || DEFAULT_AGENT_CONFIG.businessInfo,
+              businessHours: Array.isArray(data.business_hours) 
+                ? data.business_hours 
+                : (data.business_hours?.schedule || DEFAULT_AGENT_CONFIG.businessHours),
+              services: data.services || DEFAULT_AGENT_CONFIG.services,
+              messageSettings: data.message_settings || DEFAULT_AGENT_CONFIG.messageSettings
             });
           }
         } catch (e) {
