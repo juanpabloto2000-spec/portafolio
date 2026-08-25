@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { generateAgentResponse, isGeminiConfigured } from '../../lib/gemini';
+import { sendMeetConfirmationEmail } from '../../lib/notifications';
 import confetti from 'canvas-confetti';
 
 export default function WhatsAppAgentSim() {
@@ -45,6 +46,17 @@ export default function WhatsAppAgentSim() {
 
     // Transition state in app context
     updateAppointmentStatus(activeSimAppointment.id, 'agendado');
+
+    // Send real confirmation email with Google Meet room via Resend
+    sendMeetConfirmationEmail({
+      clientName: activeSimAppointment.clientName,
+      businessName: activeSimAppointment.businessName,
+      email: activeSimAppointment.email,
+      date: activeSimAppointment.date,
+      time: activeSimAppointment.time,
+      services: activeSimAppointment.services,
+      meetLink: activeSimAppointment.meetLink
+    });
 
     // Try generating response with Gemini if configured
     let botReplyText = null;
