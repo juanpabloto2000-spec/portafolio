@@ -65,8 +65,8 @@ export default function ProjectCard({ project, onOpenDemo, index }) {
           />
         )}
 
-        {/* Inner Core: Centered Clean Layout */}
-        <div className="relative z-10 rounded-xl bg-[#09090c] border border-white/5 overflow-hidden p-4 sm:p-6 flex flex-col items-center text-center">
+        {/* Inner Core: Clean Centered & Informative Layout */}
+        <div className="relative z-10 rounded-xl bg-[#09090c] border border-white/5 overflow-hidden p-5 sm:p-7 flex flex-col items-center text-center">
           
           {/* Centered High-Resolution Image Preview */}
           <div 
@@ -92,8 +92,8 @@ export default function ProjectCard({ project, onOpenDemo, index }) {
             </div>
           </div>
 
-          {/* Centered Title & Narrative */}
-          <div className="max-w-xl mx-auto space-y-2 mb-6">
+          {/* Centered Title & Main Description */}
+          <div className="max-w-2xl mx-auto space-y-2 mb-5">
             <h3 className="font-heading-luxury text-xl sm:text-2xl font-bold text-white tracking-tight">
               {project.title}
             </h3>
@@ -102,6 +102,23 @@ export default function ProjectCard({ project, onOpenDemo, index }) {
               {project.concept}
             </p>
           </div>
+
+          {/* Información Clara de lo que hace el Sistema (Sin etiquetas ni tags) */}
+          {project.features && project.features.length > 0 && (
+            <div className="w-full max-w-2xl mx-auto mb-6 grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-left">
+              {project.features.map((feat, fIdx) => (
+                <div 
+                  key={fIdx} 
+                  className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors"
+                >
+                  <div className="flex items-start gap-2 text-xs text-zinc-300 font-light leading-snug">
+                    <span className="text-zinc-500 font-mono text-[10px] mt-0.5 select-none shrink-0">✦</span>
+                    <span>{feat}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Minimalist Centered "Ver Demo" Button */}
           <div className="w-full max-w-xs mx-auto">
