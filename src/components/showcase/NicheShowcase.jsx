@@ -54,12 +54,6 @@ export default function NicheShowcase({ onOpenDemo }) {
             onSelectNiche={setActiveNiche}
             layout="vertical"
           />
-
-          {/* Helper Micro Note */}
-          <div className="mt-4 p-4 rounded-xl bg-white/[0.02] border border-white/5 text-[11px] text-zinc-400 font-light leading-relaxed">
-            <span className="text-white font-medium block mb-1">🎯 Demos 100% Funcionales</span>
-            Interactúa con la interfaz completa, prueba flujos de reserva y valida sistemas en vivo.
-          </div>
         </aside>
 
         {/* Right Stream: Demo Cards */}
