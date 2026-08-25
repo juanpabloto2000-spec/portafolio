@@ -4,10 +4,10 @@ import { motion, useInView } from 'framer-motion';
 export default function TypewriterText({ 
   text = "", 
   highlightWords = [],
-  className = "",
-  highlightClassName = "text-metallic font-extrabold",
-  speed = 40, // ms per character
-  delay = 300 // ms before start
+  className = "text-metallic",
+  highlightClassName = "text-metallic-glow font-black",
+  speed = 35, // ms per character
+  delay = 250 // ms before start
 }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-40px" });
@@ -61,15 +61,16 @@ export default function TypewriterText({
   };
 
   return (
-    <span ref={ref} className={`inline ${className}`}>
+    <span ref={ref} className={`inline-block ${className}`}>
       {renderFormattedText(displayedText)}
 
       {/* Blinking Typewriter Cursor */}
       {!isTypingComplete && (
         <motion.span
           animate={{ opacity: [1, 0, 1] }}
-          transition={{ duration: 0.7, repeat: Infinity, ease: "easeInOut" }}
-          className="inline-block ml-1 font-mono font-light text-white select-none text-opacity-80"
+          transition={{ duration: 0.65, repeat: Infinity, ease: "easeInOut" }}
+          className="inline-block ml-0.5 font-mono font-light text-white select-none not-italic"
+          style={{ WebkitTextFillColor: '#ffffff' }}
         >
           |
         </motion.span>
