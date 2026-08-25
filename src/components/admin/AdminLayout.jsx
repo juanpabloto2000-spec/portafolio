@@ -117,7 +117,10 @@ export default function AdminLayout() {
           </div>
 
           <button
-            onClick={() => setCurrentView('home')}
+            onClick={() => {
+              window.location.hash = '';
+              setCurrentView('home');
+            }}
             className="w-full py-2.5 px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-zinc-300 hover:text-white flex items-center justify-center gap-2 transition-colors"
           >
             <Globe className="w-3.5 h-3.5" />
@@ -125,7 +128,10 @@ export default function AdminLayout() {
           </button>
 
           <button
-            onClick={logout}
+            onClick={() => {
+              logout();
+              window.location.hash = '';
+            }}
             className="w-full py-2 px-3 rounded-xl text-xs text-red-400 hover:bg-red-500/10 flex items-center justify-center gap-2 transition-colors"
           >
             <LogOut className="w-3.5 h-3.5" />

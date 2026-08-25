@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import GrainOverlay from './components/ui/GrainOverlay';
 import Navbar from './components/layout/Navbar';
 import Hero from './components/hero/Hero';
@@ -9,8 +9,8 @@ import Footer from './components/layout/Footer';
 import DemoModal from './components/demos/DemoModal';
 import BrandCalendarModal from './components/booking/BrandCalendarModal';
 import WhatsAppAgentSim from './components/booking/WhatsAppAgentSim';
-import AdminAuthModal from './components/admin/AdminAuthModal';
 import AdminLayout from './components/admin/AdminLayout';
+import SecretAdminLogin from './components/admin/SecretAdminLogin';
 import { useApp } from './context/AppContext';
 
 export default function App() {
@@ -23,7 +23,20 @@ export default function App() {
   } = useApp();
 
   const [activeDemoProject, setActiveDemoProject] = useState(null);
-  const [isAdminAuthModalOpen, setIsAdminAuthModalOpen] = useState(false);
+  const [isDsbRoute, setIsDsbRoute] = useState(() => {
+    return window.location.hash.startsWith('#/dsb');
+  });
+
+  // Listen to hash changes for hidden /#/dsb route
+  useEffect(() => {
+    const handleHashChange = () => {
+      const isDsb = window.location.hash.startsWith('#/dsb');
+      setIsDsbRoute(isDsb);
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   const handleOpenDemo = (project) => {
     setActiveDemoProject(project);
@@ -33,20 +46,7 @@ export default function App() {
     setActiveDemoProject(null);
   };
 
-  const handleOpenAdmin = () => {
-    if (auth.isAuthenticated) {
-      setCurrentView('admin');
-    } else {
-      setIsAdminAuthModalOpen(true);
-    }
-  };
-
   const handleNavigate = (page, hash) => {
-    if (page === 'admin') {
-      handleOpenAdmin();
-      return;
-    }
-
     setCurrentView(page === 'live-projects' ? 'live' : 'home');
 
     if (page === 'home' && hash) {
@@ -75,8 +75,17 @@ export default function App() {
     }, 50);
   };
 
-  // If Admin View is active and authenticated, show full Admin Shell
-  if (currentView === 'admin' && auth.isAuthenticated) {
+  // 1. HIDDEN /#/dsb ROUTE
+  if (isDsbRoute) {
+    if (!auth.isAuthenticated) {
+      return (
+        <div className="min-h-screen bg-[#050505] text-white relative">
+          <GrainOverlay />
+          <SecretAdminLogin />
+        </div>
+      );
+    }
+
     return (
       <div className="min-h-screen bg-[#050505] text-white selection:bg-white selection:text-black relative">
         <GrainOverlay />
@@ -87,6 +96,7 @@ export default function App() {
     );
   }
 
+  // 2. PUBLIC PORTFOLIO WEBSITE (Zero admin buttons, 100% clean)
   return (
     <div className="min-h-screen bg-[#050505] text-white selection:bg-white selection:text-black relative overflow-x-hidden">
       {/* Background Subtle Noise */}
@@ -97,7 +107,6 @@ export default function App() {
         currentPage={currentView === 'live' ? 'live-projects' : 'home'}
         onNavigate={handleNavigate}
         onOpenContact={() => setIsBookingModalOpen(true)}
-        onOpenAdmin={handleOpenAdmin}
       />
 
       {/* Main Content View Switcher */}
@@ -130,7 +139,6 @@ export default function App() {
       <Footer 
         onNavigate={handleNavigate}
         onOpenContact={() => setIsBookingModalOpen(true)}
-        onOpenAdmin={handleOpenAdmin}
       />
 
       {/* Interactive Fullscreen Demo Simulator */}
@@ -144,12 +152,6 @@ export default function App() {
       <BrandCalendarModal 
         isOpen={isBookingModalOpen}
         onClose={() => setIsBookingModalOpen(false)}
-      />
-
-      {/* Admin Credentials Login Modal */}
-      <AdminAuthModal 
-        isOpen={isAdminAuthModalOpen}
-        onClose={() => setIsAdminAuthModalOpen(false)}
       />
 
       {/* WhatsApp Agent Live Interaction Simulator */}

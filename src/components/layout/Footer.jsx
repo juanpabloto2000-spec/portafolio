@@ -1,9 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Instagram, ArrowUpRight, MessageCircle, Globe, Play, Layers, Lock } from 'lucide-react';
+import { Instagram, ArrowUpRight, MessageCircle, Globe, Play, Layers } from 'lucide-react';
 import MagneticButton from '../ui/MagneticButton';
 
-export default function Footer({ onNavigate, onOpenContact, onOpenAdmin }) {
+export default function Footer({ onNavigate, onOpenContact }) {
   return (
     <footer className="relative border-t border-white/10 bg-[#050505] pt-20 pb-12 px-4 sm:px-6 overflow-hidden">
       
@@ -99,11 +99,11 @@ export default function Footer({ onNavigate, onOpenContact, onOpenAdmin }) {
               </li>
               <li>
                 <button 
-                  onClick={onOpenAdmin} 
+                  onClick={onOpenContact} 
                   className="hover:text-white flex items-center gap-1.5 transition-colors text-left"
                 >
-                  <Lock className="w-3 h-3 text-slate-400" />
-                  <span>Panel Administrativo (Backend)</span>
+                  <MessageCircle className="w-3 h-3 text-slate-400" />
+                  <span>Agendar Diagnóstico</span>
                 </button>
               </li>
             </ul>
