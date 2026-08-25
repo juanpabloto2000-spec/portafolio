@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, Send, CheckCheck, Video, Calendar, ArrowUpRight, 
-  MessageSquare, User, Bot, AlertTriangle 
+  MessageSquare, User, Bot, AlertTriangle, Sparkles 
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { generateAgentResponse, isGeminiConfigured } from '../../lib/gemini';
 import confetti from 'canvas-confetti';
 
 export default function WhatsAppAgentSim() {
@@ -32,7 +33,7 @@ export default function WhatsAppAgentSim() {
 
   if (!activeSimAppointment) return null;
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     const userMsg = {
       id: Date.now(),
       sender: 'user',
@@ -42,23 +43,34 @@ export default function WhatsAppAgentSim() {
     setMessages(prev => [...prev, userMsg]);
     setIsTyping(true);
 
-    setTimeout(() => {
-      // Transition state in app context
-      updateAppointmentStatus(activeSimAppointment.id, 'agendado');
+    // Transition state in app context
+    updateAppointmentStatus(activeSimAppointment.id, 'agendado');
 
+    // Try generating response with Gemini if configured
+    let botReplyText = null;
+    if (isGeminiConfigured) {
+      botReplyText = await generateAgentResponse({
+        userMessage: userMsg.text,
+        conversationHistory: messages,
+        agentConfig,
+        clientContext: { ...activeSimAppointment, status: 'agendado' }
+      });
+    }
+
+    setTimeout(() => {
       const botReply = {
         id: Date.now() + 1,
         sender: 'bot',
-        text: `¡Excelente, ${activeSimAppointment.clientName}! 🎉\n\nTu cita ha sido CONFIRMADA con éxito.\n\n🔗 Sala de Google Meet: ${activeSimAppointment.meetLink}\n📧 Notificación y calendario enviados a: ${activeSimAppointment.email}\n\nNuestro equipo revisará los detalles de tu proyecto previo a la llamada. ¡Nos vemos pronto!`,
+        text: botReplyText || `¡Excelente, ${activeSimAppointment.clientName}! 🎉\n\nTu cita ha sido CONFIRMADA con éxito.\n\n🔗 Sala de Google Meet: ${activeSimAppointment.meetLink}\n📧 Notificación y calendario enviados a: ${activeSimAppointment.email}\n\nNuestro equipo revisará los detalles de tu proyecto previo a la llamada. ¡Nos vemos pronto!`,
         time: 'Ahora'
       };
       setMessages(prev => [...prev, botReply]);
       setIsTyping(false);
       confetti({ particleCount: 75, spread: 60 });
-    }, 1200);
+    }, 1000);
   };
 
-  const handleCancel = () => {
+  const handleCancel = async () => {
     const userMsg = {
       id: Date.now(),
       sender: 'user',
@@ -68,22 +80,32 @@ export default function WhatsAppAgentSim() {
     setMessages(prev => [...prev, userMsg]);
     setIsTyping(true);
 
-    setTimeout(() => {
-      // Transition state in app context
-      updateAppointmentStatus(activeSimAppointment.id, 'cancelado');
+    // Transition state in app context
+    updateAppointmentStatus(activeSimAppointment.id, 'cancelado');
 
+    let botReplyText = null;
+    if (isGeminiConfigured) {
+      botReplyText = await generateAgentResponse({
+        userMessage: userMsg.text,
+        conversationHistory: messages,
+        agentConfig,
+        clientContext: { ...activeSimAppointment, status: 'cancelado' }
+      });
+    }
+
+    setTimeout(() => {
       const botReply = {
         id: Date.now() + 1,
         sender: 'bot',
-        text: `Entendido, ${activeSimAppointment.clientName}. Tu cita ha sido marcada como CANCELADA y hemos liberado el horario en nuestro calendario. Cuando desees reprogramar, puedes ingresar nuevamente a nuestra web. ¡Que tengas un excelente día!`,
+        text: botReplyText || `Entendido, ${activeSimAppointment.clientName}. Tu cita ha sido marcada como CANCELADA y hemos liberado el horario en nuestro calendario. Cuando desees reprogramar, puedes ingresar nuevamente a nuestra web. ¡Que tengas un excelente día!`,
         time: 'Ahora'
       };
       setMessages(prev => [...prev, botReply]);
       setIsTyping(false);
-    }, 1200);
+    }, 1000);
   };
 
-  const handleSendCustom = (e) => {
+  const handleSendCustom = async (e) => {
     e.preventDefault();
     if (!inputMessage.trim()) return;
 
@@ -98,19 +120,36 @@ export default function WhatsAppAgentSim() {
     setMessages(prev => [...prev, userMsg]);
     setIsTyping(true);
 
+    const lower = userText.toLowerCase();
+    if (lower.includes('confirm') || lower.includes('si') || lower.includes('sí') || lower.includes('listo') || lower.includes('ok')) {
+      updateAppointmentStatus(activeSimAppointment.id, 'agendado');
+    } else if (lower.includes('cancel') || lower.includes('no puedo') || lower.includes('reprogramar')) {
+      updateAppointmentStatus(activeSimAppointment.id, 'cancelado');
+    }
+
+    // Call Gemini for human-like natural conversation
+    let botResponse = null;
+    if (isGeminiConfigured) {
+      botResponse = await generateAgentResponse({
+        userMessage: userText,
+        conversationHistory: messages,
+        agentConfig,
+        clientContext: activeSimAppointment
+      });
+    }
+
     setTimeout(() => {
-      let botResponse = "Entiendo tu consulta. Conforme a las directrices de Dynamind Studios, podemos revisar ese requerimiento técnico en la sesión de diagnóstico o comunicarte con un asesor directivo.";
-      
-      const lower = userText.toLowerCase();
-      if (lower.includes('confirm') || lower.includes('si') || lower.includes('sí') || lower.includes('listo') || lower.includes('ok')) {
-        updateAppointmentStatus(activeSimAppointment.id, 'agendado');
-        botResponse = `¡Confirmación recibida! Tu estado se actualizó a AGENDADO. Tu reunión será el ${activeSimAppointment.date} a las ${activeSimAppointment.time}.\n\n🔗 Enlace Meet: ${activeSimAppointment.meetLink}`;
-        confetti({ particleCount: 60, spread: 50 });
-      } else if (lower.includes('cancel') || lower.includes('no puedo') || lower.includes('reprogramar')) {
-        updateAppointmentStatus(activeSimAppointment.id, 'cancelado');
-        botResponse = "Hemos cancelado tu cita tentativa y liberado el cupo en el sistema. Puedes volver a agendar en cualquier momento desde la web.";
-      } else if (lower.includes('humano') || lower.includes('persona') || lower.includes('asesor')) {
-        botResponse = agentConfig.messageSettings.handoverMessage;
+      if (!botResponse) {
+        botResponse = "Entiendo tu consulta. Conforme a las directrices de Dynamind Studios, podemos revisar ese requerimiento técnico en la sesión de diagnóstico o comunicarte con un asesor directivo.";
+        
+        if (lower.includes('confirm') || lower.includes('si') || lower.includes('sí') || lower.includes('listo') || lower.includes('ok')) {
+          botResponse = `¡Confirmación recibida! Tu estado se actualizó a AGENDADO. Tu reunión será el ${activeSimAppointment.date} a las ${activeSimAppointment.time}.\n\n🔗 Enlace Meet: ${activeSimAppointment.meetLink}`;
+          confetti({ particleCount: 60, spread: 50 });
+        } else if (lower.includes('cancel') || lower.includes('no puedo') || lower.includes('reprogramar')) {
+          botResponse = "Hemos cancelado tu cita tentativa y liberado el cupo en el sistema. Puedes volver a agendar en cualquier momento desde la web.";
+        } else if (lower.includes('humano') || lower.includes('persona') || lower.includes('asesor')) {
+          botResponse = agentConfig.messageSettings.handoverMessage;
+        }
       }
 
       setMessages(prev => [...prev, {
@@ -120,7 +159,7 @@ export default function WhatsAppAgentSim() {
         time: 'Ahora'
       }]);
       setIsTyping(false);
-    }, 1200);
+    }, 1100);
   };
 
   return (
@@ -135,7 +174,7 @@ export default function WhatsAppAgentSim() {
           className="fixed inset-0 bg-black/85 backdrop-blur-xl"
         />
 
-        {/* WhatsApp Mobile Simulator Phone Frame */}
+        {/* WhatsApp Mobile Simulator Frame */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -152,7 +191,15 @@ export default function WhatsAppAgentSim() {
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-[#202c33] absolute bottom-0 right-0" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-white leading-tight">Dynamind Studios AI</h4>
+                <div className="flex items-center gap-1.5">
+                  <h4 className="text-sm font-bold text-white leading-tight">Dynamind Studios</h4>
+                  {isGeminiConfigured && (
+                    <span className="px-1.5 py-0.2 rounded bg-purple-500/20 text-purple-300 text-[9px] font-mono flex items-center gap-0.5">
+                      <Sparkles className="w-2.5 h-2.5" />
+                      <span>Gemini AI</span>
+                    </span>
+                  )}
+                </div>
                 <p className="text-[10px] text-emerald-400 font-mono">En línea • Agente Oficial</p>
               </div>
             </div>
@@ -171,7 +218,15 @@ export default function WhatsAppAgentSim() {
             {/* System Info Banner */}
             <div className="p-2.5 rounded-xl bg-[#182229] border border-white/10 text-center text-[11px] text-zinc-300">
               <span className="text-zinc-400 block text-[10px] uppercase font-mono">Estado Actual en Backend:</span>
-              <span className="font-bold text-white capitalize">{activeSimAppointment.status}</span>
+              <span className={`font-bold capitalize ${
+                activeSimAppointment.status === 'agendado' 
+                  ? 'text-emerald-400' 
+                  : activeSimAppointment.status === 'cancelado' 
+                  ? 'text-red-400' 
+                  : 'text-amber-400'
+              }`}>
+                {activeSimAppointment.status}
+              </span>
             </div>
 
             {messages.map((m) => {
@@ -232,7 +287,7 @@ export default function WhatsAppAgentSim() {
           <form onSubmit={handleSendCustom} className="p-2.5 bg-[#202c33] flex items-center gap-2 border-t border-white/10">
             <input
               type="text"
-              placeholder="Escribe un mensaje de respuesta..."
+              placeholder="Escribe tu mensaje a la IA..."
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               className="flex-1 bg-[#2a3942] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white placeholder-zinc-400 focus:outline-none"
