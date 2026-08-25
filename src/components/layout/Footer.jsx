@@ -1,9 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Instagram, ArrowUpRight, MessageCircle, Globe, Play, Layers } from 'lucide-react';
+import { Instagram, ArrowUpRight, MessageCircle, Globe, Play, Layers, Lock } from 'lucide-react';
 import MagneticButton from '../ui/MagneticButton';
 
-export default function Footer({ onNavigate, onOpenContact }) {
+export default function Footer({ onNavigate, onOpenContact, onOpenAdmin }) {
   return (
     <footer className="relative border-t border-white/10 bg-[#050505] pt-20 pb-12 px-4 sm:px-6 overflow-hidden">
       
@@ -99,11 +99,11 @@ export default function Footer({ onNavigate, onOpenContact }) {
               </li>
               <li>
                 <button 
-                  onClick={onOpenContact} 
+                  onClick={onOpenAdmin} 
                   className="hover:text-white flex items-center gap-1.5 transition-colors text-left"
                 >
-                  <MessageCircle className="w-3 h-3 text-slate-400" />
-                  <span>WhatsApp de Diagnóstico</span>
+                  <Lock className="w-3 h-3 text-slate-400" />
+                  <span>Panel Administrativo (Backend)</span>
                 </button>
               </li>
             </ul>

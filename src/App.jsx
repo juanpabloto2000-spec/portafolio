@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import GrainOverlay from './components/ui/GrainOverlay';
 import Navbar from './components/layout/Navbar';
 import Hero from './components/hero/Hero';
@@ -7,12 +7,23 @@ import SystemsBento from './components/systems/SystemsBento';
 import LiveProjectsPage from './components/live/LiveProjectsPage';
 import Footer from './components/layout/Footer';
 import DemoModal from './components/demos/DemoModal';
-import ContactModal from './components/ui/ContactModal';
+import BrandCalendarModal from './components/booking/BrandCalendarModal';
+import WhatsAppAgentSim from './components/booking/WhatsAppAgentSim';
+import AdminAuthModal from './components/admin/AdminAuthModal';
+import AdminLayout from './components/admin/AdminLayout';
+import { useApp } from './context/AppContext';
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState('home'); // 'home' | 'live-projects'
+  const { 
+    currentView, 
+    setCurrentView,
+    isBookingModalOpen, 
+    setIsBookingModalOpen,
+    auth 
+  } = useApp();
+
   const [activeDemoProject, setActiveDemoProject] = useState(null);
-  const [isContactOpen, setIsContactOpen] = useState(false);
+  const [isAdminAuthModalOpen, setIsAdminAuthModalOpen] = useState(false);
 
   const handleOpenDemo = (project) => {
     setActiveDemoProject(project);
@@ -22,8 +33,22 @@ export default function App() {
     setActiveDemoProject(null);
   };
 
+  const handleOpenAdmin = () => {
+    if (auth.isAuthenticated) {
+      setCurrentView('admin');
+    } else {
+      setIsAdminAuthModalOpen(true);
+    }
+  };
+
   const handleNavigate = (page, hash) => {
-    setCurrentPage(page);
+    if (page === 'admin') {
+      handleOpenAdmin();
+      return;
+    }
+
+    setCurrentView(page === 'live-projects' ? 'live' : 'home');
+
     if (page === 'home' && hash) {
       setTimeout(() => {
         if (hash === 'top') {
@@ -41,7 +66,7 @@ export default function App() {
   };
 
   const handleScrollToDemos = () => {
-    setCurrentPage('home');
+    setCurrentView('home');
     setTimeout(() => {
       const el = document.getElementById('demos');
       if (el) {
@@ -50,6 +75,18 @@ export default function App() {
     }, 50);
   };
 
+  // If Admin View is active and authenticated, show full Admin Shell
+  if (currentView === 'admin' && auth.isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-[#050505] text-white selection:bg-white selection:text-black relative">
+        <GrainOverlay />
+        <AdminLayout />
+        {/* Real-time WhatsApp Agent Simulator */}
+        <WhatsAppAgentSim />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#050505] text-white selection:bg-white selection:text-black relative overflow-x-hidden">
       {/* Background Subtle Noise */}
@@ -57,19 +94,20 @@ export default function App() {
 
       {/* Floating Navigation Island */}
       <Navbar 
-        currentPage={currentPage}
+        currentPage={currentView === 'live' ? 'live-projects' : 'home'}
         onNavigate={handleNavigate}
-        onOpenContact={() => setIsContactOpen(true)} 
+        onOpenContact={() => setIsBookingModalOpen(true)}
+        onOpenAdmin={handleOpenAdmin}
       />
 
       {/* Main Content View Switcher */}
       <main className="relative z-10">
-        {currentPage === 'home' ? (
+        {currentView === 'home' ? (
           <>
             <Hero 
               onExploreDemos={handleScrollToDemos}
               onExploreLiveProjects={() => handleNavigate('live-projects')}
-              onOpenContact={() => setIsContactOpen(true)} 
+              onOpenContact={() => setIsBookingModalOpen(true)} 
             />
             
             <NicheShowcase 
@@ -77,13 +115,13 @@ export default function App() {
             />
             
             <SystemsBento 
-              onOpenContact={() => setIsContactOpen(true)} 
+              onOpenContact={() => setIsBookingModalOpen(true)} 
             />
           </>
         ) : (
           <LiveProjectsPage 
             onBackToHome={() => handleNavigate('home', 'demos')}
-            onOpenContact={() => setIsContactOpen(true)}
+            onOpenContact={() => setIsBookingModalOpen(true)}
           />
         )}
       </main>
@@ -91,7 +129,8 @@ export default function App() {
       {/* Editorial Footer */}
       <Footer 
         onNavigate={handleNavigate}
-        onOpenContact={() => setIsContactOpen(true)} 
+        onOpenContact={() => setIsBookingModalOpen(true)}
+        onOpenAdmin={handleOpenAdmin}
       />
 
       {/* Interactive Fullscreen Demo Simulator */}
@@ -101,11 +140,20 @@ export default function App() {
         onClose={handleCloseDemo}
       />
 
-      {/* Contact & Consultation Modal */}
-      <ContactModal 
-        isOpen={isContactOpen}
-        onClose={() => setIsContactOpen(false)}
+      {/* Branded Custom Calendar Booking Modal */}
+      <BrandCalendarModal 
+        isOpen={isBookingModalOpen}
+        onClose={() => setIsBookingModalOpen(false)}
       />
+
+      {/* Admin Credentials Login Modal */}
+      <AdminAuthModal 
+        isOpen={isAdminAuthModalOpen}
+        onClose={() => setIsAdminAuthModalOpen(false)}
+      />
+
+      {/* WhatsApp Agent Live Interaction Simulator */}
+      <WhatsAppAgentSim />
     </div>
   );
 }

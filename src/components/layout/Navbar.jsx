@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUpRight, Menu, X, Instagram, Globe, Play, Layers } from 'lucide-react';
+import { ArrowUpRight, Menu, X, Instagram, Globe, Play, Layers, Lock } from 'lucide-react';
 
-export default function Navbar({ currentPage, onNavigate, onOpenContact }) {
+export default function Navbar({ currentPage, onNavigate, onOpenContact, onOpenAdmin }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -100,7 +100,17 @@ export default function Navbar({ currentPage, onNavigate, onOpenContact }) {
           </div>
 
           {/* Action CTAs */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-2.5">
+            {/* Admin Panel Entry */}
+            <button
+              onClick={onOpenAdmin}
+              className="p-2 text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl border border-transparent hover:border-white/10 transition-colors"
+              title="Panel Administrativo & Backend"
+            >
+              <Lock className="w-3.5 h-3.5" />
+            </button>
+
+            {/* Instagram */}
             <a
               href="https://www.instagram.com/dynamind.studios?igsi=emhhenE5bjA4ZzNw"
               target="_blank"
@@ -108,9 +118,10 @@ export default function Navbar({ currentPage, onNavigate, onOpenContact }) {
               className="p-2 text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl border border-transparent hover:border-white/10 transition-colors"
               title="Instagram @dynamind.studios"
             >
-              <Instagram className="w-4 h-4" />
+              <Instagram className="w-3.5 h-3.5" />
             </a>
             
+            {/* Main CTA: Opens Brand Calendar Booking */}
             <button
               onClick={onOpenContact}
               className="group relative inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-black text-xs font-semibold hover:bg-slate-100 transition-all shadow-[0_0_20px_rgba(255,255,255,0.15)] active:scale-95"
@@ -163,16 +174,28 @@ export default function Navbar({ currentPage, onNavigate, onOpenContact }) {
               })}
             </div>
 
-            <div className="flex flex-col gap-3 pt-3 border-t border-white/10">
+            <div className="flex flex-col gap-2.5 pt-3 border-t border-white/10">
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onOpenAdmin();
+                }}
+                className="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-white/10 text-xs text-zinc-300 hover:text-white"
+              >
+                <Lock className="w-3.5 h-3.5" />
+                <span>Panel Administrativo (Backend)</span>
+              </button>
+
               <a
                 href="https://www.instagram.com/dynamind.studios?igsi=emhhenE5bjA4ZzNw"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 py-3 rounded-xl border border-white/10 text-xs text-zinc-300 hover:text-white"
+                className="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-white/10 text-xs text-zinc-300 hover:text-white"
               >
-                <Instagram className="w-4 h-4" />
+                <Instagram className="w-3.5 h-3.5" />
                 <span>@dynamind.studios en Instagram</span>
               </a>
+
               <button
                 onClick={() => {
                   setMobileMenuOpen(false);
