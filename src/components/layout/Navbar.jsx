@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUpRight, Menu, X, Instagram, Globe, Play, Layers } from 'lucide-react';
+import { useApp } from '../../context/AppContext';
+import logoImg from '/logo-transparent.png';
 
 export default function Navbar({ currentPage, onNavigate, onOpenContact }) {
+  const { siteContent } = useApp();
+  const branding = siteContent?.branding || {};
+
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -56,29 +61,29 @@ export default function Navbar({ currentPage, onNavigate, onOpenContact }) {
               : 'bg-[#0d0d10]/70 border-white/10 backdrop-blur-xl shadow-lg'
           }`}
         >
-          {/* Logo & Brand Identity */}
+          {/* Logo & Brand Identity (Clean Transparent Logo without box) */}
           <button 
             onClick={() => handleLinkClick('home', 'top')} 
             className="flex items-center gap-3 group text-left focus:outline-none"
           >
-            <div className="relative w-8 h-8 rounded-xl overflow-hidden border border-white/20 bg-black flex items-center justify-center p-0.5 group-hover:border-white/50 transition-colors">
+            <div className="w-8 h-8 flex items-center justify-center">
               <img 
-                src="/logo.jpeg" 
+                src={branding.logoUrl || logoImg} 
                 alt="Dynamind Studios Logo" 
-                className="w-full h-full object-cover rounded-lg"
+                className="w-full h-full object-contain filter drop-shadow-md select-none transition-transform duration-300 group-hover:scale-105"
               />
             </div>
             <div className="flex flex-col">
               <span className="font-heading-luxury font-bold text-xs tracking-wider text-white group-hover:text-slate-200 transition-colors">
-                DYNAMIND
+                {branding.studioName || "DYNAMIND"}
               </span>
               <span className="text-[8px] uppercase tracking-super-wide text-zinc-400 font-medium -mt-0.5">
-                STUDIOS
+                {branding.studioSubtitle || "STUDIOS"}
               </span>
             </div>
           </button>
 
-          {/* Desktop Navigation: Exactly 3 items with Live Projects on the right */}
+          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-1.5 p-1 rounded-xl bg-white/[0.03] border border-white/5">
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -103,7 +108,7 @@ export default function Navbar({ currentPage, onNavigate, onOpenContact }) {
           <div className="hidden md:flex items-center gap-3">
             {/* Instagram */}
             <a
-              href="https://www.instagram.com/dynamind.studios?igsi=emhhenE5bjA4ZzNw"
+              href={branding.instagramUrl || "https://www.instagram.com/dynamind.studios?igsi=emhhenE5bjA4ZzNw"}
               target="_blank"
               rel="noopener noreferrer"
               className="p-2 text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl border border-transparent hover:border-white/10 transition-colors"
@@ -112,7 +117,7 @@ export default function Navbar({ currentPage, onNavigate, onOpenContact }) {
               <Instagram className="w-4 h-4" />
             </a>
             
-            {/* Main CTA: Opens Brand Calendar Booking */}
+            {/* Main CTA */}
             <button
               onClick={onOpenContact}
               className="group relative inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-black text-xs font-semibold hover:bg-slate-100 transition-all shadow-[0_0_20px_rgba(255,255,255,0.15)] active:scale-95"
@@ -167,7 +172,7 @@ export default function Navbar({ currentPage, onNavigate, onOpenContact }) {
 
             <div className="flex flex-col gap-2.5 pt-3 border-t border-white/10">
               <a
-                href="https://www.instagram.com/dynamind.studios?igsi=emhhenE5bjA4ZzNw"
+                href={branding.instagramUrl || "https://www.instagram.com/dynamind.studios?igsi=emhhenE5bjA4ZzNw"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-white/10 text-xs text-zinc-300 hover:text-white"

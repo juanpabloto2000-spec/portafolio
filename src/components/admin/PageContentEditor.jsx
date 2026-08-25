@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Palette, Type, Image as ImageIcon, Sparkles, Save, RotateCcw, 
-  Check, ArrowRight, Layers, Globe, Plus, Trash2, ExternalLink 
+  Check, ArrowRight, Layers, Globe, Plus, Trash2, ExternalLink, 
+  Upload, FileImage 
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import confetti from 'canvas-confetti';
@@ -13,6 +14,8 @@ export default function PageContentEditor() {
   const [form, setForm] = useState(siteContent);
   const [activeTab, setActiveTab] = useState('texts'); // 'texts' | 'media' | 'styles' | 'projects'
   const [savedFeedback, setSavedFeedback] = useState(false);
+
+  const logoFileInputRef = useRef(null);
 
   const handleSave = () => {
     updateSiteContent(form);
@@ -29,6 +32,17 @@ export default function PageContentEditor() {
     }
   };
 
+  // Helper for uploading local files as Base64 Data URL
+  const handleFileUpload = (file, callback) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      callback(e.target.result);
+      confetti({ particleCount: 25, spread: 30 });
+    };
+    reader.readAsDataURL(file);
+  };
+
   return (
     <div className="space-y-6 text-white">
       
@@ -43,7 +57,7 @@ export default function PageContentEditor() {
             Personalización de la Página Web
           </h2>
           <p className="text-xs text-zinc-400 font-light mt-1">
-            Modifica textos, titulares, fotos, colores de fondo y proyectos del portafolio en tiempo real.
+            Modifica textos, sube imágenes desde tu PC, cambia la paleta de colores y gestiona proyectos en tiempo real.
           </p>
         </div>
 
@@ -80,7 +94,7 @@ export default function PageContentEditor() {
         {[
           { id: 'texts', label: '📝 Textos & Titulares', emoji: '📝' },
           { id: 'media', label: '🖼️ Logotipos & Fotos', emoji: '🖼️' },
-          { id: 'styles', label: '🎨 Estética & Colores', emoji: '🎨' },
+          { id: 'styles', label: '🎨 Paleta & Colores', emoji: '🎨' },
           { id: 'projects', label: '🚀 Demos & Proyectos', emoji: '🚀' }
         ].map((tab) => {
           const isActive = activeTab === tab.id;
@@ -276,11 +290,11 @@ export default function PageContentEditor() {
         </motion.div>
       )}
 
-      {/* TAB 2: LOGOS & PHOTOS */}
+      {/* TAB 2: LOGOS & PHOTOS WITH FILE UPLOAD FROM PC */}
       {activeTab === 'media' && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
           
-          {/* Logo */}
+          {/* Main Logo with Direct Upload */}
           <div className="p-6 rounded-2xl bg-[#0a0a0d] border border-white/10 space-y-4">
             <h3 className="text-sm font-bold text-white flex items-center gap-2 font-heading-luxury">
               <span>👑</span>
@@ -288,12 +302,45 @@ export default function PageContentEditor() {
             </h3>
 
             <div className="flex flex-col sm:flex-row items-center gap-6">
-              <div className="w-20 h-20 rounded-2xl bg-black border border-white/20 overflow-hidden flex items-center justify-center p-1 shadow-lg shrink-0">
-                <img src={form.branding.logoUrl} alt="Logo Preview" className="w-full h-full object-cover rounded-xl" />
+              <div className="w-24 h-24 flex items-center justify-center p-2 shrink-0">
+                <img 
+                  src={form.branding.logoUrl} 
+                  alt="Logo Preview" 
+                  className="w-full h-full object-contain filter drop-shadow-lg" 
+                />
               </div>
 
-              <div className="flex-1 space-y-2 text-xs w-full">
-                <label className="text-zinc-400 block">Ruta o URL de Imagen del Logotipo</label>
+              <div className="flex-1 space-y-3 text-xs w-full">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="file"
+                    ref={logoFileInputRef}
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        handleFileUpload(file, (dataUrl) => {
+                          setForm({
+                            ...form,
+                            branding: { ...form.branding, logoUrl: dataUrl }
+                          });
+                        });
+                      }
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => logoFileInputRef.current?.click()}
+                    className="px-4 py-2.5 rounded-xl bg-white text-black font-semibold text-xs flex items-center gap-2 hover:bg-slate-200 transition-colors shadow-md"
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>Subir Logo desde mi PC</span>
+                  </button>
+                  
+                  <span className="text-zinc-500 text-[11px]">o edita la ruta abajo:</span>
+                </div>
+
                 <input
                   type="text"
                   value={form.branding.logoUrl}
@@ -301,14 +348,14 @@ export default function PageContentEditor() {
                     ...form,
                     branding: { ...form.branding, logoUrl: e.target.value }
                   })}
-                  className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2.5 text-white font-mono"
+                  placeholder="/logo-transparent.png o URL"
+                  className="w-full bg-black/60 border border-white/15 rounded-xl px-3.5 py-2 text-white font-mono text-[11px]"
                 />
-                <p className="text-[11px] text-zinc-500 font-light">Puedes usar rutas locales (ej. <code>/logo.jpeg</code>) o enlaces HTTPS directos.</p>
               </div>
             </div>
           </div>
 
-          {/* Demo Project Images */}
+          {/* Demo Project Images with Upload Buttons */}
           <div className="p-6 rounded-2xl bg-[#0a0a0d] border border-white/10 space-y-4">
             <h3 className="text-sm font-bold text-white flex items-center gap-2 font-heading-luxury">
               <span>🖼️</span>
@@ -317,17 +364,36 @@ export default function PageContentEditor() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {form.customProjects.map((p, idx) => (
-                <div key={p.id} className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-2.5 text-xs">
+                <div key={p.id} className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-3 text-xs">
                   <div className="flex items-center gap-3">
-                    <img src={p.previewImage} alt={p.title} className="w-14 h-10 object-cover rounded-lg border border-white/10" />
+                    <img src={p.previewImage} alt={p.title} className="w-16 h-12 object-cover rounded-lg border border-white/10" />
                     <div>
                       <h4 className="font-bold text-white">{p.title}</h4>
                       <span className="text-[10px] text-zinc-500">{p.niche}</span>
                     </div>
                   </div>
 
-                  <div>
-                    <label className="text-zinc-400 text-[10px] block mb-1">URL de Imagen</label>
+                  <div className="space-y-2">
+                    <label className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white cursor-pointer text-[11px] font-medium transition-colors">
+                      <Upload className="w-3 h-3" />
+                      <span>Subir foto desde mi PC</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            handleFileUpload(file, (dataUrl) => {
+                              const newProjects = [...form.customProjects];
+                              newProjects[idx] = { ...newProjects[idx], previewImage: dataUrl };
+                              setForm({ ...form, customProjects: newProjects });
+                            });
+                          }
+                        }}
+                      />
+                    </label>
+
                     <input
                       type="text"
                       value={p.previewImage}
@@ -336,7 +402,7 @@ export default function PageContentEditor() {
                         newProjects[idx] = { ...newProjects[idx], previewImage: e.target.value };
                         setForm({ ...form, customProjects: newProjects });
                       }}
-                      className="w-full bg-black/60 border border-white/15 rounded-lg px-3 py-1.5 text-white font-mono text-[11px]"
+                      className="w-full bg-black/60 border border-white/15 rounded-lg px-3 py-1.5 text-white font-mono text-[10px]"
                     />
                   </div>
                 </div>
@@ -347,22 +413,51 @@ export default function PageContentEditor() {
         </motion.div>
       )}
 
-      {/* TAB 3: STYLES & ACCENTS */}
+      {/* TAB 3: PALETA DE COLORES SOLICITADA (Negro, Blanco, Gris, Obsidiana Morado Oscuro) */}
       {activeTab === 'styles' && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
           
-          {/* Background Tone */}
+          {/* Color Themes */}
           <div className="p-6 rounded-2xl bg-[#0a0a0d] border border-white/10 space-y-4">
             <h3 className="text-sm font-bold text-white flex items-center gap-2 font-heading-luxury">
-              <span>🌑</span>
-              <span>Tono de Fondo de la Web</span>
+              <span>🎨</span>
+              <span>Paleta de Color de Fondo</span>
             </h3>
+            <p className="text-xs text-zinc-400 font-light">
+              Selecciona entre las 4 tonalidades de alta gama para la experiencia visual de tu marca:
+            </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {[
-                { id: 'pure-dark', label: 'Obsidiana Pura', desc: 'Negro absoluto (#050505) de máximo contraste', color: '#050505' },
-                { id: 'obsidian', label: 'Noche Profunda', desc: 'Negro azulado (#08080c) de ultra lujo', color: '#08080c' },
-                { id: 'graphite', label: 'Grafito Sutil', desc: 'Gris oscuro mate (#0d0d12) minimalista', color: '#0d0d12' }
+                { 
+                  id: 'pure-black', 
+                  label: 'Negro Puro', 
+                  desc: 'Profundidad absoluta (#000000)', 
+                  bgHex: '#000000',
+                  borderHex: 'border-white/20'
+                },
+                { 
+                  id: 'pure-white', 
+                  label: 'Blanco Puro', 
+                  desc: 'Lujo etéreo y minimalista (#ffffff)', 
+                  bgHex: '#ffffff',
+                  textColor: 'text-black',
+                  borderHex: 'border-zinc-300'
+                },
+                { 
+                  id: 'graphite-gray', 
+                  label: 'Gris Grafito', 
+                  desc: 'Tono titanio mate (#18181b)', 
+                  bgHex: '#18181b',
+                  borderHex: 'border-zinc-700'
+                },
+                { 
+                  id: 'obsidian-purple', 
+                  label: 'Obsidiana Morado', 
+                  desc: 'Púrpura noche profundo (#0c0617)', 
+                  bgHex: '#0c0617',
+                  borderHex: 'border-purple-900/50'
+                }
               ].map((theme) => {
                 const isSelected = form.styles.bgTheme === theme.id;
                 return (
@@ -372,15 +467,18 @@ export default function PageContentEditor() {
                       ...form,
                       styles: { ...form.styles, bgTheme: theme.id }
                     })}
-                    className={`p-4 rounded-xl border text-left transition-all ${
+                    className={`p-4 rounded-2xl border text-left transition-all ${
                       isSelected
-                        ? 'bg-white/10 border-white shadow-metal-glow'
-                        : 'bg-white/[0.02] border-white/10 hover:border-white/20'
+                        ? 'bg-white/10 border-white shadow-metal-glow scale-[1.02]'
+                        : 'bg-white/[0.02] border-white/10 hover:border-white/25'
                     }`}
                   >
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="w-3.5 h-3.5 rounded-full border border-white/30" style={{ backgroundColor: theme.color }} />
-                      <span className="font-bold text-white text-xs">{theme.label}</span>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span 
+                        className={`w-5 h-5 rounded-full border shadow-inner ${theme.borderHex}`} 
+                        style={{ backgroundColor: theme.bgHex }} 
+                      />
+                      <span className="font-bold text-xs text-white">{theme.label}</span>
                     </div>
                     <p className="text-[11px] text-zinc-400 font-light">{theme.desc}</p>
                   </button>
@@ -393,14 +491,14 @@ export default function PageContentEditor() {
           <div className="p-6 rounded-2xl bg-[#0a0a0d] border border-white/10 space-y-4">
             <h3 className="text-sm font-bold text-white flex items-center gap-2 font-heading-luxury">
               <span>✨</span>
-              <span>Acento Metálico & Resplandor</span>
+              <span>Acento Metálico de Tipografía</span>
             </h3>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {[
-                { id: 'platinum', label: 'Platino Puro', color: 'from-slate-200 to-zinc-400' },
-                { id: 'silver', label: 'Cromo Plateado', color: 'from-zinc-100 to-slate-500' },
-                { id: 'emerald', label: 'Esmeralda', color: 'from-emerald-300 to-teal-600' },
+                { id: 'platinum', label: 'Platino Puro', color: 'from-slate-100 to-zinc-400' },
+                { id: 'silver', label: 'Cromo Plateado', color: 'from-zinc-200 to-slate-500' },
+                { id: 'emerald', label: 'Esmeralda', color: 'from-emerald-300 to-teal-500' },
                 { id: 'gold', label: 'Champagne', color: 'from-amber-200 to-yellow-600' }
               ].map((acc) => {
                 const isSelected = form.styles.accentColor === acc.id;
@@ -419,40 +517,6 @@ export default function PageContentEditor() {
                   >
                     <div className={`h-2 rounded-full bg-gradient-to-r ${acc.color} mb-2`} />
                     <span className="font-medium text-xs text-white">{acc.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Corner Radius */}
-          <div className="p-6 rounded-2xl bg-[#0a0a0d] border border-white/10 space-y-4">
-            <h3 className="text-sm font-bold text-white flex items-center gap-2 font-heading-luxury">
-              <span>📐</span>
-              <span>Radio Geométrico de Esquinas</span>
-            </h3>
-
-            <div className="grid grid-cols-3 gap-3">
-              {[
-                { id: 'rounded-xl', label: '12px (Compacto)', radius: '12px' },
-                { id: 'rounded-2xl', label: '16px (Estándar de Lujo)', radius: '16px' },
-                { id: 'rounded-3xl', label: '24px (Suave)', radius: '24px' }
-              ].map((rad) => {
-                const isSelected = form.styles.cornerRadius === rad.id;
-                return (
-                  <button
-                    key={rad.id}
-                    onClick={() => setForm({
-                      ...form,
-                      styles: { ...form.styles, cornerRadius: rad.id }
-                    })}
-                    className={`p-3.5 rounded-xl border text-center transition-all ${
-                      isSelected
-                        ? 'bg-white text-black font-semibold border-white shadow-sm'
-                        : 'bg-white/[0.02] border-white/10 text-zinc-400 hover:text-white'
-                    }`}
-                  >
-                    <div className="text-xs font-bold">{rad.label}</div>
                   </button>
                 );
               })}

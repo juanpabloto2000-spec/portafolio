@@ -9,7 +9,7 @@ import AppointmentsManager from './AppointmentsManager';
 import AgentBrainSettings from './AgentBrainSettings';
 import AgentDashboard from './AgentDashboard';
 import PageContentEditor from './PageContentEditor';
-import logoImg from '/logo.jpeg';
+import logoImg from '/logo-transparent.png';
 
 export default function AdminLayout() {
   const { 
@@ -17,44 +17,36 @@ export default function AdminLayout() {
     setActiveAdminTab, 
     setCurrentView, 
     logout,
-    auth,
-    metrics
+    auth
   } = useApp();
 
   const [imgError, setImgError] = useState(false);
 
+  // 1. Dashboard is first & default; NO tags/badges anywhere on buttons
   const navItems = [
+    {
+      id: 'dashboard',
+      emoji: '📊',
+      label: 'Dashboard & Monitoreo',
+      sublabel: 'Métricas 30D y control humano'
+    },
     {
       id: 'appointments',
       emoji: '📅',
       label: 'Agendas & Calendario',
-      sublabel: 'Semana, mes y estados',
-      icon: Calendar,
-      badge: metrics.pendingCount > 0 ? `${metrics.pendingCount} pendientes` : null
+      sublabel: 'Semana, mes y estados'
     },
     {
       id: 'agent-brain',
       emoji: '🧠',
       label: 'Cerebro del Agente IA',
-      sublabel: 'Prompts, FAQs y horarios',
-      icon: Bot,
-      badge: null
-    },
-    {
-      id: 'dashboard',
-      emoji: '📊',
-      label: 'Dashboard & Monitoreo',
-      sublabel: 'Métricas 30D y control humano',
-      icon: LayoutDashboard,
-      badge: `${metrics.conversationsLast30Days} chats`
+      sublabel: 'Prompts, FAQs y horarios'
     },
     {
       id: 'page-editor',
       emoji: '🎨',
       label: 'Editar Página',
-      sublabel: 'Textos, fotos y estética',
-      icon: Palette,
-      badge: 'CMS'
+      sublabel: 'Textos, fotos y estética'
     }
   ];
 
@@ -65,18 +57,18 @@ export default function AdminLayout() {
       <aside className="w-full lg:w-72 bg-[#09090c] border-b lg:border-b-0 lg:border-r border-white/10 p-5 flex flex-col justify-between shrink-0 select-none">
         
         <div>
-          {/* Studio Brand Header */}
-          <div className="flex items-center gap-3 mb-8 p-2.5 rounded-2xl bg-white/[0.02] border border-white/5 shadow-inner">
-            <div className="w-10 h-10 rounded-xl bg-black border border-white/15 overflow-hidden flex items-center justify-center shadow-inner shrink-0 relative">
+          {/* Studio Brand Header - Clean Floating Logo */}
+          <div className="flex items-center gap-3 mb-8 p-2 rounded-2xl">
+            <div className="w-10 h-10 flex items-center justify-center shrink-0">
               {!imgError ? (
                 <img 
                   src={logoImg} 
                   alt="Dynamind Studios Logo" 
                   onError={() => setImgError(true)}
-                  className="w-full h-full object-cover" 
+                  className="w-full h-full object-contain filter drop-shadow-md" 
                 />
               ) : (
-                <span className="font-bold font-heading-luxury text-sm text-white">D</span>
+                <span className="font-bold font-heading-luxury text-base text-white">D</span>
               )}
             </div>
             <div>
@@ -85,7 +77,7 @@ export default function AdminLayout() {
             </div>
           </div>
 
-          {/* Navigation Buttons (4 items: Agendas, Cerebro IA, Dashboard, Editar Página) */}
+          {/* Clean Minimalist Navigation Buttons (Zero tags/badges) */}
           <div className="space-y-2">
             {navItems.map((item) => {
               const isActive = activeAdminTab === item.id;
@@ -94,29 +86,19 @@ export default function AdminLayout() {
                 <button
                   key={item.id}
                   onClick={() => setActiveAdminTab(item.id)}
-                  className={`w-full p-3.5 rounded-2xl border text-left transition-all flex items-center justify-between group ${
+                  className={`w-full p-3.5 rounded-2xl border text-left transition-all flex items-center gap-3.5 ${
                     isActive
                       ? 'bg-white text-black font-semibold border-white shadow-metal-glow scale-[1.01]'
                       : 'bg-white/[0.02] border-white/5 text-zinc-400 hover:text-white hover:border-white/15 hover:bg-white/[0.04]'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <span className="text-base shrink-0">{item.emoji}</span>
-                    <div>
-                      <div className="text-xs font-bold leading-tight">{item.label}</div>
-                      <div className={`text-[10px] font-light mt-0.5 ${isActive ? 'text-zinc-700' : 'text-zinc-500'}`}>
-                        {item.sublabel}
-                      </div>
+                  <span className="text-lg shrink-0">{item.emoji}</span>
+                  <div>
+                    <div className="text-xs font-bold leading-tight">{item.label}</div>
+                    <div className={`text-[10px] font-light mt-0.5 ${isActive ? 'text-zinc-700' : 'text-zinc-500'}`}>
+                      {item.sublabel}
                     </div>
                   </div>
-
-                  {item.badge && (
-                    <span className={`px-2 py-0.5 rounded-md text-[9px] font-mono font-bold ${
-                      isActive ? 'bg-black/10 text-black' : 'bg-white/10 text-zinc-300 border border-white/10'
-                    }`}>
-                      {item.badge}
-                    </span>
-                  )}
                 </button>
               );
             })}
@@ -165,9 +147,9 @@ export default function AdminLayout() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
         >
+          {activeAdminTab === 'dashboard' && <AgentDashboard />}
           {activeAdminTab === 'appointments' && <AppointmentsManager />}
           {activeAdminTab === 'agent-brain' && <AgentBrainSettings />}
-          {activeAdminTab === 'dashboard' && <AgentDashboard />}
           {activeAdminTab === 'page-editor' && <PageContentEditor />}
         </motion.div>
       </main>

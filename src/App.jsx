@@ -19,6 +19,7 @@ export default function App() {
     setCurrentView,
     isBookingModalOpen, 
     setIsBookingModalOpen,
+    siteContent,
     auth 
   } = useApp();
 
@@ -75,11 +76,20 @@ export default function App() {
     }, 50);
   };
 
+  // Dynamic Theme Class Resolver (Negro, Blanco, Gris, Obsidiana Morado Oscuro)
+  const currentTheme = siteContent?.styles?.bgTheme || 'pure-black';
+  const themeClasses = {
+    'pure-black': 'bg-[#000000] text-white selection:bg-white selection:text-black',
+    'pure-white': 'bg-[#fafafa] text-zinc-900 selection:bg-black selection:text-white',
+    'graphite-gray': 'bg-[#18181b] text-white selection:bg-white selection:text-black',
+    'obsidian-purple': 'bg-[#0c0617] text-white selection:bg-purple-400 selection:text-black'
+  }[currentTheme] || 'bg-[#000000] text-white selection:bg-white selection:text-black';
+
   // 1. HIDDEN /#/dsb ROUTE
   if (isDsbRoute) {
     if (!auth.isAuthenticated) {
       return (
-        <div className="min-h-screen bg-[#050505] text-white relative">
+        <div className="min-h-screen bg-[#050507] text-white relative">
           <GrainOverlay />
           <SecretAdminLogin />
         </div>
@@ -87,7 +97,7 @@ export default function App() {
     }
 
     return (
-      <div className="min-h-screen bg-[#050505] text-white selection:bg-white selection:text-black relative">
+      <div className="min-h-screen bg-[#050507] text-white selection:bg-white selection:text-black relative">
         <GrainOverlay />
         <AdminLayout />
         {/* Real-time WhatsApp Agent Simulator */}
@@ -98,7 +108,7 @@ export default function App() {
 
   // 2. PUBLIC PORTFOLIO WEBSITE (Zero admin buttons, 100% clean)
   return (
-    <div className="min-h-screen bg-[#050505] text-white selection:bg-white selection:text-black relative overflow-x-hidden">
+    <div className={`min-h-screen ${themeClasses} relative overflow-x-hidden transition-colors duration-500`}>
       {/* Background Subtle Noise */}
       <GrainOverlay />
 

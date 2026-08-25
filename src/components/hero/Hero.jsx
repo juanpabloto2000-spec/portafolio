@@ -54,7 +54,7 @@ export default function Hero({ onExploreDemos, onExploreLiveProjects, onOpenCont
       {/* Main Container */}
       <div className="relative z-10 max-w-5xl mx-auto text-center flex flex-col items-center">
         
-        {/* 3D Interactive Monogram Logo */}
+        {/* 3D Interactive Monogram Logo (Clean Floating Transparent) */}
         <motion.div
           initial={{ scale: 0.85, opacity: 0, y: 25 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -64,17 +64,14 @@ export default function Hero({ onExploreDemos, onExploreLiveProjects, onOpenCont
             rotateX: rotateX,
             rotateY: rotateY,
           }}
-          className="mb-8 relative group cursor-pointer"
+          className="mb-8 relative group cursor-pointer flex items-center justify-center"
         >
-          <div className="p-2 rounded-2xl bg-gradient-to-b from-white/10 via-white/5 to-transparent border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.8),0_0_30px_rgba(255,255,255,0.06)] backdrop-blur-md transition-all duration-500 group-hover:border-white/30 group-hover:shadow-[0_25px_60px_rgba(0,0,0,0.9),0_0_40px_rgba(255,255,255,0.12)]">
-            <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden bg-black flex items-center justify-center relative shadow-inner">
-              <img 
-                src={branding.logoUrl || "/logo.jpeg"} 
-                alt="Dynamind Studios Logo" 
-                className="w-full h-full object-cover select-none transition-transform duration-500 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </div>
+          <div className="w-28 h-28 sm:w-36 sm:h-36 flex items-center justify-center relative select-none">
+            <img 
+              src={branding.logoUrl || "/logo-transparent.png"} 
+              alt="Dynamind Studios Logo" 
+              className="w-full h-full object-contain filter drop-shadow-[0_20px_35px_rgba(255,255,255,0.08)] select-none transition-transform duration-500 group-hover:scale-110"
+            />
           </div>
         </motion.div>
 

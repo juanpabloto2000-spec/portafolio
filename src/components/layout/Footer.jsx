@@ -54,8 +54,8 @@ export default function Footer({ onNavigate, onOpenContact }) {
           {/* Brand Info */}
           <div className="md:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl overflow-hidden border border-white/20 bg-black">
-                <img src={branding.logoUrl || "/logo.jpeg"} alt="Dynamind Studios Logo" className="w-full h-full object-cover" />
+              <div className="w-8 h-8 flex items-center justify-center">
+                <img src={branding.logoUrl || "/logo-transparent.png"} alt="Dynamind Studios Logo" className="w-full h-full object-contain filter drop-shadow-sm" />
               </div>
               <div className="flex flex-col">
                 <span className="font-heading-luxury font-bold text-sm tracking-wider text-white">

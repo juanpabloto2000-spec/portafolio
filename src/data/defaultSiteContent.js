@@ -3,7 +3,7 @@ import { LIVE_PROJECTS } from './liveProjects';
 
 export const DEFAULT_SITE_CONTENT = {
   branding: {
-    logoUrl: '/logo.jpeg',
+    logoUrl: '/logo-transparent.png',
     studioName: 'DYNAMIND',
     studioSubtitle: 'STUDIOS',
     instagramUrl: 'https://www.instagram.com/dynamind.studios?igsi=emhhenE5bjA4ZzNw'
@@ -46,8 +46,8 @@ export const DEFAULT_SITE_CONTENT = {
     description: 'Diseñamos experiencias digitales sin fricciones operativas. Agendamientos automáticos, validación de pagos y cartas interactivas.'
   },
   styles: {
-    bgTheme: 'pure-dark', // 'pure-dark' (#050505) | 'obsidian' (#08080c) | 'graphite' (#0d0d12)
-    accentColor: 'platinum', // 'platinum' | 'silver' | 'emerald' | 'gold'
+    bgTheme: 'pure-black', // 'pure-black' (#000000) | 'pure-white' (#ffffff) | 'graphite-gray' (#1a1a1f) | 'obsidian-purple' (#0c0617)
+    accentColor: 'platinum', // 'platinum' | 'silver' | 'emerald' | 'gold' | 'purple'
     cornerRadius: 'rounded-2xl' // 'rounded-xl' | 'rounded-2xl' | 'rounded-3xl'
   },
   customProjects: PROJECTS_DATA,

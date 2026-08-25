@@ -10,7 +10,7 @@ export function AppProvider({ children }) {
   // 1. Navigation & View State
   const [currentView, setCurrentView] = useState('home'); // 'home' | 'live' | 'admin'
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
-  const [activeAdminTab, setActiveAdminTab] = useState('appointments'); // 'appointments' | 'agent-brain' | 'dashboard' | 'page-editor'
+  const [activeAdminTab, setActiveAdminTab] = useState('dashboard'); // 'dashboard' | 'appointments' | 'agent-brain' | 'page-editor'
   
   // 2. Active simulated appointment for WhatsApp confirmation demo
   const [activeSimAppointment, setActiveSimAppointment] = useState(null);
