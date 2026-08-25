@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import GrainOverlay from './components/ui/GrainOverlay';
+import MagicCursor from './components/ui/MagicCursor';
+import Preloader from './components/ui/Preloader';
+import KineticMarquee from './components/ui/KineticMarquee';
 import Navbar from './components/layout/Navbar';
 import Hero from './components/hero/Hero';
 import NicheShowcase from './components/showcase/NicheShowcase';
@@ -90,6 +93,7 @@ export default function App() {
     if (!auth.isAuthenticated) {
       return (
         <div className="min-h-screen bg-[#050507] text-white relative">
+          <MagicCursor />
           <GrainOverlay />
           <SecretAdminLogin />
         </div>
@@ -98,6 +102,7 @@ export default function App() {
 
     return (
       <div className="min-h-screen bg-[#050507] text-white selection:bg-white selection:text-black relative">
+        <MagicCursor />
         <GrainOverlay />
         <AdminLayout />
         {/* Real-time WhatsApp Agent Simulator */}
@@ -109,6 +114,12 @@ export default function App() {
   // 2. PUBLIC PORTFOLIO WEBSITE (Zero admin buttons, 100% clean)
   return (
     <div className={`min-h-screen ${themeClasses} relative overflow-x-hidden transition-colors duration-500`}>
+      {/* Luxury Cinematic Preloader */}
+      <Preloader />
+
+      {/* Interactive Magnetic Magic Cursor */}
+      <MagicCursor />
+
       {/* Background Subtle Noise */}
       <GrainOverlay />
 
@@ -128,6 +139,9 @@ export default function App() {
               onExploreLiveProjects={() => handleNavigate('live-projects')}
               onOpenContact={() => setIsBookingModalOpen(true)} 
             />
+
+            {/* Kinetic Typography Infinite Ribbon */}
+            <KineticMarquee />
             
             <NicheShowcase 
               onOpenDemo={handleOpenDemo} 

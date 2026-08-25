@@ -279,7 +279,18 @@ export function AppProvider({ children }) {
   // 6. Site Dynamic Content State ("Editar Página")
   const [siteContent, setSiteContent] = useState(() => {
     const saved = localStorage.getItem('dynamind_site_content');
-    return saved ? JSON.parse(saved) : DEFAULT_SITE_CONTENT;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.branding && (parsed.branding.logoUrl === '/logo.jpeg' || !parsed.branding.logoUrl)) {
+          parsed.branding.logoUrl = '/logo-transparent.png';
+        }
+        return parsed;
+      } catch (e) {
+        return DEFAULT_SITE_CONTENT;
+      }
+    }
+    return DEFAULT_SITE_CONTENT;
   });
 
   useEffect(() => {
