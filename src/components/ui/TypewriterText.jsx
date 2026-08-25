@@ -1,70 +1,79 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
 
 export default function TypewriterText({ 
-  text, 
+  text = "", 
   highlightWords = [],
   className = "",
-  highlightClassName = "text-metallic",
-  speed = 0.04,
-  delay = 0.2
+  highlightClassName = "text-metallic font-extrabold",
+  speed = 40, // ms per character
+  delay = 300 // ms before start
 }) {
-  const words = text.split(" ");
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-40px" });
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: (customDelay = delay) => ({
-      opacity: 1,
-      transition: {
-        staggerChildren: speed,
-        delayChildren: customDelay,
-      },
-    }),
-  };
+  const [displayedText, setDisplayedText] = useState("");
+  const [isTypingComplete, setIsTypingComplete] = useState(false);
 
-  const letterVariants = {
-    hidden: { 
-      opacity: 0, 
-      y: 8,
-      filter: "blur(4px)" 
-    },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      filter: "blur(0px)",
-      transition: {
-        duration: 0.35,
-        ease: [0.16, 1, 0.3, 1]
-      }
-    },
+  useEffect(() => {
+    if (!isInView || !text) return;
+
+    let currentIndex = 0;
+    setDisplayedText("");
+    setIsTypingComplete(false);
+
+    const startTimer = setTimeout(() => {
+      const interval = setInterval(() => {
+        currentIndex++;
+        setDisplayedText(text.slice(0, currentIndex));
+
+        if (currentIndex >= text.length) {
+          clearInterval(interval);
+          setTimeout(() => setIsTypingComplete(true), 1200);
+        }
+      }, speed);
+
+      return () => clearInterval(interval);
+    }, delay);
+
+    return () => clearTimeout(startTimer);
+  }, [isInView, text, speed, delay]);
+
+  // Helper to parse and render text with highlight words
+  const renderFormattedText = (fullString) => {
+    if (!fullString) return null;
+
+    const words = fullString.split(" ");
+    return words.map((word, wIdx) => {
+      const cleanWord = word.replace(/[,.:;¿?¡!]/g, "").toLowerCase();
+      const isHighlight = highlightWords.some(hw => hw.toLowerCase() === cleanWord);
+
+      return (
+        <span 
+          key={wIdx} 
+          className={`inline ${isHighlight ? highlightClassName : ''}`}
+        >
+          {word}
+          {wIdx < words.length - 1 ? " " : ""}
+        </span>
+      );
+    });
   };
 
   return (
-    <motion.span
-      variants={containerVariants}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-50px" }}
-      className={`inline-block ${className}`}
-    >
-      {words.map((word, wordIndex) => {
-        const cleanWord = word.replace(/[,.]/g, "");
-        const isHighlight = highlightWords.some(hw => cleanWord.toLowerCase() === hw.toLowerCase());
+    <span ref={ref} className={`inline ${className}`}>
+      {renderFormattedText(displayedText)}
 
-        return (
-          <span key={wordIndex} className="inline-block whitespace-nowrap mr-[0.28em]">
-            {Array.from(word).map((char, charIndex) => (
-              <motion.span
-                key={charIndex}
-                variants={letterVariants}
-                className={`inline-block ${isHighlight ? highlightClassName : ''}`}
-              >
-                {char}
-              </motion.span>
-            ))}
-          </span>
-        );
-      })}
-    </motion.span>
+      {/* Blinking Typewriter Cursor */}
+      {!isTypingComplete && (
+        <motion.span
+          animate={{ opacity: [1, 0, 1] }}
+          transition={{ duration: 0.7, repeat: Infinity, ease: "easeInOut" }}
+          className="inline-block ml-1 font-mono font-light text-white select-none text-opacity-80"
+        >
+          |
+        </motion.span>
+      )}
+    </span>
   );
 }

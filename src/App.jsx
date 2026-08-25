@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import GrainOverlay from './components/ui/GrainOverlay';
-import MagicCursor from './components/ui/MagicCursor';
 import Preloader from './components/ui/Preloader';
 import KineticMarquee from './components/ui/KineticMarquee';
 import Navbar from './components/layout/Navbar';
@@ -93,7 +92,6 @@ export default function App() {
     if (!auth.isAuthenticated) {
       return (
         <div className="min-h-screen bg-[#050507] text-white relative">
-          <MagicCursor />
           <GrainOverlay />
           <SecretAdminLogin />
         </div>
@@ -102,7 +100,6 @@ export default function App() {
 
     return (
       <div className="min-h-screen bg-[#050507] text-white selection:bg-white selection:text-black relative">
-        <MagicCursor />
         <GrainOverlay />
         <AdminLayout />
         {/* Real-time WhatsApp Agent Simulator */}
@@ -116,9 +113,6 @@ export default function App() {
     <div className={`min-h-screen ${themeClasses} relative overflow-x-hidden transition-colors duration-500`}>
       {/* Luxury Cinematic Preloader */}
       <Preloader />
-
-      {/* Interactive Magnetic Magic Cursor */}
-      <MagicCursor />
 
       {/* Background Subtle Noise */}
       <GrainOverlay />

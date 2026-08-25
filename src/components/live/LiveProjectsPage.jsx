@@ -235,8 +235,8 @@ export default function LiveProjectsPage({ onBackToHome, onOpenContact }) {
           <TypewriterText 
             text="Proyectos Web en Vivo"
             highlightWords={["Vivo"]}
-            speed={0.04}
-            delay={0.15}
+            speed={35}
+            delay={200}
           />
         </h1>
         <motion.p 

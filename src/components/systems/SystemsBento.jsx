@@ -113,9 +113,9 @@ export default function SystemsBento() {
           <TypewriterText 
             key={systemsHeader.title}
             text={systemsHeader.title || "Eliminamos los Cuellos de Botella de tu Negocio"}
-            highlightWords={[systemsHeader.highlightWord || "Negocio"]}
-            speed={0.035}
-            delay={0.1}
+            highlightWords={[systemsHeader.highlightWord || "Negocio", "Botella"]}
+            speed={35}
+            delay={200}
           />
         </h2>
         <p className="text-sm sm:text-base text-zinc-400 font-light leading-relaxed">

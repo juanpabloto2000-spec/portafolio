@@ -93,8 +93,8 @@ export default function Hero({ onExploreDemos, onExploreLiveProjects, onOpenCont
             key={heroData.title}
             text={heroData.title || "Experiencias web que convierten y resuelven cuellos de botella."}
             highlightWords={[heroData.highlightWord || "convierten"]}
-            speed={0.035}
-            delay={0.2}
+            speed={35}
+            delay={350}
           />
         </h1>
 

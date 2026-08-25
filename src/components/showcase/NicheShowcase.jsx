@@ -25,8 +25,8 @@ export default function NicheShowcase({ onOpenDemo }) {
             key={demosHeader.title}
             text={demosHeader.title || "Demos Interactivas por Nicho"}
             highlightWords={[demosHeader.highlightWord || "Interactivas"]}
-            speed={0.04}
-            delay={0.1}
+            speed={35}
+            delay={200}
           />
         </h2>
         <p className="text-sm sm:text-base text-zinc-400 font-light leading-relaxed">
