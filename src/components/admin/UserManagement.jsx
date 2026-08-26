@@ -153,10 +153,10 @@ export default function UserManagement() {
         addLog(activeSite.name, 'Cambio de Estado', 'ERROR', errMsg);
       }
     } catch (err) {
-      setClientSites(prev => prev.map(s => s.id === activeSite.id ? { ...s, status: newStatus, lastCheck: new Date().toISOString() } : s));
-      const simMsg = `Orden de ${newStatus === 'unpaid' ? 'BLOQUEO' : 'REACTIVACIÓN'} enviada a ${baseUrl}. (Estado sincronizado localmente).`;
-      setFeedbackMessage({ type: 'info', text: simMsg });
-      addLog(activeSite.name, newStatus === 'unpaid' ? 'Bloqueo' : 'Reactivación', 'ENVIADO', simMsg);
+      console.error('Error de red al conectar con backend:', err);
+      const errMsg = `❌ Error de conexión con el backend (${baseUrl}): ${err.message}. Verifica que la URL esté bien escrita y activa.`;
+      setFeedbackMessage({ type: 'error', text: errMsg });
+      addLog(activeSite.name, newStatus === 'unpaid' ? 'Bloqueo' : 'Reactivación', 'ERROR', errMsg);
     } finally {
       setIsLoading(false);
     }
@@ -188,8 +188,10 @@ export default function UserManagement() {
         setFeedbackMessage({ type: 'info', text: `Servidor respondió pero no devolvió estado. Verifica las rutas.` });
       }
     } catch (err) {
-      setFeedbackMessage({ type: 'info', text: `Intento de conexión a ${activeSite.backendUrl} realizado. Revisa que el backend esté activo en Render y tenga CORS habilitado.` });
-      addLog(activeSite.name, 'Ping', 'INFO', 'Consulta de estado ejecutada');
+      console.error('Error de ping con backend:', err);
+      const errMsg = `❌ No se pudo conectar a ${baseUrl}: ${err.message}. Revisa la URL y que Render esté corriendo.`;
+      setFeedbackMessage({ type: 'error', text: errMsg });
+      addLog(activeSite.name, 'Ping', 'ERROR', errMsg);
     } finally {
       setIsLoading(false);
     }
