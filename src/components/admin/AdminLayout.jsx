@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Calendar, Bot, LayoutDashboard, Palette, LogOut, Globe, 
-  ArrowLeft, ShieldCheck, Sparkles, ChevronRight 
+  ArrowLeft, ShieldCheck, Sparkles, ChevronRight, Users 
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import AppointmentsManager from './AppointmentsManager';
 import AgentBrainSettings from './AgentBrainSettings';
 import AgentDashboard from './AgentDashboard';
 import PageContentEditor from './PageContentEditor';
+import UserManagement from './UserManagement';
 import logoImg from '/logo-transparent.png';
 
 export default function AdminLayout() {
@@ -22,7 +23,7 @@ export default function AdminLayout() {
 
   const [imgError, setImgError] = useState(false);
 
-  // 1. Dashboard is first & default; NO tags/badges anywhere on buttons
+  // 5 Main Backend Navigation Items
   const navItems = [
     {
       id: 'dashboard',
@@ -47,6 +48,12 @@ export default function AdminLayout() {
       emoji: '🎨',
       label: 'Editar Página',
       sublabel: 'Textos, fotos y estética'
+    },
+    {
+      id: 'user-management',
+      emoji: '👥',
+      label: 'Administrar Usuarios',
+      sublabel: 'Control remoto de sitios y pagos'
     }
   ];
 
@@ -57,7 +64,7 @@ export default function AdminLayout() {
       <aside className="w-full lg:w-72 bg-[#09090c] border-b lg:border-b-0 lg:border-r border-white/10 p-5 flex flex-col justify-between shrink-0 select-none">
         
         <div>
-          {/* Studio Brand Header - Clean Floating Logo */}
+          {/* Studio Brand Header with Blood-Red OWNER Tag */}
           <div className="flex items-center gap-3 mb-8 p-2 rounded-2xl">
             <div className="w-10 h-10 flex items-center justify-center shrink-0">
               {!imgError ? (
@@ -71,13 +78,20 @@ export default function AdminLayout() {
                 <span className="font-bold font-heading-luxury text-base text-white">D</span>
               )}
             </div>
-            <div>
-              <h1 className="text-sm font-bold font-heading-luxury text-white leading-tight">Dynamind Studios</h1>
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <h1 className="text-sm font-bold font-heading-luxury text-white leading-tight">
+                  Dynamind
+                </h1>
+                <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-black tracking-wider bg-red-950/90 text-red-500 border border-red-700/60 shadow-[0_0_10px_rgba(220,38,38,0.4)] uppercase">
+                  OWNER
+                </span>
+              </div>
               <p className="text-[10px] text-zinc-400 font-mono">Control Central</p>
             </div>
           </div>
 
-          {/* Clean Minimalist Navigation Buttons (Zero tags/badges) */}
+          {/* Minimalist Navigation Buttons */}
           <div className="space-y-2">
             {navItems.map((item) => {
               const isActive = activeAdminTab === item.id;
@@ -151,6 +165,7 @@ export default function AdminLayout() {
           {activeAdminTab === 'appointments' && <AppointmentsManager />}
           {activeAdminTab === 'agent-brain' && <AgentBrainSettings />}
           {activeAdminTab === 'page-editor' && <PageContentEditor />}
+          {activeAdminTab === 'user-management' && <UserManagement />}
         </motion.div>
       </main>
 
