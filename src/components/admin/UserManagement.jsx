@@ -9,6 +9,21 @@ import confetti from 'canvas-confetti';
 
 const DEFAULT_CLIENT_SITES = [
   {
+    id: 'kal-discobar',
+    name: 'KAL DISCOBAR & VIP',
+    clientCompany: 'KAL Discobar',
+    domain: 'https://kal-discobar.vercel.app',
+    backendUrl: 'https://kal-discobar-backend.onrender.com',
+    masterKey: 'PanelPassword1966@',
+    status: 'active',
+    lastCheck: new Date().toISOString(),
+    features: {
+      metrics: true,
+      orders: true,
+      menu_editor: true
+    }
+  },
+  {
     id: 'andicas-bioparque',
     name: 'Andicas Bioparque & Cabañas',
     clientCompany: 'Andicas Eco-Resort',
@@ -24,21 +39,6 @@ const DEFAULT_CLIENT_SITES = [
       clientDashboard: true,
       catalog: true
     }
-  },
-  {
-    id: 'kal-discobar',
-    name: 'KAL DISCOBAR & VIP',
-    clientCompany: 'KAL Discobar',
-    domain: 'https://kal-discobar.vercel.app',
-    backendUrl: 'https://kal-discobar-backend.onrender.com',
-    masterKey: 'KarolN2026@',
-    status: 'active',
-    lastCheck: new Date().toISOString(),
-    features: {
-      metrics: true,
-      orders: true,
-      menu_editor: true
-    }
   }
 ];
 
@@ -53,6 +53,7 @@ export default function UserManagement() {
             return {
               ...site,
               backendUrl: site.backendUrl || 'https://kal-discobar-backend.onrender.com',
+              masterKey: site.masterKey || 'PanelPassword1966@',
               features: {
                 metrics: site.features?.metrics !== false,
                 orders: site.features?.orders !== false,
@@ -67,7 +68,7 @@ export default function UserManagement() {
         if (!hasKal) {
           const kalDefault = DEFAULT_CLIENT_SITES.find(d => d.id === 'kal-discobar');
           if (kalDefault) {
-            const merged = [...updated, kalDefault];
+            const merged = [kalDefault, ...updated];
             localStorage.setItem('dynamind_client_sites', JSON.stringify(merged));
             return merged;
           }
@@ -81,7 +82,7 @@ export default function UserManagement() {
     return DEFAULT_CLIENT_SITES;
   });
 
-  const [selectedSiteId, setSelectedSiteId] = useState(clientSites[0]?.id || 'andicas-bioparque');
+  const [selectedSiteId, setSelectedSiteId] = useState('kal-discobar');
   const [isLoading, setIsLoading] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState(null);
   const [isSavedRecently, setIsSavedRecently] = useState(false);
