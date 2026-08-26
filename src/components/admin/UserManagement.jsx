@@ -49,7 +49,17 @@ export default function UserManagement() {
     const saved = localStorage.getItem('dynamind_client_sites');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        const hasKal = parsed.some(s => s.id === 'kal-discobar' || s.name?.toLowerCase().includes('kal'));
+        if (!hasKal) {
+          const kalDefault = DEFAULT_CLIENT_SITES.find(d => d.id === 'kal-discobar');
+          if (kalDefault) {
+            const merged = [...parsed, kalDefault];
+            localStorage.setItem('dynamind_client_sites', JSON.stringify(merged));
+            return merged;
+          }
+        }
+        return parsed;
       } catch (e) {
         return DEFAULT_CLIENT_SITES;
       }
