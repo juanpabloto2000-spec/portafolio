@@ -24,6 +24,23 @@ const DEFAULT_CLIENT_SITES = [
       clientDashboard: true,
       catalog: true
     }
+  },
+  {
+    id: 'kal-discobar',
+    name: 'KAL DISCOBAR & VIP',
+    clientCompany: 'KAL Discobar',
+    domain: 'https://kal-discobar.vercel.app',
+    backendUrl: 'https://kal-discobar-backend.onrender.com',
+    masterKey: 'KarolN2026@',
+    status: 'active',
+    lastCheck: new Date().toISOString(),
+    features: {
+      bookings: true,
+      payments: true,
+      whatsappAgent: true,
+      clientDashboard: true,
+      catalog: true
+    }
   }
 ];
 
@@ -177,21 +194,65 @@ export default function UserManagement() {
     setTimeout(() => setIsSavedRecently(false), 3000);
   };
 
-  // 4. Toggle Individual Features
-  const handleToggleFeature = (featureKey) => {
-    setClientSites(prev => prev.map(s => {
-      if (s.id === activeSite.id) {
-        return {
-          ...s,
-          features: {
-            ...s.features,
-            [featureKey]: !s.features?.[featureKey]
-          }
-        };
+  // 4. Toggle Individual Features (Sincronización Real con Backend)
+  const handleToggleFeature = async (featureKey) => {
+    if (!activeSite) return;
+    const currentVal = activeSite.features?.[featureKey] !== false;
+    const newVal = !currentVal;
+
+    const updatedFeatures = {
+      ...activeSite.features,
+      [featureKey]: newVal
+    };
+
+    setClientSites(prev => prev.map(s => s.id === activeSite.id ? {
+      ...s,
+      features: updatedFeatures
+    } : s));
+
+    try {
+      const endpoint = `${activeSite.backendUrl.replace(/\/$/, '')}/api/bookings/admin/set-module-status`;
+      
+      const payload = {
+        module: featureKey,
+        enabled: newVal,
+        active: newVal,
+        status: newVal ? 'active' : 'inactive',
+        modules: {
+          reservations: featureKey === 'bookings' ? newVal : activeSite.features?.bookings !== false,
+          booking: featureKey === 'bookings' ? newVal : activeSite.features?.bookings !== false,
+          payments: featureKey === 'payments' ? newVal : activeSite.features?.payments !== false,
+          checkout: featureKey === 'payments' ? newVal : activeSite.features?.payments !== false,
+          whatsapp_agent: featureKey === 'whatsappAgent' ? newVal : activeSite.features?.whatsappAgent !== false,
+          whatsapp: featureKey === 'whatsappAgent' ? newVal : activeSite.features?.whatsappAgent !== false,
+          dashboard: featureKey === 'clientDashboard' ? newVal : activeSite.features?.clientDashboard !== false,
+          admin: featureKey === 'clientDashboard' ? newVal : activeSite.features?.clientDashboard !== false,
+          menu: featureKey === 'catalog' ? newVal : activeSite.features?.catalog !== false,
+          catalog: featureKey === 'catalog' ? newVal : activeSite.features?.catalog !== false,
+        },
+        key: activeSite.masterKey
+      };
+
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-key': activeSite.masterKey
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        addLog(activeSite.name, `Módulo: ${featureKey}`, 'OK', `Servidor actualizado a: ${newVal ? 'Habilitado' : 'Deshabilitado'}`);
+        setFeedbackMessage({ 
+          type: 'success', 
+          text: `Módulo "${featureKey}" ${newVal ? 'HABILITADO' : 'DESHABILITADO'} con éxito en el servidor.` 
+        });
       }
-      return s;
-    }));
-    addLog(activeSite.name, 'Toggle Función', 'OK', `Modificado módulo: ${featureKey}`);
+    } catch (err) {
+      console.warn('Error enviando toggle al backend:', err);
+      addLog(activeSite.name, `Módulo: ${featureKey}`, 'ERROR', `Fallo al sincronizar con ${activeSite.backendUrl}`);
+    }
   };
 
   // 5. Update Site Config Fields
