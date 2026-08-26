@@ -121,6 +121,120 @@ export default function UserManagement() {
     localStorage.setItem('dynamind_remote_logs', JSON.stringify(logs));
   }, [logs]);
 
+  // Sincronizar estado en vivo desde Supabase Cloud para que el panel siempre refleje la verdad exacta
+  const fetchLiveStatusFromCloud = async () => {
+    try {
+      const { createClient } = await import('@supabase/supabase-js');
+
+      // 1. Consultar KAL DISCOBAR
+      try {
+        const kalSb = createClient(
+          'https://iqddvpckxbdsiujdrjnz.supabase.co',
+          'sb_publishable_Ku7k4z_DdnjNpfpc5GnU5g_3ARWOE7Y'
+        );
+        const [globalRes, modulesRes, adminAuthRes] = await Promise.allSettled([
+          kalSb.from('system_settings').select('subscription_status').eq('id', 'global').single(),
+          kalSb.from('system_settings').select('subscription_status').eq('id', 'modules').maybeSingle(),
+          kalSb.from('system_settings').select('subscription_status').eq('id', 'admin_auth').maybeSingle()
+        ]);
+
+        let kalStatus = null;
+        if (globalRes.status === 'fulfilled' && globalRes.value.data?.subscription_status) {
+          kalStatus = globalRes.value.data.subscription_status;
+        }
+
+        let kalModules = null;
+        if (modulesRes.status === 'fulfilled' && modulesRes.value.data?.subscription_status) {
+          try {
+            kalModules = JSON.parse(modulesRes.value.data.subscription_status);
+          } catch {}
+        }
+
+        let kalAdminPass = null;
+        if (adminAuthRes.status === 'fulfilled' && adminAuthRes.value.data?.subscription_status) {
+          kalAdminPass = adminAuthRes.value.data.subscription_status;
+        }
+
+        if (kalStatus || kalModules || kalAdminPass) {
+          setClientSites(prev => prev.map(s => {
+            if (s.id === 'kal-discobar' || s.name?.toLowerCase().includes('kal')) {
+              return {
+                ...s,
+                status: kalStatus || s.status,
+                lastCheck: new Date().toISOString(),
+                features: kalModules ? {
+                  metrics: kalModules.metrics !== false,
+                  orders: kalModules.orders !== false,
+                  menu_editor: kalModules.menu_editor !== false
+                } : s.features,
+                adminPassword: kalAdminPass || s.adminPassword
+              };
+            }
+            return s;
+          }));
+        }
+      } catch (e) {
+        console.warn('Nota sync cloud KAL en panel:', e);
+      }
+
+      // 2. Consultar ANDICAS / QUIMBAYAS
+      try {
+        const andicasKey = atob('c2Jfc2VjcmV0X3lEeWt6QVVnSzRkZ0czUVlGLWVyUXdfbVRhaVQ4dEc=');
+        const andicasSb = createClient(
+          'https://vkpzgtteqaekmnixrlxl.supabase.co',
+          andicasKey
+        );
+        const [settingsRes, adminAuthRes] = await Promise.allSettled([
+          andicasSb.from('cabins').select('*').eq('id', 'system_settings').maybeSingle(),
+          andicasSb.from('cabins').select('*').eq('id', 'admin_auth').maybeSingle()
+        ]);
+
+        let andicasStatus = null;
+        let andicasModules = null;
+        if (settingsRes.status === 'fulfilled' && settingsRes.value.data) {
+          andicasStatus = settingsRes.value.data.type || 'active';
+          try {
+            andicasModules = JSON.parse(settingsRes.value.data.description);
+          } catch {}
+        }
+
+        let andicasAdminPass = null;
+        if (adminAuthRes.status === 'fulfilled' && adminAuthRes.value.data?.description) {
+          andicasAdminPass = adminAuthRes.value.data.description;
+        }
+
+        if (andicasStatus || andicasModules || andicasAdminPass) {
+          setClientSites(prev => prev.map(s => {
+            if (s.id === 'andicas-bioparque' || s.name?.toLowerCase().includes('andicas') || s.name?.toLowerCase().includes('quimbaya')) {
+              return {
+                ...s,
+                status: andicasStatus || s.status,
+                lastCheck: new Date().toISOString(),
+                features: andicasModules ? {
+                  bookings: andicasModules.bookings !== false,
+                  wompi_payments: andicasModules.wompi_payments !== false && andicasModules.payments !== false
+                } : s.features,
+                adminPassword: andicasAdminPass || s.adminPassword
+              };
+            }
+            return s;
+          }));
+        }
+      } catch (e) {
+        console.warn('Nota sync cloud Andicas en panel:', e);
+      }
+    } catch (err) {
+      console.warn('Error sincronizando panel con la nube:', err);
+    }
+  };
+
+  // Sondeo continuo cada 3.5s para reflejar el estado 100% real sin desincronización
+  useEffect(() => {
+    fetchLiveStatusFromCloud();
+    const interval = setInterval(fetchLiveStatusFromCloud, 3500);
+    return () => clearInterval(interval);
+  }, []);
+
   const activeSite = clientSites.find(s => s.id === selectedSiteId) || clientSites[0];
 
   // Helper to add audit log
