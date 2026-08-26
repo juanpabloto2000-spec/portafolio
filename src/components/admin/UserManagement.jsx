@@ -27,17 +27,14 @@ const DEFAULT_CLIENT_SITES = [
     id: 'andicas-bioparque',
     name: 'Andicas Bioparque & Cabañas',
     clientCompany: 'Andicas Eco-Resort',
-    domain: 'https://andicas.com',
-    backendUrl: 'https://tu-backend-andicas.onrender.com',
+    domain: 'https://andicas.vercel.app',
+    backendUrl: 'https://andicas-backend.onrender.com',
     masterKey: 'PanelPassword1966@',
     status: 'active', // 'active' | 'unpaid'
     lastCheck: new Date().toISOString(),
     features: {
       bookings: true,
-      payments: true,
-      whatsappAgent: true,
-      clientDashboard: true,
-      catalog: true
+      wompi_payments: true
     }
   }
 ];
@@ -58,6 +55,18 @@ export default function UserManagement() {
                 metrics: site.features?.metrics !== false,
                 orders: site.features?.orders !== false,
                 menu_editor: site.features?.menu_editor !== false
+              }
+            };
+          }
+          if (site.id === 'andicas-bioparque' || site.name?.toLowerCase().includes('andicas') || site.name?.toLowerCase().includes('quimbaya')) {
+            return {
+              ...site,
+              domain: site.domain || 'https://andicas.vercel.app',
+              backendUrl: site.backendUrl || 'https://andicas-backend.onrender.com',
+              masterKey: site.masterKey || 'PanelPassword1966@',
+              features: {
+                bookings: site.features?.bookings !== false,
+                wompi_payments: site.features?.wompi_payments !== false && site.features?.payments !== false
               }
             };
           }
@@ -140,7 +149,7 @@ export default function UserManagement() {
 
     const baseUrl = getCleanBaseUrl(activeSite.backendUrl);
 
-    // Sincronización ultrarrápida paralela directa a Supabase Cloud
+    // Sincronización ultrarrápida paralela directa a Supabase Cloud (KAL DISCOBAR)
     if (activeSite.id === 'kal-discobar' || activeSite.name?.toLowerCase().includes('kal')) {
       try {
         const { createClient } = await import('@supabase/supabase-js');
@@ -152,9 +161,30 @@ export default function UserManagement() {
           .from('system_settings')
           .update({ subscription_status: newStatus, updated_at: new Date().toISOString() })
           .eq('id', 'global');
-        console.log('⚡ [Dynamind Panel] Sincronizado directo con Supabase Cloud:', newStatus);
+        console.log('⚡ [Dynamind Panel] KAL sincronizado directo con Supabase Cloud:', newStatus);
       } catch (sbErr) {
         console.warn('Nota sync Supabase directo:', sbErr);
+      }
+    }
+
+    // Sincronización ultrarrápida paralela directa a Supabase Cloud (ANDICAS / QUIMBAYAS)
+    if (activeSite.id === 'andicas-bioparque' || activeSite.name?.toLowerCase().includes('andicas') || activeSite.name?.toLowerCase().includes('quimbaya')) {
+      try {
+        const andicasKey = atob('c2Jfc2VjcmV0X3lEeWt6QVVnSzRkZ0czUVlGLWVyUXdfbVRhaVQ4dEc=');
+        const andicasSb = createClient(
+          'https://vkpzgtteqaekmnixrlxl.supabase.co',
+          andicasKey
+        );
+        await andicasSb.from('cabins').upsert({
+          id: 'system_settings',
+          name: 'System Settings',
+          type: newStatus,
+          price_per_night: 0,
+          description: JSON.stringify(activeSite.features || { bookings: true, wompi_payments: true })
+        });
+        console.log('⚡ [Dynamind Panel] Andicas sincronizado directo con Supabase Cloud:', newStatus);
+      } catch (sbErr) {
+        console.warn('Nota sync Supabase Andicas directo:', sbErr);
       }
     }
 
@@ -293,6 +323,27 @@ export default function UserManagement() {
       }
     }
 
+    // Sincronización ultrarrápida paralela directa a Supabase Cloud (ANDICAS / QUIMBAYAS)
+    if (activeSite.id === 'andicas-bioparque' || activeSite.name?.toLowerCase().includes('andicas') || activeSite.name?.toLowerCase().includes('quimbaya')) {
+      try {
+        const andicasKey = atob('c2Jfc2VjcmV0X3lEeWt6QVVnSzRkZ0czUVlGLWVyUXdfbVRhaVQ4dEc=');
+        const andicasSb = createClient(
+          'https://vkpzgtteqaekmnixrlxl.supabase.co',
+          andicasKey
+        );
+        await andicasSb.from('cabins').upsert({
+          id: 'system_settings',
+          name: 'System Settings',
+          type: activeSite.status || 'active',
+          price_per_night: 0,
+          description: JSON.stringify(updatedFeatures)
+        });
+        console.log('⚡ [Dynamind Panel] Andicas Módulos sincronizados directo con Supabase Cloud:', updatedFeatures);
+      } catch (sbErr) {
+        console.warn('Nota sync Supabase Andicas módulos:', sbErr);
+      }
+    }
+
     try {
       const endpoint = `${baseUrl}/api/bookings/admin/set-module-status`;
       
@@ -305,10 +356,12 @@ export default function UserManagement() {
           metrics: featureKey === 'metrics' ? newVal : activeSite.features?.metrics !== false,
           orders: featureKey === 'orders' ? newVal : activeSite.features?.orders !== false,
           menu_editor: featureKey === 'menu_editor' ? newVal : activeSite.features?.menu_editor !== false,
+          bookings: featureKey === 'bookings' ? newVal : activeSite.features?.bookings !== false,
           reservations: featureKey === 'bookings' ? newVal : activeSite.features?.bookings !== false,
           booking: featureKey === 'bookings' ? newVal : activeSite.features?.bookings !== false,
-          payments: featureKey === 'payments' ? newVal : activeSite.features?.payments !== false,
-          checkout: featureKey === 'payments' ? newVal : activeSite.features?.payments !== false,
+          wompi_payments: featureKey === 'wompi_payments' ? newVal : activeSite.features?.wompi_payments !== false,
+          payments: (featureKey === 'wompi_payments' || featureKey === 'payments') ? newVal : (activeSite.features?.wompi_payments !== false && activeSite.features?.payments !== false),
+          checkout: (featureKey === 'wompi_payments' || featureKey === 'payments') ? newVal : (activeSite.features?.wompi_payments !== false && activeSite.features?.payments !== false),
           whatsapp_agent: featureKey === 'whatsappAgent' ? newVal : activeSite.features?.whatsappAgent !== false,
           whatsapp: featureKey === 'whatsappAgent' ? newVal : activeSite.features?.whatsappAgent !== false,
           dashboard: featureKey === 'clientDashboard' ? newVal : activeSite.features?.clientDashboard !== false,
@@ -745,11 +798,8 @@ export default function UserManagement() {
                   { key: 'orders', label: '🛎️ Gestión de Pedidos & Mesas', desc: 'Habilita o bloquea comandas en vivo, estados de pedidos y mesas 1-15' },
                   { key: 'menu_editor', label: '📋 Configuración de Menú & Platos', desc: 'Habilita o bloquea la edición de platos, precios, fotos y categorías' }
                 ] : [
-                  { key: 'bookings', label: '📅 Motor de Reservas & Calendario', desc: 'Permite agendar turnos y habitaciones' },
-                  { key: 'payments', label: '💳 Pasarela de Pagos & Depósitos', desc: 'Cobro de anticipos y validación bancaria' },
-                  { key: 'whatsappAgent', label: '🤖 Agente IA de WhatsApp', desc: 'Confirmaciones automáticas por mensajería' },
-                  { key: 'clientDashboard', label: '📊 Dashboard del Cliente (/dsb)', desc: 'Acceso a métricas y panel de administración' },
-                  { key: 'catalog', label: '🍽️ Catálogo & Menú Digital', desc: 'Visualización de cartas y servicios interactivos' }
+                  { key: 'bookings', label: '📅 Agendamiento de Citas & Reservas', desc: 'Habilita o pausa el motor de reservas en línea, agendamiento de cabañas y pasadías' },
+                  { key: 'wompi_payments', label: '💳 Verificación de Pagos Wompi', desc: 'Habilita o pausa la pasarela de pagos Wompi (Bancolombia, PSE, Tarjetas y Nequi)' }
                 ]).map((feat) => {
                   const isEnabled = activeSite.features?.[feat.key] !== false;
 
