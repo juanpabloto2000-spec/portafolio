@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Users, ShieldAlert, ShieldCheck, Power, Globe, Key, 
   RefreshCw, Check, AlertCircle, Lock, Unlock, Server, 
-  ExternalLink, Plus, Trash2, Sliders, Activity, Clock 
+  ExternalLink, Plus, Trash2, Sliders, Activity, Clock, Save, Sparkles 
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -43,6 +43,7 @@ export default function UserManagement() {
   const [selectedSiteId, setSelectedSiteId] = useState(clientSites[0]?.id || 'andicas-bioparque');
   const [isLoading, setIsLoading] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState(null);
+  const [isSavedRecently, setIsSavedRecently] = useState(false);
   const [logs, setLogs] = useState(() => {
     const savedLogs = localStorage.getItem('dynamind_remote_logs');
     return savedLogs ? JSON.parse(savedLogs) : [];
@@ -131,7 +132,7 @@ export default function UserManagement() {
     }
   };
 
-  // 2. Query Remote Status (GET)
+  // 2. Query Remote Status (GET Ping)
   const handleQueryRemoteStatus = async () => {
     if (!activeSite) return;
     setIsLoading(true);
@@ -149,18 +150,34 @@ export default function UserManagement() {
 
       if (data && data.status) {
         setClientSites(prev => prev.map(s => s.id === activeSite.id ? { ...s, status: data.status, lastCheck: new Date().toISOString() } : s));
-        setFeedbackMessage({ type: 'success', text: `Estado remoto verificado: ${data.status === 'active' ? '🟢 Activo' : '🔴 Bloqueado'}` });
+        setFeedbackMessage({ type: 'success', text: `Estado remoto verificado con éxito: ${data.status === 'active' ? '🟢 Activo' : '🔴 Bloqueado'}` });
         addLog(activeSite.name, 'Verificación Ping', 'OK', `Respuesta: ${data.status}`);
+      } else {
+        setFeedbackMessage({ type: 'info', text: `Servidor respondió pero no devolvió estado. Verifica las rutas.` });
       }
     } catch (err) {
-      setFeedbackMessage({ type: 'info', text: `Endpoint ${activeSite.backendUrl} consultado. Conexión configurada.` });
+      setFeedbackMessage({ type: 'info', text: `Intento de conexión a ${activeSite.backendUrl} realizado. Revisa que el backend esté activo en Render y tenga CORS habilitado.` });
       addLog(activeSite.name, 'Ping', 'INFO', 'Consulta de estado ejecutada');
     } finally {
       setIsLoading(false);
     }
   };
 
-  // 3. Toggle Individual Features
+  // 3. Save Connection Config Explicitly (URL & Key)
+  const handleSaveConnectionConfig = (e) => {
+    if (e) e.preventDefault();
+    localStorage.setItem('dynamind_client_sites', JSON.stringify(clientSites));
+    setIsSavedRecently(true);
+    setFeedbackMessage({ 
+      type: 'success', 
+      text: `✅ Configuración de conexión para "${activeSite.name}" guardada con éxito.` 
+    });
+    addLog(activeSite.name, 'Guardado Config', 'OK', `URL y Key actualizadas: ${activeSite.backendUrl}`);
+    confetti({ particleCount: 30, spread: 35 });
+    setTimeout(() => setIsSavedRecently(false), 3000);
+  };
+
+  // 4. Toggle Individual Features
   const handleToggleFeature = (featureKey) => {
     setClientSites(prev => prev.map(s => {
       if (s.id === activeSite.id) {
@@ -177,12 +194,12 @@ export default function UserManagement() {
     addLog(activeSite.name, 'Toggle Función', 'OK', `Modificado módulo: ${featureKey}`);
   };
 
-  // 4. Update Site Config (URLs, keys)
+  // 5. Update Site Config Fields
   const handleUpdateSiteField = (field, val) => {
     setClientSites(prev => prev.map(s => s.id === activeSite.id ? { ...s, [field]: val } : s));
   };
 
-  // 5. Add New Site
+  // 6. Add New Site
   const handleAddNewSite = (e) => {
     e.preventDefault();
     if (!newSiteName.trim()) return;
@@ -214,7 +231,7 @@ export default function UserManagement() {
     confetti({ particleCount: 35, spread: 40 });
   };
 
-  // 6. Delete Site
+  // 7. Delete Site
   const handleDeleteSite = (siteId) => {
     if (clientSites.length <= 1) {
       alert("Debes mantener al menos un sitio registrado.");
@@ -485,35 +502,80 @@ export default function UserManagement() {
                 </div>
               )}
 
-              {/* Technical Endpoint Config */}
-              <div className="p-4 rounded-xl bg-black/50 border border-white/5 space-y-3 text-xs">
-                <div className="flex items-center justify-between text-[11px] text-zinc-400 font-mono">
-                  <span className="flex items-center gap-1.5">
-                    <Server className="w-3.5 h-3.5" />
-                    <span>Conexión API del Backend</span>
+              {/* Technical Endpoint Config with Explicit Save Button */}
+              <div className="p-5 rounded-xl bg-black/50 border border-white/10 space-y-4 text-xs">
+                <div className="flex items-center justify-between text-[11px] text-zinc-400 font-mono border-b border-white/5 pb-2.5">
+                  <span className="flex items-center gap-1.5 text-white font-semibold">
+                    <Server className="w-4 h-4 text-zinc-400" />
+                    <span>Configuración de Vinculación & Credenciales de API</span>
                   </span>
-                  <span className="text-zinc-600">Endpoint /set-subscription-status</span>
+                  <span className="text-zinc-500 text-[10px]">Rutas Render / Express</span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="text-[10px] text-zinc-500 block mb-1">URL DEL BACKEND (RENDER):</label>
+                    <label className="text-[11px] text-zinc-300 block mb-1 font-mono font-medium">
+                      URL DEL BACKEND (RENDER):
+                    </label>
                     <input
                       type="text"
+                      placeholder="https://tu-backend.onrender.com"
                       value={activeSite.backendUrl}
                       onChange={(e) => handleUpdateSiteField('backendUrl', e.target.value)}
-                      className="w-full bg-black/80 border border-white/15 rounded-lg px-3 py-1.5 text-white font-mono text-[11px]"
+                      className="w-full bg-black/80 border border-white/15 rounded-xl px-3.5 py-2.5 text-white font-mono text-[11px] focus:outline-none focus:border-white/40"
                     />
                   </div>
 
                   <div>
-                    <label className="text-[10px] text-zinc-500 block mb-1">CLAVE MAESTRA (X-ADMIN-KEY):</label>
+                    <label className="text-[11px] text-zinc-300 block mb-1 font-mono font-medium">
+                      CLAVE MAESTRA (X-ADMIN-KEY):
+                    </label>
                     <input
                       type="password"
+                      placeholder="PanelPassword1966@"
                       value={activeSite.masterKey}
                       onChange={(e) => handleUpdateSiteField('masterKey', e.target.value)}
-                      className="w-full bg-black/80 border border-white/15 rounded-lg px-3 py-1.5 text-white font-mono text-[11px]"
+                      className="w-full bg-black/80 border border-white/15 rounded-xl px-3.5 py-2.5 text-white font-mono text-[11px] focus:outline-none focus:border-white/40"
                     />
+                  </div>
+                </div>
+
+                {/* Save & Test Action Bar */}
+                <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+                  <span className="text-[10px] text-zinc-500 font-mono">
+                    Guarda la URL y la Key para que persistan en tu navegador y base de datos.
+                  </span>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleQueryRemoteStatus}
+                      disabled={isLoading}
+                      className="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-zinc-300 hover:text-white flex items-center gap-1.5 transition-colors"
+                    >
+                      <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
+                      <span>Probar Conexión (Ping)</span>
+                    </button>
+
+                    <button
+                      onClick={handleSaveConnectionConfig}
+                      className={`px-5 py-2 rounded-xl font-semibold text-xs flex items-center gap-2 transition-all shadow-md active:scale-95 ${
+                        isSavedRecently
+                          ? 'bg-emerald-500 text-black'
+                          : 'bg-white text-black hover:bg-slate-200 shadow-[0_0_15px_rgba(255,255,255,0.15)]'
+                      }`}
+                    >
+                      {isSavedRecently ? (
+                        <>
+                          <Check className="w-3.5 h-3.5" />
+                          <span>¡Guardado con Éxito!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Save className="w-3.5 h-3.5" />
+                          <span>Guardar URL y Clave</span>
+                        </>
+                      )}
+                    </button>
                   </div>
                 </div>
               </div>
