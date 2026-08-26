@@ -272,6 +272,27 @@ export default function UserManagement() {
 
     const baseUrl = getCleanBaseUrl(activeSite.backendUrl);
 
+    // Sincronización ultrarrápida paralela directa a Supabase Cloud
+    if (activeSite.id === 'kal-discobar' || activeSite.name?.toLowerCase().includes('kal') || activeSite.backendUrl?.toLowerCase().includes('kal')) {
+      try {
+        const { createClient } = await import('@supabase/supabase-js');
+        const kalSb = createClient(
+          'https://iqddvpckxbdsiujdrjnz.supabase.co',
+          'sb_publishable_Ku7k4z_DdnjNpfpc5GnU5g_3ARWOE7Y'
+        );
+        await kalSb
+          .from('system_settings')
+          .upsert({
+            id: 'modules',
+            subscription_status: JSON.stringify(updatedFeatures),
+            updated_at: new Date().toISOString()
+          });
+        console.log('⚡ [Dynamind Panel] Módulos sincronizados directo con Supabase Cloud:', updatedFeatures);
+      } catch (sbErr) {
+        console.warn('Nota sync Supabase directo para módulos:', sbErr);
+      }
+    }
+
     try {
       const endpoint = `${baseUrl}/api/bookings/admin/set-module-status`;
       
