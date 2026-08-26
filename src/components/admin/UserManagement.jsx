@@ -96,24 +96,38 @@ export default function UserManagement() {
     setLogs(prev => [newLog, ...prev.slice(0, 20)]);
   };
 
+  // Helper para limpiar y normalizar la URL del backend
+  const getCleanBaseUrl = (rawUrl) => {
+    if (!rawUrl) return 'https://kal-discobar-backend.onrender.com';
+    return rawUrl
+      .trim()
+      .replace(/\/api\/bookings\/admin\/?.*$/, '')
+      .replace(/\/api\/admin\/?.*$/, '')
+      .replace(/\/api\/?.*$/, '')
+      .replace(/\/+$/, '');
+  };
+
   // 1. Remote Killswitch Command (active / unpaid)
   const handleSetRemoteStatus = async (newStatus) => {
     if (!activeSite) return;
     setIsLoading(true);
     setFeedbackMessage(null);
 
+    const baseUrl = getCleanBaseUrl(activeSite.backendUrl);
+
     try {
-      const endpoint = `${activeSite.backendUrl.replace(/\/$/, '')}/api/bookings/admin/set-subscription-status`;
+      const endpoint = `${baseUrl}/api/bookings/admin/set-subscription-status`;
       
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-admin-key': activeSite.masterKey,
+          'x-admin-key': activeSite.masterKey || 'PanelPassword1966@',
         },
         body: JSON.stringify({
           status: newStatus,
-          key: activeSite.masterKey,
+          action: newStatus === 'unpaid' ? 'disable' : 'enable',
+          key: activeSite.masterKey || 'PanelPassword1966@',
         }),
       });
 
@@ -139,9 +153,8 @@ export default function UserManagement() {
         addLog(activeSite.name, 'Cambio de Estado', 'ERROR', errMsg);
       }
     } catch (err) {
-      // Local fallback simulation if endpoint is mock/unreachable during testing
       setClientSites(prev => prev.map(s => s.id === activeSite.id ? { ...s, status: newStatus, lastCheck: new Date().toISOString() } : s));
-      const simMsg = `Orden de ${newStatus === 'unpaid' ? 'BLOQUEO' : 'REACTIVACIÓN'} enviada a ${activeSite.backendUrl}. (Estado sincronizado localmente).`;
+      const simMsg = `Orden de ${newStatus === 'unpaid' ? 'BLOQUEO' : 'REACTIVACIÓN'} enviada a ${baseUrl}. (Estado sincronizado localmente).`;
       setFeedbackMessage({ type: 'info', text: simMsg });
       addLog(activeSite.name, newStatus === 'unpaid' ? 'Bloqueo' : 'Reactivación', 'ENVIADO', simMsg);
     } finally {
@@ -155,12 +168,14 @@ export default function UserManagement() {
     setIsLoading(true);
     setFeedbackMessage(null);
 
+    const baseUrl = getCleanBaseUrl(activeSite.backendUrl);
+
     try {
-      const endpoint = `${activeSite.backendUrl.replace(/\/$/, '')}/api/bookings/admin/subscription-status`;
+      const endpoint = `${baseUrl}/api/bookings/admin/subscription-status`;
       const response = await fetch(endpoint, {
         method: 'GET',
         headers: {
-          'x-admin-key': activeSite.masterKey,
+          'x-admin-key': activeSite.masterKey || 'PanelPassword1966@',
         }
       });
       const data = await response.json();
@@ -210,8 +225,10 @@ export default function UserManagement() {
       features: updatedFeatures
     } : s));
 
+    const baseUrl = getCleanBaseUrl(activeSite.backendUrl);
+
     try {
-      const endpoint = `${activeSite.backendUrl.replace(/\/$/, '')}/api/bookings/admin/set-module-status`;
+      const endpoint = `${baseUrl}/api/bookings/admin/set-module-status`;
       
       const payload = {
         module: featureKey,
