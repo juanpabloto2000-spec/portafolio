@@ -266,6 +266,9 @@ export default function UserManagement() {
         active: newVal,
         status: newVal ? 'active' : 'inactive',
         modules: {
+          metrics: featureKey === 'metrics' ? newVal : activeSite.features?.metrics !== false,
+          orders: featureKey === 'orders' ? newVal : activeSite.features?.orders !== false,
+          menu_editor: featureKey === 'menu_editor' ? newVal : activeSite.features?.menu_editor !== false,
           reservations: featureKey === 'bookings' ? newVal : activeSite.features?.bookings !== false,
           booking: featureKey === 'bookings' ? newVal : activeSite.features?.bookings !== false,
           payments: featureKey === 'payments' ? newVal : activeSite.features?.payments !== false,
@@ -701,13 +704,17 @@ export default function UserManagement() {
               </p>
 
               <div className="space-y-2 text-xs">
-                {[
+                {(activeSite.id === 'kal-discobar' || activeSite.name?.toLowerCase().includes('kal') ? [
+                  { key: 'metrics', label: '📊 Métricas & Caja (Finanzas)', desc: 'Habilita o bloquea el balance, ingresos, gráficos y arqueo de caja diario' },
+                  { key: 'orders', label: '🛎️ Gestión de Pedidos & Mesas', desc: 'Habilita o bloquea comandas en vivo, estados de pedidos y mesas 1-15' },
+                  { key: 'menu_editor', label: '📋 Configuración de Menú & Platos', desc: 'Habilita o bloquea la edición de platos, precios, fotos y categorías' }
+                ] : [
                   { key: 'bookings', label: '📅 Motor de Reservas & Calendario', desc: 'Permite agendar turnos y habitaciones' },
                   { key: 'payments', label: '💳 Pasarela de Pagos & Depósitos', desc: 'Cobro de anticipos y validación bancaria' },
                   { key: 'whatsappAgent', label: '🤖 Agente IA de WhatsApp', desc: 'Confirmaciones automáticas por mensajería' },
                   { key: 'clientDashboard', label: '📊 Dashboard del Cliente (/dsb)', desc: 'Acceso a métricas y panel de administración' },
                   { key: 'catalog', label: '🍽️ Catálogo & Menú Digital', desc: 'Visualización de cartas y servicios interactivos' }
-                ].map((feat) => {
+                ]).map((feat) => {
                   const isEnabled = activeSite.features?.[feat.key] !== false;
 
                   return (
@@ -722,10 +729,10 @@ export default function UserManagement() {
 
                       <button
                         onClick={() => handleToggleFeature(feat.key)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all ${
+                        className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all cursor-pointer ${
                           isEnabled
-                            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                            : 'bg-red-500/20 text-red-300 border border-red-500/40'
+                            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30'
+                            : 'bg-red-500/20 text-red-300 border border-red-500/40 hover:bg-red-500/30'
                         }`}
                       >
                         {isEnabled ? 'HABILITADO' : 'DESHABILITADO'}
