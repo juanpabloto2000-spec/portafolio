@@ -125,6 +125,24 @@ export default function UserManagement() {
 
     const baseUrl = getCleanBaseUrl(activeSite.backendUrl);
 
+    // Sincronización ultrarrápida paralela directa a Supabase Cloud
+    if (activeSite.id === 'kal-discobar' || activeSite.name?.toLowerCase().includes('kal')) {
+      try {
+        const { createClient } = await import('@supabase/supabase-js');
+        const kalSb = createClient(
+          'https://iqddvpckxbdsiujdrjnz.supabase.co',
+          'sb_publishable_Ku7k4z_DdnjNpfpc5GnU5g_3ARWOE7Y'
+        );
+        await kalSb
+          .from('system_settings')
+          .update({ subscription_status: newStatus, updated_at: new Date().toISOString() })
+          .eq('id', 'global');
+        console.log('⚡ [Dynamind Panel] Sincronizado directo con Supabase Cloud:', newStatus);
+      } catch (sbErr) {
+        console.warn('Nota sync Supabase directo:', sbErr);
+      }
+    }
+
     try {
       const endpoint = `${baseUrl}/api/bookings/admin/set-subscription-status`;
       
