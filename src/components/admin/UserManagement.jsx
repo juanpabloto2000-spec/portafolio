@@ -35,11 +35,9 @@ const DEFAULT_CLIENT_SITES = [
     status: 'active',
     lastCheck: new Date().toISOString(),
     features: {
-      bookings: true,
-      payments: true,
-      whatsappAgent: true,
-      clientDashboard: true,
-      catalog: true
+      metrics: true,
+      orders: true,
+      menu_editor: true
     }
   }
 ];
@@ -50,16 +48,32 @@ export default function UserManagement() {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        const hasKal = parsed.some(s => s.id === 'kal-discobar' || s.name?.toLowerCase().includes('kal'));
+        const updated = parsed.map(site => {
+          if (site.id === 'kal-discobar' || site.name?.toLowerCase().includes('kal')) {
+            return {
+              ...site,
+              backendUrl: site.backendUrl || 'https://kal-discobar-backend.onrender.com',
+              features: {
+                metrics: site.features?.metrics !== false,
+                orders: site.features?.orders !== false,
+                menu_editor: site.features?.menu_editor !== false
+              }
+            };
+          }
+          return site;
+        });
+
+        const hasKal = updated.some(s => s.id === 'kal-discobar' || s.name?.toLowerCase().includes('kal'));
         if (!hasKal) {
           const kalDefault = DEFAULT_CLIENT_SITES.find(d => d.id === 'kal-discobar');
           if (kalDefault) {
-            const merged = [...parsed, kalDefault];
+            const merged = [...updated, kalDefault];
             localStorage.setItem('dynamind_client_sites', JSON.stringify(merged));
             return merged;
           }
         }
-        return parsed;
+        localStorage.setItem('dynamind_client_sites', JSON.stringify(updated));
+        return updated;
       } catch (e) {
         return DEFAULT_CLIENT_SITES;
       }
