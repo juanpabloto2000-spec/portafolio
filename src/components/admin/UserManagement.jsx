@@ -21,7 +21,8 @@ const DEFAULT_CLIENT_SITES = [
     features: {
       metrics: true,
       orders: true,
-      menu_editor: true
+      menu_editor: true,
+      inventory: true
     }
   },
   {
@@ -55,7 +56,8 @@ export default function UserManagement() {
               features: {
                 metrics: site.features?.metrics !== false,
                 orders: site.features?.orders !== false,
-                menu_editor: site.features?.menu_editor !== false
+                menu_editor: site.features?.menu_editor !== false,
+                inventory: site.features?.inventory !== false
               }
             };
           }
@@ -165,7 +167,8 @@ export default function UserManagement() {
                 features: kalModules ? {
                   metrics: kalModules.metrics !== false,
                   orders: kalModules.orders !== false,
-                  menu_editor: kalModules.menu_editor !== false
+                  menu_editor: kalModules.menu_editor !== false,
+                  inventory: kalModules.inventory !== false
                 } : s.features,
                 adminPassword: kalAdminPass || s.adminPassword
               };
@@ -476,6 +479,7 @@ export default function UserManagement() {
           metrics: featureKey === 'metrics' ? newVal : activeSite.features?.metrics !== false,
           orders: featureKey === 'orders' ? newVal : activeSite.features?.orders !== false,
           menu_editor: featureKey === 'menu_editor' ? newVal : activeSite.features?.menu_editor !== false,
+          inventory: featureKey === 'inventory' ? newVal : activeSite.features?.inventory !== false,
           bookings: featureKey === 'bookings' ? newVal : activeSite.features?.bookings !== false,
           reservations: featureKey === 'bookings' ? newVal : activeSite.features?.bookings !== false,
           booking: featureKey === 'bookings' ? newVal : activeSite.features?.bookings !== false,
@@ -992,7 +996,8 @@ export default function UserManagement() {
                 {(activeSite.id === 'kal-discobar' || activeSite.name?.toLowerCase().includes('kal') ? [
                   { key: 'metrics', label: '📊 Métricas & Caja (Finanzas)', desc: 'Habilita o bloquea el balance, ingresos, gráficos y arqueo de caja diario' },
                   { key: 'orders', label: '🛎️ Gestión de Pedidos & Mesas', desc: 'Habilita o bloquea comandas en vivo, estados de pedidos y mesas 1-15' },
-                  { key: 'menu_editor', label: '📋 Configuración de Menú & Platos', desc: 'Habilita o bloquea la edición de platos, precios, fotos y categorías' }
+                  { key: 'menu_editor', label: '📋 Configuración de Menú & Platos', desc: 'Habilita o bloquea la edición de platos, precios, fotos y categorías' },
+                  { key: 'inventory', label: '🍾 Inventario & Botellas (Stock)', desc: 'Habilita o bloquea la 4ta pestaña de inventario de botellas, copas/ml y entradas' }
                 ] : [
                   { key: 'bookings', label: '📅 Agendamiento de Citas & Reservas', desc: 'Habilita o pausa el motor de reservas en línea, agendamiento de cabañas y pasadías' },
                   { key: 'wompi_payments', label: '💳 Verificación de Pagos Wompi', desc: 'Habilita o pausa la pasarela de pagos Wompi (Bancolombia, PSE, Tarjetas y Nequi)' }
