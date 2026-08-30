@@ -36,7 +36,11 @@ const DEFAULT_CLIENT_SITES = [
     lastCheck: new Date().toISOString(),
     features: {
       bookings: true,
-      wompi_payments: true
+      wompi_payments: true,
+      recaudos: true,
+      cancelaciones: true,
+      personalizacion: true,
+      users_management: true
     }
   }
 ];
@@ -69,7 +73,11 @@ export default function UserManagement() {
               masterKey: site.masterKey || 'PanelPassword1966@',
               features: {
                 bookings: site.features?.bookings !== false,
-                wompi_payments: site.features?.wompi_payments !== false && site.features?.payments !== false
+                wompi_payments: site.features?.wompi_payments !== false && site.features?.payments !== false,
+                recaudos: site.features?.recaudos !== false,
+                cancelaciones: site.features?.cancelaciones !== false,
+                personalizacion: site.features?.personalizacion !== false,
+                users_management: site.features?.users_management !== false
               }
             };
           }
@@ -215,7 +223,11 @@ export default function UserManagement() {
                 lastCheck: new Date().toISOString(),
                 features: andicasModules ? {
                   bookings: andicasModules.bookings !== false,
-                  wompi_payments: andicasModules.wompi_payments !== false && andicasModules.payments !== false
+                  wompi_payments: andicasModules.wompi_payments !== false && andicasModules.payments !== false,
+                  recaudos: andicasModules.recaudos !== false,
+                  cancelaciones: andicasModules.cancelaciones !== false,
+                  personalizacion: andicasModules.personalizacion !== false,
+                  users_management: andicasModules.users_management !== false
                 } : s.features,
                 adminPassword: andicasAdminPass || s.adminPassword
               };
@@ -485,7 +497,10 @@ export default function UserManagement() {
           booking: featureKey === 'bookings' ? newVal : activeSite.features?.bookings !== false,
           wompi_payments: featureKey === 'wompi_payments' ? newVal : activeSite.features?.wompi_payments !== false,
           payments: (featureKey === 'wompi_payments' || featureKey === 'payments') ? newVal : (activeSite.features?.wompi_payments !== false && activeSite.features?.payments !== false),
-          checkout: (featureKey === 'wompi_payments' || featureKey === 'payments') ? newVal : (activeSite.features?.wompi_payments !== false && activeSite.features?.payments !== false),
+          recaudos: featureKey === 'recaudos' ? newVal : activeSite.features?.recaudos !== false,
+          cancelaciones: featureKey === 'cancelaciones' ? newVal : activeSite.features?.cancelaciones !== false,
+          personalizacion: featureKey === 'personalizacion' ? newVal : activeSite.features?.personalizacion !== false,
+          users_management: featureKey === 'users_management' ? newVal : activeSite.features?.users_management !== false,
           whatsapp_agent: featureKey === 'whatsappAgent' ? newVal : activeSite.features?.whatsappAgent !== false,
           whatsapp: featureKey === 'whatsappAgent' ? newVal : activeSite.features?.whatsappAgent !== false,
           dashboard: featureKey === 'clientDashboard' ? newVal : activeSite.features?.clientDashboard !== false,
@@ -999,8 +1014,12 @@ export default function UserManagement() {
                   { key: 'menu_editor', label: '📋 Configuración de Menú & Platos', desc: 'Habilita o bloquea la edición de platos, precios, fotos y categorías' },
                   { key: 'inventory', label: '🍾 Inventario & Botellas (Stock)', desc: 'Habilita o bloquea la 4ta pestaña de inventario de botellas, copas/ml y entradas' }
                 ] : [
-                  { key: 'bookings', label: '📅 Agendamiento de Citas & Reservas', desc: 'Habilita o pausa el motor de reservas en línea, agendamiento de cabañas y pasadías' },
-                  { key: 'wompi_payments', label: '💳 Verificación de Pagos Wompi', desc: 'Habilita o pausa la pasarela de pagos Wompi (Bancolombia, PSE, Tarjetas y Nequi)' }
+                  { key: 'bookings', label: '📅 Agendamiento & Calendario', desc: 'Habilita o pausa el motor de reservas públicas y calendario de cabañas' },
+                  { key: 'wompi_payments', label: '💳 Pasarela de Pagos Wompi', desc: 'Habilita o pausa la pasarela de pagos Wompi (Bancolombia, PSE, Tarjetas y Nequi)' },
+                  { key: 'recaudos', label: '💰 Recaudos & Caja (Métricas)', desc: 'Habilita o bloquea el módulo financiero, métricas de ocupación e ingresos' },
+                  { key: 'cancelaciones', label: '⚠️ Solicitudes de Cancelación', desc: 'Habilita o bloquea el módulo de cancelaciones con regla de 72h' },
+                  { key: 'personalizacion', label: '⚙️ Personalización (CMS Tarifas)', desc: 'Habilita o bloquea el editor en vivo de precios de cabañas, pasadías y cuentas' },
+                  { key: 'users_management', label: '👥 Gestión de Usuarios & Empleados', desc: 'Habilita o bloquea el módulo para crear cuentas y contraseñas de empleados' }
                 ]).map((feat) => {
                   const isEnabled = activeSite.features?.[feat.key] !== false;
 
