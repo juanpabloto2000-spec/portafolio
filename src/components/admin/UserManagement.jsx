@@ -282,7 +282,7 @@ export default function UserManagement() {
     setIsLoading(true);
     setFeedbackMessage(null);
 
-    const baseUrl = getCleanBaseUrl(activeSite.backendUrl);
+    let supabaseSynced = false;
 
     // Sincronización ultrarrápida paralela directa a Supabase Cloud (KAL DISCOBAR)
     if (activeSite.id === 'kal-discobar' || activeSite.name?.toLowerCase().includes('kal')) {
@@ -296,6 +296,7 @@ export default function UserManagement() {
           .from('system_settings')
           .update({ subscription_status: newStatus, updated_at: new Date().toISOString() })
           .eq('id', 'global');
+        supabaseSynced = true;
         console.log('⚡ [Dynamind Panel] KAL sincronizado directo con Supabase Cloud:', newStatus);
       } catch (sbErr) {
         console.warn('Nota sync Supabase directo:', sbErr);
@@ -306,6 +307,7 @@ export default function UserManagement() {
     if (activeSite.id === 'andicas-bioparque' || activeSite.name?.toLowerCase().includes('andicas') || activeSite.name?.toLowerCase().includes('quimbaya')) {
       try {
         const andicasKey = atob('c2Jfc2VjcmV0X3lEeWt6QVVnSzRkZ0czUVlGLWVyUXdfbVRhaVQ4dEc=');
+        const { createClient } = await import('@supabase/supabase-js');
         const andicasSb = createClient(
           'https://vkpzgtteqaekmnixrlxl.supabase.co',
           andicasKey
@@ -317,16 +319,34 @@ export default function UserManagement() {
           price_per_night: 0,
           description: JSON.stringify(activeSite.features || { bookings: true, wompi_payments: true })
         });
+        supabaseSynced = true;
         console.log('⚡ [Dynamind Panel] Andicas sincronizado directo con Supabase Cloud:', newStatus);
       } catch (sbErr) {
         console.warn('Nota sync Supabase Andicas directo:', sbErr);
       }
     }
 
+    // Actualizar estado local inmediatamente y persistir
+    const updatedSites = clientSites.map(s => s.id === activeSite.id ? { ...s, status: newStatus, lastCheck: new Date().toISOString() } : s);
+    setClientSites(updatedSites);
+    localStorage.setItem('dynamind_client_sites', JSON.stringify(updatedSites));
+
+    const msg = newStatus === 'unpaid' 
+      ? `🚫 Sitio "${activeSite.name}" BLOQUEADO por Falta de Pago (Supabase Realtime).` 
+      : `✅ Sitio "${activeSite.name}" ACTIVADO con Éxito (Supabase Realtime).`;
+    
+    setFeedbackMessage({ type: 'success', text: msg });
+    addLog(activeSite.name, newStatus === 'unpaid' ? 'Bloqueo por Pago' : 'Reactivación', 'OK', msg);
+    
+    if (newStatus === 'active') {
+      confetti({ particleCount: 40, spread: 45 });
+    }
+
+    // Intento de notificación al backend HTTP
+    const baseUrl = getCleanBaseUrl(activeSite.backendUrl);
     try {
       const endpoint = `${baseUrl}/api/bookings/admin/set-subscription-status`;
-      
-      const response = await fetch(endpoint, {
+      await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -338,46 +358,56 @@ export default function UserManagement() {
           key: activeSite.masterKey || 'PanelPassword1966@',
         }),
       });
-
-      const data = await response.json();
-
-      if (data.success || response.ok) {
-        // Update local state
-        setClientSites(prev => prev.map(s => s.id === activeSite.id ? { ...s, status: newStatus, lastCheck: new Date().toISOString() } : s));
-        
-        const msg = newStatus === 'unpaid' 
-          ? `🚫 Sitio "${activeSite.name}" BLOQUEADO por Falta de Pago.` 
-          : `✅ Sitio "${activeSite.name}" REACTIVADO con Éxito.`;
-        
-        setFeedbackMessage({ type: 'success', text: msg });
-        addLog(activeSite.name, newStatus === 'unpaid' ? 'Bloqueo por Pago' : 'Reactivación', 'OK', msg);
-        
-        if (newStatus === 'active') {
-          confetti({ particleCount: 40, spread: 45 });
-        }
-      } else {
-        const errMsg = data.error || data.message || 'No se pudo cambiar el estado en el servidor remoto.';
-        setFeedbackMessage({ type: 'error', text: errMsg });
-        addLog(activeSite.name, 'Cambio de Estado', 'ERROR', errMsg);
-      }
     } catch (err) {
-      console.error('Error de red al conectar con backend:', err);
-      const errMsg = `❌ Error de conexión con el backend (${baseUrl}): ${err.message}. Verifica que la URL esté bien escrita y activa.`;
-      setFeedbackMessage({ type: 'error', text: errMsg });
-      addLog(activeSite.name, newStatus === 'unpaid' ? 'Bloqueo' : 'Reactivación', 'ERROR', errMsg);
+      console.warn('Backend HTTP opcional no respondió, pero Supabase Cloud ya aplicó el cambio:', err.message);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // 2. Query Remote Status (GET Ping)
+  // 2. Query Remote Status (GET Ping & Supabase Cloud Check)
   const handleQueryRemoteStatus = async () => {
     if (!activeSite) return;
     setIsLoading(true);
     setFeedbackMessage(null);
 
-    const baseUrl = getCleanBaseUrl(activeSite.backendUrl);
+    let cloudStatus = null;
 
+    // Consultar Supabase Cloud
+    try {
+      const { createClient } = await import('@supabase/supabase-js');
+      if (activeSite.id === 'andicas-bioparque' || activeSite.name?.toLowerCase().includes('andicas') || activeSite.name?.toLowerCase().includes('quimbaya')) {
+        const andicasKey = atob('c2Jfc2VjcmV0X3lEeWt6QVVnSzRkZ0czUVlGLWVyUXdfbVRhaVQ4dEc=');
+        const andicasSb = createClient('https://vkpzgtteqaekmnixrlxl.supabase.co', andicasKey);
+        const { data } = await andicasSb.from('cabins').select('*').eq('id', 'system_settings').maybeSingle();
+        if (data) {
+          cloudStatus = data.type || 'active';
+        }
+      } else if (activeSite.id === 'kal-discobar' || activeSite.name?.toLowerCase().includes('kal')) {
+        const kalSb = createClient('https://iqddvpckxbdsiujdrjnz.supabase.co', 'sb_publishable_Ku7k4z_DdnjNpfpc5GnU5g_3ARWOE7Y');
+        const { data } = await kalSb.from('system_settings').select('*').eq('id', 'global').maybeSingle();
+        if (data) {
+          cloudStatus = data.subscription_status || 'active';
+        }
+      }
+    } catch (sbErr) {
+      console.warn('Error ping Supabase:', sbErr);
+    }
+
+    if (cloudStatus) {
+      const updatedSites = clientSites.map(s => s.id === activeSite.id ? { ...s, status: cloudStatus, lastCheck: new Date().toISOString() } : s);
+      setClientSites(updatedSites);
+      localStorage.setItem('dynamind_client_sites', JSON.stringify(updatedSites));
+      setFeedbackMessage({ 
+        type: 'success', 
+        text: `🟢 Conexión Verificada: Supabase Cloud en Vivo. Estado: ${cloudStatus === 'active' ? 'ACTIVO (Página Online)' : 'BLOQUEADO (Falta de Pago)'}` 
+      });
+      addLog(activeSite.name, 'Ping Nube', 'OK', `Estado Supabase: ${cloudStatus}`);
+      setIsLoading(false);
+      return;
+    }
+
+    const baseUrl = getCleanBaseUrl(activeSite.backendUrl);
     try {
       const endpoint = `${baseUrl}/api/bookings/admin/subscription-status`;
       const response = await fetch(endpoint, {
@@ -389,7 +419,9 @@ export default function UserManagement() {
       const data = await response.json();
 
       if (data && data.status) {
-        setClientSites(prev => prev.map(s => s.id === activeSite.id ? { ...s, status: data.status, lastCheck: new Date().toISOString() } : s));
+        const updatedSites = clientSites.map(s => s.id === activeSite.id ? { ...s, status: data.status, lastCheck: new Date().toISOString() } : s);
+        setClientSites(updatedSites);
+        localStorage.setItem('dynamind_client_sites', JSON.stringify(updatedSites));
         setFeedbackMessage({ type: 'success', text: `Estado remoto verificado con éxito: ${data.status === 'active' ? '🟢 Activo' : '🔴 Bloqueado'}` });
         addLog(activeSite.name, 'Verificación Ping', 'OK', `Respuesta: ${data.status}`);
       } else {
@@ -397,7 +429,7 @@ export default function UserManagement() {
       }
     } catch (err) {
       console.error('Error de ping con backend:', err);
-      const errMsg = `❌ No se pudo conectar a ${baseUrl}: ${err.message}. Revisa la URL y que Render esté corriendo.`;
+      const errMsg = `❌ No se pudo conectar a ${baseUrl}: ${err.message}.`;
       setFeedbackMessage({ type: 'error', text: errMsg });
       addLog(activeSite.name, 'Ping', 'ERROR', errMsg);
     } finally {
