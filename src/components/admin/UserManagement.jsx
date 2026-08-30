@@ -7,6 +7,21 @@ import {
   Eye, EyeOff
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { createClient } from '@supabase/supabase-js';
+
+// =========================================================================
+// SUPABASE CLIENT SINGLETONS PARA COMUNICACIÓN INSTANTÁNEA (<50ms)
+// =========================================================================
+const KAL_SB = createClient(
+  'https://iqddvpckxbdsiujdrjnz.supabase.co',
+  'sb_publishable_Ku7k4z_DdnjNpfpc5GnU5g_3ARWOE7Y'
+);
+
+const ANDICAS_KEY = atob('c2Jfc2VjcmV0X3lEeWt6QVVnSzRkZ0czUVlGLWVyUXdfbVRhaVQ4dEc=');
+const ANDICAS_SB = createClient(
+  'https://vkpzgtteqaekmnixrlxl.supabase.co',
+  ANDICAS_KEY
+);
 
 const DEFAULT_CLIENT_SITES = [
   {
@@ -134,18 +149,12 @@ export default function UserManagement() {
   // Sincronizar estado en vivo desde Supabase Cloud para que el panel siempre refleje la verdad exacta
   const fetchLiveStatusFromCloud = async () => {
     try {
-      const { createClient } = await import('@supabase/supabase-js');
-
       // 1. Consultar KAL DISCOBAR
       try {
-        const kalSb = createClient(
-          'https://iqddvpckxbdsiujdrjnz.supabase.co',
-          'sb_publishable_Ku7k4z_DdnjNpfpc5GnU5g_3ARWOE7Y'
-        );
         const [globalRes, modulesRes, adminAuthRes] = await Promise.allSettled([
-          kalSb.from('system_settings').select('subscription_status').eq('id', 'global').single(),
-          kalSb.from('system_settings').select('subscription_status').eq('id', 'modules').maybeSingle(),
-          kalSb.from('system_settings').select('subscription_status').eq('id', 'admin_auth').maybeSingle()
+          KAL_SB.from('system_settings').select('subscription_status').eq('id', 'global').maybeSingle(),
+          KAL_SB.from('system_settings').select('subscription_status').eq('id', 'modules').maybeSingle(),
+          KAL_SB.from('system_settings').select('subscription_status').eq('id', 'admin_auth').maybeSingle()
         ]);
 
         let kalStatus = null;
@@ -190,14 +199,9 @@ export default function UserManagement() {
 
       // 2. Consultar ANDICAS / QUIMBAYAS
       try {
-        const andicasKey = atob('c2Jfc2VjcmV0X3lEeWt6QVVnSzRkZ0czUVlGLWVyUXdfbVRhaVQ4dEc=');
-        const andicasSb = createClient(
-          'https://vkpzgtteqaekmnixrlxl.supabase.co',
-          andicasKey
-        );
         const [settingsRes, adminAuthRes] = await Promise.allSettled([
-          andicasSb.from('cabins').select('*').eq('id', 'system_settings').maybeSingle(),
-          andicasSb.from('cabins').select('*').eq('id', 'admin_auth').maybeSingle()
+          ANDICAS_SB.from('cabins').select('*').eq('id', 'system_settings').maybeSingle(),
+          ANDICAS_SB.from('cabins').select('*').eq('id', 'admin_auth').maybeSingle()
         ]);
 
         let andicasStatus = null;
@@ -262,18 +266,13 @@ export default function UserManagement() {
       resultStatus,
       message
     };
-    setLogs(prev => [newLog, ...prev.slice(0, 20)]);
+    setLogs(prev => [newLog, ...prev.slice(0, 49)]);
   };
 
-  // Helper para limpiar y normalizar la URL del backend
-  const getCleanBaseUrl = (rawUrl) => {
-    if (!rawUrl) return 'https://kal-discobar-backend.onrender.com';
-    return rawUrl
-      .trim()
-      .replace(/\/api\/bookings\/admin\/?.*$/, '')
-      .replace(/\/api\/admin\/?.*$/, '')
-      .replace(/\/api\/?.*$/, '')
-      .replace(/\/+$/, '');
+  // Helper para normalizar URL de backend
+  const getCleanBaseUrl = (url) => {
+    if (!url) return '';
+    return url.trim().replace(/\/+$/, '');
   };
 
   // 1. Remote Killswitch Command (active / unpaid)
@@ -282,21 +281,12 @@ export default function UserManagement() {
     setIsLoading(true);
     setFeedbackMessage(null);
 
-    let supabaseSynced = false;
-
     // Sincronización ultrarrápida paralela directa a Supabase Cloud (KAL DISCOBAR)
     if (activeSite.id === 'kal-discobar' || activeSite.name?.toLowerCase().includes('kal')) {
       try {
-        const { createClient } = await import('@supabase/supabase-js');
-        const kalSb = createClient(
-          'https://iqddvpckxbdsiujdrjnz.supabase.co',
-          'sb_publishable_Ku7k4z_DdnjNpfpc5GnU5g_3ARWOE7Y'
-        );
-        await kalSb
+        await KAL_SB
           .from('system_settings')
-          .update({ subscription_status: newStatus, updated_at: new Date().toISOString() })
-          .eq('id', 'global');
-        supabaseSynced = true;
+          .upsert({ id: 'global', subscription_status: newStatus, updated_at: new Date().toISOString() });
         console.log('⚡ [Dynamind Panel] KAL sincronizado directo con Supabase Cloud:', newStatus);
       } catch (sbErr) {
         console.warn('Nota sync Supabase directo:', sbErr);
@@ -306,20 +296,20 @@ export default function UserManagement() {
     // Sincronización ultrarrápida paralela directa a Supabase Cloud (ANDICAS / QUIMBAYAS)
     if (activeSite.id === 'andicas-bioparque' || activeSite.name?.toLowerCase().includes('andicas') || activeSite.name?.toLowerCase().includes('quimbaya')) {
       try {
-        const andicasKey = atob('c2Jfc2VjcmV0X3lEeWt6QVVnSzRkZ0czUVlGLWVyUXdfbVRhaVQ4dEc=');
-        const { createClient } = await import('@supabase/supabase-js');
-        const andicasSb = createClient(
-          'https://vkpzgtteqaekmnixrlxl.supabase.co',
-          andicasKey
-        );
-        await andicasSb.from('cabins').upsert({
+        await ANDICAS_SB.from('cabins').upsert({
           id: 'system_settings',
           name: 'System Settings',
           type: newStatus,
           price_per_night: 0,
-          description: JSON.stringify(activeSite.features || { bookings: true, wompi_payments: true })
+          description: JSON.stringify(activeSite.features || {
+            bookings: true,
+            wompi_payments: true,
+            recaudos: true,
+            cancelaciones: true,
+            personalizacion: true,
+            users_management: true
+          })
         });
-        supabaseSynced = true;
         console.log('⚡ [Dynamind Panel] Andicas sincronizado directo con Supabase Cloud:', newStatus);
       } catch (sbErr) {
         console.warn('Nota sync Supabase Andicas directo:', sbErr);
@@ -375,17 +365,13 @@ export default function UserManagement() {
 
     // Consultar Supabase Cloud
     try {
-      const { createClient } = await import('@supabase/supabase-js');
       if (activeSite.id === 'andicas-bioparque' || activeSite.name?.toLowerCase().includes('andicas') || activeSite.name?.toLowerCase().includes('quimbaya')) {
-        const andicasKey = atob('c2Jfc2VjcmV0X3lEeWt6QVVnSzRkZ0czUVlGLWVyUXdfbVRhaVQ4dEc=');
-        const andicasSb = createClient('https://vkpzgtteqaekmnixrlxl.supabase.co', andicasKey);
-        const { data } = await andicasSb.from('cabins').select('*').eq('id', 'system_settings').maybeSingle();
+        const { data } = await ANDICAS_SB.from('cabins').select('*').eq('id', 'system_settings').maybeSingle();
         if (data) {
           cloudStatus = data.type || 'active';
         }
       } else if (activeSite.id === 'kal-discobar' || activeSite.name?.toLowerCase().includes('kal')) {
-        const kalSb = createClient('https://iqddvpckxbdsiujdrjnz.supabase.co', 'sb_publishable_Ku7k4z_DdnjNpfpc5GnU5g_3ARWOE7Y');
-        const { data } = await kalSb.from('system_settings').select('*').eq('id', 'global').maybeSingle();
+        const { data } = await KAL_SB.from('system_settings').select('*').eq('id', 'global').maybeSingle();
         if (data) {
           cloudStatus = data.subscription_status || 'active';
         }
@@ -451,9 +437,10 @@ export default function UserManagement() {
     setTimeout(() => setIsSavedRecently(false), 3000);
   };
 
-  // 4. Toggle Individual Features (Sincronización Real con Backend)
+  // Toggle Single Feature
   const handleToggleFeature = async (featureKey) => {
     if (!activeSite) return;
+
     const currentVal = activeSite.features?.[featureKey] !== false;
     const newVal = !currentVal;
 
@@ -462,43 +449,31 @@ export default function UserManagement() {
       [featureKey]: newVal
     };
 
-    setClientSites(prev => prev.map(s => s.id === activeSite.id ? {
-      ...s,
-      features: updatedFeatures
-    } : s));
+    // Actualizar estado local inmediatamente
+    const updatedSites = clientSites.map(s => s.id === activeSite.id ? { ...s, features: updatedFeatures } : s);
+    setClientSites(updatedSites);
+    localStorage.setItem('dynamind_client_sites', JSON.stringify(updatedSites));
 
-    const baseUrl = getCleanBaseUrl(activeSite.backendUrl);
-
-    // Sincronización ultrarrápida paralela directa a Supabase Cloud
-    if (activeSite.id === 'kal-discobar' || activeSite.name?.toLowerCase().includes('kal') || activeSite.backendUrl?.toLowerCase().includes('kal')) {
+    // Sincronización ultrarrápida a Supabase Cloud (KAL DISCOBAR)
+    if (activeSite.id === 'kal-discobar' || activeSite.name?.toLowerCase().includes('kal')) {
       try {
-        const { createClient } = await import('@supabase/supabase-js');
-        const kalSb = createClient(
-          'https://iqddvpckxbdsiujdrjnz.supabase.co',
-          'sb_publishable_Ku7k4z_DdnjNpfpc5GnU5g_3ARWOE7Y'
-        );
-        await kalSb
+        await KAL_SB
           .from('system_settings')
           .upsert({
             id: 'modules',
             subscription_status: JSON.stringify(updatedFeatures),
             updated_at: new Date().toISOString()
           });
-        console.log('⚡ [Dynamind Panel] Módulos sincronizados directo con Supabase Cloud:', updatedFeatures);
+        console.log('⚡ [Dynamind Panel] KAL Módulos sincronizados directo con Supabase Cloud:', updatedFeatures);
       } catch (sbErr) {
-        console.warn('Nota sync Supabase directo para módulos:', sbErr);
+        console.warn('Nota sync Supabase KAL módulos:', sbErr);
       }
     }
 
-    // Sincronización ultrarrápida paralela directa a Supabase Cloud (ANDICAS / QUIMBAYAS)
+    // Sincronización ultrarrápida a Supabase Cloud (ANDICAS / QUIMBAYAS)
     if (activeSite.id === 'andicas-bioparque' || activeSite.name?.toLowerCase().includes('andicas') || activeSite.name?.toLowerCase().includes('quimbaya')) {
       try {
-        const andicasKey = atob('c2Jfc2VjcmV0X3lEeWt6QVVnSzRkZ0czUVlGLWVyUXdfbVRhaVQ4dEc=');
-        const andicasSb = createClient(
-          'https://vkpzgtteqaekmnixrlxl.supabase.co',
-          andicasKey
-        );
-        await andicasSb.from('cabins').upsert({
+        await ANDICAS_SB.from('cabins').upsert({
           id: 'system_settings',
           name: 'System Settings',
           type: activeSite.status || 'active',
@@ -512,6 +487,7 @@ export default function UserManagement() {
     }
 
     try {
+      const baseUrl = getCleanBaseUrl(activeSite.backendUrl);
       const endpoint = `${baseUrl}/api/bookings/admin/set-module-status`;
       
       const payload = {
@@ -519,35 +495,15 @@ export default function UserManagement() {
         enabled: newVal,
         active: newVal,
         status: newVal ? 'active' : 'inactive',
-        modules: {
-          metrics: featureKey === 'metrics' ? newVal : activeSite.features?.metrics !== false,
-          orders: featureKey === 'orders' ? newVal : activeSite.features?.orders !== false,
-          menu_editor: featureKey === 'menu_editor' ? newVal : activeSite.features?.menu_editor !== false,
-          inventory: featureKey === 'inventory' ? newVal : activeSite.features?.inventory !== false,
-          bookings: featureKey === 'bookings' ? newVal : activeSite.features?.bookings !== false,
-          reservations: featureKey === 'bookings' ? newVal : activeSite.features?.bookings !== false,
-          booking: featureKey === 'bookings' ? newVal : activeSite.features?.bookings !== false,
-          wompi_payments: featureKey === 'wompi_payments' ? newVal : activeSite.features?.wompi_payments !== false,
-          payments: (featureKey === 'wompi_payments' || featureKey === 'payments') ? newVal : (activeSite.features?.wompi_payments !== false && activeSite.features?.payments !== false),
-          recaudos: featureKey === 'recaudos' ? newVal : activeSite.features?.recaudos !== false,
-          cancelaciones: featureKey === 'cancelaciones' ? newVal : activeSite.features?.cancelaciones !== false,
-          personalizacion: featureKey === 'personalizacion' ? newVal : activeSite.features?.personalizacion !== false,
-          users_management: featureKey === 'users_management' ? newVal : activeSite.features?.users_management !== false,
-          whatsapp_agent: featureKey === 'whatsappAgent' ? newVal : activeSite.features?.whatsappAgent !== false,
-          whatsapp: featureKey === 'whatsappAgent' ? newVal : activeSite.features?.whatsappAgent !== false,
-          dashboard: featureKey === 'clientDashboard' ? newVal : activeSite.features?.clientDashboard !== false,
-          admin: featureKey === 'clientDashboard' ? newVal : activeSite.features?.clientDashboard !== false,
-          menu: featureKey === 'catalog' ? newVal : activeSite.features?.catalog !== false,
-          catalog: featureKey === 'catalog' ? newVal : activeSite.features?.catalog !== false,
-        },
-        key: activeSite.masterKey
+        modules: updatedFeatures,
+        key: activeSite.masterKey || 'PanelPassword1966@'
       };
 
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-admin-key': activeSite.masterKey
+          'x-admin-key': activeSite.masterKey || 'PanelPassword1966@'
         },
         body: JSON.stringify(payload)
       });
@@ -576,12 +532,7 @@ export default function UserManagement() {
     // 1. Sincronización ultrarrápida a Supabase Cloud (KAL DISCOBAR)
     if (activeSite.id === 'kal-discobar' || activeSite.name?.toLowerCase().includes('kal')) {
       try {
-        const { createClient } = await import('@supabase/supabase-js');
-        const kalSb = createClient(
-          'https://iqddvpckxbdsiujdrjnz.supabase.co',
-          'sb_publishable_Ku7k4z_DdnjNpfpc5GnU5g_3ARWOE7Y'
-        );
-        await kalSb
+        await KAL_SB
           .from('system_settings')
           .upsert({
             id: 'admin_auth',
@@ -597,13 +548,7 @@ export default function UserManagement() {
     // 2. Sincronización ultrarrápida a Supabase Cloud (ANDICAS / QUIMBAYAS)
     if (activeSite.id === 'andicas-bioparque' || activeSite.name?.toLowerCase().includes('andicas') || activeSite.name?.toLowerCase().includes('quimbaya')) {
       try {
-        const andicasKey = atob('c2Jfc2VjcmV0X3lEeWt6QVVnSzRkZ0czUVlGLWVyUXdfbVRhaVQ4dEc=');
-        const { createClient } = await import('@supabase/supabase-js');
-        const andicasSb = createClient(
-          'https://vkpzgtteqaekmnixrlxl.supabase.co',
-          andicasKey
-        );
-        await andicasSb.from('cabins').upsert({
+        await ANDICAS_SB.from('cabins').upsert({
           id: 'admin_auth',
           name: 'Admin Auth Credentials',
           type: 'active',
@@ -628,13 +573,15 @@ export default function UserManagement() {
         body: JSON.stringify({
           password: cleanPass,
           newPassword: cleanPass,
-          key: activeSite.masterKey
+          key: activeSite.masterKey || 'PanelPassword1966@'
         }),
       });
     } catch (e) {}
 
     // Actualizar estado local
-    setClientSites(prev => prev.map(s => s.id === activeSite.id ? { ...s, adminPassword: cleanPass } : s));
+    const updatedSites = clientSites.map(s => s.id === activeSite.id ? { ...s, adminPassword: cleanPass } : s);
+    setClientSites(updatedSites);
+    localStorage.setItem('dynamind_client_sites', JSON.stringify(updatedSites));
     setFeedbackMessage({ type: 'success', text: `¡Contraseña del Administrador actualizada con éxito a: "${cleanPass}"!` });
     addLog(activeSite.name, 'Cambio Contraseña Admin', 'OK', `Nueva clave asignada: "${cleanPass}"`);
     setIsUpdatingPass(false);
