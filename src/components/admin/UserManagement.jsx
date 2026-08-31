@@ -103,11 +103,18 @@ export default function UserManagement() {
         if (!hasKal) {
           const kalDefault = DEFAULT_CLIENT_SITES.find(d => d.id === 'kal-discobar');
           if (kalDefault) {
-            const merged = [kalDefault, ...updated];
-            localStorage.setItem('dynamind_client_sites', JSON.stringify(merged));
-            return merged;
+            updated.unshift(kalDefault);
           }
         }
+
+        const hasAndicas = updated.some(s => s.id === 'andicas-bioparque' || s.name?.toLowerCase().includes('andicas') || s.name?.toLowerCase().includes('quimbaya'));
+        if (!hasAndicas) {
+          const andicasDefault = DEFAULT_CLIENT_SITES.find(d => d.id === 'andicas-bioparque');
+          if (andicasDefault) {
+            updated.push(andicasDefault);
+          }
+        }
+
         localStorage.setItem('dynamind_client_sites', JSON.stringify(updated));
         return updated;
       } catch (e) {
