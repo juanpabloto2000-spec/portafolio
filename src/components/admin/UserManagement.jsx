@@ -1081,19 +1081,49 @@ export default function UserManagement() {
               </div>
             </div>
 
-            {/* Remote Admin Password Management Card */}
+            {/* Remote Admin Password & Roles Card */}
             <div className="p-6 rounded-2xl bg-[#0a0a0d] border border-white/10 space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-bold text-white flex items-center gap-2 font-heading-luxury">
                   <Key className="w-4 h-4 text-amber-400" />
-                  <span>Cambiar Contraseña de Administrador (Cliente)</span>
+                  <span>Cuentas de Acceso y Clave Remota</span>
                 </h3>
                 <span className="text-[10px] font-mono text-zinc-500 bg-white/5 px-2.5 py-1 rounded-lg border border-white/5">
                   Ruta: /#/dsb
                 </span>
               </div>
 
-              <p className="text-xs text-zinc-400 font-light">
+              {/* Roles Badges & Capabilities */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1 text-[11px]">
+                <div className="p-3 rounded-xl bg-white/[0.02] border border-amber-500/20">
+                  <div className="flex items-center gap-1.5 font-bold text-amber-300">
+                    <span>👑</span>
+                    <span>Admin Master</span>
+                  </div>
+                  <div className="text-[10px] text-zinc-400 mt-1 font-mono">Usuario: admin_master</div>
+                  <div className="text-[10px] text-zinc-500 mt-0.5">Control Total + Gestión de Usuarios</div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5">
+                  <div className="flex items-center gap-1.5 font-bold text-white">
+                    <span>🛡️</span>
+                    <span>Administrador</span>
+                  </div>
+                  <div className="text-[10px] text-zinc-400 mt-1 font-mono">Usuario: admin</div>
+                  <div className="text-[10px] text-zinc-500 mt-0.5">Agendas, Caja, Cancelaciones & CMS</div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5">
+                  <div className="flex items-center gap-1.5 font-bold text-cyan-300">
+                    <span>👤</span>
+                    <span>Recepción</span>
+                  </div>
+                  <div className="text-[10px] text-zinc-400 mt-1 font-mono">Usuario: recepcion</div>
+                  <div className="text-[10px] text-zinc-500 mt-0.5">Operación de Cabañas y Pagos</div>
+                </div>
+              </div>
+
+              <p className="text-xs text-zinc-400 font-light pt-1">
                 Modifica la contraseña con la que el cliente ingresa a su panel de administración. El cambio se aplica en tiempo real en la nube:
               </p>
 
