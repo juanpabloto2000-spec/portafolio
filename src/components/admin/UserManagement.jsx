@@ -52,18 +52,7 @@ const DEFAULT_CLIENT_SITES = [
     status: 'active', // 'active' | 'unpaid'
     lastCheck: new Date().toISOString(),
     features: {
-      // Secciones Públicas de la Web
-      cabanas: true,
-      animales: true,
-      pasadias: true,
-      experiencia: true,
-      normas: true,
-      ubicacion: true,
-      ai_chatbot: true,
-      socials_hub: true,
-      // Módulos Administrativos & Operativos
       bookings: true,
-      wompi_payments: true,
       recaudos: true,
       cancelaciones: true,
       personalizacion: true,
@@ -99,16 +88,7 @@ export default function UserManagement() {
               backendUrl: site.backendUrl || 'https://andicas-backend.onrender.com',
               masterKey: site.masterKey || 'PanelPassword1966@',
               features: {
-                cabanas: site.features?.cabanas !== false,
-                animales: site.features?.animales !== false,
-                pasadias: site.features?.pasadias !== false,
-                experiencia: site.features?.experiencia !== false,
-                normas: site.features?.normas !== false,
-                ubicacion: site.features?.ubicacion !== false,
-                ai_chatbot: site.features?.ai_chatbot !== false,
-                socials_hub: site.features?.socials_hub !== false,
                 bookings: site.features?.bookings !== false,
-                wompi_payments: site.features?.wompi_payments !== false && site.features?.payments !== false,
                 recaudos: site.features?.recaudos !== false,
                 cancelaciones: site.features?.cancelaciones !== false,
                 personalizacion: site.features?.personalizacion !== false,
@@ -253,16 +233,7 @@ export default function UserManagement() {
                 status: andicasStatus || s.status,
                 lastCheck: new Date().toISOString(),
                 features: andicasModules ? {
-                  cabanas: andicasModules.cabanas !== false,
-                  animales: andicasModules.animales !== false,
-                  pasadias: andicasModules.pasadias !== false,
-                  experiencia: andicasModules.experiencia !== false,
-                  normas: andicasModules.normas !== false,
-                  ubicacion: andicasModules.ubicacion !== false,
-                  ai_chatbot: andicasModules.ai_chatbot !== false,
-                  socials_hub: andicasModules.socials_hub !== false,
                   bookings: andicasModules.bookings !== false,
-                  wompi_payments: andicasModules.wompi_payments !== false && andicasModules.payments !== false,
                   recaudos: andicasModules.recaudos !== false,
                   cancelaciones: andicasModules.cancelaciones !== false,
                   personalizacion: andicasModules.personalizacion !== false,
@@ -291,7 +262,19 @@ export default function UserManagement() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'cabins', filter: 'id=eq.system_settings' }, (payload) => {
         if (payload.new) {
           const newStatus = payload.new.type || 'active';
-          setClientSites(prev => prev.map(s => (s.id === 'andicas-bioparque' || s.name?.toLowerCase().includes('andicas')) ? { ...s, status: newStatus } : s));
+          let newMods = null;
+          try { newMods = JSON.parse(payload.new.description); } catch {}
+          setClientSites(prev => prev.map(s => (s.id === 'andicas-bioparque' || s.name?.toLowerCase().includes('andicas')) ? { 
+            ...s, 
+            status: newStatus,
+            features: newMods ? {
+              bookings: newMods.bookings !== false,
+              recaudos: newMods.recaudos !== false,
+              cancelaciones: newMods.cancelaciones !== false,
+              personalizacion: newMods.personalizacion !== false,
+              users_management: newMods.users_management !== false
+            } : s.features
+          } : s));
         }
       })
       .subscribe();
@@ -311,6 +294,11 @@ export default function UserManagement() {
       kalChannel.unsubscribe();
     };
   }, []);
+
+  // Sincronizar inmediatamente al cambiar de pestaña de sitio
+  useEffect(() => {
+    fetchLiveStatusFromCloud();
+  }, [selectedSiteId]);
 
   const activeSite = clientSites.find(s => s.id === selectedSiteId) || clientSites[0];
 
@@ -895,44 +883,52 @@ export default function UserManagement() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   
-                  {/* Reactivate Button */}
+                  {/* Reactivate / Active State Button */}
                   <button
                     onClick={() => handleSetRemoteStatus('active')}
                     disabled={isLoading || activeSite.status === 'active'}
-                    className={`p-4 rounded-xl border text-left flex items-center justify-between transition-all ${
+                    className={`p-4 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer ${
                       activeSite.status === 'active'
-                        ? 'bg-emerald-950/20 border-emerald-500/40 text-emerald-300 opacity-60 cursor-default'
-                        : 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.3)] active:scale-98'
+                        ? 'bg-emerald-950/40 border-2 border-emerald-500 text-emerald-300 shadow-[0_0_15px_rgba(16,185,129,0.2)] cursor-default'
+                        : 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-400 shadow-[0_0_25px_rgba(16,185,129,0.35)] active:scale-98'
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-lg bg-black/20 flex items-center justify-center">
+                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${activeSite.status === 'active' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-black/20 text-white'}`}>
                         <Check className="w-5 h-5" />
                       </div>
                       <div>
-                        <div className="text-xs font-bold font-mono">REACTIVAR SITIO</div>
-                        <div className="text-[11px] opacity-80 font-light">Pago recibido • Quitar bloqueo</div>
+                        <div className="text-xs font-bold font-mono">
+                          {activeSite.status === 'active' ? '🟢 SITIO ONLINE (ACTIVO)' : 'REACTIVAR SITIO'}
+                        </div>
+                        <div className="text-[11px] opacity-80 font-light">
+                          {activeSite.status === 'active' ? 'Servicio público 100% habilitado' : 'Pago recibido • Quitar bloqueo'}
+                        </div>
                       </div>
                     </div>
                   </button>
 
-                  {/* Lock Button */}
+                  {/* Lock / Blocked State Button */}
                   <button
                     onClick={() => handleSetRemoteStatus('unpaid')}
                     disabled={isLoading || activeSite.status === 'unpaid'}
-                    className={`p-4 rounded-xl border text-left flex items-center justify-between transition-all ${
+                    className={`p-4 rounded-xl border text-left flex items-center justify-between transition-all cursor-pointer ${
                       activeSite.status === 'unpaid'
-                        ? 'bg-red-950/20 border-red-500/40 text-red-300 opacity-60 cursor-default'
-                        : 'bg-red-600 hover:bg-red-500 text-white border-red-400 shadow-[0_0_25px_rgba(239,68,68,0.4)] active:scale-98'
+                        ? 'bg-red-950/60 border-2 border-red-500 text-red-300 shadow-[0_0_20px_rgba(239,68,68,0.3)] cursor-default'
+                        : 'bg-red-950/30 hover:bg-red-600 text-red-300 hover:text-white border-red-500/40 hover:border-red-400 transition-colors active:scale-98'
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-lg bg-black/20 flex items-center justify-center">
+                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${activeSite.status === 'unpaid' ? 'bg-red-500/30 text-red-300 animate-pulse' : 'bg-black/20 text-red-400'}`}>
                         <Lock className="w-5 h-5" />
                       </div>
                       <div>
-                        <div className="text-xs font-bold font-mono">BLOQUEAR SITIO</div>
-                        <div className="text-[11px] opacity-80 font-light">Falta de pago • Bloquear acceso</div>
+                        <div className="text-xs font-bold font-mono">
+                          {activeSite.status === 'unpaid' ? '🔴 SITIO SUSPENDIDO (BLOQUEADO)' : 'SUSPENDER SITIO'}
+                        </div>
+                        <div className="text-[11px] opacity-80 font-light">
+                          {activeSite.status === 'unpaid' ? 'Visitantes ven pantalla de corte' : 'Falta de pago • Bloquear acceso'}
+                        </div>
                       </div>
                     </div>
                   </button>
@@ -1051,22 +1047,11 @@ export default function UserManagement() {
                   { key: 'menu_editor', label: '📋 Configuración de Menú & Platos', desc: 'Habilita o bloquea la edición de platos, precios, fotos y categorías' },
                   { key: 'inventory', label: '🍾 Inventario & Botellas (Stock)', desc: 'Habilita o bloquea la 4ta pestaña de inventario de botellas, copas/ml y entradas' }
                 ] : [
-                  // --- SECCIONES PÚBLICAS DE LA WEB ---
-                  { key: 'cabanas', label: '🛖 Cabañas Luxury & Miradores', desc: 'Habilita o desactiva la sección de cabañas y el carrusel 3D rotacional en la web' },
-                  { key: 'animales', label: '🐾 Santuario Animal & Granja', desc: 'Habilita o desactiva la sección de animales y el carrusel infinito en la web' },
-                  { key: 'pasadias', label: '🎟️ Arma Tu Plan / Pasadías', desc: 'Habilita o desactiva el configurador de pasadías y tarjetas interactivas' },
-                  { key: 'experiencia', label: '🌿 Experiencia Andicas (Historia)', desc: 'Habilita o desactiva la sección narrativa con el stack de tarjetas' },
-                  { key: 'normas', label: '📜 Guía de Estadía & Políticas', desc: 'Habilita o desactiva la sección de normas, piscinas y políticas del parque' },
-                  { key: 'ubicacion', label: '📍 Ubicación & Cuentas Bancarias', desc: 'Habilita o desactiva el mapa interactivo y datos bancarios oficiales' },
-                  { key: 'ai_chatbot', label: '🤖 Asistente Virtual IA & Chatbot', desc: 'Habilita o desactiva el botón flotante y respuestas del asistente IA' },
-                  { key: 'socials_hub', label: '💬 Hub de Redes Sociales Flotante', desc: 'Habilita o desactiva el widget flotante lateral de WhatsApp y redes' },
-                  // --- MÓDULOS ADMINISTRATIVOS & OPERATIVOS ---
-                  { key: 'bookings', label: '📅 Motor de Reservas & Calendario', desc: 'Habilita o pausa el motor de reservas y calendario interactivo de disponibilidad' },
-                  { key: 'wompi_payments', label: '💳 Pasarela de Pagos Wompi', desc: 'Habilita o pausa la pasarela de pagos Wompi (Bancolombia, PSE, Tarjetas y Nequi)' },
-                  { key: 'recaudos', label: '💰 Recaudos & Caja en Vivo (Métricas)', desc: 'Habilita o bloquea el módulo financiero, balance y arqueo ciego de caja' },
-                  { key: 'cancelaciones', label: '⚠️ Solicitudes de Cancelación', desc: 'Habilita o bloquea el módulo de cancelaciones con regla de 72h' },
-                  { key: 'personalizacion', label: '⚙️ Personalización (CMS Tarifas & Redes)', desc: 'Habilita o bloquea el editor en vivo de precios, redes sociales y cuentas' },
-                  { key: 'users_management', label: '👥 Gestión de Usuarios & Empleados', desc: 'Habilita o bloquea el módulo para crear cuentas y contraseñas de empleados' }
+                  { key: 'bookings', label: '📅 1. Agendamientos & Calendario', desc: 'Habilita o bloquea la pestaña de reservas, disponibilidad y calendario' },
+                  { key: 'recaudos', label: '💰 2. Recaudos & Caja (Finanzas)', desc: 'Habilita o bloquea la pestaña de balance financiero, métricas y arqueo de caja' },
+                  { key: 'cancelaciones', label: '⚠️ 3. Solicitudes de Cancelación', desc: 'Habilita o bloquea la pestaña de cancelaciones y devoluciones con regla de 72h' },
+                  { key: 'personalizacion', label: '⚙️ 4. Personalización (CMS Tarifas)', desc: 'Habilita o bloquea la pestaña de edición de tarifas, pasadías y redes' },
+                  { key: 'users_management', label: '👥 5. Gestión de Usuarios (Personal)', desc: 'Habilita o bloquea la pestaña para administrar empleados y accesos' }
                 ]).map((feat) => {
                   const isEnabled = activeSite.features?.[feat.key] !== false;
 
