@@ -997,8 +997,9 @@ export default function UserManagement() {
                   { key: 'wompi_payments', label: '💳 Pasarela de Pagos Wompi', desc: 'Habilita o pausa la pasarela de pagos Wompi (Bancolombia, PSE, Tarjetas y Nequi)' },
                   { key: 'recaudos', label: '💰 Recaudos & Caja (Métricas)', desc: 'Habilita o bloquea el módulo financiero, métricas de ocupación e ingresos' },
                   { key: 'cancelaciones', label: '⚠️ Solicitudes de Cancelación', desc: 'Habilita o bloquea el módulo de cancelaciones con regla de 72h' },
-                  { key: 'personalizacion', label: '⚙️ Personalización (CMS Tarifas)', desc: 'Habilita o bloquea el editor en vivo de precios de cabañas, pasadías y cuentas' },
-                  { key: 'users_management', label: '👥 Gestión de Usuarios & Empleados', desc: 'Habilita o bloquea el módulo para crear cuentas y contraseñas de empleados' }
+                  { key: 'personalizacion', label: '⚙️ Personalización (CMS Tarifas & Redes)', desc: 'Habilita o bloquea el editor en vivo de precios, redes sociales y cuentas' },
+                  { key: 'users_management', label: '👥 Gestión de Usuarios & Empleados', desc: 'Habilita o bloquea el módulo para crear cuentas y contraseñas de empleados' },
+                  { key: 'ai_chatbot', label: '🤖 Asistente IA & Chatbot Virtual', desc: 'Habilita o pausa el botón flotante y respuestas del Asistente Virtual Inteligente' }
                 ]).map((feat) => {
                   const isEnabled = activeSite.features?.[feat.key] !== false;
 
