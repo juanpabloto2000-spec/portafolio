@@ -14,13 +14,15 @@ import { createClient } from '@supabase/supabase-js';
 // =========================================================================
 const KAL_SB = createClient(
   'https://iqddvpckxbdsiujdrjnz.supabase.co',
-  'sb_publishable_Ku7k4z_DdnjNpfpc5GnU5g_3ARWOE7Y'
+  'sb_publishable_Ku7k4z_DdnjNpfpc5GnU5g_3ARWOE7Y',
+  { auth: { persistSession: false } }
 );
 
 const ANDICAS_KEY = atob('c2Jfc2VjcmV0X3lEeWt6QVVnSzRkZ0czUVlGLWVyUXdfbVRhaVQ4dEc=');
 const ANDICAS_SB = createClient(
   'https://vkpzgtteqaekmnixrlxl.supabase.co',
-  ANDICAS_KEY
+  ANDICAS_KEY,
+  { auth: { persistSession: false } }
 );
 
 const DEFAULT_CLIENT_SITES = [
