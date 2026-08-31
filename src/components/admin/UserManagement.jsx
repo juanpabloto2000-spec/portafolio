@@ -256,11 +256,34 @@ export default function UserManagement() {
     }
   };
 
-  // Sondeo continuo cada 3.5s para reflejar el estado 100% real sin desincronización
+  // Sondeo continuo y Realtime para reflejar el estado 100% real sin desincronización
   useEffect(() => {
     fetchLiveStatusFromCloud();
-    const interval = setInterval(fetchLiveStatusFromCloud, 3500);
-    return () => clearInterval(interval);
+    const interval = setInterval(fetchLiveStatusFromCloud, 2500);
+
+    const andicasChannel = ANDICAS_SB.channel('dynamind_andicas_live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'cabins', filter: 'id=eq.system_settings' }, (payload) => {
+        if (payload.new) {
+          const newStatus = payload.new.type || 'active';
+          setClientSites(prev => prev.map(s => (s.id === 'andicas-bioparque' || s.name?.toLowerCase().includes('andicas')) ? { ...s, status: newStatus } : s));
+        }
+      })
+      .subscribe();
+
+    const kalChannel = KAL_SB.channel('dynamind_kal_live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'system_settings', filter: 'id=eq.global' }, (payload) => {
+        if (payload.new) {
+          const newStatus = payload.new.subscription_status || 'active';
+          setClientSites(prev => prev.map(s => (s.id === 'kal-discobar' || s.name?.toLowerCase().includes('kal')) ? { ...s, status: newStatus } : s));
+        }
+      })
+      .subscribe();
+
+    return () => {
+      clearInterval(interval);
+      andicasChannel.unsubscribe();
+      kalChannel.unsubscribe();
+    };
   }, []);
 
   const activeSite = clientSites.find(s => s.id === selectedSiteId) || clientSites[0];
