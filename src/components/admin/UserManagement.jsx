@@ -23,7 +23,24 @@ const ANDICAS_KEY = getAndicasKey();
 const ANDICAS_SB = createClient(
   'https://vkpzgtteqaekmnixrlxl.supabase.co',
   ANDICAS_KEY,
-  { auth: { persistSession: false } }
+  {
+    auth: { persistSession: false },
+    global: {
+      fetch: (url, options = {}) => {
+        try {
+          const u = new URL(url);
+          u.searchParams.set('apikey', ANDICAS_KEY);
+          const headers = new Headers(options.headers || {});
+          headers.set('apikey', ANDICAS_KEY);
+          headers.delete('authorization');
+          headers.delete('Authorization');
+          return fetch(u.toString(), { ...options, headers });
+        } catch (e) {
+          return fetch(url, options);
+        }
+      }
+    }
+  }
 );
 
 const DEFAULT_CLIENT_SITES = [
