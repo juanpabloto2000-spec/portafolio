@@ -54,9 +54,9 @@ const DEFAULT_CLIENT_SITES = [
     features: {
       bookings: true,
       recaudos: true,
-      cancelaciones: true,
       personalizacion: true,
-      users_management: true
+      users_management: true,
+      cancelaciones: true
     }
   }
 ];
@@ -235,9 +235,9 @@ export default function UserManagement() {
                 features: andicasModules ? {
                   bookings: andicasModules.bookings !== false,
                   recaudos: andicasModules.recaudos !== false,
-                  cancelaciones: andicasModules.cancelaciones !== false,
                   personalizacion: andicasModules.personalizacion !== false,
-                  users_management: andicasModules.users_management !== false
+                  users_management: andicasModules.users_management !== false,
+                  cancelaciones: andicasModules.cancelaciones !== false
                 } : s.features,
                 adminPassword: andicasAdminPass || s.adminPassword
               };
@@ -270,9 +270,9 @@ export default function UserManagement() {
             features: newMods ? {
               bookings: newMods.bookings !== false,
               recaudos: newMods.recaudos !== false,
-              cancelaciones: newMods.cancelaciones !== false,
               personalizacion: newMods.personalizacion !== false,
-              users_management: newMods.users_management !== false
+              users_management: newMods.users_management !== false,
+              cancelaciones: newMods.cancelaciones !== false
             } : s.features
           } : s));
         }
@@ -1047,11 +1047,11 @@ export default function UserManagement() {
                   { key: 'menu_editor', label: '📋 Configuración de Menú & Platos', desc: 'Habilita o bloquea la edición de platos, precios, fotos y categorías' },
                   { key: 'inventory', label: '🍾 Inventario & Botellas (Stock)', desc: 'Habilita o bloquea la 4ta pestaña de inventario de botellas, copas/ml y entradas' }
                 ] : [
-                  { key: 'bookings', label: '📅 1. Agendamientos & Calendario', desc: 'Habilita o bloquea la pestaña de reservas, disponibilidad y calendario' },
-                  { key: 'recaudos', label: '💰 2. Recaudos & Caja (Finanzas)', desc: 'Habilita o bloquea la pestaña de balance financiero, métricas y arqueo de caja' },
-                  { key: 'cancelaciones', label: '⚠️ 3. Solicitudes de Cancelación', desc: 'Habilita o bloquea la pestaña de cancelaciones y devoluciones con regla de 72h' },
-                  { key: 'personalizacion', label: '⚙️ 4. Personalización (CMS Tarifas)', desc: 'Habilita o bloquea la pestaña de edición de tarifas, pasadías y redes' },
-                  { key: 'users_management', label: '👥 5. Gestión de Usuarios (Personal)', desc: 'Habilita o bloquea la pestaña para administrar empleados y accesos' }
+                  { key: 'bookings', label: '📅 Sección 1 — Agendamientos & Calendario', desc: 'Bloquea toda la sección de reservas: tabla de agendas, calendario, cancelaciones y auditoría. Aplica para TODOS los perfiles.' },
+                  { key: 'recaudos', label: '💰 Sección 2 — Recaudos & Caja (Finanzas)', desc: 'Bloquea la sección financiera: caja viva, cierre de turno, métricas históricas. Aplica para TODOS los perfiles.' },
+                  { key: 'personalizacion', label: '⚙️ Sección 3 — Personalización (CMS)', desc: 'Bloquea la sección de edición de tarifas, pasadías, imágenes y redes sociales. Solo visible para Admin y Master.' },
+                  { key: 'users_management', label: '👥 Sección 4 — Gestión de Usuarios (Personal)', desc: 'Bloquea la sección de administración de empleados y accesos. Solo visible para Admin Master.' },
+                  { key: 'cancelaciones', label: '⚠️ Sub-módulo — Solicitudes de Cancelación', desc: 'Bloquea únicamente el subtab de cancelaciones y devoluciones dentro de Agendamientos (regla de 72h).' },
                 ]).map((feat) => {
                   const isEnabled = activeSite.features?.[feat.key] !== false;
 
