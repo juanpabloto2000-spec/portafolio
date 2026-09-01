@@ -449,14 +449,26 @@ export default function UserManagement() {
     setFeedbackMessage(null);
 
     let cloudStatus = null;
+    let errorDetail = null;
     const isAndicas = activeSite.id === 'andicas-bioparque' || activeSite.id?.includes('andicas') || activeSite.name?.toLowerCase().includes('andicas') || activeSite.name?.toLowerCase().includes('quimbaya') || activeSite.domain?.includes('andicas');
 
     // Consultar Supabase Cloud
     try {
       if (isAndicas) {
-        const { data } = await ANDICAS_SB.from('cabins').select('*').eq('id', 'system_settings').maybeSingle();
-        if (data) {
-          cloudStatus = data.type || 'active';
+        // Direct REST fetch
+        const rawRes = await fetch('https://vkpzgtteqaekmnixrlxl.supabase.co/rest/v1/cabins?id=eq.system_settings&select=*', {
+          headers: {
+            'apikey': ANDICAS_KEY,
+            'Authorization': `Bearer ${ANDICAS_KEY}`
+          }
+        });
+        if (rawRes.ok) {
+          const rows = await rawRes.json();
+          if (rows && rows.length > 0) {
+            cloudStatus = rows[0].type || 'active';
+          }
+        } else {
+          errorDetail = `HTTP ${rawRes.status} ${rawRes.statusText}`;
         }
       } else if (activeSite.id === 'kal-discobar' || activeSite.name?.toLowerCase().includes('kal')) {
         const { data } = await KAL_SB.from('system_settings').select('*').eq('id', 'global').maybeSingle();
@@ -466,6 +478,7 @@ export default function UserManagement() {
       }
     } catch (sbErr) {
       console.warn('Error ping Supabase:', sbErr);
+      errorDetail = sbErr.message || String(sbErr);
     }
 
     if (cloudStatus) {
@@ -474,11 +487,15 @@ export default function UserManagement() {
       localStorage.setItem('dynamind_client_sites', JSON.stringify(updatedSites));
       setFeedbackMessage({ 
         type: 'success', 
-        text: `🟢 Conexión Verificada en Supabase Cloud. Estado: ${cloudStatus === 'active' ? 'ACTIVO (Página Online)' : 'BLOQUEADO (Falta de Pago)'}` 
+        text: `🟢 Conexión Exitosa con Supabase Cloud. Estado: ${cloudStatus === 'active' ? 'ACTIVO (Página Online)' : 'BLOQUEADO (Falta de Pago)'}` 
       });
       addLog(activeSite.name, 'Ping Nube', 'OK', `Estado Supabase: ${cloudStatus}`);
-      setIsLoading(false);
-      return;
+    } else {
+      setFeedbackMessage({
+        type: 'error',
+        text: `🔴 No se pudo conectar con la base de datos de ${activeSite.name}. Detalle: ${errorDetail || 'Error de red'}`
+      });
+      addLog(activeSite.name, 'Ping Nube', 'ERROR', errorDetail || 'Fallo de conexión');
     }
 
     setIsLoading(false);
