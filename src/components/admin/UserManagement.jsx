@@ -125,7 +125,9 @@ export default function UserManagement() {
     return DEFAULT_CLIENT_SITES;
   });
 
-  const [selectedSiteId, setSelectedSiteId] = useState('kal-discobar');
+  const [selectedSiteId, setSelectedSiteId] = useState(() => {
+    return localStorage.getItem('dynamind_selected_site_id') || 'andicas-bioparque';
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState(null);
   const [isSavedRecently, setIsSavedRecently] = useState(false);
@@ -133,6 +135,13 @@ export default function UserManagement() {
     const savedLogs = localStorage.getItem('dynamind_remote_logs');
     return savedLogs ? JSON.parse(savedLogs) : [];
   });
+
+  const handleSelectSite = (siteId) => {
+    setSelectedSiteId(siteId);
+    try {
+      localStorage.setItem('dynamind_selected_site_id', siteId);
+    } catch {}
+  };
 
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [newSiteName, setNewSiteName] = useState('');
@@ -791,7 +800,7 @@ export default function UserManagement() {
           return (
             <button
               key={site.id}
-              onClick={() => setSelectedSiteId(site.id)}
+              onClick={() => handleSelectSite(site.id)}
               className={`px-4 py-2.5 rounded-xl text-xs font-medium transition-all flex items-center gap-2.5 whitespace-nowrap border ${
                 isSelected 
                   ? 'bg-white text-black font-semibold border-white shadow-md' 
