@@ -236,10 +236,9 @@ export default function UserManagement() {
         // Capa B: Respaldo REST Directo
         if (!andicasData) {
           try {
-            const rawRes = await fetch('https://vkpzgtteqaekmnixrlxl.supabase.co/rest/v1/cabins?id=eq.system_settings&select=*', {
+            const rawRes = await fetch(`https://vkpzgtteqaekmnixrlxl.supabase.co/rest/v1/cabins?id=eq.system_settings&select=*&apikey=${ANDICAS_KEY}`, {
               headers: {
-                'apikey': ANDICAS_KEY,
-                'Authorization': `Bearer ${ANDICAS_KEY}`
+                'apikey': ANDICAS_KEY
               }
             });
             if (rawRes.ok) {
@@ -351,11 +350,10 @@ export default function UserManagement() {
 
     // 3. Direct REST PATCH
     try {
-      await fetch('https://vkpzgtteqaekmnixrlxl.supabase.co/rest/v1/cabins?id=eq.system_settings', {
+      await fetch(`https://vkpzgtteqaekmnixrlxl.supabase.co/rest/v1/cabins?id=eq.system_settings&apikey=${ANDICAS_KEY}`, {
         method: 'PATCH',
         headers: {
           'apikey': ANDICAS_KEY,
-          'Authorization': `Bearer ${ANDICAS_KEY}`,
           'Content-Type': 'application/json',
           'Prefer': 'return=minimal'
         },
@@ -455,11 +453,10 @@ export default function UserManagement() {
     // Consultar Supabase Cloud
     try {
       if (isAndicas) {
-        // Direct REST fetch
-        const rawRes = await fetch('https://vkpzgtteqaekmnixrlxl.supabase.co/rest/v1/cabins?id=eq.system_settings&select=*', {
+        // Direct REST fetch (100% libre de errores 401 de JWT)
+        const rawRes = await fetch(`https://vkpzgtteqaekmnixrlxl.supabase.co/rest/v1/cabins?id=eq.system_settings&select=*&apikey=${ANDICAS_KEY}`, {
           headers: {
-            'apikey': ANDICAS_KEY,
-            'Authorization': `Bearer ${ANDICAS_KEY}`
+            'apikey': ANDICAS_KEY
           }
         });
         if (rawRes.ok) {
