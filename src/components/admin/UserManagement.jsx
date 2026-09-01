@@ -357,6 +357,10 @@ export default function UserManagement() {
           })
         });
         console.log('⚡ [Dynamind Panel] Andicas sincronizado directo con Supabase Cloud:', newStatus);
+        try {
+          localStorage.setItem('andicas_subscription_status', newStatus);
+          window.dispatchEvent(new CustomEvent('andicas_system_update'));
+        } catch {}
       } catch (sbErr) {
         console.warn('Nota sync Supabase Andicas directo:', sbErr);
       }
@@ -527,6 +531,9 @@ export default function UserManagement() {
           description: JSON.stringify(updatedFeatures)
         });
         console.log('⚡ [Dynamind Panel] Andicas Módulos sincronizados directo con Supabase Cloud:', updatedFeatures);
+        try {
+          window.dispatchEvent(new CustomEvent('andicas_system_update'));
+        } catch {}
       } catch (sbErr) {
         console.warn('Nota sync Supabase Andicas módulos:', sbErr);
       }
