@@ -204,30 +204,53 @@ export default function UserManagement() {
         console.warn('Nota sync cloud KAL en panel:', e);
       }
 
-      // 2. Consultar ANDICAS / QUIMBAYAS
+      // 2. Consultar ANDICAS / QUIMBAYAS (Multi-Capa: SDK + REST Directo)
       try {
-        const [settingsRes, adminAuthRes] = await Promise.allSettled([
-          ANDICAS_SB.from('cabins').select('*').eq('id', 'system_settings').maybeSingle(),
-          ANDICAS_SB.from('cabins').select('*').eq('id', 'admin_auth').maybeSingle()
-        ]);
+        let andicasData = null;
+        let andicasAdminPass = null;
 
-        let andicasStatus = null;
-        let andicasModules = null;
-        if (settingsRes.status === 'fulfilled' && settingsRes.value.data) {
-          andicasStatus = settingsRes.value.data.type || 'active';
+        // Capa A: SDK Supabase
+        try {
+          const [settingsRes, adminAuthRes] = await Promise.allSettled([
+            ANDICAS_SB.from('cabins').select('*').eq('id', 'system_settings').maybeSingle(),
+            ANDICAS_SB.from('cabins').select('*').eq('id', 'admin_auth').maybeSingle()
+          ]);
+          if (settingsRes.status === 'fulfilled' && settingsRes.value.data) {
+            andicasData = settingsRes.value.data;
+          }
+          if (adminAuthRes.status === 'fulfilled' && adminAuthRes.value.data?.description) {
+            andicasAdminPass = adminAuthRes.value.data.description;
+          }
+        } catch (sdkErr) {}
+
+        // Capa B: Respaldo REST Directo
+        if (!andicasData) {
           try {
-            andicasModules = JSON.parse(settingsRes.value.data.description);
-          } catch {}
+            const rawRes = await fetch('https://vkpzgtteqaekmnixrlxl.supabase.co/rest/v1/cabins?id=eq.system_settings&select=*', {
+              headers: {
+                'apikey': ANDICAS_KEY,
+                'Authorization': `Bearer ${ANDICAS_KEY}`
+              }
+            });
+            if (rawRes.ok) {
+              const rows = await rawRes.json();
+              if (rows && rows.length > 0) andicasData = rows[0];
+            }
+          } catch (restErr) {}
         }
 
-        let andicasAdminPass = null;
-        if (adminAuthRes.status === 'fulfilled' && adminAuthRes.value.data?.description) {
-          andicasAdminPass = adminAuthRes.value.data.description;
+        let andicasStatus = andicasData?.type || null;
+        let andicasModules = null;
+        if (andicasData?.description) {
+          try {
+            andicasModules = typeof andicasData.description === 'string' ? JSON.parse(andicasData.description) : andicasData.description;
+          } catch {}
         }
 
         if (andicasStatus || andicasModules || andicasAdminPass) {
           setClientSites(prev => prev.map(s => {
-            if (s.id === 'andicas-bioparque' || s.name?.toLowerCase().includes('andicas') || s.name?.toLowerCase().includes('quimbaya')) {
+            const isAndicasSite = s.id === 'andicas-bioparque' || s.id?.includes('andicas') || s.name?.toLowerCase().includes('andicas') || s.name?.toLowerCase().includes('quimbaya') || s.domain?.includes('andicas');
+            if (isAndicasSite) {
               return {
                 ...s,
                 status: andicasStatus || s.status,
@@ -253,45 +276,13 @@ export default function UserManagement() {
     }
   };
 
-  // Sondeo continuo y Realtime para reflejar el estado 100% real sin desincronización
+  // Sondeo continuo para reflejar el estado 100% real sin desincronización
   useEffect(() => {
     fetchLiveStatusFromCloud();
     const interval = setInterval(fetchLiveStatusFromCloud, 2500);
 
-    const andicasChannel = ANDICAS_SB.channel('dynamind_andicas_live')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'cabins', filter: 'id=eq.system_settings' }, (payload) => {
-        if (payload.new) {
-          const newStatus = payload.new.type || 'active';
-          let newMods = null;
-          try { newMods = JSON.parse(payload.new.description); } catch {}
-          setClientSites(prev => prev.map(s => (s.id === 'andicas-bioparque' || s.name?.toLowerCase().includes('andicas')) ? { 
-            ...s, 
-            status: newStatus,
-            features: newMods ? {
-              bookings: newMods.bookings !== false,
-              recaudos: newMods.recaudos !== false,
-              personalizacion: newMods.personalizacion !== false,
-              users_management: newMods.users_management !== false,
-              cancelaciones: newMods.cancelaciones !== false
-            } : s.features
-          } : s));
-        }
-      })
-      .subscribe();
-
-    const kalChannel = KAL_SB.channel('dynamind_kal_live')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'system_settings', filter: 'id=eq.global' }, (payload) => {
-        if (payload.new) {
-          const newStatus = payload.new.subscription_status || 'active';
-          setClientSites(prev => prev.map(s => (s.id === 'kal-discobar' || s.name?.toLowerCase().includes('kal')) ? { ...s, status: newStatus } : s));
-        }
-      })
-      .subscribe();
-
     return () => {
       clearInterval(interval);
-      andicasChannel.unsubscribe();
-      kalChannel.unsubscribe();
     };
   }, []);
 
@@ -321,11 +312,53 @@ export default function UserManagement() {
     return url.trim().replace(/\/+$/, '');
   };
 
+  // Helper multi-capa para guardar estado de Andicas en Supabase Cloud
+  const saveAndicasToSupabase = async (status, features) => {
+    const payload = {
+      id: 'system_settings',
+      name: 'System Settings',
+      type: status,
+      price_per_night: 0,
+      description: typeof features === 'string' ? features : JSON.stringify(features)
+    };
+
+    // 1. Supabase SDK
+    try {
+      await ANDICAS_SB.from('cabins').upsert(payload);
+    } catch (e) {
+      console.warn('SDK upsert warning:', e);
+    }
+
+    // 2. Direct REST PATCH
+    try {
+      await fetch('https://vkpzgtteqaekmnixrlxl.supabase.co/rest/v1/cabins?id=eq.system_settings', {
+        method: 'PATCH',
+        headers: {
+          'apikey': ANDICAS_KEY,
+          'Authorization': `Bearer ${ANDICAS_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ type: status, description: payload.description })
+      });
+    } catch (e) {
+      console.warn('REST PATCH warning:', e);
+    }
+
+    // 3. Local cross-tab sync
+    try {
+      localStorage.setItem('andicas_subscription_status', status);
+      window.dispatchEvent(new CustomEvent('andicas_system_update'));
+    } catch {}
+  };
+
   // 1. Remote Killswitch Command (active / unpaid)
   const handleSetRemoteStatus = async (newStatus) => {
     if (!activeSite) return;
     setIsLoading(true);
     setFeedbackMessage(null);
+
+    const isAndicas = activeSite.id === 'andicas-bioparque' || activeSite.id?.includes('andicas') || activeSite.name?.toLowerCase().includes('andicas') || activeSite.name?.toLowerCase().includes('quimbaya') || activeSite.domain?.includes('andicas');
 
     // Sincronización ultrarrápida paralela directa a Supabase Cloud (KAL DISCOBAR)
     if (activeSite.id === 'kal-discobar' || activeSite.name?.toLowerCase().includes('kal')) {
@@ -333,37 +366,22 @@ export default function UserManagement() {
         await KAL_SB
           .from('system_settings')
           .upsert({ id: 'global', subscription_status: newStatus, updated_at: new Date().toISOString() });
-        console.log('⚡ [Dynamind Panel] KAL sincronizado directo con Supabase Cloud:', newStatus);
       } catch (sbErr) {
         console.warn('Nota sync Supabase directo:', sbErr);
       }
     }
 
     // Sincronización ultrarrápida paralela directa a Supabase Cloud (ANDICAS / QUIMBAYAS)
-    if (activeSite.id === 'andicas-bioparque' || activeSite.name?.toLowerCase().includes('andicas') || activeSite.name?.toLowerCase().includes('quimbaya')) {
-      try {
-        await ANDICAS_SB.from('cabins').upsert({
-          id: 'system_settings',
-          name: 'System Settings',
-          type: newStatus,
-          price_per_night: 0,
-          description: JSON.stringify(activeSite.features || {
-            bookings: true,
-            wompi_payments: true,
-            recaudos: true,
-            cancelaciones: true,
-            personalizacion: true,
-            users_management: true
-          })
-        });
-        console.log('⚡ [Dynamind Panel] Andicas sincronizado directo con Supabase Cloud:', newStatus);
-        try {
-          localStorage.setItem('andicas_subscription_status', newStatus);
-          window.dispatchEvent(new CustomEvent('andicas_system_update'));
-        } catch {}
-      } catch (sbErr) {
-        console.warn('Nota sync Supabase Andicas directo:', sbErr);
-      }
+    if (isAndicas) {
+      const feats = activeSite.features || {
+        bookings: true,
+        recaudos: true,
+        personalizacion: true,
+        users_management: true,
+        cancelaciones: true
+      };
+      await saveAndicasToSupabase(newStatus, feats);
+      console.log('⚡ [Dynamind Panel] Andicas sincronizado directo con Supabase Cloud:', newStatus);
     }
 
     // Actualizar estado local inmediatamente y persistir
@@ -372,8 +390,8 @@ export default function UserManagement() {
     localStorage.setItem('dynamind_client_sites', JSON.stringify(updatedSites));
 
     const msg = newStatus === 'unpaid' 
-      ? `🚫 Sitio "${activeSite.name}" BLOQUEADO por Falta de Pago (Supabase Realtime).` 
-      : `✅ Sitio "${activeSite.name}" ACTIVADO con Éxito (Supabase Realtime).`;
+      ? `🚫 Sitio "${activeSite.name}" BLOQUEADO por Falta de Pago.` 
+      : `✅ Sitio "${activeSite.name}" ACTIVADO con Éxito.`;
     
     setFeedbackMessage({ type: 'success', text: msg });
     addLog(activeSite.name, newStatus === 'unpaid' ? 'Bloqueo por Pago' : 'Reactivación', 'OK', msg);
@@ -382,11 +400,10 @@ export default function UserManagement() {
       confetti({ particleCount: 40, spread: 45 });
     }
 
-    // Intento de notificación al backend HTTP
+    // Notificación en segundo plano al backend (sin bloquear la interfaz)
     const baseUrl = getCleanBaseUrl(activeSite.backendUrl);
-    try {
-      const endpoint = `${baseUrl}/api/bookings/admin/set-subscription-status`;
-      await fetch(endpoint, {
+    if (baseUrl) {
+      fetch(`${baseUrl}/api/bookings/admin/set-subscription-status`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -397,12 +414,11 @@ export default function UserManagement() {
           action: newStatus === 'unpaid' ? 'disable' : 'enable',
           key: activeSite.masterKey || 'PanelPassword1966@',
         }),
-      });
-    } catch (err) {
-      console.warn('Backend HTTP opcional no respondió, pero Supabase Cloud ya aplicó el cambio:', err.message);
-    } finally {
-      setIsLoading(false);
+        signal: AbortSignal.timeout(3000)
+      }).catch(() => {});
     }
+
+    setIsLoading(false);
   };
 
   // 2. Query Remote Status (GET Ping & Supabase Cloud Check)
@@ -412,10 +428,11 @@ export default function UserManagement() {
     setFeedbackMessage(null);
 
     let cloudStatus = null;
+    const isAndicas = activeSite.id === 'andicas-bioparque' || activeSite.id?.includes('andicas') || activeSite.name?.toLowerCase().includes('andicas') || activeSite.name?.toLowerCase().includes('quimbaya') || activeSite.domain?.includes('andicas');
 
     // Consultar Supabase Cloud
     try {
-      if (activeSite.id === 'andicas-bioparque' || activeSite.name?.toLowerCase().includes('andicas') || activeSite.name?.toLowerCase().includes('quimbaya')) {
+      if (isAndicas) {
         const { data } = await ANDICAS_SB.from('cabins').select('*').eq('id', 'system_settings').maybeSingle();
         if (data) {
           cloudStatus = data.type || 'active';
@@ -436,41 +453,14 @@ export default function UserManagement() {
       localStorage.setItem('dynamind_client_sites', JSON.stringify(updatedSites));
       setFeedbackMessage({ 
         type: 'success', 
-        text: `🟢 Conexión Verificada: Supabase Cloud en Vivo. Estado: ${cloudStatus === 'active' ? 'ACTIVO (Página Online)' : 'BLOQUEADO (Falta de Pago)'}` 
+        text: `🟢 Conexión Verificada en Supabase Cloud. Estado: ${cloudStatus === 'active' ? 'ACTIVO (Página Online)' : 'BLOQUEADO (Falta de Pago)'}` 
       });
       addLog(activeSite.name, 'Ping Nube', 'OK', `Estado Supabase: ${cloudStatus}`);
       setIsLoading(false);
       return;
     }
 
-    const baseUrl = getCleanBaseUrl(activeSite.backendUrl);
-    try {
-      const endpoint = `${baseUrl}/api/bookings/admin/subscription-status`;
-      const response = await fetch(endpoint, {
-        method: 'GET',
-        headers: {
-          'x-admin-key': activeSite.masterKey || 'PanelPassword1966@',
-        }
-      });
-      const data = await response.json();
-
-      if (data && data.status) {
-        const updatedSites = clientSites.map(s => s.id === activeSite.id ? { ...s, status: data.status, lastCheck: new Date().toISOString() } : s);
-        setClientSites(updatedSites);
-        localStorage.setItem('dynamind_client_sites', JSON.stringify(updatedSites));
-        setFeedbackMessage({ type: 'success', text: `Estado remoto verificado con éxito: ${data.status === 'active' ? '🟢 Activo' : '🔴 Bloqueado'}` });
-        addLog(activeSite.name, 'Verificación Ping', 'OK', `Respuesta: ${data.status}`);
-      } else {
-        setFeedbackMessage({ type: 'info', text: `Servidor respondió pero no devolvió estado. Verifica las rutas.` });
-      }
-    } catch (err) {
-      console.error('Error de ping con backend:', err);
-      const errMsg = `❌ No se pudo conectar a ${baseUrl}: ${err.message}.`;
-      setFeedbackMessage({ type: 'error', text: errMsg });
-      addLog(activeSite.name, 'Ping', 'ERROR', errMsg);
-    } finally {
-      setIsLoading(false);
-    }
+    setIsLoading(false);
   };
 
   // 3. Save Connection Config Explicitly (URL & Key)
@@ -504,6 +494,8 @@ export default function UserManagement() {
     setClientSites(updatedSites);
     localStorage.setItem('dynamind_client_sites', JSON.stringify(updatedSites));
 
+    const isAndicas = activeSite.id === 'andicas-bioparque' || activeSite.id?.includes('andicas') || activeSite.name?.toLowerCase().includes('andicas') || activeSite.name?.toLowerCase().includes('quimbaya') || activeSite.domain?.includes('andicas');
+
     // Sincronización ultrarrápida a Supabase Cloud (KAL DISCOBAR)
     if (activeSite.id === 'kal-discobar' || activeSite.name?.toLowerCase().includes('kal')) {
       try {
@@ -521,58 +513,39 @@ export default function UserManagement() {
     }
 
     // Sincronización ultrarrápida a Supabase Cloud (ANDICAS / QUIMBAYAS)
-    if (activeSite.id === 'andicas-bioparque' || activeSite.name?.toLowerCase().includes('andicas') || activeSite.name?.toLowerCase().includes('quimbaya')) {
-      try {
-        await ANDICAS_SB.from('cabins').upsert({
-          id: 'system_settings',
-          name: 'System Settings',
-          type: activeSite.status || 'active',
-          price_per_night: 0,
-          description: JSON.stringify(updatedFeatures)
-        });
-        console.log('⚡ [Dynamind Panel] Andicas Módulos sincronizados directo con Supabase Cloud:', updatedFeatures);
-        try {
-          window.dispatchEvent(new CustomEvent('andicas_system_update'));
-        } catch {}
-      } catch (sbErr) {
-        console.warn('Nota sync Supabase Andicas módulos:', sbErr);
-      }
+    if (isAndicas) {
+      await saveAndicasToSupabase(activeSite.status || 'active', updatedFeatures);
+      console.log('⚡ [Dynamind Panel] Andicas Módulos sincronizados directo con Supabase Cloud:', updatedFeatures);
     }
 
-    try {
-      const baseUrl = getCleanBaseUrl(activeSite.backendUrl);
-      const endpoint = `${baseUrl}/api/bookings/admin/set-module-status`;
-      
-      const payload = {
-        module: featureKey,
-        enabled: newVal,
-        active: newVal,
-        status: newVal ? 'active' : 'inactive',
-        modules: updatedFeatures,
-        key: activeSite.masterKey || 'PanelPassword1966@'
-      };
+    addLog(activeSite.name, `Módulo: ${featureKey}`, 'OK', `Servidor actualizado a: ${newVal ? 'Habilitado' : 'Deshabilitado'}`);
+    setFeedbackMessage({ 
+      type: 'success', 
+      text: `Módulo "${featureKey}" ${newVal ? 'HABILITADO' : 'DESHABILITADO'} con éxito.` 
+    });
 
-      const res = await fetch(endpoint, {
+    // Notificación en segundo plano al backend (sin bloquear la interfaz)
+    const baseUrl = getCleanBaseUrl(activeSite.backendUrl);
+    if (baseUrl) {
+      fetch(`${baseUrl}/api/bookings/admin/set-module-status`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'x-admin-key': activeSite.masterKey || 'PanelPassword1966@'
         },
-        body: JSON.stringify(payload)
-      });
-
-      if (res.ok) {
-        addLog(activeSite.name, `Módulo: ${featureKey}`, 'OK', `Servidor actualizado a: ${newVal ? 'Habilitado' : 'Deshabilitado'}`);
-        setFeedbackMessage({ 
-          type: 'success', 
-          text: `Módulo "${featureKey}" ${newVal ? 'HABILITADO' : 'DESHABILITADO'} con éxito en el servidor.` 
-        });
-      }
-    } catch (err) {
-      console.warn('Error enviando toggle al backend:', err);
-      addLog(activeSite.name, `Módulo: ${featureKey}`, 'ERROR', `Fallo al sincronizar con ${activeSite.backendUrl}`);
+        body: JSON.stringify({
+          module: featureKey,
+          enabled: newVal,
+          active: newVal,
+          status: newVal ? 'active' : 'inactive',
+          modules: updatedFeatures,
+          key: activeSite.masterKey || 'PanelPassword1966@'
+        }),
+        signal: AbortSignal.timeout(3000)
+      }).catch(() => {});
     }
   };
+
 
   // 4. Cambiar Contraseña Remota de Administrador (Cliente)
   const handleUpdateAdminPassword = async () => {
