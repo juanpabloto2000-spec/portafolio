@@ -18,7 +18,8 @@ const KAL_SB = createClient(
   { auth: { persistSession: false } }
 );
 
-const ANDICAS_KEY = atob('c2Jfc2VjcmV0X3lEeWt6QVVnSzRkZ0czUVlGLWVyUXdfbVRhaVQ4dEc=');
+const getAndicasKey = () => typeof atob === 'function' ? atob('c2Jfc2VjcmV0X3lEeWt6QVVnSzRkZ0czUVlGLWVyUXdfbVRhaVQ4dEc=') : Buffer.from('c2Jfc2VjcmV0X3lEeWt6QVVnSzRkZ0czUVlGLWVyUXdfbVRhaVQ4dEc=', 'base64').toString();
+const ANDICAS_KEY = getAndicasKey();
 const ANDICAS_SB = createClient(
   'https://vkpzgtteqaekmnixrlxl.supabase.co',
   ANDICAS_KEY,
