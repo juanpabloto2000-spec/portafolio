@@ -322,14 +322,24 @@ export default function UserManagement() {
       description: typeof features === 'string' ? features : JSON.stringify(features)
     };
 
-    // 1. Supabase SDK
+    // 1. Supabase SDK Update
+    try {
+      await ANDICAS_SB.from('cabins').update({
+        type: status,
+        description: payload.description
+      }).eq('id', 'system_settings');
+    } catch (e) {
+      console.warn('SDK update warning:', e);
+    }
+
+    // 2. Supabase SDK Upsert
     try {
       await ANDICAS_SB.from('cabins').upsert(payload);
     } catch (e) {
       console.warn('SDK upsert warning:', e);
     }
 
-    // 2. Direct REST PATCH
+    // 3. Direct REST PATCH
     try {
       await fetch('https://vkpzgtteqaekmnixrlxl.supabase.co/rest/v1/cabins?id=eq.system_settings', {
         method: 'PATCH',
@@ -345,9 +355,10 @@ export default function UserManagement() {
       console.warn('REST PATCH warning:', e);
     }
 
-    // 3. Local cross-tab sync
+    // 4. Local cross-tab sync
     try {
       localStorage.setItem('andicas_subscription_status', status);
+      localStorage.setItem('andicas_subscription_modules', payload.description);
       window.dispatchEvent(new CustomEvent('andicas_system_update'));
     } catch {}
   };
