@@ -35,3 +35,8 @@ screenshot*.png
 temp_captures/
 *.local
 
+# Local WhatsApp Gateway session & node_modules
+server_wa/node_modules/
+server_wa/auth_info/
+
+
