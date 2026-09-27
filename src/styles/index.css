@@ -195,3 +195,10 @@ html.theme-alabaster .glow-card {
   pointer-events: none;
   animation: laserSweep 8s linear infinite;
 }
+
+/* Keyframe Shimmer Cósmico para Skeletons del State Quintet (Doc 24) */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
