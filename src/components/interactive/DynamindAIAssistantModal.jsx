@@ -129,26 +129,23 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200 font-sans">
-      <div className="relative w-full max-w-xl bg-[#080b13] border border-white/20 rounded-3xl p-6 sm:p-8 space-y-5 shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+      <div className="relative w-full max-w-xl bg-[#080b13]/98 border border-white/15 rounded-3xl p-6 sm:p-8 space-y-5 shadow-2xl overflow-hidden flex flex-col max-h-[85vh] glow-card">
         
-        {/* Cabecera del Asistente Aura */}
+        {/* Cabecera Limpia del Asistente AURA */}
         <div className="flex items-center justify-between border-b border-white/10 pb-4">
           <div className="flex items-center gap-3">
             
-            {/* Avatar Galáctico de Aura */}
+            {/* Avatar Galáctico de AURA */}
             <div className="relative w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500/20 via-purple-500/20 to-amber-500/10 border border-cyan-400/40 flex items-center justify-center text-cyan-300 shadow-[0_0_15px_rgba(34,211,238,0.25)]">
-              <Sparkles className="w-5 h-5 animate-pulse" />
+              <Sparkles className="w-5 h-5 animate-pulse text-cyan-400" />
               <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#38bdf8]" />
             </div>
 
             <div>
-              <div className="font-display font-bold text-white text-base flex items-center gap-2">
-                <span>Aura // Asistente Dynamind</span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
-                  Voz Activa
-                </span>
+              <div className="font-display font-bold text-white text-lg tracking-wider">
+                AURA
               </div>
-              <p className="text-[11px] font-mono text-zinc-400">Ingeniería & Diagnóstico de Cuellos de Botella</p>
+              <p className="text-[11px] font-mono text-zinc-400">Inteligencia de Arquitectura & Diagnóstico</p>
             </div>
           </div>
 
@@ -159,10 +156,10 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
               className={`p-2.5 rounded-xl border transition-all cursor-pointer flex items-center gap-1.5 ${
                 isVoiceActive
                   ? 'bg-cyan-950/60 border-cyan-400/60 text-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.25)]'
-                  : 'bg-white/[0.03] border-white/10 text-zinc-400 hover:text-white'
+                  : 'bg-white/[0.03] border-white/10 text-zinc-500 hover:text-white'
               }`}
-              title={isVoiceActive ? 'Silenciar voz de Aura' : 'Activar voz femenina de Aura'}
-              aria-label="Alternar voz de asistente"
+              title={isVoiceActive ? 'Silenciar voz de AURA' : 'Activar voz de AURA'}
+              aria-label="Alternar voz de AURA"
             >
               {isVoiceActive ? (
                 <>

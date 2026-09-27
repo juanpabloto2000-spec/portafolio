@@ -44,8 +44,8 @@ export default function AppearanceModal({ isOpen, onClose }) {
   ];
 
   const languagesList = [
-    { code: 'es', label: 'Español', flag: '🇪🇸', region: 'Global ES' },
-    { code: 'en', label: 'English', flag: '🇺🇸', region: 'International' },
+    { code: 'es', label: 'Español', flag: '🇨🇴', region: 'Colombia / Latam' },
+    { code: 'en', label: 'English', flag: '🇺🇸', region: 'Global / US' },
     { code: 'fr', label: 'Français', flag: '🇫🇷', region: 'Europe FR' },
     { code: 'de', label: 'Deutsch', flag: '🇩🇪', region: 'DACH DE' },
     { code: 'pt', label: 'Português', flag: '🇧🇷', region: 'Brasil / PT' },

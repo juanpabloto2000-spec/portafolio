@@ -398,10 +398,6 @@ export default function SystemsPage() {
         {/* Cabecera Principal */}
         <section className="max-w-7xl mx-auto px-6 sm:px-12 pt-4">
           <RevealSection direction="up" className="max-w-3xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/25 text-cyan-400 font-mono text-xs font-semibold">
-              <Zap className="w-3.5 h-3.5 animate-pulse" />
-              <span>Consola de Arquitectura // Suite de 16 Sistemas Propietarios</span>
-            </div>
             <h1 className="font-display font-bold text-4xl sm:text-6xl text-white tracking-tight">
               Sistemas de Software & Automatizaciones Reales
             </h1>
@@ -415,58 +411,61 @@ export default function SystemsPage() {
         {/* ============================================================== */}
         {/* CONSOLA DE SISTEMAS EN SPLIT-VIEW TÁCTICO                     */}
         {/* ============================================================== */}
-        <section className="max-w-7xl mx-auto px-6 sm:px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <section className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
             
-            {/* RAIL LATERAL IZQUIERDO: SELECTOR DE LOS 16 SISTEMAS (4 cols) */}
-            <div className="lg:col-span-4 space-y-2 max-h-[750px] overflow-y-auto pr-1">
-              <div className="text-[11px] font-mono text-zinc-400 uppercase tracking-widest px-2 pb-1 flex items-center justify-between">
+            {/* SELECTOR DE LOS 16 SISTEMAS: Horizontal scroll en móvil, rail lateral en desktop */}
+            <div className="lg:col-span-4 w-full">
+              <div className="text-[11px] font-mono text-zinc-400 uppercase tracking-widest px-1 pb-2 flex items-center justify-between">
                 <span>MÓDULOS DE ARQUITECTURA</span>
                 <span className="text-cyan-400 font-bold">16 ACTIVOS</span>
               </div>
 
-              {systemsSuite.map((sys) => {
-                const isSelected = selectedSystemId === sys.id;
-                const Icon = sys.icon;
-                return (
-                  <button
-                    key={sys.id}
-                    onClick={() => {
-                      soundFx.playBlip(540);
-                      setSelectedSystemId(sys.id);
-                    }}
-                    className={`w-full p-3.5 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between gap-3 ${
-                      isSelected
-                        ? 'bg-white text-black border-white font-bold shadow-lg shadow-white/10 scale-[1.01]'
-                        : 'bg-white/[0.02] text-zinc-400 border-white/10 hover:text-white hover:border-white/25 hover:bg-white/[0.04]'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3 truncate">
-                      <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
-                        isSelected ? 'bg-black text-white' : 'bg-white/10 text-cyan-400'
-                      }`}>
-                        <Icon className="w-4 h-4" />
+              {/* Contenedor adaptativo: flex horizontal scroll en móvil, stack vertical en desktop */}
+              <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-y-auto pb-2 lg:pb-0 scrollbar-none snap-x lg:max-h-[750px] lg:pr-1">
+                {systemsSuite.map((sys) => {
+                  const isSelected = selectedSystemId === sys.id;
+                  const Icon = sys.icon;
+                  return (
+                    <button
+                      key={sys.id}
+                      onClick={() => {
+                        soundFx.playBlip(540);
+                        setSelectedSystemId(sys.id);
+                      }}
+                      className={`p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between gap-3 shrink-0 min-w-[170px] sm:min-w-[200px] lg:w-full snap-start ${
+                        isSelected
+                          ? 'bg-white text-black border-white font-bold shadow-lg shadow-white/10 scale-[1.01]'
+                          : 'bg-white/[0.02] text-zinc-400 border-white/10 hover:text-white hover:border-white/25 hover:bg-white/[0.04]'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 sm:gap-3 truncate">
+                        <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl flex items-center justify-center shrink-0 ${
+                          isSelected ? 'bg-black text-white' : 'bg-white/10 text-cyan-400'
+                        }`}>
+                          <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                        </div>
+                        <div className="truncate">
+                          <span className={`text-[9px] sm:text-[10px] font-mono block ${isSelected ? 'text-zinc-600' : 'text-zinc-500'}`}>
+                            SISTEMA {sys.number}
+                          </span>
+                          <span className="text-xs font-sans font-bold leading-tight truncate block">
+                            {sys.shortLabel}
+                          </span>
+                        </div>
                       </div>
-                      <div className="truncate">
-                        <span className={`text-[10px] font-mono block ${isSelected ? 'text-zinc-600' : 'text-zinc-500'}`}>
-                          SISTEMA {sys.number}
-                        </span>
-                        <span className="text-xs font-sans font-bold leading-tight truncate">
-                          {sys.shortLabel}
-                        </span>
-                      </div>
-                    </div>
 
-                    <div className="shrink-0">
-                      {isSelected ? (
-                        <div className="w-2 h-2 rounded-full bg-cyan-500 animate-ping" />
-                      ) : (
-                        <span className="text-xs font-mono text-zinc-600">→</span>
-                      )}
-                    </div>
-                  </button>
-                );
-              })}
+                      <div className="shrink-0">
+                        {isSelected ? (
+                          <div className="w-2 h-2 rounded-full bg-cyan-500 animate-ping" />
+                        ) : (
+                          <span className="text-xs font-mono text-zinc-600 hidden sm:inline">→</span>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             {/* VISUALIZADOR CENTRAL HYPERFRAMES DE ARQUITECTURA (8 cols) */}

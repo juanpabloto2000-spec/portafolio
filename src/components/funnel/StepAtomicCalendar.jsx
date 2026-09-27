@@ -15,8 +15,8 @@ export default function StepAtomicCalendar({ formData, updateFormData, onPrev, o
 
     while (days.length < 8) {
       const dayOfWeek = current.getDay();
-      // 0 = Domingo, 6 = Sábado
-      if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+      // 0 = Domingo (se incluye Sábado para Lun-Sáb)
+      if (dayOfWeek !== 0) {
         const yyyy = current.getFullYear();
         const mm = String(current.getMonth() + 1).padStart(2, '0');
         const dd = String(current.getDate()).padStart(2, '0');

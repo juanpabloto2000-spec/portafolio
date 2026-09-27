@@ -106,7 +106,7 @@ function FrictionOdometreHUD({ score, step }) {
       <div className="flex items-center gap-2 shrink-0">
         <div className="text-right hidden sm:block">
           <div className="text-[10px] font-mono text-zinc-400 uppercase">Faceta Activa</div>
-          <div className="text-xs font-mono font-bold text-white">0{step} / 07</div>
+          <div className="text-xs font-mono font-bold text-white">0{step} / 06</div>
         </div>
         <div className="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-cyan-400">
           <Gauge className="w-5 h-5 animate-pulse" />
@@ -122,7 +122,7 @@ export default function DynamicDopamineQuiz() {
   const [isLoading, setIsLoading] = useState(false);
   const [createdLead, setCreatedLead] = useState(null);
 
-  // Estado del formulario ampliado a 7 facetas
+  // Estado del formulario optimizado a 6 facetas concisas
   const [formData, setFormData] = useState({
     // Faceta 1: Identidad
     client_name: '',
@@ -140,18 +140,16 @@ export default function DynamicDopamineQuiz() {
     daily_volume: '10 a 30 clientes / consultas diarias',
     volume_friction: 15,
     
-    // Faceta 4: Cuello de Botella (Condicional al nicho)
+    // Faceta 4: Cuello de Botella (Multi-select)
+    bottlenecks: [],
     bottleneck: '',
     bottleneck_score: 85,
     
-    // Faceta 5: Nivel de Arquitectura Deseado
-    architecture_level: 'Core Operativo Completo (DSB + Turnos + Inventarios)',
-    
-    // Faceta 6: Plazo & Urgencia
+    // Faceta 5: Plazo & Urgencia
     urgency: 'Inmediata (< 2 a 3 semanas)',
     budget_range: '$2M - $5M COP (Inversión Táctica)',
     
-    // Faceta 7: Agendamiento
+    // Faceta 6: Agendamiento WhatsApp
     friction_score: 45,
     date: '',
     time: '',
@@ -300,7 +298,7 @@ export default function DynamicDopamineQuiz() {
     }, 550);
   };
 
-  // Días laborables automáticos para agendamiento
+  // Días laborables automáticos para agendamiento (Lunes a Sábado)
   const getNextDays = () => {
     const days = [];
     const now = new Date();
@@ -308,7 +306,8 @@ export default function DynamicDopamineQuiz() {
     curr.setDate(curr.getDate() + 1);
 
     while (days.length < 8) {
-      if (curr.getDay() !== 0 && curr.getDay() !== 6) {
+      // 0 = Domingo (se incluye Sábado para cobertura Lun-Sáb)
+      if (curr.getDay() !== 0) {
         const yyyy = curr.getFullYear();
         const mm = String(curr.getMonth() + 1).padStart(2, '0');
         const dd = String(curr.getDate()).padStart(2, '0');
@@ -337,21 +336,43 @@ export default function DynamicDopamineQuiz() {
     setIsLoading(true);
     soundFx.playScanTone();
     try {
+      const bottleneckSummary = formData.bottlenecks && formData.bottlenecks.length > 0 
+        ? formData.bottlenecks.join(' | ') 
+        : (formData.bottleneck || currentBottleneckList[0].title);
+
       const payload = {
         client_name: formData.client_name,
         business_name: formData.business_name,
         profile_type: formData.niche,
         niche: formData.niche,
-        bottleneck: formData.bottleneck || currentBottleneckList[0].title,
+        bottleneck: bottleneckSummary,
         friction_score: currentScore,
         date: selectedDate,
         time: selectedTime,
         phone: formData.phone,
-        notes: `Web: ${formData.website_url || 'No tiene web (' + formData.no_web_reason + ')'} | Volumen: ${formData.daily_volume} | Nivel: ${formData.architecture_level} | Urgencia: ${formData.urgency}`
+        notes: `Web: ${formData.website_url || 'No tiene web (' + formData.no_web_reason + ')'} | Volumen: ${formData.daily_volume} | Urgencia: ${formData.urgency} | Rango: ${formData.budget_range}`
       };
       const lead = await addLead(payload);
       soundFx.playSuccessChord();
       setCreatedLead(lead);
+
+      // Disparar WhatsApp directamente con Juan Pablo (+57 300 892 4110)
+      const waMsg = `Hola Juan Pablo, acabo de completar el diagnóstico de ingeniería en Dynamind Studios.
+
+*Proyecto:* ${formData.business_name || 'Sin nombre'}
+*Tomador de Decisión:* ${formData.client_name || 'Cliente'}
+*Sector:* ${formData.niche}
+*Frenos Detectados:*
+${formData.bottlenecks && formData.bottlenecks.length > 0 ? formData.bottlenecks.map(b => `• ${b}`).join('\n') : `• ${bottleneckSummary}`}
+*Volumen Operativo:* ${formData.daily_volume}
+*Plazo Estimado:* ${formData.urgency}
+*Fecha de Sesión:* ${selectedDate} a las ${selectedTime} (Lun-Sáb)
+*WhatsApp:* ${formData.phone}
+
+Quedo atento para la demostración técnica de 15 minutos.`;
+
+      const waUrl = `https://wa.me/573008924110?text=${encodeURIComponent(waMsg)}`;
+      window.open(waUrl, '_blank');
     } catch (err) {
       console.error('Error registrando lead:', err);
     } finally {
@@ -373,21 +394,21 @@ export default function DynamicDopamineQuiz() {
         <FrictionOdometreHUD score={currentScore} step={step} />
       </div>
 
-      {/* HUD 2: Barra de Telemetría Dinámica - 7 Facetas */}
+      {/* HUD 2: Barra de Telemetría Dinámica - 6 Facetas */}
       <div className="mb-8 p-3.5 sm:p-4 bg-white/[0.02] border border-white/10 rounded-2xl flex items-center justify-between font-mono text-xs text-zinc-400">
         <div className="flex items-center gap-2 text-white font-bold">
           <Activity className="w-4 h-4 text-cyan-400" />
-          <span>Faceta 0{step} de 07</span>
+          <span>Faceta 0{step} de 06</span>
         </div>
         <div className="flex items-center gap-2.5">
           <span className="text-[10px] text-zinc-500 hidden sm:inline uppercase">PROGRESO DEL DIAGNÓSTICO:</span>
           <div className="w-24 sm:w-44 h-2 bg-white/10 rounded-full overflow-hidden">
             <div 
               className="h-full bg-gradient-to-r from-cyan-400 via-blue-500 to-emerald-400 transition-all duration-300"
-              style={{ width: `${(step / 7) * 100}%` }}
+              style={{ width: `${(step / 6) * 100}%` }}
             />
           </div>
-          <span className="text-cyan-400 font-bold">{Math.round((step / 7) * 100)}%</span>
+          <span className="text-cyan-400 font-bold">{Math.round((step / 6) * 100)}%</span>
         </div>
       </div>
 
@@ -793,40 +814,100 @@ export default function DynamicDopamineQuiz() {
           </motion.div>
         )}
 
-        {/* ==================== FACETA 4: CUELLO DE BOTELLA ESPECÍFICO ==================== */}
+        {/* ==================== FACETA 4: FRENOS PRINCIPALES (MULTI-SELECT) ==================== */}
         {step === 4 && (
           <motion.div 
             initial={{ opacity: 0, y: 15 }} 
             animate={{ opacity: 1, y: 0 }} 
-            className="space-y-8"
+            className="space-y-6 sm:space-y-8"
           >
             <div className="space-y-2 text-center max-w-xl mx-auto">
               <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-red-400">
                 Fricción Crítica // {formData.niche}
               </span>
               <h2 className="font-display font-bold text-2xl sm:text-4xl text-white pt-1">
-                ¿Cuál es el principal freno de tu operación hoy?
+                ¿Cuáles son los principales frenos de tu operación hoy?
               </h2>
               <p className="text-xs sm:text-sm font-sans text-zinc-300">
-                Selecciona la situación que más dinero o tiempo te está drenando.
+                Selecciona uno o varios frenos que estén afectando tu rentabilidad o tu tiempo.
               </p>
             </div>
 
             <div className="space-y-3">
+              {/* Opción destacada: Todos los anteriores */}
+              {(() => {
+                const areAllSelected = currentBottleneckList.length > 0 && 
+                  currentBottleneckList.every(b => (formData.bottlenecks || []).includes(b.title));
+                return (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundFx.playBlip(620, 0.05);
+                      setFormData(prev => {
+                        const currentArr = prev.bottlenecks || [];
+                        const allTitles = currentBottleneckList.map(b => b.title);
+                        const isAllNow = !areAllSelected;
+                        return {
+                          ...prev,
+                          bottlenecks: isAllNow ? allTitles : [],
+                          bottleneck: isAllNow ? '🚨 Todos los anteriores (Freno Total en la Operación)' : '',
+                          bottleneck_score: 96,
+                          friction_score: isAllNow ? 96 : 45
+                        };
+                      });
+                    }}
+                    className={`w-full p-4 sm:p-5 rounded-2xl text-left border transition-all cursor-pointer flex items-center justify-between gap-4 ${
+                      areAllSelected
+                        ? 'bg-gradient-to-r from-red-950/60 to-purple-950/60 border-red-500/80 shadow-[0_0_20px_rgba(239,68,68,0.25)] text-white'
+                        : 'bg-white/[0.03] text-zinc-300 border-white/10 hover:border-red-500/40 hover:bg-white/[0.05]'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3.5">
+                      <span className="text-2xl shrink-0">🚨</span>
+                      <div>
+                        <div className="font-display font-bold text-sm sm:text-base text-white">
+                          Todos los anteriores (Freno Total en la Operación)
+                        </div>
+                        <div className="text-xs text-zinc-400">
+                          Saturación acumulada en atención, comisiones, caja y falta de automatización.
+                        </div>
+                      </div>
+                    </div>
+                    <div className="shrink-0">
+                      {areAllSelected ? (
+                        <div className="w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center font-bold">
+                          <CheckCircle2 className="w-4 h-4 stroke-[3]" />
+                        </div>
+                      ) : (
+                        <div className="w-6 h-6 rounded-full border border-white/20" />
+                      )}
+                    </div>
+                  </button>
+                );
+              })()}
+
+              {/* Lista de frenos individuales del nicho sin porcentajes */}
               {currentBottleneckList.map((b) => {
-                const isSelected = formData.bottleneck === b.title;
+                const isSelected = (formData.bottlenecks || []).includes(b.title);
                 return (
                   <button
                     key={b.id}
                     type="button"
                     onClick={() => {
-                      soundFx.playBlip(580, 0.04);
-                      setFormData(prev => ({ 
-                        ...prev, 
-                        bottleneck: b.title, 
-                        bottleneck_score: b.score,
-                        friction_score: Math.min(98, b.score + (prev.volume_friction || 5))
-                      }));
+                      soundFx.playBlip(560, 0.04);
+                      setFormData(prev => {
+                        const prevList = prev.bottlenecks || [];
+                        const nextList = isSelected
+                          ? prevList.filter(item => item !== b.title)
+                          : [...prevList, b.title];
+                        return {
+                          ...prev,
+                          bottlenecks: nextList,
+                          bottleneck: nextList.join(' | '),
+                          bottleneck_score: Math.min(95, 75 + nextList.length * 6),
+                          friction_score: Math.min(98, 75 + nextList.length * 6 + (prev.volume_friction || 5))
+                        };
+                      });
                     }}
                     className={`w-full p-4 sm:p-5 rounded-2xl text-left border transition-all cursor-pointer flex items-start justify-between gap-4 ${
                       isSelected
@@ -846,12 +927,14 @@ export default function DynamicDopamineQuiz() {
                       </div>
                     </div>
 
-                    <div className="shrink-0 text-right">
-                      <span className={`font-mono text-xs font-bold px-2.5 py-1 rounded-lg border ${
-                        isSelected ? 'bg-black text-white border-black' : 'bg-white/[0.05] text-red-400 border-red-500/20'
-                      }`}>
-                        {b.score}%
-                      </span>
+                    <div className="shrink-0 pt-0.5">
+                      {isSelected ? (
+                        <div className="w-6 h-6 rounded-full bg-cyan-400 text-black flex items-center justify-center font-bold shadow-[0_0_10px_#22d3ee]">
+                          <CheckCircle2 className="w-4 h-4 stroke-[3]" />
+                        </div>
+                      ) : (
+                        <div className="w-6 h-6 rounded-full border border-white/20" />
+                      )}
                     </div>
                   </button>
                 );
@@ -874,117 +957,22 @@ export default function DynamicDopamineQuiz() {
 
               <button
                 type="button"
-                disabled={!formData.bottleneck}
+                disabled={!(formData.bottlenecks && formData.bottlenecks.length > 0)}
                 onClick={() => {
                   soundFx.playBlip(620, 0.05);
                   setStep(5);
                 }}
                 className="px-8 py-3.5 bg-white text-black font-sans font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-platinum disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center gap-2 cursor-pointer shadow-monolith"
               >
-                <span>Avanzar a Faceta 5: Arquitectura</span>
+                <span>Avanzar a Faceta 5: Plazo & Urgencia</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </motion.div>
         )}
 
-        {/* ==================== FACETA 5: ARQUITECTURA DESEADA ==================== */}
+        {/* ==================== FACETA 5: PLAZO & INVERSIÓN ==================== */}
         {step === 5 && (
-          <motion.div 
-            initial={{ opacity: 0, y: 15 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            className="space-y-8"
-          >
-            <div className="space-y-2 text-center max-w-xl mx-auto">
-              <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-cyan-400">
-                Grado de Sofisticación
-              </span>
-              <h2 className="font-display font-bold text-2xl sm:text-4xl text-white pt-1">
-                ¿Qué nivel de arquitectura necesita tu negocio?
-              </h2>
-              <p className="text-xs sm:text-sm font-sans text-zinc-300">
-                Selecciona la infraestructura que deseas ver modelada en tu demo técnica.
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              {architectureLevels.map((lvl, idx) => {
-                const isSelected = formData.architecture_level === lvl.title;
-                return (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => {
-                      soundFx.playBlip(560 + idx * 30, 0.04);
-                      setFormData(prev => ({ ...prev, architecture_level: lvl.title }));
-                    }}
-                    className={`w-full p-5 rounded-2xl text-left border transition-all cursor-pointer flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ${
-                      isSelected
-                        ? 'bg-white text-black border-white shadow-monolith scale-[1.01]'
-                        : 'bg-white/[0.025] text-zinc-300 border-white/10 hover:border-white/25 hover:bg-white/[0.05]'
-                    }`}
-                  >
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className={`text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded ${
-                          isSelected ? 'bg-black text-white' : 'bg-cyan-500/20 text-cyan-400'
-                        }`}>
-                          {lvl.badge}
-                        </span>
-                        <div className={`font-display font-bold text-base ${isSelected ? 'text-black' : 'text-white'}`}>
-                          {lvl.title}
-                        </div>
-                      </div>
-                      <p className={`text-xs max-w-xl ${isSelected ? 'text-zinc-800' : 'text-zinc-400'}`}>
-                        {lvl.desc}
-                      </p>
-                    </div>
-
-                    <div className="shrink-0">
-                      {isSelected ? (
-                        <div className="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center">
-                          <CheckCircle2 className="w-4 h-4 stroke-[3]" />
-                        </div>
-                      ) : (
-                        <div className="w-6 h-6 rounded-full border border-white/20" />
-                      )}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Navegación */}
-            <div className="flex items-center justify-between pt-4 border-t border-white/10">
-              <button
-                type="button"
-                onClick={() => {
-                  soundFx.playBlip(480, 0.04);
-                  setStep(4);
-                }}
-                className="px-6 py-3 rounded-xl bg-white/[0.03] text-zinc-300 border border-white/15 font-sans font-bold text-xs uppercase tracking-wider hover:text-white transition-all flex items-center gap-2 cursor-pointer"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span>Volver</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  soundFx.playBlip(620, 0.05);
-                  setStep(6);
-                }}
-                className="px-8 py-3.5 bg-white text-black font-sans font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-platinum transition-all flex items-center gap-2 cursor-pointer shadow-monolith"
-              >
-                <span>Avanzar a Faceta 6: Plazo & Presupuesto</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
-          </motion.div>
-        )}
-
-        {/* ==================== FACETA 6: PLAZO & INVERSIÓN ==================== */}
-        {step === 6 && (
           <motion.div 
             initial={{ opacity: 0, y: 15 }} 
             animate={{ opacity: 1, y: 0 }} 
@@ -1064,7 +1052,7 @@ export default function DynamicDopamineQuiz() {
                 type="button"
                 onClick={() => {
                   soundFx.playBlip(480, 0.04);
-                  setStep(5);
+                  setStep(4);
                 }}
                 className="px-6 py-3 rounded-xl bg-white/[0.03] text-zinc-300 border border-white/15 font-sans font-bold text-xs uppercase tracking-wider hover:text-white transition-all flex items-center gap-2 cursor-pointer"
               >
@@ -1076,19 +1064,19 @@ export default function DynamicDopamineQuiz() {
                 type="button"
                 onClick={() => {
                   soundFx.playBlip(640, 0.05);
-                  setStep(7);
+                  setStep(6);
                 }}
                 className="px-8 py-3.5 bg-white text-black font-sans font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-platinum transition-all flex items-center gap-2 cursor-pointer shadow-monolith"
               >
-                <span>Avanzar a Faceta 7: Agendamiento Demo</span>
+                <span>Avanzar a Faceta 6: Agendamiento WhatsApp</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           </motion.div>
         )}
 
-        {/* ==================== FACETA 7: AGENDAMIENTO ATÓMICO & CONFIRMACIÓN ==================== */}
-        {step === 7 && (
+        {/* ==================== FACETA 6: AGENDAMIENTO ATÓMICO & CONFIRMACIÓN WHATSAPP ==================== */}
+        {step === 6 && (
           <motion.div 
             initial={{ opacity: 0, y: 15 }} 
             animate={{ opacity: 1, y: 0 }} 
@@ -1107,8 +1095,8 @@ export default function DynamicDopamineQuiz() {
                   <h3 className="text-lg font-bold text-white">
                     {formData.client_name} · {formData.business_name}
                   </h3>
-                  <p className="text-xs text-zinc-400">
-                    Cuello de botella: <span className="text-zinc-200">{formData.bottleneck || 'Fuga de conversión y atención manual'}</span>
+                  <p className="text-xs text-zinc-400 line-clamp-1">
+                    Frenos: <span className="text-zinc-200">{formData.bottlenecks?.join(', ') || formData.bottleneck || 'Fuga de conversión'}</span>
                   </p>
                 </div>
               </div>
@@ -1126,19 +1114,19 @@ export default function DynamicDopamineQuiz() {
 
             <div className="space-y-2 text-center max-w-xl mx-auto">
               <h2 className="font-display font-bold text-2xl sm:text-4xl text-white">
-                Reserva tu Sesión 1 a 1 de Demostración
+                Reserva tu Sesión 1 a 1 por WhatsApp
               </h2>
               <p className="text-xs sm:text-sm font-sans text-zinc-300">
-                15 minutos directos por Google Meet con Juan Pablo para ver la demo de tu sector funcionando.
+                15 minutos directos con Juan Pablo (+57 300 892 4110) para ver la demo de tu sector funcionando.
               </p>
             </div>
 
-            {/* Selector de Fecha */}
+            {/* Selector de Fecha (Lunes a Sábado) */}
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs font-mono text-zinc-300 uppercase">
                 <span className="flex items-center gap-1.5">
                   <Calendar className="w-3.5 h-3.5 text-zinc-400" />
-                  <span>Selecciona Fecha:</span>
+                  <span>Selecciona Fecha (Lun a Sáb):</span>
                 </span>
                 <span className="text-zinc-500">Zona GMT-5 (Colombia / Latam)</span>
               </div>
@@ -1169,17 +1157,17 @@ export default function DynamicDopamineQuiz() {
               </div>
             </div>
 
-            {/* Selector de Horarios */}
+            {/* Selector de Horarios (8:00 AM a 8:00 PM) */}
             <div className="space-y-2 pt-2">
               <div className="flex items-center justify-between text-xs font-mono text-zinc-300 uppercase">
                 <span className="flex items-center gap-1.5">
                   <Clock className="w-3.5 h-3.5 text-zinc-400" />
-                  <span>Horarios Disponibles:</span>
+                  <span>Horarios Disponibles (Intervalos de 1h):</span>
                 </span>
-                <span className="text-emerald-400 font-semibold text-[10px]">CERO CALENDLY</span>
+                <span className="text-emerald-400 font-semibold text-[10px]">LUN - SÁB 8AM-8PM</span>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+              <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-7 gap-2">
                 {availableSlots.map((slot) => {
                   const isSelected = selectedTime === slot;
                   return (
@@ -1190,7 +1178,7 @@ export default function DynamicDopamineQuiz() {
                         soundFx.playBlip(580, 0.04);
                         setFormData(prev => ({ ...prev, time: slot }));
                       }}
-                      className={`py-3 px-4 rounded-xl border text-center font-mono text-xs transition-all cursor-pointer ${
+                      className={`py-2.5 px-2 rounded-xl border text-center font-mono text-xs transition-all cursor-pointer ${
                         isSelected
                           ? 'bg-white text-black border-white font-bold shadow-monolith'
                           : 'bg-white/[0.02] text-zinc-300 border-white/10 hover:text-white hover:border-white/25'
@@ -1210,7 +1198,7 @@ export default function DynamicDopamineQuiz() {
                   <Phone className="w-3.5 h-3.5 text-emerald-400" />
                   <span>Tu WhatsApp de Contacto:</span>
                 </span>
-                <span className="text-zinc-500 text-[10px]">Se enviará el enlace de Meet al confirmar</span>
+                <span className="text-zinc-500 text-[10px]">Se abrirá chat directo al confirmar</span>
               </label>
               <input
                 type="tel"
@@ -1228,7 +1216,7 @@ export default function DynamicDopamineQuiz() {
                 type="button"
                 onClick={() => {
                   soundFx.playBlip(480, 0.04);
-                  setStep(6);
+                  setStep(5);
                 }}
                 className="px-6 py-3 rounded-xl bg-white/[0.03] text-zinc-300 border border-white/15 font-sans font-bold text-xs uppercase tracking-wider hover:text-white transition-all flex items-center gap-2 cursor-pointer"
               >
@@ -1240,9 +1228,10 @@ export default function DynamicDopamineQuiz() {
                 type="button"
                 disabled={!formData.phone.trim() || formData.phone.length < 8 || isLoading}
                 onClick={handleSubmit}
-                className="px-8 py-4 bg-white text-black font-sans font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-platinum disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center gap-3 cursor-pointer shadow-monolith"
+                className="px-8 py-4 bg-emerald-400 hover:bg-emerald-300 text-black font-sans font-bold text-xs uppercase tracking-wider rounded-xl disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center gap-3 cursor-pointer shadow-monolith"
               >
-                <span>{isLoading ? 'Registrando Sesión...' : 'Confirmar Diagnóstico & Reservar Demo'}</span>
+                <Phone className="w-4 h-4 fill-black" />
+                <span>{isLoading ? 'Registrando Sesión...' : 'Confirmar & Abrir WhatsApp con Juan Pablo'}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>

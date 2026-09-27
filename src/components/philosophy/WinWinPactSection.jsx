@@ -73,10 +73,7 @@ export default function WinWinPactSection() {
             <div className="p-8 sm:p-10 border border-white/15 bg-white/[0.025] rounded-2xl flex flex-col justify-between h-full space-y-8 shadow-monolith">
               <div className="space-y-6">
                 
-                <div className="border-b border-white/10 pb-4 space-y-1">
-                  <div className="text-[11px] font-mono uppercase text-emerald-400 font-bold tracking-wider">
-                    PARTE 01 // TU NEGOCIO O MARCA PERSONAL
-                  </div>
+                <div className="border-b border-white/10 pb-4">
                   <h3 className="font-display font-bold text-2xl text-white">
                     Lo que tú ganas en el día a día
                   </h3>
@@ -116,10 +113,7 @@ export default function WinWinPactSection() {
             <Tilt3DCard className="p-8 sm:p-10 border border-white/20 bg-white/[0.04] rounded-2xl flex flex-col justify-between h-full space-y-8 glow-card shadow-monolith">
               <div className="space-y-6">
                 
-                <div className="border-b border-white/10 pb-4 space-y-1">
-                  <div className="text-[11px] font-mono uppercase text-zinc-300 font-bold tracking-wider">
-                    PARTE 02 // DYNAMIND STUDIOS
-                  </div>
+                <div className="border-b border-white/10 pb-4">
                   <h3 className="font-display font-bold text-2xl text-white">
                     Lo que nosotros ganamos al servirte
                   </h3>

@@ -73,10 +73,10 @@ export default function InteractiveROICalculator() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
           
           {/* Controles y Sliders Táctiles (7 Cols) */}
-          <div className="lg:col-span-7 p-6 sm:p-10 border border-white/15 bg-[#080b13]/95 backdrop-blur-2xl rounded-3xl space-y-8 shadow-monolith">
+          <div className="lg:col-span-7 p-4 sm:p-8 lg:p-10 border border-white/15 bg-[#080b13]/95 backdrop-blur-2xl rounded-3xl space-y-5 sm:space-y-8 shadow-monolith">
             
             {/* Selector de Nicho */}
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               <label className="text-xs font-mono uppercase text-zinc-400 block tracking-wider">
                 {c.activityLabel}
               </label>
@@ -89,7 +89,7 @@ export default function InteractiveROICalculator() {
                       setBusinessType(b.id);
                       setAvgTicket(b.ticket);
                     }}
-                    className={`p-3 rounded-xl font-mono text-xs text-center transition-all cursor-pointer ${
+                    className={`p-2.5 sm:p-3 rounded-xl font-mono text-xs text-center transition-all cursor-pointer ${
                       businessType === b.id
                         ? 'bg-white text-black font-bold shadow-monolith'
                         : 'bg-white/[0.03] text-zinc-400 border border-white/10 hover:text-white hover:border-white/20'
@@ -102,7 +102,7 @@ export default function InteractiveROICalculator() {
             </div>
 
             {/* Slider 1: Mensajes por Día */}
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               <div className="flex items-center justify-between text-xs font-mono">
                 <span className="text-zinc-300">{c.messagesLabel}</span>
                 <span className="text-white font-bold text-sm px-2.5 py-1 bg-white/[0.05] rounded-lg border border-white/10">
@@ -126,7 +126,7 @@ export default function InteractiveROICalculator() {
             </div>
 
             {/* Slider 2: Horas en Pantalla */}
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               <div className="flex items-center justify-between text-xs font-mono">
                 <span className="text-zinc-300">{c.hoursLabel}</span>
                 <span className="text-emerald-400 font-bold text-sm px-2.5 py-1 bg-emerald-500/10 rounded-lg border border-emerald-500/20">
@@ -150,7 +150,7 @@ export default function InteractiveROICalculator() {
             </div>
 
             {/* Slider 3: Ticket Promedio */}
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               <div className="flex items-center justify-between text-xs font-mono">
                 <span className="text-zinc-300">{c.ticketLabel}</span>
                 <span className="text-white font-bold text-sm px-2.5 py-1 bg-white/[0.05] rounded-lg border border-white/10">
@@ -172,10 +172,10 @@ export default function InteractiveROICalculator() {
 
           {/* Tablero de Resultados Dopamínico (5 Cols) */}
           <div className="lg:col-span-5">
-            <Tilt3DCard className="p-8 sm:p-10 border border-white/20 bg-[#080b13]/95 backdrop-blur-2xl rounded-3xl h-full flex flex-col justify-between space-y-8 glow-card shadow-2xl relative overflow-hidden">
+            <Tilt3DCard className="p-4 sm:p-8 lg:p-10 border border-white/20 bg-[#080b13]/95 backdrop-blur-2xl rounded-3xl h-full flex flex-col justify-between space-y-5 sm:space-y-8 glow-card shadow-2xl relative overflow-hidden">
               
-              <div className="space-y-6">
-                <div className="flex items-center justify-between border-b border-white/10 pb-4">
+              <div className="space-y-4 sm:space-y-6">
+                <div className="flex items-center justify-between border-b border-white/10 pb-3 sm:pb-4">
                   <div className="flex items-center gap-2 text-white font-mono text-xs uppercase font-bold">
                     <Sparkles className="w-4 h-4 text-emerald-400" />
                     <span>{c.resultTitle}</span>
@@ -189,40 +189,43 @@ export default function InteractiveROICalculator() {
                   </button>
                 </div>
 
-                {/* Métrica 1: Horas de Vida Libres */}
-                <div className="p-5 bg-[#0f1422]/95 border border-white/10 rounded-2xl space-y-1.5">
-                  <div className="flex items-center gap-2 text-xs font-mono text-zinc-400 uppercase">
-                    <Clock className="w-4 h-4 text-emerald-400" />
-                    <span>{c.recoveredTimeTitle}</span>
+                {/* Métricas lado a lado (Side by Side) para ergonomía móvil limpia */}
+                <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
+                  {/* Métrica 1: Horas de Vida Libres */}
+                  <div className="p-3 sm:p-5 bg-[#0f1422]/95 border border-white/10 rounded-2xl flex flex-col justify-between space-y-1 sm:space-y-1.5">
+                    <div className="flex items-center gap-1.5 text-[10px] sm:text-xs font-mono text-zinc-400 uppercase truncate">
+                      <Clock className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <span className="truncate">{c.recoveredTimeTitle}</span>
+                    </div>
+                    <div className="font-display font-extrabold text-xl sm:text-3xl text-white">
+                      +{hoursSavedPerMonth} <span className="text-xs sm:text-sm font-mono text-emerald-400 font-normal">{c.hoursPerMonth}</span>
+                    </div>
+                    <p className="text-[10px] sm:text-[11px] font-sans text-zinc-300 line-clamp-2">
+                      {c.recoveredTimeDesc}
+                    </p>
                   </div>
-                  <div className="font-display font-extrabold text-3xl sm:text-4xl text-white">
-                    +{hoursSavedPerMonth} <span className="text-lg font-mono text-emerald-400 font-normal">{c.hoursPerMonth}</span>
-                  </div>
-                  <p className="text-[11px] font-sans text-zinc-300">
-                    {c.recoveredTimeDesc}
-                  </p>
-                </div>
 
-                {/* Métrica 2: Dinero Adicional en el Bolsillo */}
-                <div className="p-5 bg-[#071912]/95 border border-emerald-500/30 rounded-2xl space-y-1.5">
-                  <div className="flex items-center gap-2 text-xs font-mono text-emerald-400 uppercase">
-                    <DollarSign className="w-4 h-4 text-emerald-400" />
-                    <span>{c.financialImpactTitle}</span>
+                  {/* Métrica 2: Dinero Adicional en el Bolsillo */}
+                  <div className="p-3 sm:p-5 bg-[#071912]/95 border border-emerald-500/30 rounded-2xl flex flex-col justify-between space-y-1 sm:space-y-1.5">
+                    <div className="flex items-center gap-1.5 text-[10px] sm:text-xs font-mono text-emerald-400 uppercase truncate">
+                      <DollarSign className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <span className="truncate">{c.financialImpactTitle}</span>
+                    </div>
+                    <div className="font-display font-extrabold text-sm sm:text-2xl text-emerald-300 truncate">
+                      +{formatCurrency(totalMonthlyGain)} <span className="text-[10px] sm:text-xs font-mono text-zinc-300 font-normal">/ mes</span>
+                    </div>
+                    <p className="text-[10px] sm:text-[11px] font-sans text-emerald-400/80 line-clamp-2">
+                      {c.financialImpactDesc}
+                    </p>
                   </div>
-                  <div className="font-display font-extrabold text-2xl sm:text-3xl text-emerald-300">
-                    +{formatCurrency(totalMonthlyGain)} <span className="text-xs font-mono text-zinc-300 font-normal">/ mes</span>
-                  </div>
-                  <p className="text-[11px] font-sans text-emerald-400/80">
-                    {c.financialImpactDesc}
-                  </p>
                 </div>
               </div>
 
               {/* Botón de Cierre Dopamínico */}
-              <div className="pt-4 space-y-3">
+              <div className="pt-2 sm:pt-4 space-y-3">
                 <a
                   href="/#/diagnostico"
-                  className="w-full py-4 rounded-xl bg-white text-black font-mono text-xs font-bold uppercase tracking-wider text-center flex items-center justify-center gap-2 hover:bg-platinum transition-all shadow-monolith cursor-pointer"
+                  className="w-full py-3.5 sm:py-4 rounded-xl bg-white text-black font-mono text-xs font-bold uppercase tracking-wider text-center flex items-center justify-center gap-2 hover:bg-platinum transition-all shadow-monolith cursor-pointer"
                 >
                   <span>{c.cta}</span>
                   <ArrowRight className="w-4 h-4" />

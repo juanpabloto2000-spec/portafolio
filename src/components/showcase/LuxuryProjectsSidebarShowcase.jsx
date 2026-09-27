@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LIVE_PROJECTS } from '../../data/liveProjects';
-import { Globe, ArrowUpRight, Sparkles } from 'lucide-react';
+import { Globe, ArrowUpRight, Sparkles, Smartphone, Monitor } from 'lucide-react';
 import { soundFx } from '../../utils/audioEffects';
 
 export default function LuxuryProjectsSidebarShowcase() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [viewMode, setViewMode] = useState('mobile'); // 'mobile' (vertical) | 'desktop' (panorámica)
 
   const currentProject = LIVE_PROJECTS[currentIndex];
   const isLive = currentProject.liveUrl && currentProject.liveUrl !== '#' && !currentProject.isUpcoming;
@@ -15,32 +16,67 @@ export default function LuxuryProjectsSidebarShowcase() {
     setCurrentIndex(idx);
   };
 
+  const handleViewMode = (mode) => {
+    soundFx.playBlip(560);
+    setViewMode(mode);
+  };
+
   return (
-    <div className="w-full space-y-4 font-sans select-none">
+    <div className="w-full space-y-5 font-sans select-none">
       
       {/* Cabecera Editorial Limpia del Showcase */}
-      <div className="border-b border-white/10 pb-4">
-        <h3 className="font-display font-bold text-2xl sm:text-3xl text-white tracking-tight">
-          Showcase Interactivo en Vivo
-        </h3>
-        <p className="text-xs sm:text-sm font-sans text-zinc-300 mt-1">
-          Navega y opera directamente las plataformas reales de autor construidas para clientes en Colombia.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
+        <div>
+          <h3 className="font-display font-bold text-2xl sm:text-3xl text-white tracking-tight">
+            Showcase Interactivo en Vivo
+          </h3>
+          <p className="text-xs sm:text-sm font-sans text-zinc-300 mt-1">
+            Navega las plataformas reales de autor construidas para clientes en Colombia en formato vertical nativo.
+          </p>
+        </div>
+
+        {/* Selector de Modo de Vista: Vertical (Móvil) vs Panorámica */}
+        <div className="flex items-center gap-1.5 p-1 bg-black/60 border border-white/15 rounded-xl self-start sm:self-auto shrink-0">
+          <button
+            type="button"
+            onClick={() => handleViewMode('mobile')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+              viewMode === 'mobile'
+                ? 'bg-white text-black shadow-monolith'
+                : 'text-zinc-400 hover:text-white'
+            }`}
+            title="Vista vertical en smartphone (9:19)"
+          >
+            <Smartphone className="w-3.5 h-3.5" />
+            <span>Vertical Móvil</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => handleViewMode('desktop')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+              viewMode === 'desktop'
+                ? 'bg-white text-black shadow-monolith'
+                : 'text-zinc-400 hover:text-white'
+            }`}
+            title="Vista panorámica de escritorio"
+          >
+            <Monitor className="w-3.5 h-3.5" />
+            <span>Panorámica</span>
+          </button>
+        </div>
       </div>
 
-      {/* Contenedor Principal: Selector Lateral Compacto (3 cols) + Visor Panorámico Horizontal Amplio (9 cols) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+      {/* Contenedor Principal: Selector Lateral (4 cols) + Visor Vertical / Panorámico (8 cols) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
         {/* ============================================================== */}
-        {/* SELECTOR LATERAL COMPACTO (Menos largo para maximizar horizontalidad) */}
-        {/* En móvil: barra horizontal superior deslizable por toque         */}
-        {/* En desktop: columna esbelta de 3 columnas                        */}
+        {/* SELECTOR LATERAL CON FICHA EDITORIAL (4 cols en Desktop)        */}
         {/* ============================================================== */}
-        <div className="lg:col-span-3 flex flex-col justify-between space-y-2">
+        <div className="lg:col-span-4 flex flex-col space-y-3">
           
           <div className="flex lg:flex-col gap-1.5 overflow-x-auto lg:overflow-x-visible pb-1 lg:pb-0 scrollbar-none snap-x">
             <div className="text-[10px] font-mono text-zinc-400 font-bold uppercase tracking-wider px-1 pb-1 hidden lg:block">
-              Plataformas ({LIVE_PROJECTS.length})
+              Plataformas en Producción ({LIVE_PROJECTS.length})
             </div>
 
             {LIVE_PROJECTS.map((proj, idx) => {
@@ -49,7 +85,7 @@ export default function LuxuryProjectsSidebarShowcase() {
                 <button
                   key={proj.id}
                   onClick={() => handleSelect(idx)}
-                  className={`p-2.5 sm:p-3 rounded-xl border text-left transition-all duration-200 cursor-pointer flex items-center justify-between gap-2.5 shrink-0 lg:w-full min-w-[200px] lg:min-w-0 snap-start ${
+                  className={`p-2.5 sm:p-3 rounded-xl border text-left transition-all duration-200 cursor-pointer flex items-center justify-between gap-2.5 shrink-0 lg:w-full min-w-[190px] lg:min-w-0 snap-start ${
                     isSelected
                       ? 'bg-gradient-to-r from-cyan-950/70 to-purple-950/40 border-cyan-400/80 shadow-[0_0_20px_rgba(34,211,238,0.2)] ring-1 ring-cyan-400/50'
                       : 'bg-white/[0.02] border-white/10 hover:border-white/20 hover:bg-white/[0.04]'
@@ -87,72 +123,105 @@ export default function LuxuryProjectsSidebarShowcase() {
             })}
           </div>
 
-          {/* Breve Ficha Informativa Esbelta del Proyecto en Desktop */}
-          <div className="p-3.5 rounded-xl bg-[#080b13]/90 border border-white/10 space-y-1.5 hidden lg:block text-xs font-sans">
-            <div className="text-[10px] font-mono font-bold text-cyan-400 uppercase">
-              {currentProject.client}
+          {/* Ficha Editorial Detallada del Proyecto */}
+          <div className="p-4 rounded-2xl bg-[#080b13]/90 border border-white/10 space-y-2 text-xs font-sans">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase">
+                {currentProject.client}
+              </span>
+              <span className="text-[10px] font-mono text-zinc-400">
+                0{currentIndex + 1} / 0{LIVE_PROJECTS.length}
+              </span>
             </div>
-            <p className="text-[11px] text-zinc-300 leading-relaxed line-clamp-3">
+            <div className="font-display font-bold text-sm text-white">
+              {currentProject.tagline}
+            </div>
+            <p className="text-[11px] text-zinc-300 leading-relaxed">
               {currentProject.description}
             </p>
+            <div className="pt-2">
+              {isLive ? (
+                <a
+                  href={currentProject.liveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-2.5 rounded-xl bg-white text-black font-sans text-xs font-bold uppercase tracking-wider hover:bg-zinc-200 transition-all cursor-pointer shadow-md flex items-center justify-center gap-2"
+                >
+                  <span>Abrir Web en Pestaña Completa</span>
+                  <ArrowUpRight className="w-3.5 h-3.5 text-black" />
+                </a>
+              ) : (
+                <a
+                  href="/#/diagnostico"
+                  className="w-full py-2.5 rounded-xl bg-white/10 border border-white/20 text-white font-sans text-xs font-bold uppercase tracking-wider hover:bg-white/20 transition-all cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <span>Solicitar Demostración</span>
+                  <ArrowUpRight className="w-3.5 h-3.5 text-white" />
+                </a>
+              )}
+            </div>
           </div>
 
         </div>
 
         {/* ============================================================== */}
-        {/* VISOR INTERACTIVO PANORÁMICO AMPLIO (9 columnas en Desktop)     */}
-        {/* Maximiza ancho horizontal en desktop y altura táctil en móvil  */}
+        {/* VISOR VERTICAL NATIVO / PANORÁMICO (8 cols en Desktop)          */}
         {/* ============================================================== */}
-        <div className="lg:col-span-9 w-full flex flex-col">
-          <div className="rounded-2xl sm:rounded-3xl border border-white/15 bg-[#080b13]/95 backdrop-blur-2xl overflow-hidden shadow-2xl flex flex-col flex-1">
+        <div className="lg:col-span-8 w-full flex flex-col items-center">
+          
+          {/* Contenedor Adaptativo: Si es 'mobile' adopta marco vertical de Smartphone de Autor */}
+          <div className={`w-full transition-all duration-300 ${
+            viewMode === 'mobile' 
+              ? 'max-w-[400px] sm:max-w-[420px] rounded-[36px] p-2.5 bg-[#0e1320] border-2 border-white/20 shadow-[0_25px_70px_rgba(0,0,0,0.9)]' 
+              : 'rounded-2xl sm:rounded-3xl border border-white/15 bg-[#080b13]/95 backdrop-blur-2xl overflow-hidden shadow-2xl'
+          }`}>
             
-            {/* Barra de Telemetría Superior del Navegador */}
-            <div className="px-3.5 sm:px-4 py-2.5 bg-[#0c101c] border-b border-white/10 flex flex-wrap items-center justify-between gap-2.5">
+            {/* Barra de Telemetría Superior */}
+            <div className={`px-3.5 py-2 flex items-center justify-between gap-2 border-b ${
+              viewMode === 'mobile' 
+                ? 'bg-transparent border-white/10 rounded-t-[28px]' 
+                : 'bg-[#0c101c] border-white/10'
+            }`}>
               
-              {/* Controles de Navegador & URL */}
               <div className="flex items-center gap-2 min-w-0">
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <span className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
+                <div className="flex items-center gap-1 shrink-0">
+                  <span className="w-2 h-2 rounded-full bg-red-500/80" />
+                  <span className="w-2 h-2 rounded-full bg-amber-500/80" />
+                  <span className="w-2 h-2 rounded-full bg-emerald-500/80" />
                 </div>
                 
-                <div className="px-3 py-1 rounded-lg bg-black/60 border border-white/10 text-[11px] sm:text-xs font-mono text-cyan-300 truncate max-w-[180px] sm:max-w-xs md:max-w-md flex items-center gap-1.5">
-                  <Globe className="w-3 h-3 text-cyan-400 shrink-0" />
+                <div className="px-2.5 py-0.5 rounded-lg bg-black/60 border border-white/10 text-[10px] sm:text-[11px] font-mono text-cyan-300 truncate max-w-[170px] sm:max-w-xs flex items-center gap-1.5">
+                  <Globe className="w-2.5 h-2.5 text-cyan-400 shrink-0" />
                   <span className="truncate">{currentProject.url}</span>
                 </div>
               </div>
 
-              {/* Botón Maestro Único: Visitar Web Real */}
+              {/* Botón Compacto en Barra */}
               <div>
-                {isLive ? (
+                {isLive && (
                   <a
                     href={currentProject.liveUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white text-black font-sans text-xs font-bold uppercase tracking-wider hover:bg-zinc-200 transition-all cursor-pointer shadow-md"
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-mono text-[10px] uppercase transition-colors"
                   >
-                    <span>Visitar Web Real</span>
-                    <ArrowUpRight className="w-3.5 h-3.5 text-black" />
-                  </a>
-                ) : (
-                  <a
-                    href="/#/diagnostico"
-                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/10 border border-white/20 text-white font-sans text-xs font-bold uppercase tracking-wider hover:bg-white/20 transition-all cursor-pointer"
-                  >
-                    <span>Solicitar Demostración</span>
-                    <ArrowUpRight className="w-3.5 h-3.5 text-white" />
+                    <span>Visitar</span>
+                    <ArrowUpRight className="w-3 h-3" />
                   </a>
                 )}
               </div>
 
             </div>
 
-            {/* Contenedor del Iframe con Amplitud Horizontal Óptima (16:10 / 16:9) */}
-            <div className="relative w-full h-[480px] sm:h-[560px] lg:h-[640px] bg-black overflow-hidden flex-1">
+            {/* Contenedor del Iframe con Altura Vertical Optimizada */}
+            <div className={`relative w-full bg-black overflow-hidden ${
+              viewMode === 'mobile' 
+                ? 'h-[580px] sm:h-[640px] rounded-b-[28px]' 
+                : 'h-[460px] sm:h-[540px] lg:h-[600px]'
+            }`}>
               <AnimatePresence mode="wait">
                 <motion.div
-                  key={currentProject.id}
+                  key={`${currentProject.id}-${viewMode}`}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -173,18 +242,18 @@ export default function LuxuryProjectsSidebarShowcase() {
                       style={{ backgroundImage: `url(${currentProject.previewImage})` }}
                     >
                       <div className="absolute inset-0 bg-black/85 backdrop-blur-md" />
-                      <div className="relative z-10 max-w-md space-y-4">
-                        <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto">
-                          <Sparkles className="w-6 h-6 animate-pulse" />
+                      <div className="relative z-10 max-w-xs space-y-3">
+                        <div className="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto">
+                          <Sparkles className="w-5 h-5 animate-pulse" />
                         </div>
-                        <h4 className="font-display font-bold text-2xl text-white">
+                        <h4 className="font-display font-bold text-xl text-white">
                           {currentProject.title}
                         </h4>
-                        <p className="text-xs sm:text-sm font-sans text-zinc-300 leading-relaxed">
+                        <p className="text-xs font-sans text-zinc-300 leading-relaxed">
                           {currentProject.description}
                         </p>
                         <div className="pt-2">
-                          <span className="inline-block px-3.5 py-1.5 rounded-xl bg-amber-950/70 border border-amber-500/40 text-amber-300 font-mono text-xs font-bold">
+                          <span className="inline-block px-3 py-1 rounded-xl bg-amber-950/70 border border-amber-500/40 text-amber-300 font-mono text-[11px] font-bold">
                             Próximo Despliegue // Q4 2026
                           </span>
                         </div>
@@ -195,17 +264,20 @@ export default function LuxuryProjectsSidebarShowcase() {
               </AnimatePresence>
             </div>
 
-            {/* Barra Inferior del Visor */}
-            <div className="px-4 py-2 bg-[#0c101c] border-t border-white/10 flex items-center justify-between text-xs font-mono text-zinc-400">
-              <span className="text-[11px] text-zinc-300 font-medium">
-                {currentProject.client} — {currentProject.tagline}
-              </span>
-              <span className="text-[11px] text-cyan-400 font-bold shrink-0 ml-2">
-                0{currentIndex + 1} / 0{LIVE_PROJECTS.length}
-              </span>
-            </div>
+            {/* Barra Inferior en modo Desktop */}
+            {viewMode === 'desktop' && (
+              <div className="px-4 py-2 bg-[#0c101c] border-t border-white/10 flex items-center justify-between text-xs font-mono text-zinc-400">
+                <span className="text-[11px] text-zinc-300 font-medium">
+                  {currentProject.client} — {currentProject.tagline}
+                </span>
+                <span className="text-[11px] text-cyan-400 font-bold shrink-0 ml-2">
+                  0{currentIndex + 1} / 0{LIVE_PROJECTS.length}
+                </span>
+              </div>
+            )}
 
           </div>
+
         </div>
 
       </div>
