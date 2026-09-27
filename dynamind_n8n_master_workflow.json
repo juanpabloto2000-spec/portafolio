@@ -1,0 +1,531 @@
+{
+  "name": "Dynamind Studios - Master Automation Ecosystem (Webhooks + AI Agent + Calendar + Daily Reminders)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "dynamind-lead",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "node-webhook-lead",
+      "name": "Webhook: Lead Web Dynamind",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [180, 240],
+      "webhookId": "dynamind-lead-webhook"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"message\": \"Lead recibido y procesado por el búnker de Dynamind\",\n  \"lead_id\": \"{{ $json.body.id }}\"\n}",
+        "options": {}
+      },
+      "id": "node-respond-webhook",
+      "name": "Responder 200 OK Inmediato",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [420, 140]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.body.website_trap || '' }}",
+              "operation": "isEmpty"
+            }
+          ]
+        }
+      },
+      "id": "node-filter-bot",
+      "name": "¿Es Humano? (Anti-Honeypot)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [420, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalización y preparación de datos del lead\nconst b = $input.first().json.body;\n\n// Limpieza estricta de teléfono para WhatsApp\nlet rawPhone = (b.phone || '').replace(/[^0-9+]/g, '');\nif (rawPhone.startsWith('3') && rawPhone.length === 10) {\n  rawPhone = '57' + rawPhone; // Asumir Colombia si arranca en 3\n}\nrawPhone = rawPhone.replace('+', '');\n\nconst clientName = b.client_name || 'Innovador';\nconst businessName = b.business_name || 'Negocio Privado';\nconst date = b.date || new Date().toISOString().split('T')[0];\nconst time = b.time || '10:00 AM';\nconst bottleneck = b.bottleneck || 'Optimización operativa y digital';\nconst category = b.category || 'POTENCIAL';\nconst frictionScore = Number(b.friction_score) || 85;\nconst meetLink = b.meet_link || `https://meet.google.com/dyn-${Math.random().toString(36).substring(2, 7)}`;\n\nreturn [{\n  json: {\n    lead_id: b.id || `dyn-${Date.now().toString(36)}`,\n    client_name: clientName,\n    business_name: businessName,\n    phone: rawPhone,\n    niche: b.niche || 'Tecnología & Comercio',\n    bottleneck: bottleneck,\n    friction_score: frictionScore,\n    category: category,\n    date: date,\n    time: time,\n    meet_link: meetLink,\n    reminder_sent: false,\n    confirmed: false,\n    created_at: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "node-transform-lead",
+      "name": "Formatear y Sanitizar Lead",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 320]
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "primary",
+          "mode": "list"
+        },
+        "start": "={{ $json.date }} {{ $json.time }}",
+        "end": "={{ $json.date }} {{ $json.time }}",
+        "additionalFields": {
+          "summary": "=⚡ Sesión Estratégica Dynamind: {{ $json.client_name }} ({{ $json.business_name }})",
+          "description": "=Diagnóstico de Arquitectura de Software y Cuellos de Botella D0.\\n\\nCliente: {{ $json.client_name }}\\nEmpresa: {{ $json.business_name }}\\nNicho: {{ $json.niche }}\\nWhatsApp: +{{ $json.phone }}\\nScore de Fricción: {{ $json.friction_score }}%\\nCuello de Botella: {{ $json.bottleneck }}\\n\\nEnlace Meet: {{ $json.meet_link }}",
+          "conferenceDataUi": {
+            "conferenceDataValues": {
+              "conferenceSolutionConfig": {
+                "solutionType": "hangoutsMeet"
+              }
+            }
+          }
+        }
+      },
+      "id": "node-gcal-create",
+      "name": "Google Calendar: Crear Evento & Meet",
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.2,
+      "position": [900, 320]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "tableId": "appointments",
+        "dataMode": "autoMapInputData",
+        "options": {}
+      },
+      "id": "node-supabase-save",
+      "name": "Supabase: Guardar Cita & Lead",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [1140, 320]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_API_URL || 'http://localhost:8080' }}/message/sendText/{{ $env.EVOLUTION_INSTANCE_NAME || 'dynamind' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_API_KEY || 'dynamind_wa_key' }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $json.phone }}"
+            },
+            {
+              "name": "text",
+              "value": "=¡Hola {{ $json.client_name }}! ⚡ Te saludamos desde Dynamind Studios.\\n\\nHemos confirmado tu Sesión de Diagnóstico Estratégico 1 a 1 para el próximo *{{ $json.date }}* a las *{{ $json.time }}* (Hora Colombia).\\n\\n🔗 *Enlace de acceso a Google Meet:*\\n{{ $json.meet_link }}\\n\\nEl día de la llamada te enviaremos un recordatorio temprano. ¡Nos vemos pronto para potenciar tu sistema operativo!"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-wa-confirm-client",
+      "name": "WhatsApp: Confirmación al Cliente",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1380, 320]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_API_URL || 'http://localhost:8080' }}/message/sendText/{{ $env.EVOLUTION_INSTANCE_NAME || 'dynamind' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_API_KEY || 'dynamind_wa_key' }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $env.JUAN_PERSONAL_PHONE || '573000000000' }}"
+            },
+            {
+              "name": "text",
+              "value": "=🚨 *NUEVA CITA AGENDADA EN DYNAMIND* 🚨\\n\\n👤 *Cliente:* {{ $json.client_name }}\\n🏢 *Empresa:* {{ $json.business_name }}\\n🏷️ *Nicho:* {{ $json.niche }}\\n📱 *WhatsApp:* +{{ $json.phone }}\\n📅 *Fecha:* {{ $json.date }} a las {{ $json.time }}\\n⚡ *Score Fricción:* {{ $json.friction_score }}% ({{ $json.category }})\\n🎯 *Cuello de Botella:* {{ $json.bottleneck }}\\n🔗 *Meet:* {{ $json.meet_link }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-wa-alert-juan",
+      "name": "WhatsApp: Alerta a Juan",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1620, 320]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * 1-6"
+            }
+          ]
+        }
+      },
+      "id": "node-cron-reminders",
+      "name": "Cron: Todos los días 8:00 AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [180, 680]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "appointments",
+        "returnAll": true,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "date",
+              "condition": "eq",
+              "keyValue": "={{ $today.format('yyyy-MM-dd') }}"
+            },
+            {
+              "keyName": "reminder_sent",
+              "condition": "eq",
+              "keyValue": "false"
+            }
+          ]
+        }
+      },
+      "id": "node-query-today-citas",
+      "name": "Supabase: Buscar Citas de Hoy",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [420, 680]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "node-split-citas",
+      "name": "Procesar 1 por 1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [660, 680]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_API_URL || 'http://localhost:8080' }}/message/sendText/{{ $env.EVOLUTION_INSTANCE_NAME || 'dynamind' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_API_KEY || 'dynamind_wa_key' }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $json.phone }}"
+            },
+            {
+              "name": "text",
+              "value": "=¡Buenos días {{ $json.client_name }}! ⚡ Te saludamos desde Dynamind Studios.\\n\\nTe recordamos que *HOY a las {{ $json.time }}* tenemos programada tu Sesión de Diagnóstico Estratégico.\\n\\n🔗 *Enlace de la videollamada:*\\n{{ $json.meet_link }}\\n\\n¿Nos confirmas tu asistencia? Por favor responde *SÍ* para confirmar o *REAGENDAR* si requieres mover el espacio. ¡Te esperamos!"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-wa-send-reminder",
+      "name": "WhatsApp: Recordatorio Matutino",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 680]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "appointments",
+        "id": "={{ $json.id }}",
+        "updateFields": {
+          "reminder_sent": true
+        }
+      },
+      "id": "node-mark-reminder-sent",
+      "name": "Supabase: Marcar Recordatorio Enviado",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [1140, 680]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "whatsapp-inbound",
+        "options": {}
+      },
+      "id": "node-wa-inbound-webhook",
+      "name": "Webhook: WhatsApp Entrante",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [180, 1040],
+      "webhookId": "whatsapp-inbound-webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ ($json.body.data.message.conversation || $json.body.data.message.extendedTextMessage.text || '').toUpperCase() }}",
+              "operation": "contains",
+              "value2": "SI"
+            }
+          ]
+        }
+      },
+      "id": "node-check-confirmation",
+      "name": "¿Es Confirmación de Cita?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [420, 1040]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "appointments",
+        "filter": {
+          "phone": "={{ ($json.body.data.key.remoteJid || '').replace('@s.whatsapp.net', '') }}"
+        },
+        "updateFields": {
+          "confirmed": true
+        }
+      },
+      "id": "node-update-confirmed",
+      "name": "Supabase: Marcar Cita Confirmada",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [680, 960]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_API_URL || 'http://localhost:8080' }}/message/sendText/{{ $env.EVOLUTION_INSTANCE_NAME || 'dynamind' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.EVOLUTION_API_KEY || 'dynamind_wa_key' }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ ($json.body.data.key.remoteJid || '').replace('@s.whatsapp.net', '') }}"
+            },
+            {
+              "name": "text",
+              "value": "=¡Excelente! Queda confirmada tu asistencia para hoy. Ten a mano los números o puntos críticos de tu operación para resolverlos en vivo. ¡Nos vemos en unos minutos! 🚀"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-wa-thanks-confirmed",
+      "name": "WhatsApp: '¡Confirmado!'",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [920, 960]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.data.message.conversation || $json.body.data.message.extendedTextMessage.text || 'Hola' }}",
+        "systemMessage": "Eres Aura, la Asistente de IA Senior de Dynamind Studios (firma de ingeniería de software artesanal, Core Operativo, PMS y sistemas de alta conversión liderada por Juan Pablo). Tu objetivo es atender consultas, explicar nuestros estándares (cero plantillas clonadas, arquitecturas multi-página, físicas cinemáticas a 60 FPS y cuellos de botella operativos D0), calificar si tienen un negocio real y guiarlos amablemente a agendar su Sesión de Diagnóstico de 15 min."
+      },
+      "id": "node-ai-agent-sales",
+      "name": "AI Agent: Asistente Aura",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [680, 1180]
+    }
+  ],
+  "connections": {
+    "Webhook: Lead Web Dynamind": {
+      "main": [
+        [
+          {
+            "node": "Responder 200 OK Inmediato",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "¿Es Humano? (Anti-Honeypot)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es Humano? (Anti-Honeypot)": {
+      "main": [
+        [
+          {
+            "node": "Formatear y Sanitizar Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatear y Sanitizar Lead": {
+      "main": [
+        [
+          {
+            "node": "Google Calendar: Crear Evento & Meet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar: Crear Evento & Meet": {
+      "main": [
+        [
+          {
+            "node": "Supabase: Guardar Cita & Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase: Guardar Cita & Lead": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp: Confirmación al Cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp: Confirmación al Cliente": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp: Alerta a Juan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cron: Todos los días 8:00 AM": {
+      "main": [
+        [
+          {
+            "node": "Supabase: Buscar Citas de Hoy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase: Buscar Citas de Hoy": {
+      "main": [
+        [
+          {
+            "node": "Procesar 1 por 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Procesar 1 por 1": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp: Recordatorio Matutino",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp: Recordatorio Matutino": {
+      "main": [
+        [
+          {
+            "node": "Supabase: Marcar Recordatorio Enviado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase: Marcar Recordatorio Enviado": {
+      "main": [
+        [
+          {
+            "node": "Procesar 1 por 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook: WhatsApp Entrante": {
+      "main": [
+        [
+          {
+            "node": "¿Es Confirmación de Cita?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es Confirmación de Cita?": {
+      "main": [
+        [
+          {
+            "node": "Supabase: Marcar Cita Confirmada",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent: Asistente Aura",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase: Marcar Cita Confirmada": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp: '¡Confirmado!'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
