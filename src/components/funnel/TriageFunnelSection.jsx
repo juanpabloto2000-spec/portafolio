@@ -36,13 +36,19 @@ export default function TriageFunnelSection() {
     setCurrentStep(prev => Math.max(prev - 1, 1));
   };
 
+  const [submitError, setSubmitError] = useState(null);
+
   const handleSubmit = async () => {
     setIsLoading(true);
+    setSubmitError(null);
     try {
       const lead = await addLead(formData);
-      setCreatedLead(lead);
+      if (lead?.category !== 'BOT') {
+        setCreatedLead(lead);
+      }
     } catch (err) {
-      console.error('Error submitting triage lead:', err);
+      console.warn('Triage submission warning:', err.message);
+      setSubmitError(err.message || 'Hubo un inconveniente al procesar la reserva. Intenta de nuevo.');
     } finally {
       setIsLoading(false);
     }
@@ -137,6 +143,7 @@ export default function TriageFunnelSection() {
               onPrev={handlePrev} 
               onSubmit={handleSubmit}
               isLoading={isLoading} 
+              submitError={submitError}
             />
           )}
         </div>

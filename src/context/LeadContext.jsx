@@ -120,35 +120,86 @@ export function LeadProvider({ children }) {
     fetchRemoteLeads();
   }, []);
 
+  // Función de sanitización anti-XSS estricta
+  const sanitize = (str, maxLen = 250) => {
+    if (typeof str !== 'string') return '';
+    return str
+      .replace(/[<>]/g, '') // Erradica tags HTML
+      .replace(/javascript:/gi, '')
+      .substring(0, maxLen)
+      .trim();
+  };
+
   const addLead = async (leadData) => {
+    // 1. Detección de Bot Trampa (Honeypot Trap)
+    if (leadData.website_trap && leadData.website_trap.trim().length > 0) {
+      console.warn('Ciberseguridad: Bot detectado mediante honeypot. Descartado.');
+      return { id: 'bot-blocked', category: 'BOT', status: 'descartada' };
+    }
+
+    // 2. Control de Rate Limiting / Prevención de Click-Spamming (15s cooldown)
+    const lastSubTs = localStorage.getItem('dynamind_last_sub_ts');
+    const now = Date.now();
+    if (lastSubTs && (now - Number(lastSubTs)) < 15000) {
+      throw new Error('Por seguridad, espera unos segundos antes de enviar otra reserva.');
+    }
+    localStorage.setItem('dynamind_last_sub_ts', String(now));
+
     const id = `dyn-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 6)}`;
     const meetHash = Math.random().toString(36).substring(2, 6);
     const meet_link = `https://meet.google.com/dyn-${meetHash}-${id.substring(4, 7)}`;
     
-    // Clasificación algorítmica de categoría
+    // 3. Sanitización de Datos del Lead
+    const client_name = sanitize(leadData.client_name, 80);
+    const business_name = sanitize(leadData.business_name, 100);
+    const bottleneck = sanitize(leadData.bottleneck, 300);
+    const phone = sanitize(leadData.phone, 30);
+    const profile_type = sanitize(leadData.profile_type, 60);
+    const niche = sanitize(leadData.niche, 80);
+
+    // 4. Perfilamiento Algorítmico de Fricción & Cualificación
     const friction = Number(leadData.friction_score) || 75;
-    const isCurious = leadData.bottleneck?.toLowerCase().includes('curios') || 
-                      leadData.business_name?.toLowerCase().includes('idea') ||
+    const isCurious = bottleneck.toLowerCase().includes('curios') || 
+                      business_name.toLowerCase().includes('idea') ||
                       friction < 60;
     const category = isCurious ? 'CURIOSO' : 'POTENCIAL';
 
     const newLead = {
       id,
+      client_name,
+      business_name,
+      profile_type,
+      niche,
+      bottleneck,
+      phone,
+      date: leadData.date || '',
+      time: leadData.time || '',
       meet_link,
       category,
       status: 'agendado',
       created_at: new Date().toISOString(),
-      ...leadData,
       friction_score: friction
     };
 
     setLeads(prev => [newLead, ...prev]);
 
-    // Persistencia asíncrona no-bloqueante en Supabase
+    // 5. Persistencia Segura en Supabase (si está configurado)
     try {
       await supabase.from('leads').insert([newLead]);
     } catch (err) {
       console.warn('Supabase remote insert fallback to local-first:', err);
+    }
+
+    // 6. Disparo Asíncrono al Webhook de n8n (Orquestador de Backoffice)
+    const n8nWebhook = import.meta.env.VITE_N8N_WEBHOOK_URL;
+    if (n8nWebhook) {
+      try {
+        fetch(n8nWebhook, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newLead)
+        }).catch(() => {});
+      } catch {}
     }
 
     return newLead;

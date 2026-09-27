@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ArrowLeft, Calendar as CalendarIcon, Clock, Phone, ShieldCheck, ArrowRight } from 'lucide-react';
 import { useLeads } from '../../context/LeadContext';
 
-export default function StepAtomicCalendar({ formData, updateFormData, onPrev, onSubmit, isLoading }) {
+export default function StepAtomicCalendar({ formData, updateFormData, onPrev, onSubmit, isLoading, submitError }) {
   const { availableSlots } = useLeads();
 
   // Generación atómica de los próximos 10 días laborables
@@ -152,6 +152,25 @@ export default function StepAtomicCalendar({ formData, updateFormData, onPrev, o
           Privacidad absoluta: Tus datos solo se usan para la sesión de diagnóstico y la apertura del chat.
         </p>
       </div>
+
+      {/* Honeypot Anti-Bot Trap (Invisible para humanos, los bots automatizados lo rellenan) */}
+      <div className="hidden" aria-hidden="true">
+        <input 
+          type="text" 
+          name="website_trap" 
+          tabIndex="-1" 
+          autoComplete="off" 
+          value={formData.website_trap || ''} 
+          onChange={(e) => updateFormData({ website_trap: e.target.value })} 
+        />
+      </div>
+
+      {submitError && (
+        <div className="p-3.5 bg-red-950/40 border border-red-800/60 rounded-xl text-red-300 font-mono text-xs flex items-center gap-2">
+          <span>⚠️</span>
+          <span>{submitError}</span>
+        </div>
+      )}
 
       {/* Navegación y Envío */}
       <div className="pt-4 flex items-center justify-between">
