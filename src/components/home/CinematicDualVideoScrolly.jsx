@@ -69,14 +69,27 @@ export default function CinematicDualVideoScrolly() {
 
     const hRatio = w / imgW;
     const vRatio = h / imgH;
-    const ratio = Math.max(hRatio, vRatio);
+    
+    // En pantallas móviles verticales (aspect ratio estrecho), aplicar un ratio balanceado
+    // para que la escena y el monitor no se recorten agresivamente en los laterales
+    const isPortraitMobile = (w / h) < 0.75;
+    const ratio = isPortraitMobile 
+      ? Math.max(hRatio * 1.25, vRatio * 0.82) 
+      : Math.max(hRatio, vRatio);
+
     const drawW = imgW * ratio;
     const drawH = imgH * ratio;
     const drawX = (w - drawW) / 2;
     const drawY = (h - drawH) / 2;
 
     ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = 'medium';
+    ctx.imageSmoothingQuality = 'high';
+
+    // Fondo cósmico para evitar cualquier artefacto en bordes verticales
+    if (isPortraitMobile) {
+      ctx.fillStyle = '#06070a';
+      ctx.fillRect(0, 0, w, h);
+    }
 
     // Direct draw in cover mode: cero parpadeo y cero overhead de composición alfa
     ctx.drawImage(img, drawX, drawY, drawW, drawH);
@@ -223,17 +236,17 @@ export default function CinematicDualVideoScrolly() {
         />
 
         {/* Escenario Central: Fases Narrativas Sincronizadas (Completamente limpias, sin etiquetas ni badges) */}
-        <div className="relative z-30 w-full max-w-4xl mx-auto px-6 text-center pointer-events-none h-72 flex items-center justify-center">
+        <div className="relative z-30 w-full max-w-4xl mx-auto px-5 sm:px-6 text-center pointer-events-none min-h-[220px] sm:h-72 flex items-center justify-center">
           
           {/* FASE 1: 0% a 23% (Monitor Pro Display en el cosmos) */}
           <motion.div
             style={{ opacity: p1Opacity, y: p1Y }}
-            className="space-y-4 will-change-transform absolute inset-x-0 mx-auto max-w-3xl px-6"
+            className="space-y-2.5 sm:space-y-4 will-change-transform absolute inset-x-0 mx-auto max-w-3xl px-4 sm:px-6"
           >
-            <h2 className="font-display text-4xl sm:text-6xl font-bold text-white leading-tight tracking-normal uppercase drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)]">
+            <h2 className="font-display text-2xl xs:text-3xl sm:text-5xl md:text-6xl font-bold text-white leading-snug sm:leading-tight tracking-normal uppercase drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)]">
               {s.p1Title}
             </h2>
-            <p className="text-zinc-200 text-sm sm:text-base max-w-2xl mx-auto font-sans leading-relaxed drop-shadow-[0_2px_14px_rgba(0,0,0,0.9)]">
+            <p className="text-zinc-200 text-xs sm:text-base max-w-xl mx-auto font-sans leading-relaxed drop-shadow-[0_2px_14px_rgba(0,0,0,0.9)]">
               {s.p1Desc}
             </p>
           </motion.div>
@@ -241,12 +254,12 @@ export default function CinematicDualVideoScrolly() {
           {/* FASE 2: 22% a 48% (Centro de Mando & Autonomía) */}
           <motion.div
             style={{ opacity: p2Opacity, y: p2Y }}
-            className="space-y-4 will-change-transform absolute inset-x-0 mx-auto max-w-3xl px-6"
+            className="space-y-2.5 sm:space-y-4 will-change-transform absolute inset-x-0 mx-auto max-w-3xl px-4 sm:px-6"
           >
-            <h2 className="font-display text-4xl sm:text-6xl font-bold text-white leading-tight tracking-normal uppercase drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)]">
+            <h2 className="font-display text-2xl xs:text-3xl sm:text-5xl md:text-6xl font-bold text-white leading-snug sm:leading-tight tracking-normal uppercase drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)]">
               {s.p2Title}
             </h2>
-            <p className="text-zinc-200 text-sm sm:text-base max-w-2xl mx-auto font-sans leading-relaxed drop-shadow-[0_2px_14px_rgba(0,0,0,0.9)]">
+            <p className="text-zinc-200 text-xs sm:text-base max-w-xl mx-auto font-sans leading-relaxed drop-shadow-[0_2px_14px_rgba(0,0,0,0.9)]">
               {s.p2Desc}
             </p>
           </motion.div>
@@ -254,12 +267,12 @@ export default function CinematicDualVideoScrolly() {
           {/* FASE 3: 47% a 74% (Salto Hiperespacial - Túnel Cósmico) */}
           <motion.div
             style={{ opacity: p3Opacity, y: p3Y }}
-            className="space-y-4 will-change-transform absolute inset-x-0 mx-auto max-w-3xl px-6"
+            className="space-y-2.5 sm:space-y-4 will-change-transform absolute inset-x-0 mx-auto max-w-3xl px-4 sm:px-6"
           >
-            <h2 className="font-display text-4xl sm:text-6xl font-bold text-white leading-tight tracking-normal uppercase drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)]">
+            <h2 className="font-display text-2xl xs:text-3xl sm:text-5xl md:text-6xl font-bold text-white leading-snug sm:leading-tight tracking-normal uppercase drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)]">
               {s.p3Title}
             </h2>
-            <p className="text-zinc-200 text-sm sm:text-base max-w-2xl mx-auto font-sans leading-relaxed drop-shadow-[0_2px_14px_rgba(0,0,0,0.9)]">
+            <p className="text-zinc-200 text-xs sm:text-base max-w-xl mx-auto font-sans leading-relaxed drop-shadow-[0_2px_14px_rgba(0,0,0,0.9)]">
               {s.p3Desc}
             </p>
           </motion.div>
@@ -267,18 +280,18 @@ export default function CinematicDualVideoScrolly() {
           {/* FASE 4: 73% a 100% (Destino Soberano & Conversión) */}
           <motion.div
             style={{ opacity: p4Opacity, y: p4Y }}
-            className="space-y-6 will-change-transform absolute inset-x-0 mx-auto max-w-3xl px-6 pointer-events-auto"
+            className="space-y-4 sm:space-y-6 will-change-transform absolute inset-x-0 mx-auto max-w-3xl px-4 sm:px-6 pointer-events-auto"
           >
-            <h2 className="font-display text-4xl sm:text-6xl font-bold text-white leading-tight tracking-normal uppercase drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)]">
+            <h2 className="font-display text-2xl xs:text-3xl sm:text-5xl md:text-6xl font-bold text-white leading-snug sm:leading-tight tracking-normal uppercase drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)]">
               {s.p4Title}
             </h2>
-            <p className="text-zinc-200 text-sm sm:text-base max-w-2xl mx-auto font-sans leading-relaxed drop-shadow-[0_2px_14px_rgba(0,0,0,0.9)]">
+            <p className="text-zinc-200 text-xs sm:text-base max-w-xl mx-auto font-sans leading-relaxed drop-shadow-[0_2px_14px_rgba(0,0,0,0.9)]">
               {s.p4Desc}
             </p>
             <div className="pt-2">
               <a
                 href="/#/diagnostico"
-                className="inline-flex items-center gap-3 px-9 py-4 bg-white text-black hover:bg-zinc-200 transition-all duration-300 font-sans text-xs tracking-wider font-bold rounded-xl shadow-[0_0_35px_rgba(255,255,255,0.35)] hover:scale-105 transform cursor-pointer uppercase"
+                className="inline-flex items-center gap-2.5 sm:gap-3 px-6 sm:px-9 py-3 sm:py-4 bg-white text-black hover:bg-zinc-200 transition-all duration-300 font-sans text-xs tracking-wider font-bold rounded-xl shadow-[0_0_35px_rgba(255,255,255,0.35)] hover:scale-105 transform cursor-pointer uppercase"
               >
                 <span>{s.p4Cta}</span>
                 <ArrowRight className="w-4 h-4" />
