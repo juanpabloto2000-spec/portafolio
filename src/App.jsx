@@ -1,177 +1,116 @@
-import React, { useState, useEffect } from 'react';
-import GrainOverlay from './components/ui/GrainOverlay';
-import Preloader from './components/ui/Preloader';
-import KineticMarquee from './components/ui/KineticMarquee';
+import React, { useState, useEffect, useRef } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ThemeLanguageProvider } from './context/ThemeLanguageContext';
+import GalaxyAmbientBackground from './components/ui/GalaxyAmbientBackground';
 import Navbar from './components/layout/Navbar';
-import Hero from './components/hero/Hero';
-import NicheShowcase from './components/showcase/NicheShowcase';
-import SystemsBento from './components/systems/SystemsBento';
-import LiveProjectsPage from './components/live/LiveProjectsPage';
-import Footer from './components/layout/Footer';
-import DemoModal from './components/demos/DemoModal';
-import BrandCalendarModal from './components/booking/BrandCalendarModal';
-import WhatsAppAgentSim from './components/booking/WhatsAppAgentSim';
-import AdminLayout from './components/admin/AdminLayout';
-import SecretAdminLogin from './components/admin/SecretAdminLogin';
-import { useApp } from './context/AppContext';
+import HomePage from './pages/HomePage';
+import WorksPage from './pages/WorksPage';
+import SystemsPage from './pages/SystemsPage';
+import TriagePage from './pages/TriagePage';
+import VisionPage from './pages/VisionPage';
+import AdminDashboard from './components/admin/AdminDashboard';
+import AdminAuthGuard from './components/admin/AdminAuthGuard';
+import FloatingSocialsDock from './components/layout/FloatingSocialsDock';
+import FloatingAIOrb from './components/layout/FloatingAIOrb';
+import WelcomeGalaxyPreloader from './components/ui/WelcomeGalaxyPreloader';
+
+const getPageIndex = (hash) => {
+  if (hash.startsWith('#/diagnostico')) return 4;
+  if (hash.startsWith('#/sistemas')) return 3;
+  if (hash.startsWith('#/obras')) return 2;
+  if (hash.startsWith('#/vision')) return 1;
+  return 0; // Home y anclas internas
+};
+
+const getPageKey = (hash) => {
+  if (hash.startsWith('#/diagnostico')) return 'diagnostico';
+  if (hash.startsWith('#/sistemas')) return 'sistemas';
+  if (hash.startsWith('#/obras')) return 'obras';
+  if (hash.startsWith('#/vision')) return 'vision';
+  return 'home';
+};
 
 export default function App() {
-  const { 
-    currentView, 
-    setCurrentView,
-    isBookingModalOpen, 
-    setIsBookingModalOpen,
-    siteContent,
-    auth 
-  } = useApp();
+  const [currentHash, setCurrentHash] = useState(() => window.location.hash || '#/');
+  const prevIndexRef = useRef(getPageIndex(window.location.hash || '#/'));
+  const [direction, setDirection] = useState(1);
 
-  const [activeDemoProject, setActiveDemoProject] = useState(null);
-  const [isDsbRoute, setIsDsbRoute] = useState(() => {
-    return window.location.hash.startsWith('#/dsb');
-  });
-
-  // Listen to hash changes for hidden /#/dsb route
   useEffect(() => {
     const handleHashChange = () => {
-      const isDsb = window.location.hash.startsWith('#/dsb');
-      setIsDsbRoute(isDsb);
+      const newHash = window.location.hash || '#/';
+      const newIndex = getPageIndex(newHash);
+      const prevIndex = prevIndexRef.current;
+
+      if (newIndex !== prevIndex) {
+        setDirection(newIndex > prevIndex ? 1 : -1);
+        prevIndexRef.current = newIndex;
+      }
+
+      setCurrentHash(newHash);
+      
+      // Desplazamiento limpio al inicio de la página salvo anclas internas
+      if (!newHash.includes('#comparativa')) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     };
 
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  const handleOpenDemo = (project) => {
-    setActiveDemoProject(project);
-  };
-
-  const handleCloseDemo = () => {
-    setActiveDemoProject(null);
-  };
-
-  const handleNavigate = (page, hash) => {
-    setCurrentView(page === 'live-projects' ? 'live' : 'home');
-
-    if (page === 'home' && hash) {
-      setTimeout(() => {
-        if (hash === 'top') {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-          const el = document.getElementById(hash);
-          if (el) {
-            el.scrollIntoView({ behavior: 'smooth' });
-          }
-        }
-      }, 100);
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
-  const handleScrollToDemos = () => {
-    setCurrentView('home');
-    setTimeout(() => {
-      const el = document.getElementById('demos');
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, 50);
-  };
-
-  // Dynamic Theme Class Resolver (Negro, Blanco, Gris, Obsidiana Morado Oscuro)
-  const currentTheme = siteContent?.styles?.bgTheme || 'pure-black';
-  const themeClasses = {
-    'pure-black': 'bg-[#000000] text-white selection:bg-white selection:text-black',
-    'pure-white': 'bg-[#fafafa] text-zinc-900 selection:bg-black selection:text-white',
-    'graphite-gray': 'bg-[#18181b] text-white selection:bg-white selection:text-black',
-    'obsidian-purple': 'bg-[#0c0617] text-white selection:bg-purple-400 selection:text-black'
-  }[currentTheme] || 'bg-[#000000] text-white selection:bg-white selection:text-black';
-
-  // 1. HIDDEN /#/dsb ROUTE
-  if (isDsbRoute) {
-    if (!auth.isAuthenticated) {
-      return (
-        <div className="min-h-screen bg-[#050507] text-white relative">
-          <GrainOverlay />
-          <SecretAdminLogin />
-        </div>
-      );
-    }
-
+  // 1. Ruta Administrativa Aislada (DSB) con Atmósfera Galáctica Cósmica
+  if (currentHash.startsWith('#/dsb') || currentHash.startsWith('#/admin')) {
     return (
-      <div className="min-h-screen bg-[#050507] text-white selection:bg-white selection:text-black relative">
-        <GrainOverlay />
-        <AdminLayout />
-        {/* Real-time WhatsApp Agent Simulator */}
-        <WhatsAppAgentSim />
-      </div>
+      <ThemeLanguageProvider>
+        <div className="min-h-screen bg-transparent text-slate-100 overflow-x-hidden relative selection:bg-white/20">
+          <GalaxyAmbientBackground />
+          <div className="relative z-10">
+            <AdminAuthGuard>
+              <AdminDashboard />
+            </AdminAuthGuard>
+          </div>
+        </div>
+      </ThemeLanguageProvider>
     );
   }
 
-  // 2. PUBLIC PORTFOLIO WEBSITE (Zero admin buttons, 100% clean)
+  const pageKey = getPageKey(currentHash);
+
   return (
-    <div className={`min-h-screen ${themeClasses} relative overflow-x-clip transition-colors duration-500`}>
-      {/* Luxury Cinematic Preloader */}
-      <Preloader />
+    <ThemeLanguageProvider>
+      <div className="min-h-screen bg-transparent text-slate-100 relative transition-colors duration-500">
+        {/* 🌌 Capa Ambiental Cósmica Galaxia a 60 FPS */}
+        <GalaxyAmbientBackground />
 
-      {/* Background Subtle Noise */}
-      <GrainOverlay />
+        {/* 🚀 Preloader Cósmico Interactivo (Index y Diagnóstico) */}
+        <WelcomeGalaxyPreloader pageKey={pageKey} />
 
-      {/* Floating Navigation Island */}
-      <Navbar 
-        currentPage={currentView === 'live' ? 'live-projects' : 'home'}
-        onNavigate={handleNavigate}
-        onOpenContact={() => setIsBookingModalOpen(true)}
-      />
+        {/* 🧭 Navbar Global Fijo a Nivel de Viewport (Inamovible durante el scroll) */}
+        <Navbar currentHash={currentHash} />
 
-      {/* Main Content View Switcher */}
-      <main className="relative z-10">
-        {currentView === 'home' ? (
-          <>
-            <Hero 
-              onOpenContact={() => setIsBookingModalOpen(true)} 
-            />
+        <div className="relative z-10">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={pageKey}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="w-full"
+            >
+              {pageKey === 'diagnostico' && <TriagePage />}
+              {pageKey === 'sistemas' && <SystemsPage />}
+              {pageKey === 'obras' && <WorksPage />}
+              {pageKey === 'vision' && <VisionPage />}
+              {pageKey === 'home' && <HomePage />}
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
-            {/* Kinetic Typography Infinite Ribbon */}
-            <KineticMarquee />
-            
-            <NicheShowcase 
-              onOpenDemo={handleOpenDemo} 
-            />
-            
-            <SystemsBento 
-              onOpenContact={() => setIsBookingModalOpen(true)} 
-            />
-          </>
-        ) : (
-          <LiveProjectsPage 
-            onBackToHome={() => handleNavigate('home', 'demos')}
-            onOpenContact={() => setIsBookingModalOpen(true)}
-          />
-        )}
-      </main>
-
-      {/* Editorial Footer */}
-      <Footer 
-        onNavigate={handleNavigate}
-        onOpenContact={() => setIsBookingModalOpen(true)}
-      />
-
-      {/* Interactive Fullscreen Demo Simulator */}
-      <DemoModal 
-        project={activeDemoProject}
-        isOpen={Boolean(activeDemoProject)}
-        onClose={handleCloseDemo}
-      />
-
-      {/* Branded Custom Calendar Booking Modal */}
-      <BrandCalendarModal 
-        isOpen={isBookingModalOpen}
-        onClose={() => setIsBookingModalOpen(false)}
-      />
-
-      {/* WhatsApp Agent Live Interaction Simulator */}
-      <WhatsAppAgentSim />
-    </div>
+        {/* Botones Flotantes Permanentes del Sistema */}
+        <FloatingSocialsDock />
+        <FloatingAIOrb />
+      </div>
+    </ThemeLanguageProvider>
   );
 }
