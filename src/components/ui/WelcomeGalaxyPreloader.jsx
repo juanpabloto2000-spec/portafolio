@@ -20,15 +20,18 @@ export default function WelcomeGalaxyPreloader({ pageKey }) {
       }
     }
 
-    // Efecto en los últimos 2 segundos: aparecer el logo con fade-in suave
+    // Efecto en los últimos 2 segundos: aparecer el logo con fade-in suave desde 1.6s
     const logoTimer = setTimeout(() => {
       setShowLogo(true);
-    }, 2000);
+    }, 1600);
 
-    // Salida suave a los 4.2 segundos (duración completa del clip)
+    // Salida cinematográfica en el frame exacto de entrada al agujero (3.65s)
     const exitTimer = setTimeout(() => {
+      if (videoRef.current) {
+        try { videoRef.current.pause(); } catch {}
+      }
       setIsVisible(false);
-    }, 4200);
+    }, 3650);
 
     return () => {
       clearTimeout(logoTimer);
@@ -48,8 +51,16 @@ export default function WelcomeGalaxyPreloader({ pageKey }) {
   const handleTimeUpdate = () => {
     const video = videoRef.current;
     if (!video) return;
-    if (video.duration && (video.duration - video.currentTime <= 2.1) && !showLogo) {
+
+    // 1. Mostrar logo con opacidad suave en los últimos 2 segundos de vuelo
+    if (video.currentTime >= 1.6 && !showLogo) {
       setShowLogo(true);
+    }
+
+    // 2. Terminar en el frame exacto cuando la nave entra en el agujero cósmico (3.60s)
+    if (video.currentTime >= 3.60 && isVisible) {
+      try { video.pause(); } catch {}
+      setIsVisible(false);
     }
   };
 
@@ -59,12 +70,12 @@ export default function WelcomeGalaxyPreloader({ pageKey }) {
         <motion.div
           key="cinematic-preloader"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, scale: 1.02 }}
-          transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+          exit={{ opacity: 0, scale: 1.03 }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           onClick={() => setIsVisible(false)}
           className="fixed inset-0 z-[99999] bg-black overflow-hidden flex items-center justify-center select-none cursor-pointer"
         >
-          {/* Video a pantalla completa sin etiquetas */}
+          {/* Video a pantalla completa con encuadre adaptable (enfocado en el vórtice cósmico en móvil y centrado en desktop) */}
           <video
             ref={videoRef}
             src="/videos/pcarga.mp4"
@@ -75,7 +86,7 @@ export default function WelcomeGalaxyPreloader({ pageKey }) {
             onEnded={handleVideoEnded}
             onError={handleVideoError}
             onTimeUpdate={handleTimeUpdate}
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover object-[78%_35%] sm:object-center"
           />
 
           {/* Viñeta cinematográfica muy sutil para dar profundidad */}
@@ -88,13 +99,13 @@ export default function WelcomeGalaxyPreloader({ pageKey }) {
                 initial={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
                 animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
                 exit={{ opacity: 0, scale: 1.05 }}
-                transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
                 className="relative z-20 flex items-center justify-center p-6"
               >
                 <img
                   src="/logo sin fondo.png"
                   alt="Dynamind Studios Logo"
-                  className="w-52 xs:w-64 sm:w-80 md:w-96 h-auto object-contain drop-shadow-[0_0_40px_rgba(255,255,255,0.45)]"
+                  className="w-44 xs:w-56 sm:w-72 md:w-88 h-auto object-contain drop-shadow-[0_0_40px_rgba(255,255,255,0.45)]"
                 />
               </motion.div>
             )}
