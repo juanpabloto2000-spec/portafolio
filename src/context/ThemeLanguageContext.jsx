@@ -785,6 +785,7 @@ export function ThemeLanguageProvider({ children }) {
   };
 
   const isLight = theme === 'alabaster';
+  const t = TRANSLATIONS[language] || TRANSLATIONS.es;
 
   return (
     <ThemeLanguageContext.Provider value={{ theme, setTheme, toggleTheme, isLight, borderStyle, setBorderStyle, language, setLanguage, t }}>

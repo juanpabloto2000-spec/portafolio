@@ -6,13 +6,18 @@ export default function WelcomeGalaxyPreloader({ pageKey }) {
   const [showLogo, setShowLogo] = useState(false);
   const videoRef = useRef(null);
 
-  // Iniciar la reproducción y temporizar la aparición del logo en los últimos 2 segundos
   useEffect(() => {
     const video = videoRef.current;
     if (video) {
-      video.play().catch(() => {
-        // Fallback si el navegador bloquea autoplay
-      });
+      video.muted = true;
+      video.defaultMuted = true;
+      video.playsInline = true;
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((err) => {
+          console.debug('Autoplay fallback notice:', err);
+        });
+      }
     }
 
     // Efecto en los últimos 2 segundos: aparecer el logo con fade-in suave
@@ -32,16 +37,17 @@ export default function WelcomeGalaxyPreloader({ pageKey }) {
   }, []);
 
   const handleVideoEnded = () => {
-    // Si el video termina antes de los 4.2s, cerrar con suavidad
-    setTimeout(() => {
-      setIsVisible(false);
-    }, 300);
+    setIsVisible(false);
+  };
+
+  const handleVideoError = () => {
+    // Si hay error al cargar el video, proceder de inmediato al index
+    setIsVisible(false);
   };
 
   const handleTimeUpdate = () => {
     const video = videoRef.current;
     if (!video) return;
-    // Si la duración es conocida y faltan <= 2 segundos, activar el logo
     if (video.duration && (video.duration - video.currentTime <= 2.1) && !showLogo) {
       setShowLogo(true);
     }
@@ -55,7 +61,8 @@ export default function WelcomeGalaxyPreloader({ pageKey }) {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, scale: 1.02 }}
           transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-          className="fixed inset-0 z-[99999] bg-black overflow-hidden flex items-center justify-center select-none"
+          onClick={() => setIsVisible(false)}
+          className="fixed inset-0 z-[99999] bg-black overflow-hidden flex items-center justify-center select-none cursor-pointer"
         >
           {/* Video a pantalla completa sin etiquetas */}
           <video
@@ -66,6 +73,7 @@ export default function WelcomeGalaxyPreloader({ pageKey }) {
             playsInline
             preload="auto"
             onEnded={handleVideoEnded}
+            onError={handleVideoError}
             onTimeUpdate={handleTimeUpdate}
             className="absolute inset-0 w-full h-full object-cover"
           />
