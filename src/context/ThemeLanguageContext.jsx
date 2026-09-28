@@ -25,7 +25,7 @@ export const TRANSLATIONS = {
       close: 'Aplicar y Cerrar'
     },
     hero: {
-      headline: 'En Dynamind no diseñamos solo sitios estéticos pero muertos y sin función.',
+      headline: 'En Dynamind no diseñamos sitios estéticos, muertos y sin función.',
       subtitle: 'Construimos herramientas de software vivas con dashboards operativos aislados (Core PMS), código nativo a 60 FPS, agendadores atómicos y pasarelas directas que liberan al dueño de negocio y al mentor de cientos de horas de fricción manual.',
       ctaDiagnostico: 'Diagnosticar Mi Proyecto (45s)',
       ctaFilosofia: 'Por Qué No Webs Tradicionales',
@@ -149,7 +149,7 @@ export const TRANSLATIONS = {
       close: 'Apply & Close'
     },
     hero: {
-      headline: 'At Dynamind we do not design just aesthetic yet dead and functionless websites.',
+      headline: 'At Dynamind we do not design aesthetic, dead and functionless websites.',
       subtitle: 'We build living software tools with isolated operational dashboards (Core PMS), native 60 FPS code, atomic schedulers, and direct checkout gateways that liberate the business owner from hundreds of hours of manual friction.',
       ctaDiagnostico: 'Start Diagnostic (45s)',
       ctaFilosofia: 'Why Not Traditional Websites',
@@ -273,7 +273,7 @@ export const TRANSLATIONS = {
       close: 'Appliquer et Fermer'
     },
     hero: {
-      headline: 'Chez Dynamind, nous ne créons pas seulement des sites esthétiques mais morts et sans fonction.',
+      headline: 'Chez Dynamind, nous ne créons pas de sites esthétiques, morts et sans fonction.',
       subtitle: 'Nous construisons des outils logiciels vivants avec tableaux de bord opérationnels isolés (Core PMS), code natif à 60 FPS, planificateurs atomiques et passerelles directes libérant le dirigeant de centaines d\'heures de friction.',
       ctaDiagnostico: 'Démarrer le Diagnostic (45s)',
       ctaFilosofia: 'Pourquoi Pas de Web Traditionnel',
@@ -397,7 +397,7 @@ export const TRANSLATIONS = {
       close: 'Anwenden & Schließen'
     },
     hero: {
-      headline: 'Bei Dynamind gestalten wir nicht nur ästhetische, aber tote und funktionslose Websites.',
+      headline: 'Bei Dynamind gestalten wir keine ästhetischen, toten und funktionslosen Websites.',
       subtitle: 'Wir entwickeln lebendige Software-Werkzeuge mit isolierten operativen Dashboards (Core PMS), nativem 60-FPS-Code, atomaren Terminplanern und Direkt-Checkouts.',
       ctaDiagnostico: 'Diagnose starten (45s)',
       ctaFilosofia: 'Warum keine Standard-Websites',
@@ -521,7 +521,7 @@ export const TRANSLATIONS = {
       close: 'Aplicar e Fechar'
     },
     hero: {
-      headline: 'Na Dynamind não desenhamos apenas sites estéticos mas mortos e sem função.',
+      headline: 'Na Dynamind não desenhamos sites estéticos, mortos e sem função.',
       subtitle: 'Construímos ferramentas de software vivas com painéis operacionais isolados (Core PMS), código nativo a 60 FPS, agendadores atômicos e checkout direto que libertam o dono do negócio de centenas de horas de fricção manual.',
       ctaDiagnostico: 'Iniciar Diagnóstico (45s)',
       ctaFilosofia: 'Por Que Não Sites Tradicionais',
