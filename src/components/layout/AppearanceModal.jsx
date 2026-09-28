@@ -25,21 +25,18 @@ export default function AppearanceModal({ isOpen, onClose }) {
       id: 'sharp',
       name: t.appearance.sharp,
       description: t.appearance.sharpDesc,
-      badge: 'Bordes Rectos 90°',
       previewRadius: 'rounded-none'
     },
     {
       id: 'medium',
       name: t.appearance.medium,
       description: t.appearance.mediumDesc,
-      badge: 'Equilibrado (Actual)',
       previewRadius: 'rounded-xl'
     },
     {
       id: 'rounded',
       name: t.appearance.rounded,
       description: t.appearance.roundedDesc,
-      badge: 'Redondeado Suave',
       previewRadius: 'rounded-2xl'
     }
   ];
@@ -199,25 +196,20 @@ export default function AppearanceModal({ isOpen, onClose }) {
                           : (isLight ? 'border-slate-200 bg-slate-50/80 hover:bg-slate-100 hover:border-slate-300' : 'border-white/10 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/20')
                       }`}
                     >
-                      <div className="flex items-center justify-between mb-2">
-                        <span className={`text-[10px] font-mono uppercase px-2 py-0.5 rounded-full ${
-                          isLight ? 'bg-slate-200 text-slate-700' : 'bg-white/10 text-slate-300'
+                      <div className="flex items-center justify-between mb-1.5 min-h-[24px]">
+                        <span className={`font-semibold text-sm ${
+                          isLight ? 'text-black' : 'text-white'
                         }`}>
-                          {item.badge}
+                          {item.name}
                         </span>
                         {isSelected && (
-                          <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
+                          <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${
                             isLight ? 'bg-indigo-600 text-white' : 'bg-cyan-400 text-black'
                           }`}>
                             <Check className="w-3.5 h-3.5 stroke-[3]" />
                           </div>
                         )}
                       </div>
-                      <span className={`font-semibold text-sm mb-1 ${
-                        isLight ? 'text-slate-900' : 'text-white'
-                      }`}>
-                        {item.name}
-                      </span>
                       <p className={`text-[11px] line-clamp-2 leading-relaxed mb-3 ${
                         isLight ? 'text-slate-500' : 'text-slate-400'
                       }`}>

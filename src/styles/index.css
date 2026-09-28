@@ -79,20 +79,63 @@ html.theme-alabaster {
 
 html.theme-alabaster body {
   background-color: transparent !important;
-  color: #0f172a !important;
+  color: #000000 !important;
 }
 
-html.theme-alabaster .text-white {
-  color: #0f172a !important;
+/* ========================================================== */
+/* TODAS LAS LETRAS EN MODO CLARO SON 100% NEGRAS (#000000)   */
+/* ========================================================== */
+html.theme-alabaster,
+html.theme-alabaster h1,
+html.theme-alabaster h2,
+html.theme-alabaster h3,
+html.theme-alabaster h4,
+html.theme-alabaster h5,
+html.theme-alabaster h6,
+html.theme-alabaster p,
+html.theme-alabaster li,
+html.theme-alabaster strong,
+html.theme-alabaster label {
+  color: #000000 !important;
 }
 
-html.theme-alabaster .text-platinum {
-  color: #1e293b !important;
-}
-
+/* Forzar clases utilitarias de texto a negro absoluto en modo claro */
+html.theme-alabaster .text-white,
+html.theme-alabaster .text-platinum,
+html.theme-alabaster .text-zinc-100,
+html.theme-alabaster .text-zinc-200,
 html.theme-alabaster .text-zinc-300,
-html.theme-alabaster .text-zinc-400 {
-  color: #475569 !important;
+html.theme-alabaster .text-zinc-400,
+html.theme-alabaster .text-zinc-500,
+html.theme-alabaster .text-slate-300,
+html.theme-alabaster .text-slate-400,
+html.theme-alabaster .text-slate-500,
+html.theme-alabaster .text-slate-600,
+html.theme-alabaster .text-slate-700,
+html.theme-alabaster .text-slate-800,
+html.theme-alabaster .text-slate-900,
+html.theme-alabaster .text-gray-300,
+html.theme-alabaster .text-gray-400,
+html.theme-alabaster .text-gray-500,
+html.theme-alabaster .text-red-300,
+html.theme-alabaster .text-red-400,
+html.theme-alabaster .text-cyan-300,
+html.theme-alabaster .text-cyan-400,
+html.theme-alabaster .text-emerald-300,
+html.theme-alabaster .text-emerald-400,
+html.theme-alabaster .text-amber-300,
+html.theme-alabaster .text-amber-400 {
+  color: #000000 !important;
+}
+
+/* Excepción: Botones con fondo sólido o gradiente conservan letra blanca para contraste */
+html.theme-alabaster a[class*="bg-gradient-to-r"] span,
+html.theme-alabaster button[class*="bg-gradient-to-r"] span,
+html.theme-alabaster a[class*="bg-indigo-600"],
+html.theme-alabaster button[class*="bg-indigo-600"],
+html.theme-alabaster a[class*="bg-blue-600"],
+html.theme-alabaster button[class*="bg-blue-600"] {
+  color: #ffffff !important;
 }
 
 html.theme-alabaster .border-white\/10,
@@ -100,15 +143,15 @@ html.theme-alabaster .border-white\/15,
 html.theme-alabaster .border-white\/20,
 html.theme-alabaster .border-white\/25,
 html.theme-alabaster .border-white\/30 {
-  border-color: rgba(15, 23, 42, 0.12) !important;
+  border-color: #e2e8f0 !important;
 }
 
 html.theme-alabaster .bg-white\/\[0\.025\],
 html.theme-alabaster .bg-white\/\[0\.03\],
 html.theme-alabaster .bg-white\/\[0\.04\],
 html.theme-alabaster .bg-white\/\[0\.05\] {
-  background-color: rgba(255, 255, 255, 0.85) !important;
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+  background-color: #f1f5f9 !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04);
 }
 
 html.theme-alabaster .bg-volumetric {
@@ -120,45 +163,65 @@ html.theme-alabaster .bg-volumetric {
   -webkit-backdrop-filter: blur(12px);
 }
 
-html.theme-alabaster .glow-card {
-  background: rgba(255, 255, 255, 0.95) !important;
-  border-color: rgba(15, 23, 42, 0.08) !important;
-  box-shadow: 0 14px 35px -5px rgba(0, 0, 0, 0.06), 0 0 1px rgba(0,0,0,0.1) !important;
-}
-
-/* Adaptación de Contenedores y Búnkers Oscuros a Cristal Alabastro */
+/* ========================================================================= */
+/* TARJETAS EN MODO CLARO: TODAS ROJAS, AZULES Y GRIS OSCURO -> GRIS MUY CLARITO */
+/* ========================================================================= */
+html.theme-alabaster .bg-\[\#0e0709\],
+html.theme-alabaster .bg-\[\#0e0709\]\/95,
+html.theme-alabaster .bg-\[\#130708\],
+html.theme-alabaster .bg-\[\#130708\]\/95,
+html.theme-alabaster .bg-\[\#061017\],
+html.theme-alabaster .bg-\[\#061017\]\/95,
+html.theme-alabaster .bg-\[\#061219\],
+html.theme-alabaster .bg-\[\#061219\]\/95,
 html.theme-alabaster .bg-\[\#080b13\],
 html.theme-alabaster .bg-\[\#080b13\]\/90,
 html.theme-alabaster .bg-\[\#080b13\]\/95,
+html.theme-alabaster .bg-\[\#0e121e\],
+html.theme-alabaster .bg-\[\#0e121e\]\/95,
 html.theme-alabaster .bg-\[\#0e1320\],
 html.theme-alabaster .bg-\[\#080d1a\],
 html.theme-alabaster .bg-\[\#080d1a\]\/95,
-html.theme-alabaster .bg-\[\#0c101c\] {
-  background-color: rgba(255, 255, 255, 0.96) !important;
-  border-color: rgba(15, 23, 42, 0.09) !important;
-  color: #0f172a !important;
-}
-
-/* Tarjetas Tácticas de Comparativa en Modo Claro */
-html.theme-alabaster .bg-\[\#0e0709\],
-html.theme-alabaster .bg-\[\#0e0709\]\/95 {
-  background-color: #fff1f2 !important;
-  border-color: rgba(244, 63, 94, 0.25) !important;
-  box-shadow: 0 15px 35px -5px rgba(225, 29, 72, 0.06) !important;
-}
-
-html.theme-alabaster .bg-\[\#061017\],
-html.theme-alabaster .bg-\[\#061017\]\/95 {
-  background-color: #f0f9ff !important;
-  border-color: rgba(2, 132, 199, 0.3) !important;
-  box-shadow: 0 15px 35px -5px rgba(2, 132, 199, 0.08) !important;
-}
-
-/* Nodos y Steppers en Modo Claro */
-html.theme-alabaster .bg-\[\#0f1422\] {
+html.theme-alabaster .bg-\[\#0c101c\],
+html.theme-alabaster .bg-\[\#0f1422\],
+html.theme-alabaster .bg-\[\#0f1422\]\/95,
+html.theme-alabaster .bg-\[\#071912\],
+html.theme-alabaster .bg-\[\#071912\]\/95,
+html.theme-alabaster .glow-card {
   background-color: #f1f5f9 !important;
-  border-color: rgba(15, 23, 42, 0.1) !important;
-  color: #64748b !important;
+  border-color: #e2e8f0 !important;
+  color: #000000 !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04), 0 0 1px rgba(0, 0, 0, 0.06) !important;
+}
+
+html.theme-alabaster .glow-card:hover,
+html.theme-alabaster .bg-\[\#0e121e\]\/95:hover {
+  background-color: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+}
+
+/* Neutralización de marcos/bordes de color en modo claro */
+html.theme-alabaster .border-red-500\/30,
+html.theme-alabaster .border-red-500\/35,
+html.theme-alabaster .border-red-500\/40,
+html.theme-alabaster .border-red-900\/40,
+html.theme-alabaster .border-cyan-400\/40,
+html.theme-alabaster .border-cyan-400\/50,
+html.theme-alabaster .border-cyan-500\/20,
+html.theme-alabaster .border-cyan-500\/30,
+html.theme-alabaster .border-emerald-500\/30 {
+  border-color: #e2e8f0 !important;
+}
+
+/* Iconos de cabecera en las comparativas sobre fondo gris muy clarito */
+html.theme-alabaster .bg-red-900\/40 {
+  background-color: #fee2e2 !important;
+  border-color: #fca5a5 !important;
+}
+html.theme-alabaster .bg-cyan-500\/25,
+html.theme-alabaster .bg-cyan-500\/10 {
+  background-color: #e0f2fe !important;
+  border-color: #bae6fd !important;
 }
 
 html.theme-alabaster .ring-offset-\[\#080b13\] {
@@ -168,6 +231,19 @@ html.theme-alabaster .ring-offset-\[\#080b13\] {
 /* Header Navbar en Modo Claro */
 html.theme-alabaster header {
   border-bottom-color: rgba(15, 23, 42, 0.06) !important;
+}
+
+/* Sombras tácticas ultra suaves en Modo Claro */
+html.theme-alabaster [class*="shadow-\[0_20px_50px"],
+html.theme-alabaster .shadow-2xl,
+html.theme-alabaster .shadow-monolith {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.04), 0 0 1px rgba(0, 0, 0, 0.08) !important;
+}
+
+html.theme-alabaster .shadow-cyan-500\/10,
+html.theme-alabaster .shadow-cyan-500\/25,
+html.theme-alabaster .shadow-indigo-500\/10 {
+  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.04) !important;
 }
 
 /* Scrollbars en Modo Claro */

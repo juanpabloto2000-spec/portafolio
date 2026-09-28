@@ -41,5 +41,7 @@ server_wa/auth_info/
 
 # Temporary user feedback recordings
 public/videos/demostracion.mp4
+public/videos/bug movil.mp4
+scratch/
 
 
