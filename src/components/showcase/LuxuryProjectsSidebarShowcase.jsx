@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LIVE_PROJECTS } from '../../data/liveProjects';
-import { Sparkles, Smartphone, Monitor, LayoutDashboard, Globe } from 'lucide-react';
+import { Sparkles, Smartphone, Monitor, Globe } from 'lucide-react';
 import { soundFx } from '../../utils/audioEffects';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 
 export default function LuxuryProjectsSidebarShowcase() {
   const { isLight } = useThemeLanguage();
   const [currentIndex, setCurrentIndex] = useState(0);
-  
-  // Pestaña activa: 'front' (Portal Web Comercial) vs 'dashboard' (Core Operativo /#/dsb)
-  const [activeLayer, setActiveLayer] = useState('front');
 
   // Detección automática inteligente: si el ancho es >= 1024px (PC / Laptop) inicia en 'desktop', de lo contrario en 'mobile'
   const [viewMode, setViewMode] = useState(() => {
@@ -37,13 +34,10 @@ export default function LuxuryProjectsSidebarShowcase() {
   const currentProject = LIVE_PROJECTS[currentIndex];
   const isLive = currentProject.liveUrl && currentProject.liveUrl !== '#' && !currentProject.isUpcoming;
 
-  // Cálculo de URL del iframe según la pestaña activa (Portal vs Dashboard /#/dsb)
-  const getIframeUrl = (project, layer) => {
+  // Cálculo de URL del iframe exclusivamente hacia el Portal Web Comercial (DSB 100% privado y oculto)
+  const getIframeUrl = (project) => {
     if (!project.liveUrl || project.liveUrl === '#' || project.isUpcoming) return null;
     const cleanBase = project.liveUrl.replace(/\/+#*(\/.*)?$/, '');
-    if (layer === 'dashboard') {
-      return `${cleanBase}/#/dsb`;
-    }
     return project.liveUrl.includes('/#/') ? project.liveUrl : `${cleanBase}/#/`;
   };
 
@@ -52,18 +46,13 @@ export default function LuxuryProjectsSidebarShowcase() {
     setCurrentIndex(idx);
   };
 
-  const handleLayerChange = (layer) => {
-    soundFx.playBlip(layer === 'dashboard' ? 640 : 540);
-    setActiveLayer(layer);
-  };
-
   const handleViewMode = (mode) => {
     soundFx.playBlip(560);
     setHasManuallyToggled(true);
     setViewMode(mode);
   };
 
-  const activeIframeSrc = getIframeUrl(currentProject, activeLayer);
+  const activeIframeSrc = getIframeUrl(currentProject);
 
   return (
     <div className="w-full space-y-4 font-sans select-none">
@@ -75,7 +64,7 @@ export default function LuxuryProjectsSidebarShowcase() {
             Showcase Interactivo en Vivo
           </h3>
           <p className="text-xs sm:text-sm font-sans text-zinc-300 mt-0.5">
-            Plataformas reales de autor en producción con alternancia directa entre Frontoffice y Dashboard.
+            Plataformas reales de autor en producción operando con comensales, huéspedes y reservas en tiempo real.
           </p>
         </div>
 
@@ -207,7 +196,7 @@ export default function LuxuryProjectsSidebarShowcase() {
               isLight ? 'text-black' : 'text-zinc-400'
             }`}>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-              <span>Core PMS & Capa Operativa Integrada</span>
+              <span>Plataforma Soberana de Alta Conversión</span>
             </div>
           </div>
 
@@ -225,7 +214,7 @@ export default function LuxuryProjectsSidebarShowcase() {
               : 'rounded-2xl sm:rounded-3xl border border-white/15 bg-[#080b13]/95 backdrop-blur-2xl overflow-hidden shadow-2xl'
           }`}>
             
-            {/* Barra de Telemetría Superior con Conmutador de Pestañas (Portal vs Dashboard) */}
+            {/* Barra de Telemetría Superior (Limpia, sin exposición de DSB) */}
             <div className={`px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 border-b ${
               viewMode === 'mobile' 
                 ? 'bg-transparent border-white/10 rounded-t-[28px]' 
@@ -245,32 +234,11 @@ export default function LuxuryProjectsSidebarShowcase() {
                 </span>
               </div>
 
-              {/* Centro: Conmutador de Pestañas [ Portal Web ] vs [ Core Operativo (/#/dsb) ] */}
-              <div className="flex items-center p-1 bg-black/80 border border-white/15 rounded-xl backdrop-blur-md shrink-0">
-                <button
-                  type="button"
-                  onClick={() => handleLayerChange('front')}
-                  className={`px-3 py-1 rounded-lg text-xs font-sans font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
-                    activeLayer === 'front'
-                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-sm'
-                      : 'text-zinc-400 hover:text-white'
-                  }`}
-                >
-                  <Globe className="w-3 h-3 text-cyan-300" />
-                  <span>Portal Web</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleLayerChange('dashboard')}
-                  className={`px-3 py-1 rounded-lg text-xs font-sans font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
-                    activeLayer === 'dashboard'
-                      ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md shadow-cyan-500/30 border border-cyan-400/40'
-                      : 'text-zinc-400 hover:text-white'
-                  }`}
-                >
-                  <LayoutDashboard className="w-3 h-3 text-cyan-300" />
-                  <span>Core Dashboard (/#/dsb)</span>
-                </button>
+              {/* Insignia de Telemetría de Producción Activa */}
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-black/80 border border-white/15 rounded-xl backdrop-blur-md shrink-0">
+                <Globe className="w-3.5 h-3.5 text-cyan-400" />
+                <span className="text-[11px] font-mono text-zinc-300 font-medium">Plataforma Web Activa</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse ml-0.5" />
               </div>
 
             </div>
@@ -283,7 +251,7 @@ export default function LuxuryProjectsSidebarShowcase() {
             }`}>
               <AnimatePresence mode="wait">
                 <motion.div
-                  key={`${currentProject.id}-${viewMode}-${activeLayer}`}
+                  key={`${currentProject.id}-${viewMode}`}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -293,7 +261,7 @@ export default function LuxuryProjectsSidebarShowcase() {
                   {isLive && activeIframeSrc ? (
                     <iframe
                       src={activeIframeSrc}
-                      title={`${currentProject.title} - ${activeLayer === 'dashboard' ? 'Core Dashboard' : 'Portal Web'}`}
+                      title={`${currentProject.title} - Plataforma Web Oficial`}
                       sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
                       className="w-full h-full border-0 bg-white"
                       loading="lazy"
@@ -330,7 +298,7 @@ export default function LuxuryProjectsSidebarShowcase() {
             {viewMode === 'desktop' && (
               <div className="px-4 py-2 bg-[#0c101c] border-t border-white/10 flex items-center justify-between text-xs font-mono text-zinc-400">
                 <span className="text-[11px] text-zinc-300 font-medium">
-                  {currentProject.client} — {activeLayer === 'dashboard' ? 'Módulo Administrativo & PMS (/ #/dsb)' : currentProject.tagline}
+                  {currentProject.client} — {currentProject.tagline}
                 </span>
                 <span className="text-[11px] text-cyan-400 font-bold shrink-0 ml-2">
                   0{currentIndex + 1} / 0{LIVE_PROJECTS.length}

@@ -91,11 +91,6 @@ export default function AppearanceModal({ isOpen, onClose }) {
                 }`}>
                   {t.appearance.title}
                 </h3>
-                <p className={`text-xs ${
-                  isLight ? 'text-slate-500' : 'text-slate-400'
-                }`}>
-                  Personaliza la morfología geométrica de bordes y el idioma del portal
-                </p>
               </div>
             </div>
             <button

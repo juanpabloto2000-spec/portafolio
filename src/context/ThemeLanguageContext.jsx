@@ -13,7 +13,7 @@ export const TRANSLATIONS = {
       configuracion: 'Apariencia & Idioma'
     },
     appearance: {
-      title: 'Morfología & Idioma',
+      title: 'Configuraciones de Página',
       borders: 'Morfología de Bordes',
       languages: 'Idioma del Portal',
       sharp: 'Con Bordes Rectos (90°)',
@@ -137,7 +137,7 @@ export const TRANSLATIONS = {
       configuracion: 'Appearance & Language'
     },
     appearance: {
-      title: 'Morphology & Language',
+      title: 'Page Settings',
       borders: 'Border Morphology',
       languages: 'Portal Language',
       sharp: 'Sharp Orthogonal (90°)',
@@ -261,7 +261,7 @@ export const TRANSLATIONS = {
       configuracion: 'Apparence & Langue'
     },
     appearance: {
-      title: 'Morphologie & Langue',
+      title: 'Paramètres de la Page',
       borders: 'Morphologie des Bordures',
       languages: 'Langue du Portail',
       sharp: 'Bords Droits (90°)',
@@ -385,7 +385,7 @@ export const TRANSLATIONS = {
       configuracion: 'Erscheinungsbild & Sprache'
     },
     appearance: {
-      title: 'Morphologie & Sprache',
+      title: 'Seiteneinstellungen',
       borders: 'Kanten-Morphologie',
       languages: 'Portalsprache',
       sharp: 'Geradlinig / Eckig (90°)',
@@ -509,7 +509,7 @@ export const TRANSLATIONS = {
       configuracion: 'Aparência & Idioma'
     },
     appearance: {
-      title: 'Morfologia & Idioma',
+      title: 'Configurações da Página',
       borders: 'Morfologia de Bordas',
       languages: 'Idioma do Portal',
       sharp: 'Com Bordas Retas (90°)',
@@ -633,7 +633,7 @@ export const TRANSLATIONS = {
       configuracion: '外観と環境設定'
     },
     appearance: {
-      title: '形状と環境設定',
+      title: 'ページ設定',
       borders: 'エッジ・ボーダー形状',
       languages: 'ポータル言語',
       sharp: '直角・スクエア (90°)',
