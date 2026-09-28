@@ -202,20 +202,30 @@ export default function CinematicDualVideoScrolly() {
       ref={containerRef} 
       className="relative w-full h-[480vh] bg-[#06070a] select-none"
     >
+      {/* Transición Atmosférica de Entrada (Se funde con la sección anterior sin líneas de corte) */}
+      <div className="absolute top-0 inset-x-0 h-64 bg-gradient-to-b from-transparent via-[#06070a]/70 to-[#06070a] pointer-events-none z-30" />
+
+      {/* Transición Atmosférica de Salida (Se funde con la sección posterior sin líneas de corte) */}
+      <div className="absolute bottom-0 inset-x-0 h-64 bg-gradient-to-t from-transparent via-[#06070a]/70 to-[#06070a] pointer-events-none z-30" />
+
       {/* Marco Sticky de pantalla completa sin overflow obstaculizador */}
       <div className="sticky top-0 left-0 w-full h-screen overflow-hidden flex items-center justify-center bg-[#06070a]">
         
-        {/* Layer 1: Motor Canvas de 120 Fotogramas WebP de Alta Resolución a 60 FPS */}
+        {/* Layer 1: Motor Canvas de 120 Fotogramas WebP de Alta Resolución a 60 FPS con Máscara de Desvanecimiento Vertical */}
         <canvas
           ref={canvasRef}
           className="absolute inset-0 w-full h-full object-cover pointer-events-none z-10"
+          style={{
+            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 4%, rgba(0,0,0,0.95) 12%, black 20%, black 80%, rgba(0,0,0,0.95) 88%, rgba(0,0,0,0.5) 96%, transparent 100%)',
+            maskImage: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 4%, rgba(0,0,0,0.95) 12%, black 20%, black 80%, rgba(0,0,0,0.95) 88%, rgba(0,0,0,0.5) 96%, transparent 100%)'
+          }}
         />
 
         {/* Layer 2: Viñeta Cinemática Crystalline (Sin capas negras pesadas, preserva colores y estrellas) */}
         <div 
           className="absolute inset-0 pointer-events-none z-20"
           style={{
-            background: 'linear-gradient(to bottom, rgba(6,7,10,0.65) 0%, rgba(6,7,10,0.02) 25%, rgba(6,7,10,0.02) 75%, rgba(6,7,10,0.75) 100%)'
+            background: 'linear-gradient(to bottom, rgba(6,7,10,0.85) 0%, rgba(6,7,10,0.02) 20%, rgba(6,7,10,0.02) 80%, rgba(6,7,10,0.9) 100%)'
           }}
         />
         <div 
@@ -224,6 +234,10 @@ export default function CinematicDualVideoScrolly() {
             background: 'radial-gradient(ellipse at center, transparent 55%, rgba(6,7,10,0.55) 100%)'
           }}
         />
+
+        {/* Gradientes Atmosféricos de Borde para fusión total con el cosmos */}
+        <div className="absolute top-0 left-0 right-0 h-44 pointer-events-none z-25 bg-gradient-to-b from-[#06070a] via-[#06070a]/90 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-44 pointer-events-none z-25 bg-gradient-to-t from-[#06070a] via-[#06070a]/90 to-transparent" />
 
         {/* Escenario Central: Fases Narrativas Sincronizadas elevadas en móvil para despejar el monitor y la consola */}
         <div className="relative z-30 w-full max-w-4xl mx-auto px-4 sm:px-6 text-center pointer-events-none min-h-[220px] sm:h-72 flex flex-col justify-start sm:justify-center pt-20 sm:pt-0">

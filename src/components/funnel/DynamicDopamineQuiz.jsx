@@ -389,12 +389,7 @@ Quedo atento para la demostración técnica de 15 minutos.`;
       className="w-full max-w-4xl mx-auto font-sans relative"
     >
       
-      {/* HUD 1: Odómetro Reactivo Dopamínico */}
-      <div className="mb-4">
-        <FrictionOdometreHUD score={currentScore} step={step} />
-      </div>
-
-      {/* HUD 2: Stepped Facet Pipeline de 6 Nodos Cósmicos (Reemplaza la barra de carga plana) */}
+      {/* HUD de Progreso: Stepped Facet Pipeline de 6 Nodos Cósmicos */}
       <div className="mb-8 p-4 sm:p-5 bg-[#080b13]/90 border border-white/15 rounded-3xl backdrop-blur-xl shadow-2xl relative overflow-hidden">
         
         {/* Nodos de Facetas Interconectados */}

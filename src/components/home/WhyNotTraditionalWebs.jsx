@@ -124,8 +124,8 @@ export default function WhyNotTraditionalWebs() {
 
       </div>
 
-      {/* Transición Atmosférica Difuminada (Sin líneas duras que corten el fondo) */}
-      <div className="w-full max-w-5xl mx-auto h-px bg-gradient-to-r from-transparent via-white/10 to-transparent pointer-events-none mt-20 sm:mt-28 opacity-40" />
+      {/* Transición Atmosférica Difuminada (Resplandor etéreo sin cortes de línea) */}
+      <div className="w-full max-w-4xl mx-auto h-20 bg-gradient-to-b from-transparent via-cyan-500/[0.03] to-transparent blur-2xl pointer-events-none mt-12 sm:mt-16" />
 
     </section>
   );
