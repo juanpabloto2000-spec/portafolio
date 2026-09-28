@@ -1,9 +1,11 @@
 {
-  "acp_version": "1.0.0",
+  "protocol": {
+    "name": "ACP",
+    "version": "1.0.0"
+  },
   "provider": "Dynamind Studios",
   "capabilities": [
-    "autonomous_checkout",
-    "invoice_generation"
+    "autonomous_checkout"
   ],
   "endpoints": {
     "catalog": "https://portafolio.juanpabloto2000.workers.dev/openapi.json",

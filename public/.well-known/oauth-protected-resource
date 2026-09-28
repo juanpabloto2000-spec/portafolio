@@ -1,5 +1,5 @@
 {
-  "resource": "https://portafolio.juanpabloto2000.workers.dev/api",
+  "resource": "https://portafolio.juanpabloto2000.workers.dev",
   "authorization_servers": [
     "https://portafolio.juanpabloto2000.workers.dev"
   ],

@@ -1,14 +1,15 @@
 {
-  "ucp_version": "1.0",
-  "services": [
-    {
-      "name": "Dynamind Engineering Consulting",
-      "endpoint": "https://portafolio.juanpabloto2000.workers.dev/api/audit/deep-consultation",
-      "currency": "USD"
-    }
-  ],
+  "ucp": {
+    "version": "1.0",
+    "name": "Dynamind Studios Sovereign Commerce",
+    "services": [
+      {
+        "name": "Deep Architecture Consulting",
+        "endpoint": "https://portafolio.juanpabloto2000.workers.dev/api/audit/deep-consultation"
+      }
+    ]
+  },
   "capabilities": {
-    "direct_checkout": true,
-    "quote_negotiation": true
+    "direct_checkout": true
   }
 }

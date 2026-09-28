@@ -4,6 +4,7 @@
   "description": "Autonomous Business Engineering and Triage Agent by Dynamind Studios",
   "supportedInterfaces": [
     {
+      "url": "https://portafolio.juanpabloto2000.workers.dev/api/a2a",
       "serviceUrl": "https://portafolio.juanpabloto2000.workers.dev/api/a2a",
       "protocol": "HTTP/JSON"
     }

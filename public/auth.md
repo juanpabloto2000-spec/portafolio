@@ -1,6 +1,8 @@
-# Agent Authentication & Discovery - Dynamind Studios
+# Auth.md
 
-This document describes how autonomous AI agents can discover, authenticate, and interact with Dynamind Studios APIs and resources.
+> Agent Authentication and Registration Protocol for Dynamind Studios
+
+This document describes how autonomous AI agents can discover, register, authenticate, and interact with Dynamind Studios APIs and resources.
 
 ## Authentication Overview
 
