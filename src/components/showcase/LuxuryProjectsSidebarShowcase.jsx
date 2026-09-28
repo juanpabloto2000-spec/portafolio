@@ -236,11 +236,11 @@ export default function LuxuryProjectsSidebarShowcase() {
 
             </div>
 
-            {/* Contenedor del Iframe con Altura Vertical Optimizada */}
+            {/* Contenedor del Iframe con Altura Panorámica Horizontal en PC */}
             <div className={`relative w-full bg-black overflow-hidden ${
               viewMode === 'mobile' 
                 ? 'h-[580px] sm:h-[640px] rounded-b-[28px]' 
-                : 'h-[460px] sm:h-[540px] lg:h-[600px]'
+                : 'h-[400px] sm:h-[460px] lg:h-[490px]'
             }`}>
               <AnimatePresence mode="wait">
                 <motion.div

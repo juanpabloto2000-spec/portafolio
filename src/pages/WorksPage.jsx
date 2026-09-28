@@ -11,10 +11,10 @@ export default function WorksPage() {
       
       <AmbientSpotlightGlow />
 
-      <main className="flex-1 pt-24 sm:pt-28 pb-20 space-y-16">
+      <main className="flex-1 pt-20 sm:pt-24 pb-16 space-y-8 sm:space-y-10">
         
         {/* Cabecera Editorial Principal Limpia */}
-        <section className="max-w-7xl mx-auto px-6 sm:px-12 pt-4">
+        <section className="max-w-7xl mx-auto px-6 sm:px-12 pt-2 sm:pt-4">
           <RevealSection direction="up" className="max-w-3xl space-y-4">
             <h1 className="font-display font-bold text-4xl sm:text-6xl text-white tracking-tight">
               Obras Reales en Producción

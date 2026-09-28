@@ -87,28 +87,28 @@ function FrictionOdometreHUD({ score, step }) {
         </div>
 
         <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono uppercase tracking-wider text-zinc-400">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs font-sans font-bold uppercase tracking-wider text-zinc-300">
               Odómetro de Fricción Operativa
             </span>
-            <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${badgeBg}`}>
+            <span className={`text-[11px] font-sans font-semibold px-2.5 py-0.5 rounded-full border ${badgeBg}`}>
               {statusLabel}
             </span>
           </div>
-          <div className="text-xl sm:text-2xl font-mono font-black text-white flex items-baseline gap-1.5">
+          <div className="text-xl sm:text-2xl font-mono font-black text-white flex items-baseline gap-2">
             <span className={`${statusColor} transition-colors duration-500`}>{score}%</span>
-            <span className="text-xs text-zinc-500 font-sans font-normal">índice de automatización requerido</span>
+            <span className="text-xs text-zinc-400 font-sans font-normal">índice de automatización requerido</span>
           </div>
         </div>
       </div>
 
-      {/* Mini telemetría de pasos */}
-      <div className="flex items-center gap-2 shrink-0">
+      {/* Tacómetro / Resonancia del Diagnóstico */}
+      <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
         <div className="text-right hidden sm:block">
-          <div className="text-[10px] font-mono text-zinc-400 uppercase">Faceta Activa</div>
-          <div className="text-xs font-mono font-bold text-white">0{step} / 06</div>
+          <div className="text-[10px] font-sans text-zinc-400 uppercase font-semibold">Estado</div>
+          <div className="text-xs font-sans font-bold text-cyan-300">Diagnóstico Activo</div>
         </div>
-        <div className="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center text-cyan-400">
+        <div className="w-10 h-10 rounded-2xl bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center text-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.25)]">
           <Gauge className="w-5 h-5 animate-pulse" />
         </div>
       </div>
@@ -394,21 +394,66 @@ Quedo atento para la demostración técnica de 15 minutos.`;
         <FrictionOdometreHUD score={currentScore} step={step} />
       </div>
 
-      {/* HUD 2: Barra de Telemetría Dinámica - 6 Facetas */}
-      <div className="mb-8 p-3.5 sm:p-4 bg-white/[0.02] border border-white/10 rounded-2xl flex items-center justify-between font-mono text-xs text-zinc-400">
-        <div className="flex items-center gap-2 text-white font-bold">
-          <Activity className="w-4 h-4 text-cyan-400" />
-          <span>Faceta 0{step} de 06</span>
-        </div>
-        <div className="flex items-center gap-2.5">
-          <span className="text-[10px] text-zinc-500 hidden sm:inline uppercase">PROGRESO DEL DIAGNÓSTICO:</span>
-          <div className="w-24 sm:w-44 h-2 bg-white/10 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-gradient-to-r from-cyan-400 via-blue-500 to-emerald-400 transition-all duration-300"
-              style={{ width: `${(step / 6) * 100}%` }}
-            />
-          </div>
-          <span className="text-cyan-400 font-bold">{Math.round((step / 6) * 100)}%</span>
+      {/* HUD 2: Stepped Facet Pipeline de 6 Nodos Cósmicos (Reemplaza la barra de carga plana) */}
+      <div className="mb-8 p-4 sm:p-5 bg-[#080b13]/90 border border-white/15 rounded-3xl backdrop-blur-xl shadow-2xl relative overflow-hidden">
+        
+        {/* Nodos de Facetas Interconectados */}
+        <div className="relative flex items-center justify-between z-10">
+          
+          {/* Línea conectora de fondo */}
+          <div className="absolute left-4 right-4 top-1/2 -translate-y-1/2 h-1 bg-white/10 -z-10 rounded-full" />
+          
+          {/* Línea de energía iluminada reactiva */}
+          <motion.div 
+            className="absolute left-4 top-1/2 -translate-y-1/2 h-1 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 -z-10 rounded-full shadow-[0_0_12px_rgba(34,211,238,0.7)]"
+            initial={{ width: '0%' }}
+            animate={{ width: `${((step - 1) / 5) * 100}%` }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          />
+
+          {[
+            { num: 1, label: 'Perfil', icon: Building2 },
+            { num: 2, label: 'Activo Web', icon: Globe },
+            { num: 3, label: 'Volumen', icon: TrendingUp },
+            { num: 4, label: 'Frenos', icon: AlertTriangle },
+            { num: 5, label: 'Plazo', icon: Clock },
+            { num: 6, label: 'Agenda', icon: Calendar }
+          ].map((facet) => {
+            const isCompleted = facet.num < step;
+            const isCurrent = facet.num === step;
+            const Icon = facet.icon;
+
+            return (
+              <div key={facet.num} className="flex flex-col items-center gap-2 group">
+                <div 
+                  className={`w-8 h-8 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-all duration-500 ${
+                    isCompleted
+                      ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.6)] font-bold scale-95'
+                      : isCurrent
+                      ? 'bg-gradient-to-tr from-cyan-400 via-blue-600 to-purple-600 text-white shadow-[0_0_25px_rgba(34,211,238,0.8)] ring-2 sm:ring-4 ring-cyan-400/40 ring-offset-2 ring-offset-[#080b13] scale-110 font-black animate-pulse'
+                      : 'bg-[#0f1422] border border-white/15 text-zinc-500'
+                  }`}
+                >
+                  {isCompleted ? (
+                    <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5]" />
+                  ) : (
+                    <span className="text-xs sm:text-sm font-sans font-bold">0{facet.num}</span>
+                  )}
+                </div>
+                
+                {/* Etiqueta Editorial de la Faceta */}
+                <span className={`text-[10px] sm:text-xs font-sans transition-colors duration-300 hidden xs:block ${
+                  isCurrent 
+                    ? 'text-white font-bold drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]' 
+                    : isCompleted 
+                    ? 'text-emerald-400 font-medium' 
+                    : 'text-zinc-500'
+                }`}>
+                  {facet.label}
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -427,10 +472,7 @@ Quedo atento para la demostración técnica de 15 minutos.`;
             className="space-y-8"
           >
             <div className="space-y-2 text-center max-w-xl mx-auto">
-              <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-cyan-400">
-                Perfil del Negocio
-              </span>
-              <h2 className="font-display font-bold text-2xl sm:text-4xl text-white pt-1">
+              <h2 className="font-display font-bold text-2xl sm:text-4xl text-white">
                 ¿Cuál es la naturaleza de tu negocio?
               </h2>
               <p className="text-xs sm:text-sm font-sans text-zinc-300">
@@ -526,10 +568,7 @@ Quedo atento para la demostración técnica de 15 minutos.`;
             className="space-y-8"
           >
             <div className="space-y-2 text-center max-w-xl mx-auto">
-              <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-cyan-400">
-                Activo Digital
-              </span>
-              <h2 className="font-display font-bold text-2xl sm:text-4xl text-white pt-1">
+              <h2 className="font-display font-bold text-2xl sm:text-4xl text-white">
                 ¿Cuentas con página web actualmente?
               </h2>
               <p className="text-xs sm:text-sm font-sans text-zinc-300">
@@ -737,10 +776,7 @@ Quedo atento para la demostración técnica de 15 minutos.`;
             className="space-y-8"
           >
             <div className="space-y-2 text-center max-w-xl mx-auto">
-              <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-cyan-400">
-                Volumen Operativo
-              </span>
-              <h2 className="font-display font-bold text-2xl sm:text-4xl text-white pt-1">
+              <h2 className="font-display font-bold text-2xl sm:text-4xl text-white">
                 ¿Qué flujo de clientes atiendes a diario?
               </h2>
               <p className="text-xs sm:text-sm font-sans text-zinc-300">
@@ -822,10 +858,7 @@ Quedo atento para la demostración técnica de 15 minutos.`;
             className="space-y-6 sm:space-y-8"
           >
             <div className="space-y-2 text-center max-w-xl mx-auto">
-              <span className="text-[11px] font-sans font-bold uppercase tracking-wider text-red-400">
-                Frenos Operativos en {formData.niche}
-              </span>
-              <h2 className="font-display font-bold text-2xl sm:text-4xl text-white pt-1">
+              <h2 className="font-display font-bold text-2xl sm:text-4xl text-white">
                 ¿Cuáles son los principales frenos de tu operación hoy?
               </h2>
               <p className="text-xs sm:text-sm font-sans text-zinc-300">
@@ -979,10 +1012,7 @@ Quedo atento para la demostración técnica de 15 minutos.`;
             className="space-y-8"
           >
             <div className="space-y-2 text-center max-w-xl mx-auto">
-              <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-cyan-400">
-                Plazo & Urgencia
-              </span>
-              <h2 className="font-display font-bold text-2xl sm:text-4xl text-white pt-1">
+              <h2 className="font-display font-bold text-2xl sm:text-4xl text-white">
                 ¿En qué plazo necesitas tener el sistema operando?
               </h2>
               <p className="text-xs sm:text-sm font-sans text-zinc-300">

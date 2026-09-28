@@ -441,9 +441,6 @@ export default function SystemsPage() {
                           <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         </div>
                         <div className="truncate">
-                          <span className={`text-[9px] sm:text-[10px] font-mono block ${isSelected ? 'text-cyan-300 font-semibold' : 'text-zinc-500'}`}>
-                            SISTEMA {sys.number}
-                          </span>
                           <span className="text-xs font-sans font-bold leading-tight truncate block">
                             {sys.shortLabel}
                           </span>

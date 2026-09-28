@@ -5,6 +5,7 @@ import { X, Sparkles, Send, ArrowRight, Bot, Volume2, VolumeX, RotateCcw } from 
 export default function DynamindAIAssistantModal({ isOpen, onClose }) {
   const [isVoiceActive, setIsVoiceActive] = useState(true);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [voicesLoaded, setVoicesLoaded] = useState(false);
   const speechRef = useRef(null);
 
   const [messages, setMessages] = useState([
@@ -22,11 +23,35 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
     { label: '⚡ ¿Cuánto tarda la entrega?', query: '¿Cuál es el tiempo de desarrollo e implementación de una plataforma completa?' }
   ];
 
-  // Función de Síntesis de Voz Femenina de Autor
+  // Precargar las voces del sintetizador (Fix asíncrono para Chrome/Safari móvil)
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.speechSynthesis) return;
+
+    const updateVoices = () => {
+      const v = window.speechSynthesis.getVoices();
+      if (v && v.length > 0) {
+        setVoicesLoaded(true);
+      }
+    };
+
+    updateVoices();
+    window.speechSynthesis.onvoiceschanged = updateVoices;
+
+    return () => {
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.onvoiceschanged = null;
+      }
+    };
+  }, []);
+
+  // Función de Síntesis de Voz Femenina de Autor con Despertador Anti-Pausa de Chromium
   const speakText = (textToSpeak) => {
     if (typeof window === 'undefined' || !window.speechSynthesis) return;
 
+    // Despertar sintetizador (Fix obligatorio para bug Chromium en móviles donde se queda paused)
     window.speechSynthesis.cancel();
+    window.speechSynthesis.resume();
+
     if (!isVoiceActive) {
       setIsSpeaking(false);
       return;
@@ -35,16 +60,16 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
     // Limpiar markdown, asteriscos y emojis para una pronunciación fluida
     const cleanText = textToSpeak
       .replace(/[*_#`~]/g, '')
-      .replace(/[🔮🍽️🏨💆‍♀️⚡💎👀✓✕●•]/g, '')
+      .replace(/[🔮🍽️🏨💆‍♀️⚡💎👀✓✕●•→]/g, '')
       .replace(/\n+/g, ' ');
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.lang = 'es-ES';
 
     // Buscar una voz femenina en español en los sintetizadores del sistema
-    const voices = window.speechSynthesis.getVoices();
+    const voices = window.speechSynthesis.getVoices() || [];
     const femaleVoice = voices.find(v => 
-      v.lang.startsWith('es') && 
+      (v.lang.startsWith('es') || v.lang.includes('es')) && 
       (v.name.toLowerCase().includes('paulina') || 
        v.name.toLowerCase().includes('monica') || 
        v.name.toLowerCase().includes('sofia') || 
@@ -55,21 +80,25 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
        v.name.toLowerCase().includes('zira') || 
        v.name.toLowerCase().includes('female') ||
        v.name.toLowerCase().includes('mujer'))
-    ) || voices.find(v => v.lang.startsWith('es'));
+    ) || voices.find(v => v.lang.startsWith('es') || v.lang.includes('es'));
 
     if (femaleVoice) {
       utterance.voice = femaleVoice;
+      utterance.lang = femaleVoice.lang;
     }
 
-    // Ajustes acústicos: tono femenino (pitch 1.18) y cadencia ágil (rate 1.02)
-    utterance.pitch = 1.18;
-    utterance.rate = 1.02;
+    // Ajustes acústicos: tono femenino (pitch 1.15) y cadencia ágil (rate 1.0)
+    utterance.pitch = 1.15;
+    utterance.rate = 1.0;
 
     utterance.onstart = () => setIsSpeaking(true);
     utterance.onend = () => setIsSpeaking(false);
     utterance.onerror = () => setIsSpeaking(false);
 
     speechRef.current = utterance;
+    
+    // Doble llamada de seguridad de reactivación para iOS y Android
+    window.speechSynthesis.resume();
     window.speechSynthesis.speak(utterance);
   };
 
@@ -83,6 +112,11 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
 
   const handleSendQuery = (query) => {
     if (!query.trim()) return;
+
+    // Desbloquear audio síncronamente con el evento de click/tap del usuario
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      window.speechSynthesis.resume();
+    }
 
     const userMsg = { sender: 'user', text: query };
     let reply = '';
@@ -104,9 +138,7 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
     setInputText('');
 
     // Hablar la respuesta con voz femenina
-    setTimeout(() => {
-      speakText(reply);
-    }, 150);
+    speakText(reply);
   };
 
   const toggleVoice = () => {
@@ -207,17 +239,17 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
                     : 'bg-white/[0.04] border border-white/10 text-zinc-200 whitespace-pre-line'
                 }`}
               >
-                {m.text}
-
-                {/* Botón para volver a escuchar el mensaje de Aura */}
+                {/* Botón táctil para volver a escuchar el mensaje de Aura */}
                 {m.sender === 'ai' && (
                   <button
+                    type="button"
                     onClick={() => speakText(m.text)}
-                    className="absolute bottom-2 right-2 p-1 rounded-md bg-black/40 hover:bg-black/80 text-zinc-400 hover:text-cyan-300 transition-colors opacity-0 group-hover:opacity-100 cursor-pointer"
+                    className="mt-2.5 pt-1.5 border-t border-white/10 flex items-center gap-1.5 text-[11px] font-sans text-cyan-400/90 hover:text-cyan-300 transition-colors cursor-pointer"
                     title="Escuchar a Aura"
                     aria-label="Escuchar mensaje de Aura"
                   >
-                    <Volume2 className="w-3 h-3" />
+                    <Volume2 className="w-3.5 h-3.5" />
+                    <span>Escuchar respuesta</span>
                   </button>
                 )}
               </div>

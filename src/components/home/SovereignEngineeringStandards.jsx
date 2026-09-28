@@ -154,10 +154,7 @@ export default function SovereignEngineeringStandards() {
         <RevealSection direction="up">
           <div className="p-8 sm:p-12 rounded-3xl border border-white/15 bg-[#080b13]/95 backdrop-blur-2xl shadow-2xl space-y-8">
             <div className="space-y-2 text-center max-w-2xl mx-auto">
-              <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-emerald-400">
-                Compromiso Incondicional de Éxito
-              </span>
-              <h3 className="font-display font-bold text-2xl sm:text-4xl text-white pt-1">
+              <h3 className="font-display font-bold text-2xl sm:text-4xl text-white">
                 La Tríada de Garantías Dynamind
               </h3>
               <p className="text-xs sm:text-sm font-sans text-zinc-300">
@@ -178,8 +175,8 @@ export default function SovereignEngineeringStandards() {
                     Sesiones guiadas con recepcionistas, cajeros, administradores y personal de cocina. Entrega de manuales en video de autor para asegurar <strong>100% de adopción</strong> desde el primer día.
                   </p>
                 </div>
-                <div className="pt-3 border-t border-white/5 text-[11px] font-mono text-cyan-400 font-semibold">
-                  ✓ Cero Curva de Frustración
+                <div className="pt-3 border-t border-white/5 text-xs text-cyan-400 font-sans font-semibold">
+                  Cero Curva de Frustración
                 </div>
               </div>
 
@@ -194,8 +191,8 @@ export default function SovereignEngineeringStandards() {
                     Acompañamiento prioritario en vivo durante las primeras 4 semanas de lanzamiento. Ajustamos cualquier detalle de flujo, tarifa o comanda en tiempo real sin cobrar ni un solo centavo extra.
                   </p>
                 </div>
-                <div className="pt-3 border-t border-white/5 text-[11px] font-mono text-emerald-400 font-semibold">
-                  ✓ Cobertura Operativa 100%
+                <div className="pt-3 border-t border-white/5 text-xs text-emerald-400 font-sans font-semibold">
+                  Cobertura Operativa 100%
                 </div>
               </div>
 
@@ -210,8 +207,8 @@ export default function SovereignEngineeringStandards() {
                     Garantía formal de que el sistema funcionará a la perfección. Si algún flujo de reservas, cálculo de caja o base de datos presenta fallas lógicas, lo resolvemos inmediatamente por escrito.
                   </p>
                 </div>
-                <div className="pt-3 border-t border-white/5 text-[11px] font-mono text-amber-400 font-semibold">
-                  ✓ Garantía de Paz Mental
+                <div className="pt-3 border-t border-white/5 text-xs text-amber-400 font-sans font-semibold">
+                  Garantía de Paz Mental
                 </div>
               </div>
 

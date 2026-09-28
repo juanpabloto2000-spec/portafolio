@@ -58,19 +58,20 @@ export default function RadicalComparison() {
           <RevealSection direction="left" delay={0.1}>
             <div className="p-8 sm:p-10 border border-white/10 bg-white/[0.015] rounded-2xl space-y-8 flex flex-col justify-between h-full">
               <div className="space-y-6">
-                <div className="flex items-center gap-2 text-zinc-400 font-mono text-xs uppercase border-b border-white/10 pb-4">
-                  <AlertTriangle className="w-4 h-4 text-zinc-400" />
-                  <span>El Modelo Estándar de Agencia</span>
+                <div className="border-b border-white/10 pb-4 space-y-1">
+                  <div className="flex items-center gap-2 text-zinc-400 text-xs font-sans font-bold uppercase tracking-wider">
+                    <AlertTriangle className="w-4 h-4 text-zinc-400" />
+                    <span>El Modelo Tradicional de Agencia</span>
+                  </div>
+                  <h3 className="font-display font-bold text-2xl text-zinc-300">
+                    Folletos Digitales Frágiles
+                  </h3>
                 </div>
-
-                <h3 className="font-display font-bold text-2xl text-zinc-300">
-                  Folletos Digitales Frágiles
-                </h3>
 
                 <div className="space-y-6">
                   {comparisonItems.map((item, idx) => (
                     <div key={idx} className="space-y-1.5 border-b border-white/5 pb-4 last:border-0 last:pb-0">
-                      <div className="text-[11px] font-mono uppercase text-zinc-400">
+                      <div className="text-xs font-sans font-semibold text-zinc-400">
                         {item.feature}
                       </div>
                       <div className="flex items-start gap-2.5 text-xs text-zinc-300 font-sans leading-relaxed">
@@ -82,8 +83,8 @@ export default function RadicalComparison() {
                 </div>
               </div>
 
-              <div className="p-4 bg-red-950/20 border border-red-900/30 rounded-xl text-[11px] font-mono text-zinc-400 mt-6">
-                Resultado: Desperdicio de pauta, horas de atención a curiosos y dependencia perpetua.
+              <div className="p-4 bg-red-950/20 border border-red-900/30 rounded-xl text-xs font-sans text-zinc-300 mt-6 leading-relaxed">
+                <strong className="text-red-400">Consecuencia:</strong> Desperdicio de pauta, horas consumidas respondiendo a curiosos y dependencia perpetua.
               </div>
             </div>
           </RevealSection>
@@ -92,19 +93,20 @@ export default function RadicalComparison() {
           <RevealSection direction="right" delay={0.15}>
             <Tilt3DCard className="p-8 sm:p-10 border border-white/20 bg-white/[0.035] rounded-2xl space-y-8 flex flex-col justify-between glow-card h-full">
               <div className="space-y-6">
-                <div className="flex items-center gap-2 text-emerald-400 font-mono text-xs uppercase font-semibold border-b border-white/15 pb-4">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                  <span>Ingeniería Dynamind Studios</span>
+                <div className="border-b border-white/15 pb-4 space-y-1">
+                  <div className="flex items-center gap-2 text-emerald-400 text-xs font-sans font-bold uppercase tracking-wider">
+                    <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                    <span>Ingeniería Dynamind Studios</span>
+                  </div>
+                  <h3 className="font-display font-bold text-2xl text-white">
+                    Sistemas Vivos de Conversión
+                  </h3>
                 </div>
-
-                <h3 className="font-display font-bold text-2xl text-white">
-                  Sistemas Vivos de Conversión
-                </h3>
 
                 <div className="space-y-6">
                   {comparisonItems.map((item, idx) => (
                     <div key={idx} className="space-y-1.5 border-b border-white/10 pb-4 last:border-0 last:pb-0">
-                      <div className="text-[11px] font-mono uppercase text-zinc-300">
+                      <div className="text-xs font-sans font-semibold text-zinc-300">
                         {item.feature}
                       </div>
                       <div className="flex items-start gap-2.5 text-xs text-zinc-200 font-sans leading-relaxed">
@@ -116,8 +118,8 @@ export default function RadicalComparison() {
                 </div>
               </div>
 
-              <div className="p-4 bg-emerald-950/20 border border-emerald-800/40 rounded-xl text-[11px] font-mono text-emerald-300 mt-6">
-                Resultado: Filtrado automático de prospectos, agendamiento autónomo y soberanía operativa.
+              <div className="p-4 bg-emerald-950/20 border border-emerald-800/40 rounded-xl text-xs font-sans text-emerald-200 mt-6 leading-relaxed">
+                <strong className="text-emerald-400">Impacto Real:</strong> Filtrado automático de prospectos, agendamiento autónomo y soberanía operativa total.
               </div>
             </Tilt3DCard>
           </RevealSection>
