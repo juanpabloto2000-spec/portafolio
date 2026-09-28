@@ -37,10 +37,22 @@ export default function HeroEditorial() {
             loop
             muted
             playsInline
-            className="w-full h-full object-cover object-[72%_center] sm:object-center opacity-100 scale-100 transition-opacity duration-700"
+            className={`w-full h-full object-cover object-[72%_center] sm:object-center transition-all duration-700 ${
+              isLight ? 'brightness-110 contrast-105 saturate-125' : 'opacity-100 scale-100'
+            }`}
           >
             <source src="/videos/video hero.mp4" type="video/mp4" />
           </video>
+
+          {/* Capa Holográfica Luminous AI en Modo Claro */}
+          {isLight && (
+            <div 
+              className="absolute inset-0 pointer-events-none mix-blend-screen opacity-65 transition-opacity duration-500"
+              style={{
+                background: 'radial-gradient(ellipse at 65% 50%, rgba(99,102,241,0.22) 0%, rgba(168,85,247,0.16) 35%, rgba(6,182,212,0.10) 65%, transparent 80%)'
+              }}
+            />
+          )}
 
           {/* Gradiente de contraste cinematográfico adaptable a tema */}
           <div 

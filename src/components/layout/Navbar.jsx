@@ -24,15 +24,22 @@ export default function Navbar({ currentHash = '#/' }) {
   const isVision = currentHash.startsWith('#/vision');
   const isTriage = currentHash.startsWith('#/diagnostico');
 
-  const activeClasses = 'bg-gradient-to-r from-cyan-500/25 via-purple-600/30 to-blue-500/25 text-white border border-cyan-400/40 shadow-[0_0_20px_rgba(168,85,247,0.35)] backdrop-blur-md font-semibold';
-  const inactiveClasses = 'text-zinc-400 hover:text-white hover:bg-white/[0.04] border border-transparent';
+  const activeClasses = isLight
+    ? 'bg-gradient-to-r from-indigo-100 via-purple-100 to-blue-100 text-black border border-indigo-300/80 shadow-[0_2px_12px_rgba(99,102,241,0.18)] font-bold'
+    : 'bg-gradient-to-r from-cyan-500/25 via-purple-600/30 to-blue-500/25 text-white border border-cyan-400/40 shadow-[0_0_20px_rgba(168,85,247,0.35)] backdrop-blur-md font-semibold';
+  
+  const inactiveClasses = isLight
+    ? 'text-black font-bold hover:text-indigo-600 hover:bg-slate-100/80 border border-transparent'
+    : 'text-zinc-400 hover:text-white hover:bg-white/[0.04] border border-transparent';
 
   return (
     <>
       <header 
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           scrolled 
-            ? 'bg-[#030508]/90 backdrop-blur-xl border-b border-white/10 py-2 shadow-monolith' 
+            ? (isLight 
+                ? 'bg-white/90 backdrop-blur-2xl border-b border-slate-200/90 py-2 shadow-sm' 
+                : 'bg-[#030508]/90 backdrop-blur-xl border-b border-white/10 py-2 shadow-monolith')
             : 'bg-transparent py-2.5 sm:py-3 border-b border-transparent'
         }`}
       >
@@ -101,7 +108,11 @@ export default function Navbar({ currentHash = '#/' }) {
                 soundFx.playBlip(isLight ? 520 : 640);
                 toggleTheme();
               }}
-              className="p-2 rounded-xl text-zinc-400 hover:text-amber-400 hover:bg-white/10 border border-transparent hover:border-amber-500/30 transition-all duration-300 group cursor-pointer"
+              className={`p-2 rounded-xl transition-all duration-300 group cursor-pointer border ${
+                isLight 
+                  ? 'text-black hover:text-indigo-600 hover:bg-slate-100 border-slate-200/80 shadow-sm' 
+                  : 'text-zinc-400 hover:text-amber-400 hover:bg-white/10 border-transparent hover:border-amber-500/30'
+              }`}
               title={isLight ? 'Cambiar a Modo Oscuro Cósmico' : 'Cambiar a Modo Claro Editorial (Apple)'}
               aria-label="Alternar tema visual"
             >
@@ -115,7 +126,11 @@ export default function Navbar({ currentHash = '#/' }) {
             {/* Botón Tuerca Táctica de Apariencia e Idioma */}
             <button
               onClick={() => setAppearanceOpen(true)}
-              className="p-2 rounded-xl text-zinc-400 hover:text-cyan-400 hover:bg-white/10 border border-transparent hover:border-cyan-500/30 transition-all duration-300 group cursor-pointer"
+              className={`p-2 rounded-xl transition-all duration-300 group cursor-pointer border ${
+                isLight 
+                  ? 'text-black hover:text-indigo-600 hover:bg-slate-100 border-slate-200/80 shadow-sm' 
+                  : 'text-zinc-400 hover:text-cyan-400 hover:bg-white/10 border-transparent hover:border-cyan-500/30'
+              }`}
               title={t.nav.configuracion}
               aria-label={t.nav.configuracion}
             >
@@ -130,21 +145,33 @@ export default function Navbar({ currentHash = '#/' }) {
                 soundFx.playBlip(isLight ? 520 : 640);
                 toggleTheme();
               }}
-              className="p-2 text-zinc-400 hover:text-amber-400 border border-white/10 rounded-xl bg-white/[0.02]"
+              className={`p-2 rounded-xl border ${
+                isLight 
+                  ? 'text-black hover:text-indigo-600 border-slate-200 bg-slate-100/80' 
+                  : 'text-zinc-400 hover:text-amber-400 border-white/10 bg-white/[0.02]'
+              }`}
               aria-label="Alternar tema visual"
             >
               {isLight ? <Moon className="w-4 h-4 text-indigo-600" /> : <Sun className="w-4 h-4 text-amber-400" />}
             </button>
             <button
               onClick={() => setAppearanceOpen(true)}
-              className="p-2 text-zinc-400 hover:text-cyan-400 border border-white/10 rounded-xl bg-white/[0.02]"
+              className={`p-2 rounded-xl border ${
+                isLight 
+                  ? 'text-black hover:text-indigo-600 border-slate-200 bg-slate-100/80' 
+                  : 'text-zinc-400 hover:text-cyan-400 border-white/10 bg-white/[0.02]'
+              }`}
               aria-label={t.nav.configuracion}
             >
               <Settings className="w-4 h-4" />
             </button>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-zinc-400 hover:text-white border border-white/10 rounded-xl bg-white/[0.02]"
+              className={`p-2 rounded-xl border ${
+                isLight 
+                  ? 'text-black hover:text-indigo-600 border-slate-200 bg-slate-100/80' 
+                  : 'text-zinc-400 hover:text-white border-white/10 bg-white/[0.02]'
+              }`}
               aria-label="Abrir menú"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -155,13 +182,17 @@ export default function Navbar({ currentHash = '#/' }) {
 
         {/* Menú Mobile Drawer */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-[#030508]/98 border-b border-white/15 px-6 py-6 space-y-4 animate-in slide-in-from-top duration-200 font-mono">
+          <div className={`md:hidden px-6 py-6 space-y-4 animate-in slide-in-from-top duration-200 font-mono border-b ${
+            isLight 
+              ? 'bg-white/95 backdrop-blur-2xl border-slate-200 text-black shadow-xl' 
+              : 'bg-[#030508]/98 border-white/15 text-white'
+          }`}>
             <nav className="flex flex-col gap-2 text-sm">
               <a 
                 href="/#/" 
                 onClick={() => setMobileMenuOpen(false)}
                 className={`px-4 py-2.5 rounded-xl uppercase transition-all flex items-center justify-between ${
-                  isHome ? activeClasses : 'text-zinc-400 hover:text-white'
+                  isHome ? activeClasses : (isLight ? 'text-black font-bold hover:text-indigo-600 hover:bg-slate-100' : 'text-zinc-400 hover:text-white')
                 }`}
               >
                 <span>01. {t.nav.inicio}</span>
@@ -170,7 +201,7 @@ export default function Navbar({ currentHash = '#/' }) {
                 href="/#/obras" 
                 onClick={() => setMobileMenuOpen(false)}
                 className={`px-4 py-2.5 rounded-xl uppercase transition-all flex items-center justify-between ${
-                  isWorks ? activeClasses : 'text-zinc-400 hover:text-white'
+                  isWorks ? activeClasses : (isLight ? 'text-black font-bold hover:text-indigo-600 hover:bg-slate-100' : 'text-zinc-400 hover:text-white')
                 }`}
               >
                 <span>02. {t.nav.obras}</span>
@@ -179,7 +210,7 @@ export default function Navbar({ currentHash = '#/' }) {
                 href="/#/sistemas" 
                 onClick={() => setMobileMenuOpen(false)}
                 className={`px-4 py-2.5 rounded-xl uppercase transition-all flex items-center justify-between ${
-                  isSystems ? activeClasses : 'text-zinc-400 hover:text-white'
+                  isSystems ? activeClasses : (isLight ? 'text-black font-bold hover:text-indigo-600 hover:bg-slate-100' : 'text-zinc-400 hover:text-white')
                 }`}
               >
                 <span>03. {t.nav.sistemas}</span>
@@ -188,7 +219,7 @@ export default function Navbar({ currentHash = '#/' }) {
                 href="/#/vision" 
                 onClick={() => setMobileMenuOpen(false)}
                 className={`px-4 py-2.5 rounded-xl uppercase transition-all flex items-center justify-between ${
-                  isVision ? activeClasses : 'text-zinc-400 hover:text-white'
+                  isVision ? activeClasses : (isLight ? 'text-black font-bold hover:text-indigo-600 hover:bg-slate-100' : 'text-zinc-400 hover:text-white')
                 }`}
               >
                 <span>04. {t.nav.vision}</span>
@@ -197,7 +228,7 @@ export default function Navbar({ currentHash = '#/' }) {
                 href="/#/diagnostico" 
                 onClick={() => setMobileMenuOpen(false)}
                 className={`px-4 py-2.5 rounded-xl uppercase transition-all flex items-center justify-between ${
-                  isTriage ? activeClasses : 'text-zinc-400 hover:text-white'
+                  isTriage ? activeClasses : (isLight ? 'text-black font-bold hover:text-indigo-600 hover:bg-slate-100' : 'text-zinc-400 hover:text-white')
                 }`}
               >
                 <span>05. {t.nav.diagnostico}</span>

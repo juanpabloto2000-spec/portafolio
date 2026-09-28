@@ -188,6 +188,8 @@ export default function CinematicDualVideoScrolly() {
   const p1Opacity = useTransform(smoothProgress, [0.00, 0.04, 0.16, 0.22], [1, 1, 1, 0]);
   const p1Y = useTransform(smoothProgress, [0.00, 0.16, 0.22], [0, 0, -35]);
 
+  const canvasOpacity = useTransform(smoothProgress, [0, 0.05, 0.94, 1.0], [0, 1, 1, 0]);
+
   const p2Opacity = useTransform(smoothProgress, [0.25, 0.31, 0.43, 0.48], [0, 1, 1, 0]);
   const p2Y = useTransform(smoothProgress, [0.25, 0.31, 0.43, 0.48], [35, 0, 0, -35]);
 
@@ -201,59 +203,39 @@ export default function CinematicDualVideoScrolly() {
     <section 
       ref={containerRef} 
       className={`relative w-full h-[480vh] select-none transition-colors duration-500 ${
-        isLight ? 'bg-[#f8fafc]' : 'bg-[#06070a]'
+        isLight ? 'bg-[#f8fafc]' : 'bg-transparent'
       }`}
     >
-      {/* Transición Atmosférica de Entrada */}
-      <div className={`absolute top-0 inset-x-0 h-64 pointer-events-none z-30 transition-all duration-500 ${
-        isLight ? 'bg-gradient-to-b from-transparent via-[#f8fafc]/80 to-[#f8fafc]' : 'bg-gradient-to-b from-transparent via-[#06070a]/70 to-[#06070a]'
-      }`} />
-
-      {/* Transición Atmosférica de Salida */}
-      <div className={`absolute bottom-0 inset-x-0 h-64 pointer-events-none z-30 transition-all duration-500 ${
-        isLight ? 'bg-gradient-to-t from-transparent via-[#f8fafc]/80 to-[#f8fafc]' : 'bg-gradient-to-t from-transparent via-[#06070a]/70 to-[#06070a]'
-      }`} />
-
-      {/* Marco Sticky de pantalla completa sin overflow obstaculizador */}
+      {/* Marco Sticky de pantalla completa con transparencia cósmica en modo oscuro */}
       <div className={`sticky top-0 left-0 w-full h-screen overflow-hidden flex items-center justify-center transition-colors duration-500 ${
-        isLight ? 'bg-[#f8fafc]' : 'bg-[#06070a]'
+        isLight ? 'bg-[#f8fafc]' : 'bg-transparent'
       }`}>
         
-        {/* Layer 1: Motor Canvas de 120 Fotogramas WebP de Alta Resolución a 60 FPS con Máscara de Desvanecimiento Vertical */}
-        <canvas
+        {/* Layer 1: Motor Canvas de 120 Fotogramas WebP con desvanecimiento alfa suave y fade in/out continuo (cero parches negros ni líneas) */}
+        <motion.canvas
           ref={canvasRef}
           className="absolute inset-0 w-full h-full object-cover pointer-events-none z-10"
           style={{
-            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 4%, rgba(0,0,0,0.95) 12%, black 20%, black 80%, rgba(0,0,0,0.95) 88%, rgba(0,0,0,0.5) 96%, transparent 100%)',
-            maskImage: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 4%, rgba(0,0,0,0.95) 12%, black 20%, black 80%, rgba(0,0,0,0.95) 88%, rgba(0,0,0,0.5) 96%, transparent 100%)'
+            opacity: canvasOpacity,
+            WebkitMaskImage: isLight
+              ? 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 10%, black 22%, black 78%, rgba(0,0,0,0.7) 90%, transparent 100%)'
+              : 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 14%, black 28%, black 72%, rgba(0,0,0,0.4) 86%, transparent 100%)',
+            maskImage: isLight
+              ? 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 10%, black 22%, black 78%, rgba(0,0,0,0.7) 90%, transparent 100%)'
+              : 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 14%, black 28%, black 72%, rgba(0,0,0,0.4) 86%, transparent 100%)',
+            filter: isLight ? 'brightness(1.15) contrast(1.05) saturate(1.25)' : 'none'
           }}
         />
 
-        {/* Layer 2: Viñeta Cinemática Crystalline */}
-        <div 
-          className="absolute inset-0 pointer-events-none z-20 transition-all duration-500"
-          style={{
-            background: isLight
-              ? 'linear-gradient(to bottom, rgba(248,250,252,0.85) 0%, rgba(248,250,252,0.02) 20%, rgba(248,250,252,0.02) 80%, rgba(248,250,252,0.9) 100%)'
-              : 'linear-gradient(to bottom, rgba(6,7,10,0.85) 0%, rgba(6,7,10,0.02) 20%, rgba(6,7,10,0.02) 80%, rgba(6,7,10,0.9) 100%)'
-          }}
-        />
-        <div 
-          className="absolute inset-0 pointer-events-none z-20 transition-all duration-500"
-          style={{
-            background: isLight
-              ? 'radial-gradient(ellipse at center, transparent 50%, rgba(248,250,252,0.65) 100%)'
-              : 'radial-gradient(ellipse at center, transparent 55%, rgba(6,7,10,0.55) 100%)'
-          }}
-        />
-
-        {/* Gradientes Atmosféricos de Borde */}
-        <div className={`absolute top-0 left-0 right-0 h-44 pointer-events-none z-25 transition-all duration-500 ${
-          isLight ? 'bg-gradient-to-b from-[#f8fafc] via-[#f8fafc]/90 to-transparent' : 'bg-gradient-to-b from-[#06070a] via-[#06070a]/90 to-transparent'
-        }`} />
-        <div className={`absolute bottom-0 left-0 right-0 h-44 pointer-events-none z-25 transition-all duration-500 ${
-          isLight ? 'bg-gradient-to-t from-[#f8fafc] via-[#f8fafc]/90 to-transparent' : 'bg-gradient-to-t from-[#06070a] via-[#06070a]/90 to-transparent'
-        }`} />
+        {/* Layer 2: Iluminación Holográfica Luminous AI en Modo Claro */}
+        {isLight && (
+          <div 
+            className="absolute inset-0 pointer-events-none z-15 mix-blend-screen opacity-70 transition-opacity duration-500"
+            style={{
+              background: 'radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.20) 0%, rgba(168, 85, 247, 0.14) 40%, rgba(6, 182, 212, 0.08) 70%, transparent 100%)'
+            }}
+          />
+        )}
 
         {/* Escenario Central: Fases Narrativas Sincronizadas */}
         <div className="relative z-30 w-full max-w-4xl mx-auto px-4 sm:px-6 text-center pointer-events-none min-h-[220px] sm:h-72 flex flex-col justify-start sm:justify-center pt-20 sm:pt-0">
@@ -262,7 +244,7 @@ export default function CinematicDualVideoScrolly() {
           <motion.div
             style={{ opacity: p1Opacity, y: p1Y }}
             className={`space-y-2 sm:space-y-4 will-change-transform absolute inset-x-0 mx-auto max-w-3xl px-4 sm:px-6 transition-all duration-300 ${
-              isLight ? 'p-6 sm:p-8 rounded-3xl bg-white/95 backdrop-blur-2xl border border-slate-200/90 shadow-2xl' : ''
+              isLight ? 'p-6 sm:p-8 rounded-3xl bg-white/70 backdrop-blur-2xl border border-indigo-200/60 shadow-[0_10px_35px_rgba(99,102,241,0.12)]' : ''
             }`}
           >
             <h2 className={`font-display text-xl xs:text-2xl sm:text-5xl md:text-6xl font-bold leading-snug sm:leading-tight tracking-normal uppercase ${
@@ -271,7 +253,7 @@ export default function CinematicDualVideoScrolly() {
               {s.p1Title}
             </h2>
             <p className={`text-xs sm:text-base max-w-xl mx-auto font-sans leading-relaxed ${
-              isLight ? 'text-slate-600' : 'text-zinc-200 drop-shadow-[0_2px_14px_rgba(0,0,0,0.9)]'
+              isLight ? 'text-slate-700' : 'text-zinc-200 drop-shadow-[0_2px_14px_rgba(0,0,0,0.9)]'
             }`}>
               {s.p1Desc}
             </p>
@@ -281,7 +263,7 @@ export default function CinematicDualVideoScrolly() {
           <motion.div
             style={{ opacity: p2Opacity, y: p2Y }}
             className={`space-y-2 sm:space-y-4 will-change-transform absolute inset-x-0 mx-auto max-w-3xl px-4 sm:px-6 transition-all duration-300 ${
-              isLight ? 'p-6 sm:p-8 rounded-3xl bg-white/95 backdrop-blur-2xl border border-slate-200/90 shadow-2xl' : ''
+              isLight ? 'p-6 sm:p-8 rounded-3xl bg-white/70 backdrop-blur-2xl border border-indigo-200/60 shadow-[0_10px_35px_rgba(99,102,241,0.12)]' : ''
             }`}
           >
             <h2 className={`font-display text-xl xs:text-2xl sm:text-5xl md:text-6xl font-bold leading-snug sm:leading-tight tracking-normal uppercase ${
@@ -290,7 +272,7 @@ export default function CinematicDualVideoScrolly() {
               {s.p2Title}
             </h2>
             <p className={`text-xs sm:text-base max-w-xl mx-auto font-sans leading-relaxed ${
-              isLight ? 'text-slate-600' : 'text-zinc-200 drop-shadow-[0_2px_14px_rgba(0,0,0,0.9)]'
+              isLight ? 'text-slate-700' : 'text-zinc-200 drop-shadow-[0_2px_14px_rgba(0,0,0,0.9)]'
             }`}>
               {s.p2Desc}
             </p>
@@ -303,7 +285,7 @@ export default function CinematicDualVideoScrolly() {
           >
             <div className={`p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2 sm:space-y-3 transition-all duration-300 ${
               isLight 
-                ? 'bg-white/95 backdrop-blur-2xl border border-slate-200/90 shadow-2xl'
+                ? 'bg-white/70 backdrop-blur-2xl border border-indigo-200/60 shadow-[0_10px_35px_rgba(99,102,241,0.12)]'
                 : 'bg-black/65 sm:bg-transparent backdrop-blur-xl sm:backdrop-blur-none border border-white/10 sm:border-transparent shadow-[0_15px_40px_rgba(0,0,0,0.95)] sm:shadow-none'
             }`}>
               <h2 className={`font-display text-xl xs:text-2xl sm:text-5xl md:text-6xl font-bold leading-snug sm:leading-tight tracking-normal uppercase ${
@@ -312,7 +294,7 @@ export default function CinematicDualVideoScrolly() {
                 {s.p3Title}
               </h2>
               <p className={`text-xs sm:text-base max-w-xl mx-auto font-sans leading-relaxed ${
-                isLight ? 'text-slate-600' : 'text-zinc-200 drop-shadow-[0_2px_14px_rgba(0,0,0,1)]'
+                isLight ? 'text-slate-700' : 'text-zinc-200 drop-shadow-[0_2px_14px_rgba(0,0,0,1)]'
               }`}>
                 {s.p3Desc}
               </p>
@@ -323,7 +305,7 @@ export default function CinematicDualVideoScrolly() {
           <motion.div
             style={{ opacity: p4Opacity, y: p4Y }}
             className={`space-y-3 sm:space-y-6 will-change-transform absolute inset-x-0 mx-auto max-w-3xl px-4 sm:px-6 pointer-events-auto transition-all duration-300 ${
-              isLight ? 'p-6 sm:p-8 rounded-3xl bg-white/95 backdrop-blur-2xl border border-slate-200/90 shadow-2xl' : ''
+              isLight ? 'p-6 sm:p-8 rounded-3xl bg-white/70 backdrop-blur-2xl border border-indigo-200/60 shadow-[0_10px_35px_rgba(99,102,241,0.12)]' : ''
             }`}
           >
             <h2 className={`font-display text-xl xs:text-2xl sm:text-5xl md:text-6xl font-bold leading-snug sm:leading-tight tracking-normal uppercase ${
@@ -332,7 +314,7 @@ export default function CinematicDualVideoScrolly() {
               {s.p4Title}
             </h2>
             <p className={`text-xs sm:text-base max-w-xl mx-auto font-sans leading-relaxed ${
-              isLight ? 'text-slate-600' : 'text-zinc-200 drop-shadow-[0_2px_14px_rgba(0,0,0,0.9)]'
+              isLight ? 'text-slate-700' : 'text-zinc-200 drop-shadow-[0_2px_14px_rgba(0,0,0,0.9)]'
             }`}>
               {s.p4Desc}
             </p>

@@ -29,6 +29,8 @@ export default function AmbientSpotlightGlow() {
     };
   }, []);
 
+  if (opacity <= 0 || position.x < 0) return null;
+
   return (
     <div
       aria-hidden="true"

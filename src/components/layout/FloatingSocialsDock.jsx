@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Share2 } from 'lucide-react';
+import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 
 // Iconos vectoriales de autor oficiales
 function WhatsAppIcon({ className = 'w-5 h-5' }) {
@@ -32,6 +33,7 @@ function TikTokIcon({ className = 'w-5 h-5' }) {
 
 export default function FloatingSocialsDock() {
   const [isOpen, setIsOpen] = useState(false);
+  const { isLight } = useThemeLanguage();
 
   const socialItems = [
     {
@@ -84,17 +86,25 @@ export default function FloatingSocialsDock() {
                   className="relative group flex items-center justify-center"
                 >
                   {/* Tooltip lateral */}
-                  <span className="absolute left-14 px-3 py-1 rounded-xl bg-black/95 backdrop-blur-md text-xs font-mono font-bold text-white border border-white/20 shadow-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
+                  <span className={`absolute left-14 px-3 py-1 rounded-xl backdrop-blur-md text-xs font-mono font-bold border shadow-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap ${
+                    isLight 
+                      ? 'bg-white/95 text-slate-900 border-slate-200' 
+                      : 'bg-black/95 text-white border-white/20'
+                  }`}>
                     {item.name}
                   </span>
 
-                  {/* Botón Circular: Reposo Negro Obsidiana -> Color de Marca al Hover */}
+                  {/* Botón Circular: Reposo -> Color de Marca al Hover */}
                   <a
                     href={item.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={item.name}
-                    className={`w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer bg-[#090b14] text-zinc-300 border border-white/15 shadow-xl ${item.hoverClass}`}
+                    className={`w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer shadow-xl ${
+                      isLight 
+                        ? 'bg-white text-slate-700 border border-slate-200 hover:text-white' 
+                        : 'bg-[#090b14] text-zinc-300 border border-white/15'
+                    } ${item.hoverClass}`}
                   >
                     <IconComp className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
                   </a>
@@ -105,16 +115,22 @@ export default function FloatingSocialsDock() {
         )}
       </AnimatePresence>
 
-      {/* Botón Gatillo Principal: Negro Obsidiana con Transición Sutil */}
+      {/* Botón Gatillo Principal */}
       <motion.button
         type="button"
         whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.92 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-[#090b14] border border-white/20 text-zinc-300 hover:text-white hover:border-cyan-400/60 hover:shadow-[0_0_22px_rgba(34,211,238,0.35)] backdrop-blur-xl flex items-center justify-center shadow-2xl cursor-pointer group focus:outline-none transition-all duration-300"
+        className={`w-13 h-13 sm:w-14 sm:h-14 rounded-full border backdrop-blur-xl flex items-center justify-center shadow-2xl cursor-pointer group focus:outline-none transition-all duration-300 ${
+          isLight 
+            ? 'bg-white/95 border-slate-200 text-slate-800 hover:text-indigo-600 hover:border-indigo-400 hover:shadow-[0_0_22px_rgba(99,102,241,0.25)]' 
+            : 'bg-[#090b14] border-white/20 text-zinc-300 hover:text-white hover:border-cyan-400/60 hover:shadow-[0_0_22px_rgba(34,211,238,0.35)]'
+        }`}
         aria-label="Abrir canales sociales"
       >
-        <Share2 className="w-5 h-5 transition-transform duration-300 group-hover:rotate-12 group-hover:text-cyan-400" />
+        <Share2 className={`w-5 h-5 transition-transform duration-300 group-hover:rotate-12 ${
+          isLight ? 'group-hover:text-indigo-600' : 'group-hover:text-cyan-400'
+        }`} />
       </motion.button>
     </div>
   );

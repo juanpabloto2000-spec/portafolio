@@ -70,10 +70,10 @@ export default function WelcomeGalaxyPreloader({ pageKey }) {
         <motion.div
           key="cinematic-preloader"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, scale: 1.03 }}
+          exit={{ opacity: 0 }}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           onClick={() => setIsVisible(false)}
-          className="fixed inset-0 z-[99999] bg-black overflow-hidden flex items-center justify-center select-none cursor-pointer"
+          className="fixed inset-0 z-[99999] bg-black overflow-hidden flex items-center justify-center select-none cursor-pointer w-full max-w-[100vw] h-full max-h-[100vh]"
         >
           {/* Video a pantalla completa con encuadre adaptable (enfocado en el vórtice cósmico en móvil y centrado en desktop) */}
           <video
@@ -86,7 +86,7 @@ export default function WelcomeGalaxyPreloader({ pageKey }) {
             onEnded={handleVideoEnded}
             onError={handleVideoError}
             onTimeUpdate={handleTimeUpdate}
-            className="absolute inset-0 w-full h-full object-cover object-[78%_35%] sm:object-center"
+            className="absolute inset-0 preloader-video pointer-events-none"
           />
 
           {/* Viñeta cinematográfica muy sutil para dar profundidad */}

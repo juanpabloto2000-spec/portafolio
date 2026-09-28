@@ -15,14 +15,33 @@
   html {
     scroll-behavior: smooth;
     background-color: var(--bg-base);
+    overflow-x: hidden !important;
+    max-width: 100vw;
+    width: 100%;
   }
 
-  body {
+  body, #root {
     background-color: transparent;
     color: #e2e8f0;
     font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-    overflow-x: clip;
+    overflow-x: hidden !important;
+    max-width: 100vw;
+    width: 100%;
+    position: relative;
     transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
+
+/* Video de Preloader Responsive Cósmico */
+.preloader-video {
+  object-fit: cover;
+  object-position: 78% 35% !important;
+  width: 100%;
+  height: 100%;
+}
+@media (min-width: 640px) {
+  .preloader-video {
+    object-position: center !important;
   }
 }
 

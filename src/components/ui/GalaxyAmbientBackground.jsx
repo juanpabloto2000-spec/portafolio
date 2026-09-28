@@ -61,9 +61,9 @@ export default function GalaxyAmbientBackground() {
         nebula2Color = 'rgba(180, 83, 9, 0.06)';
         nebula3Color = 'rgba(120, 53, 15, 0.05)';
       } else if (theme === 'alabaster') {
-        nebula1Color = 'rgba(59, 130, 246, 0.035)';
-        nebula2Color = 'rgba(147, 197, 253, 0.03)';
-        nebula3Color = 'rgba(251, 191, 36, 0.025)';
+        nebula1Color = 'rgba(79, 70, 229, 0.085)'; // Índigo eléctrico IA
+        nebula2Color = 'rgba(124, 58, 237, 0.075)'; // Violeta IA intenso
+        nebula3Color = 'rgba(6, 182, 212, 0.055)';  // Cian IA luminoso
       }
 
       // Nebulosa 1
@@ -111,7 +111,9 @@ export default function GalaxyAmbientBackground() {
         ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
 
         if (theme === 'alabaster') {
-          ctx.fillStyle = `rgba(15, 23, 42, ${clampedAlpha * 0.45})`;
+          // Micro-estrellas irisadas azul y púrpura IA sobre lienzo claro
+          const starTone = i % 2 === 0 ? '99, 102, 241' : '168, 85, 247';
+          ctx.fillStyle = `rgba(${starTone}, ${clampedAlpha * 0.6})`;
         } else {
           ctx.fillStyle = star.color;
           ctx.globalAlpha = clampedAlpha;

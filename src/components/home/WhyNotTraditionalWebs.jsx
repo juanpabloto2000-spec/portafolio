@@ -12,7 +12,7 @@ export default function WhyNotTraditionalWebs() {
     <section id="filosofia" className="py-24 sm:py-32 relative overflow-hidden bg-transparent">
       
       {/* Halo de Plasma Convectivo de Fondo (Efecto de Color del Hero) */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-gradient-to-tr from-cyan-500/10 via-purple-600/10 to-amber-500/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-[500px] h-[300px] bg-gradient-to-tr from-cyan-500/10 via-purple-600/10 to-amber-500/5 blur-[100px] rounded-full pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 sm:px-12 space-y-20 relative z-10">
         
