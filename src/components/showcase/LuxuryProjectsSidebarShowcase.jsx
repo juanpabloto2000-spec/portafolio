@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LIVE_PROJECTS } from '../../data/liveProjects';
 import { Globe, ArrowUpRight, Sparkles, Smartphone, Monitor } from 'lucide-react';
@@ -6,7 +6,29 @@ import { soundFx } from '../../utils/audioEffects';
 
 export default function LuxuryProjectsSidebarShowcase() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [viewMode, setViewMode] = useState('mobile'); // 'mobile' (vertical) | 'desktop' (panorámica)
+  
+  // Detección automática inteligente: si el ancho es >= 1024px (PC / Laptop) inicia en 'desktop', de lo contrario en 'mobile' (vertical celular)
+  const [viewMode, setViewMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 1024 ? 'desktop' : 'mobile';
+    }
+    return 'desktop';
+  });
+
+  const [hasManuallyToggled, setHasManuallyToggled] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      // Auto-adaptar fluidamente si el usuario no ha forzado un modo manualmente con los botones
+      if (!hasManuallyToggled && typeof window !== 'undefined') {
+        const isDesktop = window.innerWidth >= 1024;
+        setViewMode(isDesktop ? 'desktop' : 'mobile');
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [hasManuallyToggled]);
 
   const currentProject = LIVE_PROJECTS[currentIndex];
   const isLive = currentProject.liveUrl && currentProject.liveUrl !== '#' && !currentProject.isUpcoming;
@@ -18,6 +40,7 @@ export default function LuxuryProjectsSidebarShowcase() {
 
   const handleViewMode = (mode) => {
     soundFx.playBlip(560);
+    setHasManuallyToggled(true);
     setViewMode(mode);
   };
 
@@ -31,18 +54,18 @@ export default function LuxuryProjectsSidebarShowcase() {
             Showcase Interactivo en Vivo
           </h3>
           <p className="text-xs sm:text-sm font-sans text-zinc-300 mt-1">
-            Navega las plataformas reales de autor construidas para clientes en Colombia en formato vertical nativo.
+            Plataformas reales de autor en producción. Se adapta automáticamente a tu pantalla (Panorámica en PC / Vertical en Móvil).
           </p>
         </div>
 
-        {/* Selector de Modo de Vista: Vertical (Móvil) vs Panorámica */}
-        <div className="flex items-center gap-1.5 p-1 bg-black/60 border border-white/15 rounded-xl self-start sm:self-auto shrink-0">
+        {/* Selector de Modo de Vista: Vertical (Móvil) vs Panorámica (PC) */}
+        <div className="flex items-center gap-1.5 p-1 bg-black/60 border border-white/15 rounded-xl self-start sm:self-auto shrink-0 backdrop-blur-md">
           <button
             type="button"
             onClick={() => handleViewMode('mobile')}
             className={`px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
               viewMode === 'mobile'
-                ? 'bg-white text-black shadow-monolith'
+                ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md shadow-cyan-500/25 border border-cyan-400/40'
                 : 'text-zinc-400 hover:text-white'
             }`}
             title="Vista vertical en smartphone (9:19)"
@@ -55,13 +78,13 @@ export default function LuxuryProjectsSidebarShowcase() {
             onClick={() => handleViewMode('desktop')}
             className={`px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
               viewMode === 'desktop'
-                ? 'bg-white text-black shadow-monolith'
+                ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md shadow-cyan-500/25 border border-cyan-400/40'
                 : 'text-zinc-400 hover:text-white'
             }`}
             title="Vista panorámica de escritorio"
           >
             <Monitor className="w-3.5 h-3.5" />
-            <span>Panorámica</span>
+            <span>Panorámica PC</span>
           </button>
         </div>
       </div>
@@ -145,10 +168,10 @@ export default function LuxuryProjectsSidebarShowcase() {
                   href={currentProject.liveUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-2.5 rounded-xl bg-white text-black font-sans text-xs font-bold uppercase tracking-wider hover:bg-zinc-200 transition-all cursor-pointer shadow-md flex items-center justify-center gap-2"
+                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 text-white font-sans text-xs font-bold uppercase tracking-wider transition-all cursor-pointer shadow-lg shadow-indigo-500/25 border border-indigo-400/40 flex items-center justify-center gap-2"
                 >
                   <span>Abrir Web en Pestaña Completa</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-black" />
+                  <ArrowUpRight className="w-3.5 h-3.5 text-white" />
                 </a>
               ) : (
                 <a
@@ -172,7 +195,7 @@ export default function LuxuryProjectsSidebarShowcase() {
           {/* Contenedor Adaptativo: Si es 'mobile' adopta marco vertical de Smartphone de Autor */}
           <div className={`w-full transition-all duration-300 ${
             viewMode === 'mobile' 
-              ? 'max-w-[400px] sm:max-w-[420px] rounded-[36px] p-2.5 bg-[#0e1320] border-2 border-white/20 shadow-[0_25px_70px_rgba(0,0,0,0.9)]' 
+              ? 'max-w-[400px] sm:max-w-[420px] mx-auto rounded-3xl sm:rounded-[36px] p-2 sm:p-2.5 bg-[#0e1320] border-2 border-white/20 shadow-[0_25px_70px_rgba(0,0,0,0.9)]' 
               : 'rounded-2xl sm:rounded-3xl border border-white/15 bg-[#080b13]/95 backdrop-blur-2xl overflow-hidden shadow-2xl'
           }`}>
             
