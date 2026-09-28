@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Check, Globe, Palette, Sparkles } from 'lucide-react';
+import { X, Check, Globe, Square, Sparkles } from 'lucide-react';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 
 export default function AppearanceModal({ isOpen, onClose }) {
-  const { theme, setTheme, language, setLanguage, t } = useThemeLanguage();
+  const { borderStyle, setBorderStyle, language, setLanguage, t } = useThemeLanguage();
 
   // Cerrar con tecla Escape
   useEffect(() => {
@@ -19,27 +19,27 @@ export default function AppearanceModal({ isOpen, onClose }) {
 
   if (!isOpen) return null;
 
-  const themesList = [
+  const bordersList = [
     {
-      id: 'obsidian',
-      name: t.appearance.obsidian,
-      description: 'Titanio mate, carbón cósmico y acentos cian/oro. Profundidad absoluta.',
-      colors: ['#030508', '#0b111e', '#00f2fe', '#f59e0b'],
-      badge: 'Dark Elite'
+      id: 'sharp',
+      name: t.appearance.sharp,
+      description: t.appearance.sharpDesc,
+      badge: 'Bordes Rectos 90°',
+      previewRadius: 'rounded-none'
     },
     {
-      id: 'mocha',
-      name: t.appearance.mocha,
-      description: 'Café tostado de origen, ámbar cálido y crema tostada. Tono editorial.',
-      colors: ['#16100d', '#281c16', '#d97706', '#fef3c7'],
-      badge: 'Warm Luxury'
+      id: 'medium',
+      name: t.appearance.medium,
+      description: t.appearance.mediumDesc,
+      badge: 'Equilibrado (Actual)',
+      previewRadius: 'rounded-xl'
     },
     {
-      id: 'alabaster',
-      name: t.appearance.alabaster,
-      description: 'Blanco editorial suizo, mármol suave y tipografía de alto contraste.',
-      colors: ['#f8fafc', '#ffffff', '#0f172a', '#2563eb'],
-      badge: 'Swiss Pure'
+      id: 'rounded',
+      name: t.appearance.rounded,
+      description: t.appearance.roundedDesc,
+      badge: 'Redondeado Suave',
+      previewRadius: 'rounded-2xl'
     }
   ];
 
@@ -84,7 +84,7 @@ export default function AppearanceModal({ isOpen, onClose }) {
                   {t.appearance.title}
                 </h3>
                 <p className="text-xs text-slate-400">
-                  Personaliza la atmósfera cromática y el idioma de toda la plataforma
+                  Personaliza la morfología geométrica de bordes y el idioma del portal
                 </p>
               </div>
             </div>
@@ -98,19 +98,19 @@ export default function AppearanceModal({ isOpen, onClose }) {
           </div>
 
           <div className="py-6 space-y-6 max-h-[70vh] overflow-y-auto pr-1">
-            {/* Sección Gamas Cromáticas */}
+            {/* Sección Morfología de Bordes */}
             <div>
               <div className="flex items-center gap-2 mb-3 text-sm font-semibold tracking-wide text-cyan-400 uppercase">
-                <Palette className="w-4 h-4" />
-                <span>{t.appearance.themes}</span>
+                <Square className="w-4 h-4" />
+                <span>{t.appearance.borders}</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {themesList.map((item) => {
-                  const isSelected = theme === item.id;
+                {bordersList.map((item) => {
+                  const isSelected = borderStyle === item.id;
                   return (
                     <button
                       key={item.id}
-                      onClick={() => setTheme(item.id)}
+                      onClick={() => setBorderStyle(item.id)}
                       className={`relative flex flex-col p-4 rounded-xl border text-left transition-all ${
                         isSelected
                           ? 'border-cyan-400 bg-cyan-950/30 shadow-lg shadow-cyan-500/20 ring-1 ring-cyan-400'
@@ -133,15 +133,11 @@ export default function AppearanceModal({ isOpen, onClose }) {
                       <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed mb-3">
                         {item.description}
                       </p>
-                      {/* Swatch de colores */}
-                      <div className="flex items-center gap-1.5 mt-auto pt-2 border-t border-white/5">
-                        {item.colors.map((c, i) => (
-                          <div
-                            key={i}
-                            className="w-4 h-4 rounded-full border border-white/20"
-                            style={{ backgroundColor: c }}
-                          />
-                        ))}
+                      {/* Miniatura visual de demostración de esquina */}
+                      <div className="mt-auto pt-2 border-t border-white/5 flex items-center justify-center">
+                        <div className={`w-full py-2 px-3 text-center text-[10px] font-mono border border-cyan-400/40 bg-cyan-500/10 text-cyan-300 ${item.previewRadius}`}>
+                          DEMO UI
+                        </div>
                       </div>
                     </button>
                   );

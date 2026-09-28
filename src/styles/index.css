@@ -202,3 +202,36 @@ html.theme-alabaster .glow-card {
     transform: translateX(100%);
   }
 }
+
+/* ========================================================== */
+/* SISTEMA DE MORFOLOGÍA DE BORDES Y ESQUINAS (ARQUITECTURA)  */
+/* ========================================================== */
+
+/* 1. MODO SHARP (Con Bordes Rectos / Ortogonal 90°) */
+html.radius-sharp :not(.rounded-full):not(circle):not(svg):not(path) {
+  border-radius: 0px !important;
+}
+
+/* 2. MODO MEDIUM (Equilibrado / Medio / Como está ahora) */
+/* Conserva la curvatura balanceada estándar (rounded-xl / rounded-2xl) */
+
+/* 3. MODO ROUNDED (Completamente Redondeado / Soft Curve) */
+html.radius-rounded .rounded-md,
+html.radius-rounded .rounded-lg,
+html.radius-rounded .rounded-xl {
+  border-radius: 1.25rem !important;
+}
+
+html.radius-rounded .rounded-2xl {
+  border-radius: 1.85rem !important;
+}
+
+html.radius-rounded .rounded-3xl {
+  border-radius: 2.5rem !important;
+}
+
+html.radius-rounded button:not(.rounded-full):not(.rounded-none),
+html.radius-rounded a.shadow-monolith {
+  border-radius: 9999px !important;
+}
+

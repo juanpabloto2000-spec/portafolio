@@ -509,7 +509,7 @@ Quedo atento para la demostración técnica de 15 minutos.`;
                   soundFx.playBlip(620, 0.05);
                   setStep(2);
                 }}
-                className="px-8 py-3.5 bg-white text-black font-sans font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-platinum disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center gap-2 cursor-pointer shadow-monolith"
+                className="px-8 py-3.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 text-white font-sans font-bold text-xs uppercase tracking-wider rounded-xl border border-indigo-400/40 shadow-[0_0_25px_rgba(99,102,241,0.35)] hover:shadow-[0_0_35px_rgba(168,85,247,0.55)] disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center gap-2 cursor-pointer"
               >
                 <span>Avanzar a Faceta 2: Activo Web</span>
                 <ArrowRight className="w-4 h-4" />
@@ -720,7 +720,7 @@ Quedo atento para la demostración técnica de 15 minutos.`;
                   soundFx.playBlip(620, 0.05);
                   setStep(3);
                 }}
-                className="px-8 py-3.5 bg-white text-black font-sans font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-platinum disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center gap-2 cursor-pointer shadow-monolith"
+                className="px-8 py-3.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 text-white font-sans font-bold text-xs uppercase tracking-wider rounded-xl border border-indigo-400/40 shadow-[0_0_25px_rgba(99,102,241,0.35)] hover:shadow-[0_0_35px_rgba(168,85,247,0.55)] disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center gap-2 cursor-pointer"
               >
                 <span>Avanzar a Faceta 3: Volumen</span>
                 <ArrowRight className="w-4 h-4" />
@@ -805,7 +805,7 @@ Quedo atento para la demostración técnica de 15 minutos.`;
                   soundFx.playBlip(620, 0.05);
                   setStep(4);
                 }}
-                className="px-8 py-3.5 bg-white text-black font-sans font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-platinum transition-all flex items-center gap-2 cursor-pointer shadow-monolith"
+                className="px-8 py-3.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 text-white font-sans font-bold text-xs uppercase tracking-wider rounded-xl border border-indigo-400/40 shadow-[0_0_25px_rgba(99,102,241,0.35)] hover:shadow-[0_0_35px_rgba(168,85,247,0.55)] transition-all flex items-center gap-2 cursor-pointer"
               >
                 <span>Avanzar a Faceta 4: Cuello de Botella</span>
                 <ArrowRight className="w-4 h-4" />
@@ -962,7 +962,7 @@ Quedo atento para la demostración técnica de 15 minutos.`;
                   soundFx.playBlip(620, 0.05);
                   setStep(5);
                 }}
-                className="px-8 py-3.5 bg-white text-black font-sans font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-platinum disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center gap-2 cursor-pointer shadow-monolith"
+                className="px-8 py-3.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 text-white font-sans font-bold text-xs uppercase tracking-wider rounded-xl border border-indigo-400/40 shadow-[0_0_25px_rgba(99,102,241,0.35)] hover:shadow-[0_0_35px_rgba(168,85,247,0.55)] disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center gap-2 cursor-pointer"
               >
                 <span>Avanzar a Faceta 5: Plazo & Urgencia</span>
                 <ArrowRight className="w-4 h-4" />
@@ -1066,7 +1066,7 @@ Quedo atento para la demostración técnica de 15 minutos.`;
                   soundFx.playBlip(640, 0.05);
                   setStep(6);
                 }}
-                className="px-8 py-3.5 bg-white text-black font-sans font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-platinum transition-all flex items-center gap-2 cursor-pointer shadow-monolith"
+                className="px-8 py-3.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 text-white font-sans font-bold text-xs uppercase tracking-wider rounded-xl border border-indigo-400/40 shadow-[0_0_25px_rgba(99,102,241,0.35)] hover:shadow-[0_0_35px_rgba(168,85,247,0.55)] transition-all flex items-center gap-2 cursor-pointer"
               >
                 <span>Avanzar a Faceta 6: Agendamiento WhatsApp</span>
                 <ArrowRight className="w-4 h-4" />

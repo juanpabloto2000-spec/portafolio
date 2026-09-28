@@ -13,12 +13,15 @@ export const TRANSLATIONS = {
       configuracion: 'Apariencia & Idioma'
     },
     appearance: {
-      title: 'Configuración de Experiencia',
-      themes: 'Gamas Cromáticas',
+      title: 'Morfología & Idioma',
+      borders: 'Morfología de Bordes',
       languages: 'Idioma del Portal',
-      obsidian: 'Obsidian Titanio',
-      mocha: 'Mocha Café de Autor',
-      alabaster: 'Alabaster Claro Editorial',
+      sharp: 'Con Bordes Rectos (90°)',
+      sharpDesc: 'Estilo ortogonal, técnico y monolítico sin curvas.',
+      medium: 'Equilibrado / Medio',
+      mediumDesc: 'Curvatura armónica estándar con esquinas refinadas.',
+      rounded: 'Completamente Redondeado',
+      roundedDesc: 'Estilo orgánico y suave con contornos fluidos.',
       close: 'Aplicar y Cerrar'
     },
     hero: {
@@ -134,12 +137,15 @@ export const TRANSLATIONS = {
       configuracion: 'Appearance & Language'
     },
     appearance: {
-      title: 'Experience Settings',
-      themes: 'Color Palettes',
+      title: 'Morphology & Language',
+      borders: 'Border Morphology',
       languages: 'Portal Language',
-      obsidian: 'Obsidian Titanium',
-      mocha: 'Author Mocha Coffee',
-      alabaster: 'Editorial Light Alabaster',
+      sharp: 'Sharp Orthogonal (90°)',
+      sharpDesc: 'Technical, monolithic style with crisp 90-degree edges.',
+      medium: 'Balanced / Medium',
+      mediumDesc: 'Standard harmonious curvature with refined corners.',
+      rounded: 'Fully Rounded',
+      roundedDesc: 'Organic, soft curves with fluid contours.',
       close: 'Apply & Close'
     },
     hero: {
@@ -255,12 +261,15 @@ export const TRANSLATIONS = {
       configuracion: 'Apparence & Langue'
     },
     appearance: {
-      title: 'Paramètres d\'Expérience',
-      themes: 'Gammes Chromatiques',
+      title: 'Morphologie & Langue',
+      borders: 'Morphologie des Bordures',
       languages: 'Langue du Portail',
-      obsidian: 'Obsidienne Titane',
-      mocha: 'Mocha Café d\'Auteur',
-      alabaster: 'Clair Albâtre Éditorial',
+      sharp: 'Bords Droits (90°)',
+      sharpDesc: 'Style orthogonal, technique et monolithique sans courbes.',
+      medium: 'Équilibré / Moyen',
+      mediumDesc: 'Courbure harmonieuse standard avec angles raffinés.',
+      rounded: 'Entièrement Arrondi',
+      roundedDesc: 'Style organique et doux avec contours fluides.',
       close: 'Appliquer et Fermer'
     },
     hero: {
@@ -376,12 +385,15 @@ export const TRANSLATIONS = {
       configuracion: 'Erscheinungsbild & Sprache'
     },
     appearance: {
-      title: 'Erlebnis-Einstellungen',
-      themes: 'Farbskalen',
+      title: 'Morphologie & Sprache',
+      borders: 'Kanten-Morphologie',
       languages: 'Portalsprache',
-      obsidian: 'Obsidian Titan',
-      mocha: 'Mocha Autorenkaffee',
-      alabaster: 'Editorial Hell Alabaster',
+      sharp: 'Geradlinig / Eckig (90°)',
+      sharpDesc: 'Technischer, monolithischer Stil ohne Rundungen.',
+      medium: 'Ausgewogen / Mittel',
+      mediumDesc: 'Standardmäßige harmonische Kurvenführung.',
+      rounded: 'Vollständig Abgerundet',
+      roundedDesc: 'Organischer, weicher Stil mit fließenden Konturen.',
       close: 'Anwenden & Schließen'
     },
     hero: {
@@ -497,12 +509,15 @@ export const TRANSLATIONS = {
       configuracion: 'Aparência & Idioma'
     },
     appearance: {
-      title: 'Configurações de Experiência',
-      themes: 'Gamas Cromáticas',
+      title: 'Morfologia & Idioma',
+      borders: 'Morfologia de Bordas',
       languages: 'Idioma do Portal',
-      obsidian: 'Obsidiana Titânio',
-      mocha: 'Mocha Café de Autor',
-      alabaster: 'Alabastro Claro Editorial',
+      sharp: 'Com Bordas Retas (90°)',
+      sharpDesc: 'Estilo ortogonal, técnico e monolítico sem curvas.',
+      medium: 'Equilibrado / Médio',
+      mediumDesc: 'Curvatura harmônica padrão com cantos refinados.',
+      rounded: 'Completamente Arredondado',
+      roundedDesc: 'Estilo orgânico e suave com contornos fluidos.',
       close: 'Aplicar e Fechar'
     },
     hero: {
@@ -618,12 +633,15 @@ export const TRANSLATIONS = {
       configuracion: '外観と環境設定'
     },
     appearance: {
-      title: 'エクスペリエンス設定',
-      themes: 'カラーパレット',
+      title: '形状と環境設定',
+      borders: 'エッジ・ボーダー形状',
       languages: 'ポータル言語',
-      obsidian: '黒曜石チタン',
-      mocha: 'モカ・コーヒー',
-      alabaster: '雪花石膏ライト',
+      sharp: '直角・スクエア (90°)',
+      sharpDesc: '曲線のない直角でソリッドなモノリスデザイン。',
+      medium: 'バランス / 標準',
+      mediumDesc: '適度な曲率を持つ洗練されたエッジ。',
+      rounded: 'フルラウンド / 曲線',
+      roundedDesc: '有機的で柔らかな丸みを帯びたデザイン。',
       close: '適用して閉じる'
     },
     hero: {
@@ -732,6 +750,7 @@ export const TRANSLATIONS = {
 
 export function ThemeLanguageProvider({ children }) {
   const [theme, setTheme] = useState(() => localStorage.getItem('dynamind_theme') || 'obsidian');
+  const [borderStyle, setBorderStyle] = useState(() => localStorage.getItem('dynamind_border_style') || 'medium');
   const [language, setLanguage] = useState(() => localStorage.getItem('dynamind_language') || 'es');
 
   useEffect(() => {
@@ -751,13 +770,20 @@ export function ThemeLanguageProvider({ children }) {
   }, [theme]);
 
   useEffect(() => {
+    localStorage.setItem('dynamind_border_style', borderStyle);
+    document.documentElement.setAttribute('data-radius', borderStyle);
+    document.documentElement.classList.remove('radius-sharp', 'radius-medium', 'radius-rounded');
+    document.documentElement.classList.add(`radius-${borderStyle}`);
+  }, [borderStyle]);
+
+  useEffect(() => {
     localStorage.setItem('dynamind_language', language);
   }, [language]);
 
   const t = TRANSLATIONS[language] || TRANSLATIONS.es;
 
   return (
-    <ThemeLanguageContext.Provider value={{ theme, setTheme, language, setLanguage, t }}>
+    <ThemeLanguageContext.Provider value={{ theme, setTheme, borderStyle, setBorderStyle, language, setLanguage, t }}>
       {children}
     </ThemeLanguageContext.Provider>
   );

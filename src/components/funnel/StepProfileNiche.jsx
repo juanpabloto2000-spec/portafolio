@@ -151,7 +151,7 @@ export default function StepProfileNiche({ formData, updateFormData, onNext }) {
           type="button"
           disabled={!isValid}
           onClick={onNext}
-          className="px-8 py-3.5 bg-white text-black font-mono text-xs font-bold uppercase tracking-wider rounded-xl transition-all duration-200 hover:bg-platinum disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer"
+          className="px-8 py-3.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 text-white font-mono text-xs font-bold uppercase tracking-wider rounded-xl border border-indigo-400/40 shadow-[0_0_25px_rgba(99,102,241,0.35)] hover:shadow-[0_0_35px_rgba(168,85,247,0.55)] disabled:opacity-30 disabled:cursor-not-allowed transition-all flex items-center gap-2 cursor-pointer"
         >
           <span>Siguiente: Diagnóstico del Dolor (Paso 2)</span>
           <ArrowRight className="w-4 h-4" />
