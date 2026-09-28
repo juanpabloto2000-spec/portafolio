@@ -21,7 +21,7 @@ export default function FunnelSuccessModal({ lead, onClose }) {
 
   if (!lead) return null;
 
-  const juanPhone = '573008924110';
+  const juanPhone = '573122952165';
   const waMessage = `Hola Juan Pablo, acabo de completar el diagnóstico de ingeniería en Dynamind Studios.
 
 *Proyecto:* ${lead.business_name || 'Sin nombre'}

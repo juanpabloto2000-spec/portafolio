@@ -37,7 +37,7 @@ export default function FloatingSocialsDock() {
     {
       id: 'whatsapp',
       name: 'WhatsApp Oficial',
-      url: 'https://wa.me/573008924110?text=Hola%20Juan%20Pablo%2C%20vengo%20de%20la%20web%20de%20Dynamind%20Studios%20y%20quiero%20conocer%20m%C3%A1s%20sobre%20sus%20sistemas.',
+      url: 'https://wa.me/573122952165?text=Hola%20Juan%20Pablo%2C%20vengo%20de%20la%20web%20de%20Dynamind%20Studios%20y%20quiero%20conocer%20m%C3%A1s%20sobre%20sus%20sistemas.',
       icon: WhatsAppIcon,
       hoverClass: 'hover:bg-[#25D366] hover:text-black hover:border-[#25D366] hover:shadow-[0_0_20px_rgba(37,211,102,0.6)]'
     },

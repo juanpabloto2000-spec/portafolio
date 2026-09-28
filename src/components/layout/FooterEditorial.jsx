@@ -79,13 +79,13 @@ export default function FooterEditorial() {
               <ul className="space-y-2.5 text-zinc-300">
                 <li>
                   <a 
-                    href="https://wa.me/573008924110" 
+                    href="https://wa.me/573122952165?text=Hola%20Dynamind%20Studios%2C%20quiero%20hacer%20un%20diagn%C3%B3stico%20de%20mi%20empresa" 
                     target="_blank" 
                     rel="noreferrer" 
-                    className="flex items-center gap-2 hover:text-white transition-colors"
+                    className="flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors group"
                   >
-                    <Phone className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>+57 300 892 4110</span>
+                    <Phone className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
+                    <span className="font-mono text-xs font-semibold">wa.link/dynamind</span>
                   </a>
                 </li>
                 <li>
@@ -109,8 +109,8 @@ export default function FooterEditorial() {
                   </a>
                 </li>
                 <li className="flex items-center gap-2 text-zinc-400 pt-1">
-                  <MapPin className="w-3.5 h-3.5 text-zinc-400" />
-                  <span>Medellín, Colombia · Global USD</span>
+                  <MapPin className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>Eje Cafetero, Colombia · Armenia / Pereira / Manizales · Cobertura Global</span>
                 </li>
               </ul>
             </div>
@@ -125,7 +125,7 @@ export default function FooterEditorial() {
             © {new Date().getFullYear()} DYNAMIND STUDIOS S.A.S. — {f.rights}
           </div>
           <div className="flex items-center gap-4 text-zinc-400">
-            <span>DIRECTOR DE ARQUITECTURA: JUAN PABLO</span>
+            <span>CEO & DIRECTOR DE ARQUITECTURA: JUAN PABLO TORO</span>
             <span>·</span>
             <span>VERSIÓN 2.0 CANÓNICA</span>
           </div>
