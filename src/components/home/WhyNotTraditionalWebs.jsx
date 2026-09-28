@@ -16,55 +16,16 @@ export default function WhyNotTraditionalWebs() {
 
       <div className="max-w-7xl mx-auto px-6 sm:px-12 space-y-20 relative z-10">
         
-        {/* Cabecera Principal con Reactor Giroscópico Flotante */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          
-          <div className="lg:col-span-8 space-y-5">
-            <RevealSection direction="up">
-              <span className="text-xs font-mono font-bold uppercase text-cyan-400 tracking-widest">
-                {w.manifestoTag}
-              </span>
-              <h2 className="font-display font-bold text-3xl sm:text-5xl lg:text-6xl text-white tracking-tight uppercase leading-[1.1] pt-2">
-                {w.title}
-              </h2>
-              <p className="text-base sm:text-lg font-sans text-zinc-300 leading-relaxed max-w-2xl pt-2">
-                {w.desc}
-              </p>
-            </RevealSection>
-          </div>
-
-          {/* Reactor Giroscópico del Hero Reutilizado con Efecto de Color */}
-          <div className="lg:col-span-4 flex justify-center lg:justify-end">
-            <RevealSection direction="scale" delay={0.2}>
-              <div className="relative w-64 h-64 border border-white/15 rounded-3xl p-6 bg-[#080b13]/95 backdrop-blur-2xl flex flex-col items-center justify-center text-center space-y-4 glow-card shadow-[0_20px_50px_rgba(0,0,0,0.85),0_0_30px_rgba(56,189,248,0.15)]">
-                
-                {/* Anillos Giroscópicos en Contra-Rotación */}
-                <div className="relative w-28 h-28 flex items-center justify-center">
-                  <div className="absolute inset-0 border border-cyan-400/30 rounded-full animate-[spin_20s_linear_infinite]" />
-                  <div className="absolute inset-2 border border-purple-500/25 rounded-full animate-[spin_14s_linear_infinite_reverse]" />
-                  <div className="absolute inset-4 border border-amber-400/20 rounded-full animate-[spin_28s_linear_infinite]" />
-                  
-                  <div className="w-16 h-16 rounded-2xl bg-white/[0.06] border border-white/20 flex items-center justify-center backdrop-blur-md shadow-[0_0_15px_rgba(56,189,248,0.25)]">
-                    <img 
-                      src="/logo-transparent.png" 
-                      alt="Dynamind Studios Monogram" 
-                      className="w-10 h-10 object-contain filter contrast-125"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <div className="font-display font-bold text-sm text-white uppercase tracking-wider">
-                    {w.reactorTitle}
-                  </div>
-                  <p className="text-xs text-zinc-400 leading-tight">
-                    {w.reactorSubtitle}
-                  </p>
-                </div>
-              </div>
-            </RevealSection>
-          </div>
-
+        {/* Cabecera Principal Editorial */}
+        <div className="max-w-4xl space-y-4">
+          <RevealSection direction="up">
+            <h2 className="font-display font-bold text-3xl sm:text-5xl lg:text-6xl text-white tracking-tight uppercase leading-[1.1]">
+              {w.title}
+            </h2>
+            <p className="text-base sm:text-lg font-sans text-zinc-300 leading-relaxed pt-3 max-w-3xl">
+              {w.desc}
+            </p>
+          </RevealSection>
         </div>
 
         {/* Comparativa Radical de Ingeniería: Tumbas Digitales vs Software Soberano */}

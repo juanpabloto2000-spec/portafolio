@@ -17,9 +17,6 @@ export default function SovereignEngineeringStandards() {
         
         {/* Cabecera de la Sección */}
         <RevealSection direction="up" className="max-w-3xl space-y-4">
-          <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-cyan-400">
-            {st.tag}
-          </span>
           <h2 className="font-display font-bold text-3xl sm:text-5xl text-white tracking-tight uppercase leading-[1.1]">
             {st.title}
           </h2>

@@ -7,7 +7,7 @@ export default function Navbar({ currentHash = '#/' }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [appearanceOpen, setAppearanceOpen] = useState(false);
-  const { t, theme, language, setLanguage } = useThemeLanguage();
+  const { t } = useThemeLanguage();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -94,19 +94,6 @@ export default function Navbar({ currentHash = '#/' }) {
               </a>
             </nav>
 
-            {/* Divisor vertical sutil */}
-            <div className="w-[1px] h-4 bg-white/15 mx-1" />
-
-            {/* Selector Rápido de Idioma con Banderas Oficiales 🇨🇴 / 🇺🇸 */}
-            <button
-              onClick={() => setLanguage(language === 'es' ? 'en' : 'es')}
-              className="px-2.5 py-1.5 rounded-xl border border-white/10 hover:border-cyan-500/30 bg-white/[0.03] hover:bg-white/[0.08] text-xs font-mono transition-all flex items-center gap-1.5 cursor-pointer text-zinc-300 hover:text-white"
-              title={language === 'es' ? 'Switch to English (US)' : 'Cambiar a Español (Colombia)'}
-              aria-label="Cambiar idioma"
-            >
-              <span>{language === 'es' ? '🇨🇴 ES' : '🇺🇸 EN'}</span>
-            </button>
-
             {/* Botón Tuerca Táctica de Apariencia e Idioma */}
             <button
               onClick={() => setAppearanceOpen(true)}
@@ -120,15 +107,6 @@ export default function Navbar({ currentHash = '#/' }) {
 
           {/* Botones Mobile Menu */}
           <div className="md:hidden flex items-center gap-2 ml-auto">
-            {/* Quick Flag Toggle en Móvil */}
-            <button
-              onClick={() => setLanguage(language === 'es' ? 'en' : 'es')}
-              className="px-2 py-1.5 text-xs font-mono text-zinc-300 border border-white/10 rounded-xl bg-white/[0.02]"
-              aria-label="Cambiar idioma"
-            >
-              <span>{language === 'es' ? '🇨🇴' : '🇺🇸'}</span>
-            </button>
-
             <button
               onClick={() => setAppearanceOpen(true)}
               className="p-2 text-zinc-400 hover:text-cyan-400 border border-white/10 rounded-xl bg-white/[0.02]"

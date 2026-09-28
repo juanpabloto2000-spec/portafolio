@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Check, Globe, Square, Sparkles } from 'lucide-react';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
+import { getFlagComponent } from '../common/FlagIcons';
 
 export default function AppearanceModal({ isOpen, onClose }) {
   const { borderStyle, setBorderStyle, language, setLanguage, t } = useThemeLanguage();
@@ -164,8 +165,10 @@ export default function AppearanceModal({ isOpen, onClose }) {
                           : 'border-white/10 bg-white/[0.02] text-slate-300 hover:bg-white/[0.05] hover:border-white/20'
                       }`}
                     >
-                      <div className="flex items-center gap-2.5">
-                        <span className="text-xl">{lang.flag}</span>
+                      <div className="flex items-center gap-3">
+                        <div className="shrink-0">
+                          {getFlagComponent(lang.code, 24)}
+                        </div>
                         <div>
                           <p className="text-xs font-semibold leading-tight">{lang.label}</p>
                           <p className="text-[10px] text-slate-400 font-mono">{lang.region}</p>

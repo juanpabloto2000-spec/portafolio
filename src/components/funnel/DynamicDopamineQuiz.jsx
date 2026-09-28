@@ -822,8 +822,8 @@ Quedo atento para la demostración técnica de 15 minutos.`;
             className="space-y-6 sm:space-y-8"
           >
             <div className="space-y-2 text-center max-w-xl mx-auto">
-              <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-red-400">
-                Fricción Crítica // {formData.niche}
+              <span className="text-[11px] font-sans font-bold uppercase tracking-wider text-red-400">
+                Frenos Operativos en {formData.niche}
               </span>
               <h2 className="font-display font-bold text-2xl sm:text-4xl text-white pt-1">
                 ¿Cuáles son los principales frenos de tu operación hoy?

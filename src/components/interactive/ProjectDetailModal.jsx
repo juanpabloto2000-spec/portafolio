@@ -12,9 +12,9 @@ export default function ProjectDetailModal({ project, onClose }) {
         {/* Cabecera del Modal */}
         <div className="sticky top-0 z-10 bg-zinc-950/95 border-b border-white/10 p-5 flex items-center justify-between">
           <div>
-            <div className="text-[10px] text-zinc-500 uppercase tracking-widest">
-              EXPEDIENTE TÉCNICO // {project.nicheLabel}
-            </div>
+            <span className="text-[11px] font-sans font-semibold text-cyan-400">
+              {project.nicheLabel}
+            </span>
             <h3 className="font-display font-bold text-lg sm:text-xl text-white">
               {project.title}
             </h3>
