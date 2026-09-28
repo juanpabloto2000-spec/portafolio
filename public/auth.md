@@ -1,26 +1,33 @@
 # Auth.md
 
-> Agent Authentication and Registration Protocol for Dynamind Studios
+An introduction to authentication and authorization for AI agents on Dynamind Studios.
 
-This document describes how autonomous AI agents can discover, register, authenticate, and interact with Dynamind Studios APIs and resources.
+## Registration
 
-## Authentication Overview
+Agents can register for API access by submitting their identity information:
+- Protocol: OAuth 2.0 Dynamic Client Registration
+- Registration Endpoint: https://portafolio.juanpabloto2000.workers.dev/api/agents/register
 
-Dynamind Studios supports OAuth 2.0 and API Key authentication for autonomous agents.
+## Authentication
 
-### Discovery Metadata
-- Authorization Server: `/.well-known/oauth-authorization-server`
-- Protected Resource Metadata: `/.well-known/oauth-protected-resource`
+Agents authenticate using Bearer tokens in the HTTP Authorization header:
+
+```http
+Authorization: Bearer <access_token>
+```
+
+Token endpoint: `https://portafolio.juanpabloto2000.workers.dev/oauth/token`
+
+## Discovery
+
+Metadata discovery endpoints:
+- OAuth Authorization Server: `/.well-known/oauth-authorization-server`
 - OpenID Configuration: `/.well-known/openid-configuration`
+- OAuth Protected Resource: `/.well-known/oauth-protected-resource`
 
-### Supported Scopes
+## Scopes
+
 - `read:projects`: Read portfolio case studies, metrics, and architecture dossiers.
 - `write:triage`: Submit diagnostic assessments for business operational analysis.
 - `write:leads`: Register potential business inquiries.
 - `execute:agent`: Invoke autonomous agent workflows.
-
-### Registration Process for Agents
-1. Agents can request client credentials by sending a registration payload to `https://portafolio.juanpabloto2000.workers.dev/api/agents/register`.
-2. Public endpoints (such as `/api/triage/submit` and `/openapi.json`) require no bearer token.
-3. For administrative or protected operations, provide:
-   `Authorization: Bearer <token>`

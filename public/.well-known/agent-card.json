@@ -2,10 +2,11 @@
   "name": "Dynamind Sovereign AI",
   "version": "2.0.0",
   "description": "Autonomous Business Engineering and Triage Agent by Dynamind Studios",
+  "url": "https://portafolio.juanpabloto2000.workers.dev",
   "supportedInterfaces": [
     {
       "url": "https://portafolio.juanpabloto2000.workers.dev/api/a2a",
-      "serviceUrl": "https://portafolio.juanpabloto2000.workers.dev/api/a2a",
+      "transport": "HTTP",
       "protocol": "HTTP/JSON"
     }
   ],
