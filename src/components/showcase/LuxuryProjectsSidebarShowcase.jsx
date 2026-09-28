@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LIVE_PROJECTS } from '../../data/liveProjects';
-import { Globe, ArrowUpRight, Sparkles, Smartphone, Monitor } from 'lucide-react';
+import { Sparkles, Smartphone, Monitor, LayoutDashboard, Globe } from 'lucide-react';
 import { soundFx } from '../../utils/audioEffects';
 
 export default function LuxuryProjectsSidebarShowcase() {
   const [currentIndex, setCurrentIndex] = useState(0);
   
-  // Detección automática inteligente: si el ancho es >= 1024px (PC / Laptop) inicia en 'desktop', de lo contrario en 'mobile' (vertical celular)
+  // Pestaña activa: 'front' (Portal Web Comercial) vs 'dashboard' (Core Operativo /#/dsb)
+  const [activeLayer, setActiveLayer] = useState('front');
+
+  // Detección automática inteligente: si el ancho es >= 1024px (PC / Laptop) inicia en 'desktop', de lo contrario en 'mobile'
   const [viewMode, setViewMode] = useState(() => {
     if (typeof window !== 'undefined') {
       return window.innerWidth >= 1024 ? 'desktop' : 'mobile';
@@ -19,7 +22,6 @@ export default function LuxuryProjectsSidebarShowcase() {
 
   useEffect(() => {
     const handleResize = () => {
-      // Auto-adaptar fluidamente si el usuario no ha forzado un modo manualmente con los botones
       if (!hasManuallyToggled && typeof window !== 'undefined') {
         const isDesktop = window.innerWidth >= 1024;
         setViewMode(isDesktop ? 'desktop' : 'mobile');
@@ -33,9 +35,24 @@ export default function LuxuryProjectsSidebarShowcase() {
   const currentProject = LIVE_PROJECTS[currentIndex];
   const isLive = currentProject.liveUrl && currentProject.liveUrl !== '#' && !currentProject.isUpcoming;
 
+  // Cálculo de URL del iframe según la pestaña activa (Portal vs Dashboard /#/dsb)
+  const getIframeUrl = (project, layer) => {
+    if (!project.liveUrl || project.liveUrl === '#' || project.isUpcoming) return null;
+    const cleanBase = project.liveUrl.replace(/\/+#*(\/.*)?$/, '');
+    if (layer === 'dashboard') {
+      return `${cleanBase}/#/dsb`;
+    }
+    return project.liveUrl.includes('/#/') ? project.liveUrl : `${cleanBase}/#/`;
+  };
+
   const handleSelect = (idx) => {
     soundFx.playBlip(520 + idx * 30);
     setCurrentIndex(idx);
+  };
+
+  const handleLayerChange = (layer) => {
+    soundFx.playBlip(layer === 'dashboard' ? 640 : 540);
+    setActiveLayer(layer);
   };
 
   const handleViewMode = (mode) => {
@@ -44,21 +61,23 @@ export default function LuxuryProjectsSidebarShowcase() {
     setViewMode(mode);
   };
 
+  const activeIframeSrc = getIframeUrl(currentProject, activeLayer);
+
   return (
-    <div className="w-full space-y-5 font-sans select-none">
+    <div className="w-full space-y-4 font-sans select-none">
       
       {/* Cabecera Editorial Limpia del Showcase */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-3">
         <div>
           <h3 className="font-display font-bold text-2xl sm:text-3xl text-white tracking-tight">
             Showcase Interactivo en Vivo
           </h3>
-          <p className="text-xs sm:text-sm font-sans text-zinc-300 mt-1">
-            Plataformas reales de autor en producción. Se adapta automáticamente a tu pantalla (Panorámica en PC / Vertical en Móvil).
+          <p className="text-xs sm:text-sm font-sans text-zinc-300 mt-0.5">
+            Plataformas reales de autor en producción con alternancia directa entre Frontoffice y Dashboard.
           </p>
         </div>
 
-        {/* Selector de Modo de Vista: Vertical (Móvil) vs Panorámica (PC) */}
+        {/* Selector de Modo de Dispositivo: Móvil vs PC */}
         <div className="flex items-center gap-1.5 p-1 bg-black/60 border border-white/15 rounded-xl self-start sm:self-auto shrink-0 backdrop-blur-md">
           <button
             type="button"
@@ -89,17 +108,17 @@ export default function LuxuryProjectsSidebarShowcase() {
         </div>
       </div>
 
-      {/* Contenedor Principal: Selector Lateral (4 cols) + Visor Vertical / Panorámico (8 cols) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      {/* Contenedor Principal: Botones Compactos (3 cols) + Gran Pantalla Panorámica (9 cols) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         
         {/* ============================================================== */}
-        {/* SELECTOR LATERAL CON FICHA EDITORIAL (4 cols en Desktop)        */}
+        {/* SELECTOR LATERAL: BOTONES MENOS ALARGADOS SIN NÚMEROS (3 cols) */}
         {/* ============================================================== */}
-        <div className="lg:col-span-4 flex flex-col space-y-3">
+        <div className="lg:col-span-3 flex flex-col space-y-2.5">
           
           <div className="flex lg:flex-col gap-1.5 overflow-x-auto lg:overflow-x-visible pb-1 lg:pb-0 scrollbar-none snap-x">
-            <div className="text-[10px] font-mono text-zinc-400 font-bold uppercase tracking-wider px-1 pb-1 hidden lg:block">
-              Plataformas en Producción ({LIVE_PROJECTS.length})
+            <div className="text-[10px] font-mono text-zinc-400 font-bold uppercase tracking-wider px-1 pb-0.5 hidden lg:block">
+              Sistemas Activos ({LIVE_PROJECTS.length})
             </div>
 
             {LIVE_PROJECTS.map((proj, idx) => {
@@ -108,32 +127,25 @@ export default function LuxuryProjectsSidebarShowcase() {
                 <button
                   key={proj.id}
                   onClick={() => handleSelect(idx)}
-                  className={`p-2.5 sm:p-3 rounded-xl border text-left transition-all duration-200 cursor-pointer flex items-center justify-between gap-2.5 shrink-0 lg:w-full min-w-[190px] lg:min-w-0 snap-start ${
+                  className={`py-2 px-2.5 sm:px-3 rounded-xl border text-left transition-all duration-200 cursor-pointer flex items-center justify-between gap-2 shrink-0 lg:w-full min-w-[170px] lg:min-w-0 snap-start ${
                     isSelected
-                      ? 'bg-gradient-to-r from-cyan-950/70 to-purple-950/40 border-cyan-400/80 shadow-[0_0_20px_rgba(34,211,238,0.2)] ring-1 ring-cyan-400/50'
+                      ? 'bg-gradient-to-r from-cyan-950/80 to-purple-950/50 border-cyan-400/80 shadow-[0_0_20px_rgba(34,211,238,0.25)] ring-1 ring-cyan-400/50'
                       : 'bg-white/[0.02] border-white/10 hover:border-white/20 hover:bg-white/[0.04]'
                   }`}
                 >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <span className={`text-[11px] font-mono font-bold shrink-0 ${
-                      isSelected ? 'text-cyan-400' : 'text-zinc-500'
+                  <div className="min-w-0 flex-1">
+                    <div className={`font-display font-bold text-xs truncate ${
+                      isSelected ? 'text-white' : 'text-zinc-300'
                     }`}>
-                      0{idx + 1}
-                    </span>
-                    <div className="min-w-0">
-                      <div className={`font-display font-bold text-xs truncate ${
-                        isSelected ? 'text-white' : 'text-zinc-300'
-                      }`}>
-                        {proj.title}
-                      </div>
-                      <div className="text-[10px] text-zinc-400 truncate">
-                        {proj.client}
-                      </div>
+                      {proj.title}
+                    </div>
+                    <div className="text-[10px] text-zinc-400 truncate">
+                      {proj.client}
                     </div>
                   </div>
 
                   {proj.isUpcoming ? (
-                    <span className="text-[9px] font-mono text-amber-400 font-semibold shrink-0 px-1.5 py-0.5 rounded bg-amber-950/40 border border-amber-500/20">
+                    <span className="text-[9px] font-mono text-amber-400 font-semibold shrink-0 px-1.5 py-0.5 rounded bg-amber-950/50 border border-amber-500/25">
                       Q4
                     </span>
                   ) : (
@@ -146,115 +158,114 @@ export default function LuxuryProjectsSidebarShowcase() {
             })}
           </div>
 
-          {/* Ficha Editorial Detallada del Proyecto */}
-          <div className="p-4 rounded-2xl bg-[#080b13]/90 border border-white/10 space-y-2 text-xs font-sans">
+          {/* Ficha Editorial Compacta del Proyecto Seleccionado */}
+          <div className="p-3.5 rounded-2xl bg-[#080b13]/90 border border-white/10 space-y-1.5 text-xs font-sans">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase">
+              <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-wider">
                 {currentProject.client}
               </span>
-              <span className="text-[10px] font-mono text-zinc-400">
+              <span className="text-[9px] font-mono text-zinc-400 px-1.5 py-0.5 rounded bg-white/5 border border-white/10">
                 0{currentIndex + 1} / 0{LIVE_PROJECTS.length}
               </span>
             </div>
-            <div className="font-display font-bold text-sm text-white">
+            
+            <div className="font-display font-bold text-xs text-white leading-snug">
               {currentProject.tagline}
             </div>
-            <p className="text-[11px] text-zinc-300 leading-relaxed">
+            
+            <p className="text-[11px] text-zinc-400 leading-relaxed line-clamp-3">
               {currentProject.description}
             </p>
-            <div className="pt-2">
-              {isLive ? (
-                <a
-                  href={currentProject.liveUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 text-white font-sans text-xs font-bold uppercase tracking-wider transition-all cursor-pointer shadow-lg shadow-indigo-500/25 border border-indigo-400/40 flex items-center justify-center gap-2"
-                >
-                  <span>Abrir Web en Pestaña Completa</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-white" />
-                </a>
-              ) : (
-                <a
-                  href="/#/diagnostico"
-                  className="w-full py-2.5 rounded-xl bg-white/10 border border-white/20 text-white font-sans text-xs font-bold uppercase tracking-wider hover:bg-white/20 transition-all cursor-pointer flex items-center justify-center gap-2"
-                >
-                  <span>Solicitar Demostración</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-white" />
-                </a>
-              )}
+
+            <div className="pt-1.5 flex items-center gap-1.5 text-[10px] font-mono text-zinc-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              <span>Core PMS & Capa Operativa Integrada</span>
             </div>
           </div>
 
         </div>
 
         {/* ============================================================== */}
-        {/* VISOR VERTICAL NATIVO / PANORÁMICO (8 cols en Desktop)          */}
+        {/* GRAN PANTALLA PANORÁMICA HORIZONTAL (9 cols en Desktop)        */}
         {/* ============================================================== */}
-        <div className="lg:col-span-8 w-full flex flex-col items-center">
+        <div className="lg:col-span-9 w-full flex flex-col items-center">
           
-          {/* Contenedor Adaptativo: Si es 'mobile' adopta marco vertical de Smartphone de Autor */}
+          {/* Contenedor Adaptativo: Si es 'mobile' adopta smartphone; si es PC es ultra panorámico */}
           <div className={`w-full transition-all duration-300 ${
             viewMode === 'mobile' 
               ? 'max-w-[400px] sm:max-w-[420px] mx-auto rounded-3xl sm:rounded-[36px] p-2 sm:p-2.5 bg-[#0e1320] border-2 border-white/20 shadow-[0_25px_70px_rgba(0,0,0,0.9)]' 
               : 'rounded-2xl sm:rounded-3xl border border-white/15 bg-[#080b13]/95 backdrop-blur-2xl overflow-hidden shadow-2xl'
           }`}>
             
-            {/* Barra de Telemetría Superior */}
-            <div className={`px-3.5 py-2 flex items-center justify-between gap-2 border-b ${
+            {/* Barra de Telemetría Superior con Conmutador de Pestañas (Portal vs Dashboard) */}
+            <div className={`px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 border-b ${
               viewMode === 'mobile' 
                 ? 'bg-transparent border-white/10 rounded-t-[28px]' 
                 : 'bg-[#0c101c] border-white/10'
             }`}>
               
-              <div className="flex items-center gap-2 min-w-0">
-                <div className="flex items-center gap-1 shrink-0">
-                  <span className="w-2 h-2 rounded-full bg-red-500/80" />
-                  <span className="w-2 h-2 rounded-full bg-amber-500/80" />
-                  <span className="w-2 h-2 rounded-full bg-emerald-500/80" />
+              {/* Lado Izquierdo: Botones Mac & Título del Proyecto */}
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span className="w-2.5 h-2.5 rounded-full bg-red-500/80 shadow-[0_0_6px_rgba(239,68,68,0.5)]" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80 shadow-[0_0_6px_rgba(245,158,11,0.5)]" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80 shadow-[0_0_6px_rgba(16,185,129,0.5)]" />
                 </div>
                 
-                <div className="px-2.5 py-0.5 rounded-lg bg-black/60 border border-white/10 text-[10px] sm:text-[11px] font-mono text-cyan-300 truncate max-w-[170px] sm:max-w-xs flex items-center gap-1.5">
-                  <Globe className="w-2.5 h-2.5 text-cyan-400 shrink-0" />
-                  <span className="truncate">{currentProject.url}</span>
-                </div>
+                <span className="font-display font-bold text-xs sm:text-sm text-white truncate max-w-[180px] sm:max-w-xs">
+                  {currentProject.title}
+                </span>
               </div>
 
-              {/* Botón Compacto en Barra */}
-              <div>
-                {isLive && (
-                  <a
-                    href={currentProject.liveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white font-mono text-[10px] uppercase transition-colors"
-                  >
-                    <span>Visitar</span>
-                    <ArrowUpRight className="w-3 h-3" />
-                  </a>
-                )}
+              {/* Centro: Conmutador de Pestañas [ Portal Web ] vs [ Core Operativo (/#/dsb) ] */}
+              <div className="flex items-center p-1 bg-black/80 border border-white/15 rounded-xl backdrop-blur-md shrink-0">
+                <button
+                  type="button"
+                  onClick={() => handleLayerChange('front')}
+                  className={`px-3 py-1 rounded-lg text-xs font-sans font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
+                    activeLayer === 'front'
+                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-sm'
+                      : 'text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  <Globe className="w-3 h-3 text-cyan-300" />
+                  <span>Portal Web</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleLayerChange('dashboard')}
+                  className={`px-3 py-1 rounded-lg text-xs font-sans font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+                    activeLayer === 'dashboard'
+                      ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md shadow-cyan-500/30 border border-cyan-400/40'
+                      : 'text-zinc-400 hover:text-white'
+                  }`}
+                >
+                  <LayoutDashboard className="w-3 h-3 text-cyan-300" />
+                  <span>Core Dashboard (/#/dsb)</span>
+                </button>
               </div>
 
             </div>
 
-            {/* Contenedor del Iframe con Altura Panorámica Horizontal en PC */}
+            {/* Contenedor del Iframe con Gran Altura Panorámica Horizontal en PC */}
             <div className={`relative w-full bg-black overflow-hidden ${
               viewMode === 'mobile' 
                 ? 'h-[580px] sm:h-[640px] rounded-b-[28px]' 
-                : 'h-[400px] sm:h-[460px] lg:h-[490px]'
+                : 'h-[440px] sm:h-[520px] lg:h-[580px] xl:h-[620px]'
             }`}>
               <AnimatePresence mode="wait">
                 <motion.div
-                  key={`${currentProject.id}-${viewMode}`}
+                  key={`${currentProject.id}-${viewMode}-${activeLayer}`}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
                   className="w-full h-full"
                 >
-                  {isLive ? (
+                  {isLive && activeIframeSrc ? (
                     <iframe
-                      src={currentProject.liveUrl}
-                      title={currentProject.title}
+                      src={activeIframeSrc}
+                      title={`${currentProject.title} - ${activeLayer === 'dashboard' ? 'Core Dashboard' : 'Portal Web'}`}
                       sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
                       className="w-full h-full border-0 bg-white"
                       loading="lazy"
@@ -291,7 +302,7 @@ export default function LuxuryProjectsSidebarShowcase() {
             {viewMode === 'desktop' && (
               <div className="px-4 py-2 bg-[#0c101c] border-t border-white/10 flex items-center justify-between text-xs font-mono text-zinc-400">
                 <span className="text-[11px] text-zinc-300 font-medium">
-                  {currentProject.client} — {currentProject.tagline}
+                  {currentProject.client} — {activeLayer === 'dashboard' ? 'Módulo Administrativo & PMS (/ #/dsb)' : currentProject.tagline}
                 </span>
                 <span className="text-[11px] text-cyan-400 font-bold shrink-0 ml-2">
                   0{currentIndex + 1} / 0{LIVE_PROJECTS.length}
