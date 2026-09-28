@@ -20,6 +20,8 @@
     "authorization_code"
   ],
   "agent_auth": {
+    "skill": "https://portafolio.juanpabloto2000.workers.dev/auth.md",
+    "skill_url": "https://portafolio.juanpabloto2000.workers.dev/auth.md",
     "register_uri": "https://portafolio.juanpabloto2000.workers.dev/api/agents/register",
     "supported_identity_types": ["agent", "human"],
     "credential_types": ["api_key", "bearer_token"],

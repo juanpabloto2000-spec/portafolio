@@ -8,20 +8,24 @@
     "name": "Dynamind Studios",
     "url": "https://portafolio.juanpabloto2000.workers.dev"
   },
-  "endpoints": [
+  "entries": [
     {
+      "id": "mcp",
       "type": "mcp",
       "url": "https://portafolio.juanpabloto2000.workers.dev/.well-known/mcp/server-card.json"
     },
     {
+      "id": "a2a",
       "type": "a2a",
       "url": "https://portafolio.juanpabloto2000.workers.dev/.well-known/agent-card.json"
     },
     {
+      "id": "skills",
       "type": "skills",
       "url": "https://portafolio.juanpabloto2000.workers.dev/.well-known/agent-skills/index.json"
     },
     {
+      "id": "openapi",
       "type": "openapi",
       "url": "https://portafolio.juanpabloto2000.workers.dev/openapi.json"
     }
