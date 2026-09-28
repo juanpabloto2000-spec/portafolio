@@ -12,7 +12,7 @@ const DEFAULT_PAGES_CMS = {
     heroSubtitle: 'Diseñamos y programamos software propietario, motores de reserva atómicos, KDS para cocina y cajas con arqueo ciego que erradican las comisiones abusivas y el caos operativo.',
     ctaText: 'Iniciar Diagnóstico (45s)',
     whatsappNumber: '+57 300 000 0000',
-    announcementBanner: '⚡ NUEVA SUITE 2026: 16 SISTEMAS PROPIETARIOS CON IA DESPLEGADOS',
+    announcementBanner: '⚡ NUEVA SUITE 2026: 17 SISTEMAS PROPIETARIOS CON IA DESPLEGADOS',
     bannerActive: true,
     coverImage: '/proyectos/quimbayas.png'
   },
@@ -31,7 +31,7 @@ const DEFAULT_PAGES_CMS = {
     name: 'Sistemas de Software & Automatizaciones',
     hash: '#/sistemas',
     heroTitle: 'Sistemas de Software & Automatizaciones Reales',
-    heroSubtitle: '16 sistemas propietarios gobernados por código nativo y diseñados para erradicar cada cuello de botella operativo, comercial y administrativo de tu negocio.',
+    heroSubtitle: '17 sistemas propietarios gobernados por código nativo y diseñados para erradicar cada cuello de botella operativo, comercial y administrativo de tu negocio.',
     ctaText: 'Solicitar Demo de un Sistema',
     whatsappNumber: '+57 300 000 0000',
     announcementBanner: 'CERO DEPENDENCIAS DE CALENDLY NI WORDPRESS INFLADO',

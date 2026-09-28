@@ -57,7 +57,7 @@ export const TRANSLATIONS = {
       col2Item3Title: 'Tríada de Garantías Soberanas:',
       col2Item3Text: 'Capacitación 1 a 1 de todo tu equipo + 1 mes de soporte + 6 meses de garantía.',
       col2Footer: 'Soberanía total sin rentas a terceros',
-      col2Btn: 'Conocer los 16 Sistemas'
+      col2Btn: 'Conocer los 17 Sistemas'
     },
     scrolly: {
       p1Title: 'Ingeniería Más Allá de lo Terrenal',
@@ -181,7 +181,7 @@ export const TRANSLATIONS = {
       col2Item3Title: 'Sovereign Guarantee Triad:',
       col2Item3Text: '1-on-1 team training + 1 month proactive support + 6 months unconditional guarantee.',
       col2Footer: 'Complete sovereignty without third-party rent',
-      col2Btn: 'Explore the 16 Systems'
+      col2Btn: 'Explore the 17 Systems'
     },
     scrolly: {
       p1Title: 'Engineering Beyond the Terrestrial',
@@ -305,7 +305,7 @@ export const TRANSLATIONS = {
       col2Item3Title: 'Triade de Garanties Souveraines :',
       col2Item3Text: 'Formation 1 à 1 de votre équipe + 1 mois de support + 6 mois de garantie totale.',
       col2Footer: 'Souveraineté totale sans rentes à des tiers',
-      col2Btn: 'Découvrir les 16 Systèmes'
+      col2Btn: 'Découvrir les 17 Systèmes'
     },
     scrolly: {
       p1Title: 'Une Ingénierie au-delà du Terrestre',
@@ -429,7 +429,7 @@ export const TRANSLATIONS = {
       col2Item3Title: 'Souveräne Garantie-Triade:',
       col2Item3Text: '1:1 Team-Schulung + 1 Monat proaktiver Support + 6 Monate bedingungslose Garantie.',
       col2Footer: 'Vollständige Souveränität ohne Mieten an Dritte',
-      col2Btn: 'Die 16 Systeme entdecken'
+      col2Btn: 'Die 17 Systeme entdecken'
     },
     scrolly: {
       p1Title: 'Engineering jenseits des Irdischen',
@@ -553,7 +553,7 @@ export const TRANSLATIONS = {
       col2Item3Title: 'Tríade de Garantias Soberanas:',
       col2Item3Text: 'Treinamento 1 a 1 da sua equipe + 1 mês de suporte ativo + 6 meses de garantia total.',
       col2Footer: 'Soberania total sem pagar aluguel a terceiros',
-      col2Btn: 'Conhecer os 16 Sistemas'
+      col2Btn: 'Conhecer os 17 Sistemas'
     },
     scrolly: {
       p1Title: 'Engenharia Além do Terreno',
@@ -677,7 +677,7 @@ export const TRANSLATIONS = {
       col2Item3Title: '主権保証トライアード:',
       col2Item3Text: '1対1のチームトレーニング + 1ヶ月の能動的サポート + 6ヶ月の無条件保証。',
       col2Footer: '第三者への家賃ゼロの完全な主権',
-      col2Btn: '16のシステムを見る'
+      col2Btn: '17のシステムを見る'
     },
     scrolly: {
       p1Title: '地上を超越するエンジニアリング',

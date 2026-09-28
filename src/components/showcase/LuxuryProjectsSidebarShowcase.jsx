@@ -34,11 +34,10 @@ export default function LuxuryProjectsSidebarShowcase() {
   const currentProject = LIVE_PROJECTS[currentIndex];
   const isLive = currentProject.liveUrl && currentProject.liveUrl !== '#' && !currentProject.isUpcoming;
 
-  // Cálculo de URL del iframe exclusivamente hacia el Portal Web Comercial (DSB 100% privado y oculto)
+  // Retorno de la URL limpia del proyecto en producción
   const getIframeUrl = (project) => {
     if (!project.liveUrl || project.liveUrl === '#' || project.isUpcoming) return null;
-    const cleanBase = project.liveUrl.replace(/\/+#*(\/.*)?$/, '');
-    return project.liveUrl.includes('/#/') ? project.liveUrl : `${cleanBase}/#/`;
+    return project.liveUrl;
   };
 
   const handleSelect = (idx) => {
@@ -195,8 +194,8 @@ export default function LuxuryProjectsSidebarShowcase() {
             <div className={`pt-1.5 flex items-center gap-1.5 text-[10px] font-mono ${
               isLight ? 'text-black' : 'text-zinc-400'
             }`}>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-              <span>Plataforma Soberana de Alta Conversión</span>
+              <span className={`w-1.5 h-1.5 rounded-full ${currentProject.isUpcoming ? 'bg-amber-400' : 'bg-emerald-400'}`} />
+              <span>{currentProject.isUpcoming ? 'Próximo Despliegue // Q4 2026' : 'Plataforma Soberana de Alta Conversión'}</span>
             </div>
           </div>
 
@@ -236,9 +235,11 @@ export default function LuxuryProjectsSidebarShowcase() {
 
               {/* Insignia de Telemetría de Producción Activa */}
               <div className="flex items-center gap-2 px-3 py-1.5 bg-black/80 border border-white/15 rounded-xl backdrop-blur-md shrink-0">
-                <Globe className="w-3.5 h-3.5 text-cyan-400" />
-                <span className="text-[11px] font-mono text-zinc-300 font-medium">Plataforma Web Activa</span>
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse ml-0.5" />
+                <Globe className={`w-3.5 h-3.5 ${currentProject.isUpcoming ? 'text-amber-400' : 'text-cyan-400'}`} />
+                <span className="text-[11px] font-mono text-zinc-300 font-medium">
+                  {currentProject.isUpcoming ? 'En Despliegue // Q4' : 'Plataforma Web Activa'}
+                </span>
+                <span className={`w-1.5 h-1.5 rounded-full ${currentProject.isUpcoming ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400 animate-pulse'} ml-0.5`} />
               </div>
 
             </div>

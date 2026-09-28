@@ -7,7 +7,7 @@ import RevealSection from '../components/motion/RevealSection';
 import { 
   Layers, Calendar, Database, Utensils, DollarSign, Package, 
   BedDouble, Palette, ShieldAlert, LineChart, CheckCircle2, ArrowRight, Sparkles,
-  FileSpreadsheet, Video, Workflow, Target, Inbox, Bot, Zap, Cpu, Activity, GitFork
+  FileSpreadsheet, Video, Workflow, Target, Inbox, Bot, Zap, Cpu, Activity, GitFork, Award
 } from 'lucide-react';
 import { soundFx } from '../utils/audioEffects';
 
@@ -382,6 +382,29 @@ export default function SystemsPage() {
         { name: 'Ejecutor Autónomo de Rutinas', desc: 'Hace copias de seguridad, actualiza planillas y envía reportes sin falta.' },
         { name: 'Reporte Ejecutivo a WhatsApp', desc: 'Un informe nocturno en tu móvil con todo lo resuelto y lo que requiere tu visto bueno.' }
       ]
+    },
+    {
+      id: 'sys-17',
+      number: '17',
+      shortLabel: 'Fidelización & Membresías',
+      title: 'Creación de Sistemas de Fidelización, Membresías VIP & Puntos',
+      icon: Award,
+      category: 'RETENCIÓN & RECURRENCIA SOBERANA',
+      tagline: 'Plataforma de puntos por consumo, membresías escalonadas y billetera digital en WhatsApp para triplicar la recompra sin regalar descuentos.',
+      coreProblem: 'Negocios gastando miles de dólares en captar clientes nuevos que nunca vuelven, mientras regalan descuentos improvisados que destruyen los márgenes de ganancia.',
+      pipelineSteps: ['Registro en 1-Tap', 'Acumulación por Consumo', 'Billetera Digital VIP', 'Recompra Recurrente'],
+      keyCapabilities: [
+        'Acumulación algorítmica de puntos o saldo por cada consumo escaneando el QR de la mesa o folio',
+        'Membresías escalonadas (Silver, Gold, Black) con beneficios exclusivos y cortesías de autor',
+        'Billetera digital vinculada a WhatsApp sin necesidad de descargar apps pesadas del App Store',
+        'Disparadores inteligentes de retención: aviso personalizado al cliente que lleva más de 30 días sin volver'
+      ],
+      modules: [
+        { name: 'Billetera Digital en WhatsApp', desc: 'Consulta de saldo de puntos y recompensas en 1 clic sin fricción de contraseñas.' },
+        { name: 'Matriz de Niveles VIP & Exclusividad', desc: 'Reglas de fidelización que incentivan subir el ticket promedio para desbloquear privilegios.' },
+        { name: 'Radar de Reactivación de Clientes Inactivos', desc: 'Envíos personalizados y automatizados cuando un cliente habitual deja de frecuentar el negocio.' },
+        { name: 'Auditor Antifraude de Puntos', desc: 'Control estricto para evitar que personal de turno acredite puntos ficticios o no autorizados.' }
+      ]
     }
   ];
 
@@ -403,7 +426,7 @@ export default function SystemsPage() {
             </h1>
             <p className="text-sm sm:text-base font-sans text-zinc-300 leading-relaxed">
               En Dynamind no vendemos plantillas de WordPress ni agregadores con comisiones. 
-              Diseñamos una suite de 16 sistemas nativos gobernados por código propietario para erradicar cada cuello de botella de tu negocio.
+              Diseñamos una suite de 17 sistemas nativos gobernados por código propietario para erradicar cada cuello de botella de tu negocio.
             </p>
           </RevealSection>
         </section>

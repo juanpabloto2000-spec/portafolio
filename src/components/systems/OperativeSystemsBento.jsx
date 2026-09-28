@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layers, Calendar, Database, Utensils, FileSpreadsheet, Video, ArrowUpRight, ArrowRight } from 'lucide-react';
+import { Layers, Calendar, Database, Utensils, FileSpreadsheet, Video, ArrowUpRight, ArrowRight, Award } from 'lucide-react';
 import Tilt3DCard from '../ui/Tilt3DCard';
 import RevealSection from '../motion/RevealSection';
 
@@ -94,6 +94,21 @@ export default function OperativeSystemsBento() {
       ],
       investment: '$250 – $550 USD',
       target: 'Marcas personales, fundadores, clínicas estéticas y restaurantes.'
+    },
+    {
+      id: 'sistema-7',
+      title: 'Creación de Sistemas de Fidelización, Membresías VIP & Puntos',
+      category: 'Fidelización & Retención Soberana',
+      icon: Award,
+      description: 'Plataforma de puntos por consumo, membresías escalonadas y billetera digital en WhatsApp para triplicar la tasa de recompra sin regalar descuentos.',
+      features: [
+        'Acumulación de saldo y puntos por cada consumo en mesa o folio',
+        'Membresías VIP escalonadas (Silver, Gold, Black) sin apps pesadas',
+        'Radar predictivo para reactivar clientes inactivos tras 30 días',
+        'Billetera digital en WhatsApp con consulta de beneficios en 1 toque'
+      ],
+      investment: '$350 – $750 USD',
+      target: 'Restaurantes, gastrobares, hoteles, spas, clínicas y marcas de autor.'
     }
   ];
 
@@ -125,45 +140,62 @@ export default function OperativeSystemsBento() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {systems.map((sys, idx) => {
             const IconComponent = sys.icon;
+            const isFeatured = idx === 6;
             return (
-              <RevealSection key={sys.id} direction="up" delay={idx * 0.1}>
+              <RevealSection 
+                key={sys.id} 
+                direction="up" 
+                delay={idx * 0.08}
+                className={isFeatured ? 'md:col-span-2 lg:col-span-3' : ''}
+              >
                 <Tilt3DCard
-                  className="p-8 sm:p-10 border border-white/10 bg-white/[0.025] rounded-2xl glow-card space-y-8 flex flex-col justify-between group h-full"
+                  className={`p-8 sm:p-10 border rounded-2xl glow-card space-y-8 flex flex-col justify-between group h-full ${
+                    isFeatured 
+                      ? 'border-amber-400/30 bg-gradient-to-br from-amber-950/20 via-white/[0.03] to-cyan-950/25 shadow-[0_0_40px_rgba(245,158,11,0.08)]' 
+                      : 'border-white/10 bg-white/[0.025]'
+                  }`}
                 >
-                  <div className="space-y-6">
+                  <div className={`space-y-6 ${isFeatured ? 'grid grid-cols-1 lg:grid-cols-12 gap-8 space-y-0 items-start' : ''}`}>
                     
-                    {/* Fila Superior */}
-                    <div className="flex items-center gap-2.5 text-zinc-400 font-mono text-xs uppercase border-b border-white/10 pb-4">
-                      <IconComponent className="w-4 h-4 text-white" />
-                      <span>{sys.category}</span>
+                    <div className={isFeatured ? 'lg:col-span-7 space-y-4' : 'space-y-6'}>
+                      {/* Fila Superior */}
+                      <div className="flex items-center gap-2.5 text-zinc-400 font-mono text-xs uppercase border-b border-white/10 pb-4">
+                        <IconComponent className={`w-4 h-4 ${isFeatured ? 'text-amber-400' : 'text-white'}`} />
+                        <span className={isFeatured ? 'text-amber-300 font-bold' : ''}>{sys.category}</span>
+                        {isFeatured && (
+                          <span className="ml-auto px-2 py-0.5 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-300 text-[10px] font-mono font-bold">
+                            NUEVO 2026 // ALTA RETENCIÓN
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Título & Descripción */}
+                      <div className="space-y-3">
+                        <h3 className="font-display font-bold text-2xl text-white group-hover:text-platinum transition-colors">
+                          {sys.title}
+                        </h3>
+                        <p className="text-xs sm:text-sm text-zinc-300 font-sans leading-relaxed">
+                          {sys.description}
+                        </p>
+                      </div>
+
+                      {/* Ideal Para */}
+                      <div className="pt-2 text-[11px] font-mono text-zinc-400 leading-relaxed">
+                        <span className="text-white font-semibold">Diseñado para:</span> {sys.target}
+                      </div>
                     </div>
 
-                    {/* Título & Descripción */}
-                    <div className="space-y-3">
-                      <h3 className="font-display font-bold text-2xl text-white group-hover:text-platinum transition-colors">
-                        {sys.title}
-                      </h3>
-                      <p className="text-xs sm:text-sm text-zinc-300 font-sans leading-relaxed">
-                        {sys.description}
-                      </p>
-                    </div>
-
-                    {/* Lista de Capacidades */}
-                    <div className="space-y-2 pt-2 border-t border-white/5">
+                    <div className={isFeatured ? 'lg:col-span-5 space-y-3 border-t lg:border-t-0 lg:border-l border-white/10 lg:pl-8 pt-4 lg:pt-0' : 'space-y-2 pt-2 border-t border-white/5'}>
+                      {/* Lista de Capacidades */}
                       <div className="text-[10px] font-mono text-zinc-400 uppercase mb-2">
                         Capacidades Clave:
                       </div>
                       {sys.features.map((feat, fIdx) => (
                         <div key={fIdx} className="flex items-center gap-2.5 text-xs text-zinc-300 font-mono">
-                          <span className="w-1.5 h-1.5 bg-emerald-400 shrink-0 rounded-full" />
+                          <span className={`w-1.5 h-1.5 shrink-0 rounded-full ${isFeatured ? 'bg-amber-400' : 'bg-emerald-400'}`} />
                           <span>{feat}</span>
                         </div>
                       ))}
-                    </div>
-
-                    {/* Ideal Para */}
-                    <div className="pt-2 text-[11px] font-mono text-zinc-400 leading-relaxed">
-                      <span className="text-white font-semibold">Diseñado para:</span> {sys.target}
                     </div>
 
                   </div>
