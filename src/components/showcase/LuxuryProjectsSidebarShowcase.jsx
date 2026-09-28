@@ -3,8 +3,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { LIVE_PROJECTS } from '../../data/liveProjects';
 import { Sparkles, Smartphone, Monitor, LayoutDashboard, Globe } from 'lucide-react';
 import { soundFx } from '../../utils/audioEffects';
+import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 
 export default function LuxuryProjectsSidebarShowcase() {
+  const { isLight } = useThemeLanguage();
   const [currentIndex, setCurrentIndex] = useState(0);
   
   // Pestaña activa: 'front' (Portal Web Comercial) vs 'dashboard' (Core Operativo /#/dsb)
@@ -129,28 +131,40 @@ export default function LuxuryProjectsSidebarShowcase() {
                   onClick={() => handleSelect(idx)}
                   className={`py-2 px-2.5 sm:px-3 rounded-xl border text-left transition-all duration-200 cursor-pointer flex items-center justify-between gap-2 shrink-0 lg:w-full min-w-[170px] lg:min-w-0 snap-start ${
                     isSelected
-                      ? 'bg-gradient-to-r from-cyan-950/80 to-purple-950/50 border-cyan-400/80 shadow-[0_0_20px_rgba(34,211,238,0.25)] ring-1 ring-cyan-400/50'
-                      : 'bg-white/[0.02] border-white/10 hover:border-white/20 hover:bg-white/[0.04]'
+                      ? (isLight
+                          ? 'bg-gradient-to-r from-blue-50 to-indigo-50 border-indigo-400 text-black shadow-md ring-1 ring-indigo-400'
+                          : 'bg-gradient-to-r from-cyan-950/85 via-[#131b2e] to-purple-950/60 border-cyan-400/80 shadow-[0_0_20px_rgba(34,211,238,0.25)] ring-1 ring-cyan-400/50')
+                      : (isLight
+                          ? 'bg-slate-100/90 border-slate-200 hover:bg-white hover:border-slate-300 text-black shadow-sm'
+                          : 'bg-[#121726]/95 border-white/15 hover:bg-[#182035] hover:border-white/25 text-zinc-300 shadow-md')
                   }`}
                 >
                   <div className="min-w-0 flex-1">
                     <div className={`font-display font-bold text-xs truncate ${
-                      isSelected ? 'text-white' : 'text-zinc-300'
+                      isSelected 
+                        ? (isLight ? 'text-black' : 'text-white')
+                        : (isLight ? 'text-black font-semibold' : 'text-zinc-200')
                     }`}>
                       {proj.title}
                     </div>
-                    <div className="text-[10px] text-zinc-400 truncate">
+                    <div className={`text-[10px] truncate ${
+                      isLight ? 'text-slate-600' : 'text-zinc-400'
+                    }`}>
                       {proj.client}
                     </div>
                   </div>
 
                   {proj.isUpcoming ? (
-                    <span className="text-[9px] font-mono text-amber-400 font-semibold shrink-0 px-1.5 py-0.5 rounded bg-amber-950/50 border border-amber-500/25">
+                    <span className={`text-[9px] font-mono font-semibold shrink-0 px-1.5 py-0.5 rounded border ${
+                      isLight ? 'bg-amber-100 border-amber-300 text-amber-800' : 'bg-amber-950/50 border-amber-500/25 text-amber-400'
+                    }`}>
                       Q4
                     </span>
                   ) : (
                     <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                      isSelected ? 'bg-cyan-400 shadow-[0_0_8px_#22d3ee]' : 'bg-zinc-600'
+                      isSelected 
+                        ? (isLight ? 'bg-indigo-600 shadow-[0_0_6px_#6366f1]' : 'bg-cyan-400 shadow-[0_0_8px_#22d3ee]')
+                        : (isLight ? 'bg-slate-400' : 'bg-zinc-600')
                     }`} />
                   )}
                 </button>
@@ -159,25 +173,39 @@ export default function LuxuryProjectsSidebarShowcase() {
           </div>
 
           {/* Ficha Editorial Compacta del Proyecto Seleccionado */}
-          <div className="p-3.5 rounded-2xl bg-[#080b13]/90 border border-white/10 space-y-1.5 text-xs font-sans">
+          <div className={`p-3.5 rounded-2xl border space-y-1.5 text-xs font-sans transition-colors ${
+            isLight
+              ? 'bg-slate-100/95 border-slate-200 text-black shadow-md'
+              : 'bg-[#121726]/95 border-white/15 text-zinc-300 shadow-xl'
+          }`}>
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-wider">
+              <span className={`text-[10px] font-mono font-bold uppercase tracking-wider ${
+                isLight ? 'text-indigo-600' : 'text-cyan-400'
+              }`}>
                 {currentProject.client}
               </span>
-              <span className="text-[9px] font-mono text-zinc-400 px-1.5 py-0.5 rounded bg-white/5 border border-white/10">
+              <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded border ${
+                isLight ? 'bg-white border-slate-200 text-black' : 'bg-white/5 border-white/10 text-zinc-400'
+              }`}>
                 0{currentIndex + 1} / 0{LIVE_PROJECTS.length}
               </span>
             </div>
             
-            <div className="font-display font-bold text-xs text-white leading-snug">
+            <div className={`font-display font-bold text-xs leading-snug ${
+              isLight ? 'text-black' : 'text-white'
+            }`}>
               {currentProject.tagline}
             </div>
             
-            <p className="text-[11px] text-zinc-400 leading-relaxed line-clamp-3">
+            <p className={`text-[11px] leading-relaxed line-clamp-3 ${
+              isLight ? 'text-black' : 'text-zinc-400'
+            }`}>
               {currentProject.description}
             </p>
 
-            <div className="pt-1.5 flex items-center gap-1.5 text-[10px] font-mono text-zinc-400">
+            <div className={`pt-1.5 flex items-center gap-1.5 text-[10px] font-mono ${
+              isLight ? 'text-black' : 'text-zinc-400'
+            }`}>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
               <span>Core PMS & Capa Operativa Integrada</span>
             </div>
@@ -247,11 +275,11 @@ export default function LuxuryProjectsSidebarShowcase() {
 
             </div>
 
-            {/* Contenedor del Iframe con Gran Altura Panorámica Horizontal en PC */}
+            {/* Contenedor del Iframe con Altura Panorámica Proporcional Alineada al Lateral */}
             <div className={`relative w-full bg-black overflow-hidden ${
               viewMode === 'mobile' 
-                ? 'h-[580px] sm:h-[640px] rounded-b-[28px]' 
-                : 'h-[440px] sm:h-[520px] lg:h-[580px] xl:h-[620px]'
+                ? 'h-[520px] sm:h-[560px] rounded-b-[28px]' 
+                : 'h-[380px] sm:h-[400px] lg:h-[410px] xl:h-[420px]'
             }`}>
               <AnimatePresence mode="wait">
                 <motion.div

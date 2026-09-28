@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Sparkles, Send, ArrowRight, Bot, Volume2, VolumeX, RotateCcw } from 'lucide-react';
+import { X, Sparkles, Send, ArrowRight, Volume2, VolumeX, RotateCcw } from 'lucide-react';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
+import AndroidVoiceAvatar from './AndroidVoiceAvatar';
 
 export default function DynamindAIAssistantModal({ isOpen, onClose }) {
   const { isLight } = useThemeLanguage();
@@ -175,23 +176,19 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
         }`}>
           <div className="flex items-center gap-3">
             
-            {/* Avatar Galáctico de AURA */}
-            <div className={`relative w-10 h-10 rounded-2xl border flex items-center justify-center transition-colors ${
-              isLight 
-                ? 'bg-indigo-50 border-indigo-200 text-indigo-600 shadow-sm' 
-                : 'bg-gradient-to-tr from-cyan-500/20 via-purple-500/20 to-amber-500/10 border-cyan-400/40 text-cyan-300 shadow-[0_0_15px_rgba(34,211,238,0.25)]'
-            }`}>
-              <Sparkles className={`w-5 h-5 animate-pulse ${isLight ? 'text-indigo-600' : 'text-cyan-400'}`} />
-              <span className={`absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full ${
-                isLight ? 'bg-indigo-500 shadow-[0_0_8px_#6366f1]' : 'bg-cyan-400 shadow-[0_0_8px_#38bdf8]'
-              }`} />
-            </div>
+            {/* Cara de la Androide AURA hablando en vivo */}
+            <AndroidVoiceAvatar size="md" isSpeaking={isSpeaking} />
 
             <div>
-              <div className={`font-display font-bold text-lg tracking-wider ${
+              <div className={`font-display font-bold text-lg tracking-wider flex items-center gap-2 ${
                 isLight ? 'text-slate-900' : 'text-white'
               }`}>
-                AURA
+                <span>AURA</span>
+                {isSpeaking && (
+                  <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/50 animate-pulse">
+                    HABLANDO...
+                  </span>
+                )}
               </div>
               <p className={`text-[11px] font-mono ${
                 isLight ? 'text-slate-500' : 'text-zinc-400'
@@ -248,11 +245,11 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
               className={`flex gap-3 ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {m.sender === 'ai' && (
-                <div className={`w-7 h-7 rounded-lg border flex items-center justify-center shrink-0 mt-0.5 ${
-                  isLight ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-cyan-950/80 border-cyan-500/30 text-cyan-400'
-                }`}>
-                  <Sparkles className="w-3.5 h-3.5" />
-                </div>
+                <AndroidVoiceAvatar 
+                  size="sm" 
+                  isSpeaking={isSpeaking && idx === messages.length - 1} 
+                  className="mt-0.5" 
+                />
               )}
               <div
                 className={`p-4 rounded-2xl max-w-[85%] leading-relaxed relative group ${

@@ -83,6 +83,15 @@ html.theme-alabaster body {
 }
 
 /* ========================================================== */
+/* LOGO TRANSPARENTE TOTALMENTE NEGRO EN MODO CLARO           */
+/* ========================================================== */
+html.theme-alabaster img[src*="logo"],
+html.theme-alabaster header a img,
+html.theme-alabaster footer img[src*="logo"] {
+  filter: brightness(0) !important;
+}
+
+/* ========================================================== */
 /* TODAS LAS LETRAS EN MODO CLARO SON 100% NEGRAS (#000000)   */
 /* ========================================================== */
 html.theme-alabaster,
