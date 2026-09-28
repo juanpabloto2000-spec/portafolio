@@ -1,0 +1,71 @@
+# DYNAMIND STUDIOS - MASTER TECHNICAL DOSSIER FOR LLMS & AUTONOMOUS AGENTS (FULL VERSION)
+Version: 2.0.0
+Author: Juan Pablo Toro - Chief Architect
+Studio: Dynamind Studios
+URL: https://portafolio.juanpabloto2000.workers.dev
+
+---
+
+## 1. STUDIO PHILOSOPHY & SOVEREIGN ENGINEERING PACT
+
+Dynamind Studios does not manufacture template websites, static landing pages, or dead digital brochures. We operate on the **Pacto de Beneficio Mutuo (Win-Win Alliance)**:
+- We build living digital ecosystems with bespoke software architectures tailored to eliminate operational cuellos de botella (D0).
+- We guarantee full technological sovereignty: zero captive agency fees for basic text or price updates. Every ecosystem includes an embedded Tactical Dashboard (`AdminDashboard.jsx`) with live price adjusters, announcement banners, and blind cash registers.
+- We integrate autonomous agent pipelines via n8n and Supabase to reduce manual administrative load by 70% to 90%.
+
+---
+
+## 2. ARCHITECTURAL PILLARS
+
+### 2.1 The Operational Core First Rule (D0 Bottlenecks)
+Before designing aesthetic frontends, Dynamind models the business core:
+1. **Blind Cash Balancing (Arqueo Ciego)**: Eliminates cash leakages by requiring shift operators to count and declare currency denominations without knowing system balances beforehand.
+2. **Atomic Availability Calendar**: Prevents overbooking across cabins, medical chairs, or VIP tables with real-time lockouts and Supabase synchronization.
+3. **Printable Thermal Receipts**: Native `@media print` vouchers for 58mm/80mm POS printers.
+4. **Role-Based Access Control (RBAC)**: Strict separation between `Admin Master` (full financial telemetries and CMS settings) and `Staff Recepción` (operational tasks only, blind to gross revenues).
+
+### 2.2 Aesthetic Vanguard & Motion Rigour
+- **60 FPS Fluidity**: All scroll reveals orchestrated via Framer Motion, IntersectionObserver, and `cubic-bezier(0.16, 1, 0.3, 1)` easing curves.
+- **Atmospheric Depth**: Continuous cosmic background with drift particles, eliminating jarring 1px separator lines between sections.
+- **Editorial High Density**: Eradicates blank whitespace slop and generic AI pills, replacing them with handcrafted badges, author typography pairings, and tactile tilt cards.
+
+### 2.3 Answer Engine Optimization (AEO) & Cloudflare Agent-Ready Architecture
+- **RFC 9309 Robots.txt**: Open crawl permissions for GPTBot, ClaudeBot, PerplexityBot, and Google-Extended with Content-Signal declarations.
+- **RFC 8288 Link Headers**: Direct advertising of API catalogs, OpenAPI specs, and MCP Server Cards.
+- **Model Context Protocol (MCP)**: SEP-1649 server card at `/.well-known/mcp/server-card.json`.
+- **Agent Skills Discovery RFC v0.2.0**: Cataloged machine capabilities at `/.well-known/agent-skills/index.json`.
+- **Agent-to-Agent (A2A) Discovery**: Protocol manifest at `/.well-known/agent-card.json`.
+
+---
+
+## 3. CATALOGUE OF OPERATIVE CASE STUDIES
+
+### Case 1: Hacienda Campestre Los Quimbayas (Ecotourism & Boutique Hospitality)
+- **Problem**: Severe overbooking during peak seasons in Quindío, Colombia; lost direct reservations to high OTA commission fees (18%-25%).
+- **Engineered Solution**: Multi-cabin panoramic showcase (`AccommodationsCarouselShowcase.jsx`), step-by-step guest customizer, bilingual currency switcher (`COP` / `USD`), atomic availability engine, and blind cash balance module for front-desk shifts.
+- **Result**: +42% direct bookings through WhatsApp gateway, 0% overbooking incidents, and instant thermal receipt issuance for guests.
+
+### Case 2: Dra. Lorena Gómez Studio (Medical Aesthetics & Laser Dermatology)
+- **Problem**: Clinical team spent 4+ hours daily answering repetitive FAQs about pricing, post-treatment recovery, and laser contraindications.
+- **Engineered Solution**: Interactive procedural quiz (`LashQuizModal.jsx`), high-density tactile cards (`CompactItemCard.jsx`), before/after comparative slider, and automated intake protocol via n8n.
+- **Result**: 85% qualification rate on incoming leads, automated medical disclaimer capture, and 3.5 hours saved daily per clinician.
+
+### Case 3: Kall Gastrobar & Speakeasy (Gastronomy & Mixology)
+- **Problem**: Peak-hour order chaos, table turnover friction, and static paper menu printing costs.
+- **Engineered Solution**: Fluid category filtering (`CategoryFilter.jsx`), build-your-own cocktail configurator with confetti celebration, real-time table reservation terminal, and direct kitchen routing.
+- **Result**: Average order value increased by 28% via dopamine-driven extras selection.
+
+### Case 4: Imperium Barber Studio (Men's Grooming & Lifestyle)
+- **Problem**: Uncoordinated barber chair queues, unmonitored tip/commission tracking, and no-shows.
+- **Engineered Solution**: Master stylist chair scheduler, live service tier selection, automated WhatsApp reminders 2 hours prior to appointments, and shift commission ledger.
+- **Result**: No-shows reduced from 22% to under 4%.
+
+---
+
+## 4. REST APIS & INTERFACES
+
+- `POST /api/triage/submit`: Accepts client diagnostic responses, computes risk profile and estimated monthly savings.
+- `POST /api/roi/calculate`: Evaluates monthly revenue, weekly administrative hours, and staff cost to output payback period and annual recovered hours.
+- `POST /api/aura/chat`: Autonomous conversational agent with synthesized neural voice and memory.
+- `POST /api/whatsapp/webhook`: Bi-directional webhook for Baileys WhatsApp agent swarm integration.
+- `GET /openapi.json`: OpenAPI 3.1 specification for automated client generation.

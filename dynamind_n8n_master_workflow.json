@@ -94,7 +94,8 @@
       "position": [
         900,
         320
-      ]
+      ],
+      "continueOnFail": true
     },
     {
       "parameters": {
@@ -110,7 +111,8 @@
       "position": [
         1140,
         320
-      ]
+      ],
+      "continueOnFail": true
     },
     {
       "parameters": {
@@ -130,11 +132,11 @@
           "parameters": [
             {
               "name": "number",
-              "value": "={{ $json.phone }}"
+              "value": "={{ $('Formatear y Sanitizar Lead').item.json.phone }}"
             },
             {
               "name": "text",
-              "value": "=¡Hola {{ $json.client_name }}! ⚡ Te saludamos desde Dynamind Studios.\\n\\nHemos confirmado tu Sesión de Diagnóstico Estratégico 1 a 1 para el próximo *{{ $json.date }}* a las *{{ $json.time }}* (Hora Colombia).\\n\\n🔗 *Enlace de acceso a Google Meet:*\\n{{ $json.meet_link }}\\n\\nEl día de la llamada te enviaremos un recordatorio temprano. ¡Nos vemos pronto para potenciar tu sistema operativo!"
+              "value": "=¡Hola {{ $('Formatear y Sanitizar Lead').item.json.client_name }}! ⚡ Te saludamos desde Dynamind Studios.\\n\\nHemos confirmado tu Sesión de Diagnóstico Estratégico 1 a 1 para el próximo *{{ $('Formatear y Sanitizar Lead').item.json.date }}* a las *{{ $('Formatear y Sanitizar Lead').item.json.time }}* (Hora Colombia).\\n\\n🔗 *Enlace de acceso a Google Meet:*\\n{{ $('Formatear y Sanitizar Lead').item.json.meet_link }}\\n\\nEl día de la llamada te enviaremos un recordatorio temprano. ¡Nos vemos pronto para potenciar tu sistema operativo!"
             }
           ]
         },
@@ -167,11 +169,11 @@
           "parameters": [
             {
               "name": "number",
-              "value": "={{ $env.JUAN_PERSONAL_PHONE || '573000000000' }}"
+              "value": "={{ $env.JUAN_PERSONAL_PHONE || '573008924110' }}"
             },
             {
               "name": "text",
-              "value": "=🚨 *NUEVA CITA AGENDADA EN DYNAMIND* 🚨\\n\\n👤 *Cliente:* {{ $json.client_name }}\\n🏢 *Empresa:* {{ $json.business_name }}\\n🏷️ *Nicho:* {{ $json.niche }}\\n📱 *WhatsApp:* +{{ $json.phone }}\\n📅 *Fecha:* {{ $json.date }} a las {{ $json.time }}\\n⚡ *Score Fricción:* {{ $json.friction_score }}% ({{ $json.category }})\\n🎯 *Cuello de Botella:* {{ $json.bottleneck }}\\n🔗 *Meet:* {{ $json.meet_link }}"
+              "value": "=🚨 *NUEVA CITA AGENDADA EN DYNAMIND* 🚨\\n\\n👤 *Cliente:* {{ $('Formatear y Sanitizar Lead').item.json.client_name }}\\n🏢 *Empresa:* {{ $('Formatear y Sanitizar Lead').item.json.business_name }}\\n🏷️ *Nicho:* {{ $('Formatear y Sanitizar Lead').item.json.niche }}\\n📱 *WhatsApp:* +{{ $('Formatear y Sanitizar Lead').item.json.phone }}\\n📅 *Fecha:* {{ $('Formatear y Sanitizar Lead').item.json.date }} a las {{ $('Formatear y Sanitizar Lead').item.json.time }}\\n⚡ *Score Fricción:* {{ $('Formatear y Sanitizar Lead').item.json.friction_score }}% ({{ $('Formatear y Sanitizar Lead').item.json.category }})\\n🎯 *Cuello de Botella:* {{ $('Formatear y Sanitizar Lead').item.json.bottleneck }}\\n🔗 *Meet:* {{ $('Formatear y Sanitizar Lead').item.json.meet_link }}"
             }
           ]
         },

@@ -71,7 +71,7 @@ export default function TriageFunnelSection() {
   };
 
   return (
-    <section id="diagnostico" className="py-28 sm:py-36 border-b border-white/10 bg-obsidian relative">
+    <section id="diagnostico" className="py-28 sm:py-36 bg-obsidian relative">
       <div className="max-w-4xl mx-auto px-6 sm:px-12 space-y-12">
         
         {/* Cabecera del Funnel */}
@@ -149,6 +149,9 @@ export default function TriageFunnelSection() {
         </div>
 
       </div>
+
+      {/* Transición Atmosférica Difuminada (Sin líneas duras que corten el fondo) */}
+      <div className="w-full max-w-5xl mx-auto h-px bg-gradient-to-r from-transparent via-white/10 to-transparent pointer-events-none mt-20 sm:mt-28 opacity-40" />
 
       {/* Modal de Confirmación */}
       {createdLead && (

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://modelcontextprotocol.io/schemas/server-card.json",
+  "serverInfo": {
+    "name": "dynamind-sovereign-agent",
+    "version": "2.0.0",
+    "description": "Dynamind Studios Agent MCP Server for Autonomous Business Operations, Triage, and Architectural Audits"
+  },
+  "transport": {
+    "type": "http",
+    "endpoint": "https://portafolio.juanpabloto2000.workers.dev/api/mcp"
+  },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    },
+    "resources": {
+      "subscribe": false
+    },
+    "prompts": {
+      "listChanged": false
+    }
+  }
+}

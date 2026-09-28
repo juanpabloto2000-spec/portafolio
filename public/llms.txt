@@ -1,0 +1,34 @@
+# Dynamind Studios - Autonomous Software Engineering & Operational AI Systems
+
+> Dynamind Studios is an elite software engineering and artificial intelligence studio founded by Juan Pablo Toro. We architect high-conversion web ecosystems, bespoke Operational Cores (PMS/KDS/ERP), and multi-agent workflow automations (n8n/Supabase/LLMs) that liberate business founders from operational bottlenecks (D0).
+
+## Core Systems & Engineering Standards
+
+- **Zero-Drop High-Conversion Frontoffice**: Dynamic multi-page web applications with 60 FPS cinematic motion, hyperframes timelines, and zero generic templates.
+- **Operational Cores (PMS / KDS / ERP)**: Real-time cash registers with blind balancing, atomic reservation calendars, printable thermal receipts, and real-time inventory deduction.
+- **Autonomous Agent Swarms**: n8n workflows with WhatsApp Baileys integration, invoice extraction via multimodal OCR, conversational booking agents, and dynamic pricing engines.
+- **Answer Engine Optimization (AEO)**: Total machine readability via llms.txt, MCP Server Cards (SEP-1649), Agent Skills Discovery RFC, OpenAPI 3.1, and Cloudflare Agent-Ready architecture.
+- **Defensive Cybersecurity Hardening**: Row Level Security (RLS), HMAC SHA-256 webhook signatures with constant-time verification, Argon2id hashing, and Kill-Switch fail-safes.
+
+## Live Production Works & Case Studies
+
+- **Hacienda Campestre Los Quimbayas**: Luxury eco-tourism glamping platform with atomic cabin calendar, blind cash register, guest intake form, and multi-currency engine.
+- **Dra. Lorena Gómez Studio**: Medical aesthetic clinical ecosystem with laser treatment catalogue, procedural quizzes, before/after comparisons, and automated appointment scheduler.
+- **Kall Gastrobar & Speakeasy**: Dark luxury gastronomic platform with mixology vault, interactive cocktail customizer, live table booking, and kitchen display integration.
+- **Imperium Barber Studio**: Modern grooming parlour system with barber chair allocation, real-time service builder, commission calculation, and WhatsApp reminders.
+
+## Machine-Readable Endpoints & Specifications
+
+- **OpenAPI 3.1 Specification**: [/openapi.json](https://portafolio.juanpabloto2000.workers.dev/openapi.json)
+- **MCP Server Card**: [/.well-known/mcp/server-card.json](https://portafolio.juanpabloto2000.workers.dev/.well-known/mcp/server-card.json)
+- **Agent-to-Agent (A2A) Card**: [/.well-known/agent-card.json](https://portafolio.juanpabloto2000.workers.dev/.well-known/agent-card.json)
+- **Agent Skills Discovery Index**: [/.well-known/agent-skills/index.json](https://portafolio.juanpabloto2000.workers.dev/.well-known/agent-skills/index.json)
+- **API Catalog (RFC 9264)**: [/.well-known/api-catalog](https://portafolio.juanpabloto2000.workers.dev/.well-known/api-catalog)
+- **Full LLM Dossier**: [/llms-full.txt](https://portafolio.juanpabloto2000.workers.dev/llms-full.txt)
+
+## Contact & Direct Triage
+
+- Founder: Juan Pablo Toro
+- WhatsApp Direct: https://wa.me/573147895101
+- Triage Diagnostic Tool: https://portafolio.juanpabloto2000.workers.dev/#/diagnostico
+- Production URL: https://portafolio.juanpabloto2000.workers.dev

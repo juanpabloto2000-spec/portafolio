@@ -1,0 +1,118 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Dynamind Studios Sovereign Engineering API",
+    "version": "2.0.0",
+    "description": "Public and programmatic interfaces for triage, ROI calculations, and autonomous operational agents by Dynamind Studios."
+  },
+  "servers": [
+    {
+      "url": "https://portafolio.juanpabloto2000.workers.dev",
+      "description": "Production Edge Worker"
+    }
+  ],
+  "paths": {
+    "/api/triage/submit": {
+      "post": {
+        "summary": "Submit a business triage diagnostic",
+        "operationId": "submitTriage",
+        "description": "Receives operational answers, diagnoses D0 bottlenecks, and returns a tailored architectural roadmap.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "businessType": { "type": "string" },
+                  "mainBottleneck": { "type": "string" },
+                  "monthlyRevenueEstimate": { "type": "string" },
+                  "contactPhone": { "type": "string" }
+                },
+                "required": ["businessType", "mainBottleneck"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Diagnostic evaluation generated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "leadId": { "type": "string" },
+                    "status": { "type": "string" },
+                    "recommendedArchitecture": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/roi/calculate": {
+      "post": {
+        "summary": "Calculate operational ROI and free hours",
+        "operationId": "calculateROI",
+        "description": "Calculates free hours gained, operational cost savings, and investment payback.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "weeklyHoursSpent": { "type": "number" },
+                  "hourlyStaffCost": { "type": "number" },
+                  "currentRevenue": { "type": "number" }
+                },
+                "required": ["weeklyHoursSpent", "hourlyStaffCost"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "ROI calculation results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "annualHoursSaved": { "type": "number" },
+                    "annualMoneySaved": { "type": "number" },
+                    "paybackMonths": { "type": "number" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/audit/deep-consultation": {
+      "post": {
+        "summary": "Book a deep operational architectural audit",
+        "operationId": "bookDeepAudit",
+        "description": "Comprehensive 1-on-1 engineering audit with chief architect Juan Pablo Toro.",
+        "x-payment-info": {
+          "intent": "charge",
+          "method": "stripe",
+          "amount": 25000,
+          "currency": "USD"
+        },
+        "responses": {
+          "200": {
+            "description": "Booking confirmation"
+          },
+          "402": {
+            "description": "Payment Required (MPP / x402)"
+          }
+        }
+      }
+    }
+  }
+}

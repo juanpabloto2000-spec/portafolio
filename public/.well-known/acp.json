@@ -1,0 +1,12 @@
+{
+  "acp_version": "1.0.0",
+  "provider": "Dynamind Studios",
+  "capabilities": [
+    "autonomous_checkout",
+    "invoice_generation"
+  ],
+  "endpoints": {
+    "catalog": "https://portafolio.juanpabloto2000.workers.dev/openapi.json",
+    "checkout": "https://portafolio.juanpabloto2000.workers.dev/api/audit/deep-consultation"
+  }
+}

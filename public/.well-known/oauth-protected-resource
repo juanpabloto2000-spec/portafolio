@@ -1,0 +1,16 @@
+{
+  "resource": "https://portafolio.juanpabloto2000.workers.dev/api",
+  "authorization_servers": [
+    "https://portafolio.juanpabloto2000.workers.dev"
+  ],
+  "scopes_supported": [
+    "read:projects",
+    "write:triage",
+    "write:leads",
+    "execute:agent"
+  ],
+  "bearer_methods_supported": [
+    "header"
+  ],
+  "resource_documentation": "https://portafolio.juanpabloto2000.workers.dev/auth.md"
+}

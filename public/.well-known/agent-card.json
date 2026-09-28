@@ -1,0 +1,29 @@
+{
+  "name": "Dynamind Sovereign AI",
+  "version": "2.0.0",
+  "description": "Autonomous Business Engineering and Triage Agent by Dynamind Studios",
+  "supportedInterfaces": [
+    {
+      "serviceUrl": "https://portafolio.juanpabloto2000.workers.dev/api/a2a",
+      "protocol": "HTTP/JSON"
+    }
+  ],
+  "capabilities": {
+    "triage": true,
+    "roiCalculation": true,
+    "scheduling": true,
+    "voiceInteraction": true
+  },
+  "skills": [
+    {
+      "id": "business-triage",
+      "name": "Business Bottleneck Triage",
+      "description": "Diagnoses D0 bottlenecks, operational leaks, and automation readiness in hospitality, gastronomy, and medical clinics."
+    },
+    {
+      "id": "roi-projection",
+      "name": "ROI and Operational Savings Projection",
+      "description": "Calculates free hours gained, payback period, and revenue recovery from automated WhatsApp and ERP agent swarms."
+    }
+  ]
+}

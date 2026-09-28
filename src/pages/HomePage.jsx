@@ -40,7 +40,7 @@ export default function HomePage() {
         <InteractiveROICalculator />
 
         {/* Banner Táctico de Conversión Directa al Diagnóstico con Tipografía font-sans */}
-        <section className="py-20 sm:py-28 border-b border-white/10 relative">
+        <section className="py-20 sm:py-28 relative">
           <div className="max-w-5xl mx-auto px-6 sm:px-12">
             <RevealSection direction="up">
               <div className="p-8 sm:p-14 border border-white/15 bg-[#080b13]/95 backdrop-blur-2xl rounded-3xl glow-card flex flex-col md:flex-row items-center justify-between gap-8 relative shadow-2xl">

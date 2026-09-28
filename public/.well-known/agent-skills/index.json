@@ -1,0 +1,19 @@
+{
+  "$schema": "https://agentskills.io/schema/v0.2.0.json",
+  "skills": [
+    {
+      "name": "business-triage",
+      "type": "tool",
+      "description": "Diagnoses business operational bottlenecks (D0) and produces high-impact software engineering proposals.",
+      "url": "https://portafolio.juanpabloto2000.workers.dev/.well-known/agent-skills/business-triage/SKILL.md",
+      "sha256": "9958a99ed3a19c6d6520d3b556439ccfab48dec75e7f29de9edadac84d82eb9b"
+    },
+    {
+      "name": "roi-calculator",
+      "type": "tool",
+      "description": "Calculates financial ROI, hours liberated per month, and payback timeline for deploying sovereign software.",
+      "url": "https://portafolio.juanpabloto2000.workers.dev/.well-known/agent-skills/roi-calculator/SKILL.md",
+      "sha256": "3b93bfbee4c564bbdd2cacce290c7f625f1911c2a9e319e4f11c6629b28d6260"
+    }
+  ]
+}

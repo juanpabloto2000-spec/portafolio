@@ -1,0 +1,12 @@
+{
+  "keys": [
+    {
+      "kty": "OKP",
+      "crv": "Ed25519",
+      "kid": "dynamind-bot-key-2026",
+      "x": "11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrGwOWnLeePs",
+      "use": "sig",
+      "alg": "EdDSA"
+    }
+  ]
+}

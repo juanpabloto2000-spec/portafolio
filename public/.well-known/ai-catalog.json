@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "Dynamind Studios AI Catalog",
+  "version": "2.0.0",
+  "description": "Agent Resource Discovery (ARD) capability manifest for Dynamind Studios sovereign services",
+  "provider": {
+    "name": "Dynamind Studios",
+    "url": "https://portafolio.juanpabloto2000.workers.dev"
+  },
+  "endpoints": [
+    {
+      "type": "mcp",
+      "url": "https://portafolio.juanpabloto2000.workers.dev/.well-known/mcp/server-card.json"
+    },
+    {
+      "type": "a2a",
+      "url": "https://portafolio.juanpabloto2000.workers.dev/.well-known/agent-card.json"
+    },
+    {
+      "type": "skills",
+      "url": "https://portafolio.juanpabloto2000.workers.dev/.well-known/agent-skills/index.json"
+    },
+    {
+      "type": "openapi",
+      "url": "https://portafolio.juanpabloto2000.workers.dev/openapi.json"
+    }
+  ]
+}

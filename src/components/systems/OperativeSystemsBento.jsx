@@ -98,11 +98,11 @@ export default function OperativeSystemsBento() {
   ];
 
   return (
-    <section id="sistemas" className="py-24 sm:py-32 border-b border-white/10 bg-volumetric relative">
+    <section id="sistemas" className="py-24 sm:py-32 bg-volumetric relative">
       <div className="max-w-7xl mx-auto px-6 sm:px-12 space-y-16">
         
         {/* Cabecera Limpia (Solo Título y Subtítulo) */}
-        <RevealSection direction="up" className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/10 pb-6">
+        <RevealSection direction="up" className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/5 pb-6">
           <div className="space-y-2">
             <h2 className="font-display font-bold text-3xl sm:text-5xl text-white uppercase tracking-normal">
               Sistemas Operativos & Automatizaciones con IA
@@ -200,6 +200,9 @@ export default function OperativeSystemsBento() {
         </div>
 
       </div>
+
+      {/* Transición Atmosférica Difuminada (Sin líneas duras que corten el fondo) */}
+      <div className="w-full max-w-5xl mx-auto h-px bg-gradient-to-r from-transparent via-white/10 to-transparent pointer-events-none mt-20 sm:mt-28 opacity-40" />
     </section>
   );
 }

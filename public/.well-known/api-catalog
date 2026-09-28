@@ -1,0 +1,19 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://portafolio.juanpabloto2000.workers.dev/",
+      "service-desc": [
+        {
+          "href": "https://portafolio.juanpabloto2000.workers.dev/openapi.json",
+          "type": "application/json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://portafolio.juanpabloto2000.workers.dev/#/sistemas",
+          "type": "text/html"
+        }
+      ]
+    }
+  ]
+}

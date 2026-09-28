@@ -51,7 +51,7 @@ export default function WinWinPactSection() {
   ];
 
   return (
-    <section id="pacto-win-win" className="py-24 sm:py-32 border-b border-white/10 bg-volumetric relative">
+    <section id="pacto-win-win" className="py-24 sm:py-32 bg-volumetric relative">
       <div className="max-w-7xl mx-auto px-6 sm:px-12 space-y-16">
         
         {/* Cabecera Limpia */}
@@ -151,6 +151,9 @@ export default function WinWinPactSection() {
         </div>
 
       </div>
+
+      {/* Transición Atmosférica Difuminada (Sin líneas duras que corten el fondo) */}
+      <div className="w-full max-w-5xl mx-auto h-px bg-gradient-to-r from-transparent via-white/10 to-transparent pointer-events-none mt-20 sm:mt-28 opacity-40" />
     </section>
   );
 }

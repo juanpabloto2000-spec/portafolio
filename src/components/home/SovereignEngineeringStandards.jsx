@@ -12,7 +12,7 @@ export default function SovereignEngineeringStandards() {
   const st = t.standards;
 
   return (
-    <section className="py-24 sm:py-32 border-b border-white/10 relative">
+    <section className="py-24 sm:py-32 relative">
       <div className="max-w-7xl mx-auto px-6 sm:px-12 space-y-16">
         
         {/* Cabecera de la Sección */}
@@ -229,6 +229,9 @@ export default function SovereignEngineeringStandards() {
         </RevealSection>
 
       </div>
+
+      {/* Transición Atmosférica Difuminada (Sin líneas duras que corten el fondo) */}
+      <div className="w-full max-w-5xl mx-auto h-px bg-gradient-to-r from-transparent via-white/10 to-transparent pointer-events-none mt-20 sm:mt-28 opacity-40" />
     </section>
   );
 }

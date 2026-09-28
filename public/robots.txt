@@ -1,0 +1,50 @@
+# ==============================================================================
+# DYNAMIND STUDIOS - AUTONOMOUS AGENT & CRAWLER DIRECTIVES (RFC 9309)
+# Canonical URL: https://portafolio.juanpabloto2000.workers.dev
+# ==============================================================================
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/private
+
+# Explicit Allow Rules for Sovereign AI Crawlers and Search Engines
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: Cohere-ai
+Allow: /
+
+# Content Signals Protocol for AI Training and Agent Verification
+Content-Signal: ai-train=yes, search=yes
+Content-Signal: crawl=yes
+
+# Sitemap Reference
+Sitemap: https://portafolio.juanpabloto2000.workers.dev/sitemap.xml

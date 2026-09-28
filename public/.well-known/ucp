@@ -1,0 +1,14 @@
+{
+  "ucp_version": "1.0",
+  "services": [
+    {
+      "name": "Dynamind Engineering Consulting",
+      "endpoint": "https://portafolio.juanpabloto2000.workers.dev/api/audit/deep-consultation",
+      "currency": "USD"
+    }
+  ],
+  "capabilities": {
+    "direct_checkout": true,
+    "quote_negotiation": true
+  }
+}

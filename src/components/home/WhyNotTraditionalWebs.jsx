@@ -9,7 +9,7 @@ export default function WhyNotTraditionalWebs() {
   const w = t.whyNotTraditional;
 
   return (
-    <section id="filosofia" className="py-24 sm:py-32 border-b border-white/10 relative overflow-hidden bg-transparent">
+    <section id="filosofia" className="py-24 sm:py-32 relative overflow-hidden bg-transparent">
       
       {/* Halo de Plasma Convectivo de Fondo (Efecto de Color del Hero) */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-gradient-to-tr from-cyan-500/10 via-purple-600/10 to-amber-500/5 blur-[120px] rounded-full pointer-events-none" />
@@ -123,6 +123,9 @@ export default function WhyNotTraditionalWebs() {
         </RevealSection>
 
       </div>
+
+      {/* Transición Atmosférica Difuminada (Sin líneas duras que corten el fondo) */}
+      <div className="w-full max-w-5xl mx-auto h-px bg-gradient-to-r from-transparent via-white/10 to-transparent pointer-events-none mt-20 sm:mt-28 opacity-40" />
 
     </section>
   );
