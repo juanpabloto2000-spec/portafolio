@@ -78,7 +78,7 @@ export default function App() {
 
   return (
     <ThemeLanguageProvider>
-      <div className="min-h-screen bg-transparent text-slate-100 relative transition-colors duration-500 overflow-x-hidden w-full max-w-[100vw]">
+      <div className="min-h-screen bg-transparent text-slate-100 relative transition-colors duration-500">
         {/* 🌌 Capa Ambiental Cósmica Galaxia a 60 FPS */}
         <GalaxyAmbientBackground />
 

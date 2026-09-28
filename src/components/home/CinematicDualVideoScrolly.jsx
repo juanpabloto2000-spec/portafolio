@@ -39,7 +39,7 @@ export default function CinematicDualVideoScrolly() {
     // Si ya está pintado exactamente este frame, abortamos para ahorrar GPU
     if (frameIdx === lastDrawnFrameRef.current) return;
 
-    const ctx = canvas.getContext('2d', { alpha: false });
+    const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
     let img = imagesRef.current[frameIdx];
@@ -188,8 +188,6 @@ export default function CinematicDualVideoScrolly() {
   const p1Opacity = useTransform(smoothProgress, [0.00, 0.04, 0.16, 0.22], [1, 1, 1, 0]);
   const p1Y = useTransform(smoothProgress, [0.00, 0.16, 0.22], [0, 0, -35]);
 
-  const canvasOpacity = useTransform(smoothProgress, [0, 0.05, 0.94, 1.0], [0, 1, 1, 0]);
-
   const p2Opacity = useTransform(smoothProgress, [0.25, 0.31, 0.43, 0.48], [0, 1, 1, 0]);
   const p2Y = useTransform(smoothProgress, [0.25, 0.31, 0.43, 0.48], [35, 0, 0, -35]);
 
@@ -211,18 +209,17 @@ export default function CinematicDualVideoScrolly() {
         isLight ? 'bg-[#f8fafc]' : 'bg-transparent'
       }`}>
         
-        {/* Layer 1: Motor Canvas de 120 Fotogramas WebP con desvanecimiento alfa suave y fade in/out continuo (cero parches negros ni líneas) */}
-        <motion.canvas
+        {/* Layer 1: Motor Canvas de 120 Fotogramas WebP con máscara de desvanecimiento suave */}
+        <canvas
           ref={canvasRef}
           className="absolute inset-0 w-full h-full object-cover pointer-events-none z-10"
           style={{
-            opacity: canvasOpacity,
             WebkitMaskImage: isLight
-              ? 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 10%, black 22%, black 78%, rgba(0,0,0,0.7) 90%, transparent 100%)'
-              : 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 14%, black 28%, black 72%, rgba(0,0,0,0.4) 86%, transparent 100%)',
+              ? 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 8%, black 18%, black 82%, rgba(0,0,0,0.7) 92%, transparent 100%)'
+              : 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 8%, black 18%, black 82%, rgba(0,0,0,0.5) 92%, transparent 100%)',
             maskImage: isLight
-              ? 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 10%, black 22%, black 78%, rgba(0,0,0,0.7) 90%, transparent 100%)'
-              : 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.4) 14%, black 28%, black 72%, rgba(0,0,0,0.4) 86%, transparent 100%)',
+              ? 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 8%, black 18%, black 82%, rgba(0,0,0,0.7) 92%, transparent 100%)'
+              : 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 8%, black 18%, black 82%, rgba(0,0,0,0.5) 92%, transparent 100%)',
             filter: isLight ? 'brightness(1.15) contrast(1.05) saturate(1.25)' : 'none'
           }}
         />
