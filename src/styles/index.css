@@ -108,9 +108,66 @@ html.theme-alabaster .bg-volumetric {
 }
 
 html.theme-alabaster .glow-card {
-  background: rgba(255, 255, 255, 0.9) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+  box-shadow: 0 14px 35px -5px rgba(0, 0, 0, 0.06), 0 0 1px rgba(0,0,0,0.1) !important;
+}
+
+/* Adaptación de Contenedores y Búnkers Oscuros a Cristal Alabastro */
+html.theme-alabaster .bg-\[\#080b13\],
+html.theme-alabaster .bg-\[\#080b13\]\/90,
+html.theme-alabaster .bg-\[\#080b13\]\/95,
+html.theme-alabaster .bg-\[\#0e1320\],
+html.theme-alabaster .bg-\[\#080d1a\],
+html.theme-alabaster .bg-\[\#080d1a\]\/95,
+html.theme-alabaster .bg-\[\#0c101c\] {
+  background-color: rgba(255, 255, 255, 0.96) !important;
+  border-color: rgba(15, 23, 42, 0.09) !important;
+  color: #0f172a !important;
+}
+
+/* Tarjetas Tácticas de Comparativa en Modo Claro */
+html.theme-alabaster .bg-\[\#0e0709\],
+html.theme-alabaster .bg-\[\#0e0709\]\/95 {
+  background-color: #fff1f2 !important;
+  border-color: rgba(244, 63, 94, 0.25) !important;
+  box-shadow: 0 15px 35px -5px rgba(225, 29, 72, 0.06) !important;
+}
+
+html.theme-alabaster .bg-\[\#061017\],
+html.theme-alabaster .bg-\[\#061017\]\/95 {
+  background-color: #f0f9ff !important;
+  border-color: rgba(2, 132, 199, 0.3) !important;
+  box-shadow: 0 15px 35px -5px rgba(2, 132, 199, 0.08) !important;
+}
+
+/* Nodos y Steppers en Modo Claro */
+html.theme-alabaster .bg-\[\#0f1422\] {
+  background-color: #f1f5f9 !important;
   border-color: rgba(15, 23, 42, 0.1) !important;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05) !important;
+  color: #64748b !important;
+}
+
+html.theme-alabaster .ring-offset-\[\#080b13\] {
+  --tw-ring-offset-color: #ffffff !important;
+}
+
+/* Header Navbar en Modo Claro */
+html.theme-alabaster header {
+  border-bottom-color: rgba(15, 23, 42, 0.06) !important;
+}
+
+/* Scrollbars en Modo Claro */
+html.theme-alabaster ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+html.theme-alabaster ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+
+html.theme-alabaster ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 /* Scrollbar táctica minimalista */

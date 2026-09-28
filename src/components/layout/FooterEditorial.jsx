@@ -3,26 +3,34 @@ import { MapPin, Mail, Phone, Instagram } from 'lucide-react';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 
 export default function FooterEditorial() {
-  const { t } = useThemeLanguage();
+  const { t, isLight } = useThemeLanguage();
   const f = t.footer;
 
   return (
-    <footer id="filosofia" className="py-24 sm:py-32 bg-transparent border-t border-white/10 relative">
+    <footer id="filosofia" className={`py-24 sm:py-32 border-t relative transition-colors duration-500 ${
+      isLight ? 'bg-slate-100/90 border-slate-200 text-slate-700' : 'bg-transparent border-white/10 text-platinum'
+    }`}>
       <div className="max-w-7xl mx-auto px-6 sm:px-12 space-y-16">
         
         {/* Manifiesto Editorial Central */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 border-b border-white/10 pb-16">
+        <div className={`grid grid-cols-1 lg:grid-cols-12 gap-12 border-b pb-16 ${
+          isLight ? 'border-slate-200' : 'border-white/10'
+        }`}>
           
           <div className="lg:col-span-6 space-y-6">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-sm bg-white/[0.04] border border-white/15 flex items-center justify-center">
+              <div className={`w-8 h-8 rounded-sm border flex items-center justify-center ${
+                isLight ? 'bg-white border-slate-300 shadow-sm' : 'bg-white/[0.04] border-white/15'
+              }`}>
                 <img 
                   src="/logo-transparent.png" 
                   alt="Dynamind Studios Logo" 
                   className="w-5 h-5 object-contain"
                 />
               </div>
-              <span className="font-display font-bold text-lg text-white uppercase tracking-wider">
+              <span className={`font-display font-bold text-lg uppercase tracking-wider ${
+                isLight ? 'text-[#090d16]' : 'text-white'
+              }`}>
                 Dynamind Studios
               </span>
             </div>

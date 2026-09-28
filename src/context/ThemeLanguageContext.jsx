@@ -780,10 +780,14 @@ export function ThemeLanguageProvider({ children }) {
     localStorage.setItem('dynamind_language', language);
   }, [language]);
 
-  const t = TRANSLATIONS[language] || TRANSLATIONS.es;
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'alabaster' ? 'obsidian' : 'alabaster'));
+  };
+
+  const isLight = theme === 'alabaster';
 
   return (
-    <ThemeLanguageContext.Provider value={{ theme, setTheme, borderStyle, setBorderStyle, language, setLanguage, t }}>
+    <ThemeLanguageContext.Provider value={{ theme, setTheme, toggleTheme, isLight, borderStyle, setBorderStyle, language, setLanguage, t }}>
       {children}
     </ThemeLanguageContext.Provider>
   );

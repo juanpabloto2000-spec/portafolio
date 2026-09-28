@@ -8,7 +8,7 @@ import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 const TOTAL_FRAMES = 120;
 
 export default function CinematicDualVideoScrolly() {
-  const { t } = useThemeLanguage();
+  const { t, isLight } = useThemeLanguage();
   const s = t.scrolly;
 
   const containerRef = useRef(null);
@@ -200,16 +200,24 @@ export default function CinematicDualVideoScrolly() {
   return (
     <section 
       ref={containerRef} 
-      className="relative w-full h-[480vh] bg-[#06070a] select-none"
+      className={`relative w-full h-[480vh] select-none transition-colors duration-500 ${
+        isLight ? 'bg-[#f8fafc]' : 'bg-[#06070a]'
+      }`}
     >
-      {/* Transición Atmosférica de Entrada (Se funde con la sección anterior sin líneas de corte) */}
-      <div className="absolute top-0 inset-x-0 h-64 bg-gradient-to-b from-transparent via-[#06070a]/70 to-[#06070a] pointer-events-none z-30" />
+      {/* Transición Atmosférica de Entrada */}
+      <div className={`absolute top-0 inset-x-0 h-64 pointer-events-none z-30 transition-all duration-500 ${
+        isLight ? 'bg-gradient-to-b from-transparent via-[#f8fafc]/80 to-[#f8fafc]' : 'bg-gradient-to-b from-transparent via-[#06070a]/70 to-[#06070a]'
+      }`} />
 
-      {/* Transición Atmosférica de Salida (Se funde con la sección posterior sin líneas de corte) */}
-      <div className="absolute bottom-0 inset-x-0 h-64 bg-gradient-to-t from-transparent via-[#06070a]/70 to-[#06070a] pointer-events-none z-30" />
+      {/* Transición Atmosférica de Salida */}
+      <div className={`absolute bottom-0 inset-x-0 h-64 pointer-events-none z-30 transition-all duration-500 ${
+        isLight ? 'bg-gradient-to-t from-transparent via-[#f8fafc]/80 to-[#f8fafc]' : 'bg-gradient-to-t from-transparent via-[#06070a]/70 to-[#06070a]'
+      }`} />
 
       {/* Marco Sticky de pantalla completa sin overflow obstaculizador */}
-      <div className="sticky top-0 left-0 w-full h-screen overflow-hidden flex items-center justify-center bg-[#06070a]">
+      <div className={`sticky top-0 left-0 w-full h-screen overflow-hidden flex items-center justify-center transition-colors duration-500 ${
+        isLight ? 'bg-[#f8fafc]' : 'bg-[#06070a]'
+      }`}>
         
         {/* Layer 1: Motor Canvas de 120 Fotogramas WebP de Alta Resolución a 60 FPS con Máscara de Desvanecimiento Vertical */}
         <canvas
@@ -221,77 +229,111 @@ export default function CinematicDualVideoScrolly() {
           }}
         />
 
-        {/* Layer 2: Viñeta Cinemática Crystalline (Sin capas negras pesadas, preserva colores y estrellas) */}
+        {/* Layer 2: Viñeta Cinemática Crystalline */}
         <div 
-          className="absolute inset-0 pointer-events-none z-20"
+          className="absolute inset-0 pointer-events-none z-20 transition-all duration-500"
           style={{
-            background: 'linear-gradient(to bottom, rgba(6,7,10,0.85) 0%, rgba(6,7,10,0.02) 20%, rgba(6,7,10,0.02) 80%, rgba(6,7,10,0.9) 100%)'
+            background: isLight
+              ? 'linear-gradient(to bottom, rgba(248,250,252,0.85) 0%, rgba(248,250,252,0.02) 20%, rgba(248,250,252,0.02) 80%, rgba(248,250,252,0.9) 100%)'
+              : 'linear-gradient(to bottom, rgba(6,7,10,0.85) 0%, rgba(6,7,10,0.02) 20%, rgba(6,7,10,0.02) 80%, rgba(6,7,10,0.9) 100%)'
           }}
         />
         <div 
-          className="absolute inset-0 pointer-events-none z-20"
+          className="absolute inset-0 pointer-events-none z-20 transition-all duration-500"
           style={{
-            background: 'radial-gradient(ellipse at center, transparent 55%, rgba(6,7,10,0.55) 100%)'
+            background: isLight
+              ? 'radial-gradient(ellipse at center, transparent 50%, rgba(248,250,252,0.65) 100%)'
+              : 'radial-gradient(ellipse at center, transparent 55%, rgba(6,7,10,0.55) 100%)'
           }}
         />
 
-        {/* Gradientes Atmosféricos de Borde para fusión total con el cosmos */}
-        <div className="absolute top-0 left-0 right-0 h-44 pointer-events-none z-25 bg-gradient-to-b from-[#06070a] via-[#06070a]/90 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-44 pointer-events-none z-25 bg-gradient-to-t from-[#06070a] via-[#06070a]/90 to-transparent" />
+        {/* Gradientes Atmosféricos de Borde */}
+        <div className={`absolute top-0 left-0 right-0 h-44 pointer-events-none z-25 transition-all duration-500 ${
+          isLight ? 'bg-gradient-to-b from-[#f8fafc] via-[#f8fafc]/90 to-transparent' : 'bg-gradient-to-b from-[#06070a] via-[#06070a]/90 to-transparent'
+        }`} />
+        <div className={`absolute bottom-0 left-0 right-0 h-44 pointer-events-none z-25 transition-all duration-500 ${
+          isLight ? 'bg-gradient-to-t from-[#f8fafc] via-[#f8fafc]/90 to-transparent' : 'bg-gradient-to-t from-[#06070a] via-[#06070a]/90 to-transparent'
+        }`} />
 
-        {/* Escenario Central: Fases Narrativas Sincronizadas elevadas en móvil para despejar el monitor y la consola */}
+        {/* Escenario Central: Fases Narrativas Sincronizadas */}
         <div className="relative z-30 w-full max-w-4xl mx-auto px-4 sm:px-6 text-center pointer-events-none min-h-[220px] sm:h-72 flex flex-col justify-start sm:justify-center pt-20 sm:pt-0">
           
-          {/* FASE 1: 0% a 22% (Monitor Pro Display en el cosmos) */}
+          {/* FASE 1: 0% a 22% */}
           <motion.div
             style={{ opacity: p1Opacity, y: p1Y }}
-            className="space-y-2 sm:space-y-4 will-change-transform absolute inset-x-0 mx-auto max-w-3xl px-4 sm:px-6"
+            className={`space-y-2 sm:space-y-4 will-change-transform absolute inset-x-0 mx-auto max-w-3xl px-4 sm:px-6 transition-all duration-300 ${
+              isLight ? 'p-6 sm:p-8 rounded-3xl bg-white/95 backdrop-blur-2xl border border-slate-200/90 shadow-2xl' : ''
+            }`}
           >
-            <h2 className="font-display text-xl xs:text-2xl sm:text-5xl md:text-6xl font-bold text-white leading-snug sm:leading-tight tracking-normal uppercase drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)]">
+            <h2 className={`font-display text-xl xs:text-2xl sm:text-5xl md:text-6xl font-bold leading-snug sm:leading-tight tracking-normal uppercase ${
+              isLight ? 'text-[#090d16]' : 'text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)]'
+            }`}>
               {s.p1Title}
             </h2>
-            <p className="text-zinc-200 text-xs sm:text-base max-w-xl mx-auto font-sans leading-relaxed drop-shadow-[0_2px_14px_rgba(0,0,0,0.9)]">
+            <p className={`text-xs sm:text-base max-w-xl mx-auto font-sans leading-relaxed ${
+              isLight ? 'text-slate-600' : 'text-zinc-200 drop-shadow-[0_2px_14px_rgba(0,0,0,0.9)]'
+            }`}>
               {s.p1Desc}
             </p>
           </motion.div>
 
-          {/* FASE 2: 25% a 48% (Centro de Mando & Autonomía) */}
+          {/* FASE 2: 25% a 48% */}
           <motion.div
             style={{ opacity: p2Opacity, y: p2Y }}
-            className="space-y-2 sm:space-y-4 will-change-transform absolute inset-x-0 mx-auto max-w-3xl px-4 sm:px-6"
+            className={`space-y-2 sm:space-y-4 will-change-transform absolute inset-x-0 mx-auto max-w-3xl px-4 sm:px-6 transition-all duration-300 ${
+              isLight ? 'p-6 sm:p-8 rounded-3xl bg-white/95 backdrop-blur-2xl border border-slate-200/90 shadow-2xl' : ''
+            }`}
           >
-            <h2 className="font-display text-xl xs:text-2xl sm:text-5xl md:text-6xl font-bold text-white leading-snug sm:leading-tight tracking-normal uppercase drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)]">
+            <h2 className={`font-display text-xl xs:text-2xl sm:text-5xl md:text-6xl font-bold leading-snug sm:leading-tight tracking-normal uppercase ${
+              isLight ? 'text-[#090d16]' : 'text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)]'
+            }`}>
               {s.p2Title}
             </h2>
-            <p className="text-zinc-200 text-xs sm:text-base max-w-xl mx-auto font-sans leading-relaxed drop-shadow-[0_2px_14px_rgba(0,0,0,0.9)]">
+            <p className={`text-xs sm:text-base max-w-xl mx-auto font-sans leading-relaxed ${
+              isLight ? 'text-slate-600' : 'text-zinc-200 drop-shadow-[0_2px_14px_rgba(0,0,0,0.9)]'
+            }`}>
               {s.p2Desc}
             </p>
           </motion.div>
 
-          {/* FASE 3: 51% a 74% (Salto Hiperespacial - Cápsula de alto contraste contra la explosión de luz blanca) */}
+          {/* FASE 3: 51% a 74% */}
           <motion.div
             style={{ opacity: p3Opacity, y: p3Y }}
             className="space-y-2.5 sm:space-y-4 will-change-transform absolute inset-x-0 mx-auto max-w-2xl px-4 sm:px-6"
           >
-            <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-black/65 sm:bg-transparent backdrop-blur-xl sm:backdrop-blur-none border border-white/10 sm:border-transparent shadow-[0_15px_40px_rgba(0,0,0,0.95)] sm:shadow-none space-y-2 sm:space-y-3">
-              <h2 className="font-display text-xl xs:text-2xl sm:text-5xl md:text-6xl font-bold text-white leading-snug sm:leading-tight tracking-normal uppercase drop-shadow-[0_4px_30px_rgba(0,0,0,1)]">
+            <div className={`p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-2 sm:space-y-3 transition-all duration-300 ${
+              isLight 
+                ? 'bg-white/95 backdrop-blur-2xl border border-slate-200/90 shadow-2xl'
+                : 'bg-black/65 sm:bg-transparent backdrop-blur-xl sm:backdrop-blur-none border border-white/10 sm:border-transparent shadow-[0_15px_40px_rgba(0,0,0,0.95)] sm:shadow-none'
+            }`}>
+              <h2 className={`font-display text-xl xs:text-2xl sm:text-5xl md:text-6xl font-bold leading-snug sm:leading-tight tracking-normal uppercase ${
+                isLight ? 'text-[#090d16]' : 'text-white drop-shadow-[0_4px_30px_rgba(0,0,0,1)]'
+              }`}>
                 {s.p3Title}
               </h2>
-              <p className="text-zinc-200 text-xs sm:text-base max-w-xl mx-auto font-sans leading-relaxed drop-shadow-[0_2px_14px_rgba(0,0,0,1)]">
+              <p className={`text-xs sm:text-base max-w-xl mx-auto font-sans leading-relaxed ${
+                isLight ? 'text-slate-600' : 'text-zinc-200 drop-shadow-[0_2px_14px_rgba(0,0,0,1)]'
+              }`}>
                 {s.p3Desc}
               </p>
             </div>
           </motion.div>
 
-          {/* FASE 4: 77% a 100% (Destino Soberano & Conversión con CTA Cósmico) */}
+          {/* FASE 4: 77% a 100% */}
           <motion.div
             style={{ opacity: p4Opacity, y: p4Y }}
-            className="space-y-3 sm:space-y-6 will-change-transform absolute inset-x-0 mx-auto max-w-3xl px-4 sm:px-6 pointer-events-auto"
+            className={`space-y-3 sm:space-y-6 will-change-transform absolute inset-x-0 mx-auto max-w-3xl px-4 sm:px-6 pointer-events-auto transition-all duration-300 ${
+              isLight ? 'p-6 sm:p-8 rounded-3xl bg-white/95 backdrop-blur-2xl border border-slate-200/90 shadow-2xl' : ''
+            }`}
           >
-            <h2 className="font-display text-xl xs:text-2xl sm:text-5xl md:text-6xl font-bold text-white leading-snug sm:leading-tight tracking-normal uppercase drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)]">
+            <h2 className={`font-display text-xl xs:text-2xl sm:text-5xl md:text-6xl font-bold leading-snug sm:leading-tight tracking-normal uppercase ${
+              isLight ? 'text-[#090d16]' : 'text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)]'
+            }`}>
               {s.p4Title}
             </h2>
-            <p className="text-zinc-200 text-xs sm:text-base max-w-xl mx-auto font-sans leading-relaxed drop-shadow-[0_2px_14px_rgba(0,0,0,0.9)]">
+            <p className={`text-xs sm:text-base max-w-xl mx-auto font-sans leading-relaxed ${
+              isLight ? 'text-slate-600' : 'text-zinc-200 drop-shadow-[0_2px_14px_rgba(0,0,0,0.9)]'
+            }`}>
               {s.p4Desc}
             </p>
             <div className="pt-2">

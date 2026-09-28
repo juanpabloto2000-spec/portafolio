@@ -6,7 +6,7 @@ import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 export default function HeroEditorial() {
   const [titleDone, setTitleDone] = useState(false);
   const heroRef = useRef(null);
-  const { t } = useThemeLanguage();
+  const { t, isLight } = useThemeLanguage();
 
   // Parallax Curtain Lift Effect: As the user scrolls down, the Hero glides upward like an architectural curtain
   const { scrollYProgress } = useScroll({
@@ -22,13 +22,15 @@ export default function HeroEditorial() {
     <div 
       ref={heroRef} 
       id="top" 
-      className="relative z-0 w-full min-h-screen h-screen overflow-hidden bg-[#06070a]"
+      className={`relative z-0 w-full min-h-screen h-screen overflow-hidden transition-colors duration-500 ${
+        isLight ? 'bg-[#f8fafc]' : 'bg-[#06070a]'
+      }`}
     >
       <motion.section 
         style={{ y: curtainY, scale: curtainScale, opacity: curtainOpacity }}
         className="relative w-full h-full min-h-screen flex flex-col justify-between overflow-hidden select-none will-change-transform"
       >
-        {/* 1. Capa de Video Ultra HD de Fondo (Nítido, sin música, sin transparencias pesadas) */}
+        {/* 1. Capa de Video Ultra HD de Fondo */}
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
           <video
             autoPlay
@@ -40,23 +42,27 @@ export default function HeroEditorial() {
             <source src="/videos/video hero.mp4" type="video/mp4" />
           </video>
 
-          {/* Gradiente de contraste cinematográfico para legibilidad impecable en móvil y desktop sin tapar los nodos estelares */}
+          {/* Gradiente de contraste cinematográfico adaptable a tema */}
           <div 
-            className="absolute inset-0 pointer-events-none"
+            className="absolute inset-0 pointer-events-none transition-all duration-500"
             style={{
-              background: 'linear-gradient(to right, rgba(6,7,10,0.92) 0%, rgba(6,7,10,0.72) 40%, rgba(6,7,10,0.25) 75%, transparent 100%)'
+              background: isLight 
+                ? 'linear-gradient(to right, rgba(248,250,252,0.97) 0%, rgba(248,250,252,0.85) 44%, rgba(248,250,252,0.2) 75%, transparent 100%)'
+                : 'linear-gradient(to right, rgba(6,7,10,0.92) 0%, rgba(6,7,10,0.72) 40%, rgba(6,7,10,0.25) 75%, transparent 100%)'
             }}
           />
           {/* Suave difuminado inferior para conexión continua */}
           <div 
-            className="absolute inset-0 pointer-events-none"
+            className="absolute inset-0 pointer-events-none transition-all duration-500"
             style={{
-              background: 'linear-gradient(to top, rgba(6,7,10,0.95) 0%, rgba(6,7,10,0.3) 25%, transparent 55%)'
+              background: isLight
+                ? 'linear-gradient(to top, rgba(248,250,252,1) 0%, rgba(248,250,252,0.5) 25%, transparent 55%)'
+                : 'linear-gradient(to top, rgba(6,7,10,0.95) 0%, rgba(6,7,10,0.3) 25%, transparent 55%)'
             }}
           />
         </div>
 
-        {/* 2. Contenido Central del Hero Elevado Ópticamente con ergonomía móvil */}
+        {/* 2. Contenido Central del Hero */}
         <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-12 w-full pt-20 sm:pt-24 flex-1 flex flex-col justify-center">
           
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 items-center">
@@ -64,9 +70,11 @@ export default function HeroEditorial() {
             <div className="lg:col-span-8 space-y-4 sm:space-y-6">
               
               {/* Titular Principal Limpio Adaptativo */}
-              <h1 className="font-display font-bold text-2xl xs:text-3xl sm:text-5xl md:text-6xl lg:text-7xl text-white tracking-normal leading-[1.18] sm:leading-[1.1] uppercase min-h-[60px] xs:min-h-[75px] sm:min-h-[160px] drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)]">
+              <h1 className={`font-display font-bold text-2xl xs:text-3xl sm:text-5xl md:text-6xl lg:text-7xl tracking-normal leading-[1.18] sm:leading-[1.1] uppercase min-h-[60px] xs:min-h-[75px] sm:min-h-[160px] ${
+                isLight ? 'text-[#090d16]' : 'text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)]'
+              }`}>
                 <KineticTypewriter 
-                  key={t.hero.headline}
+                  key={`${t.hero.headline}-${isLight ? 'light' : 'dark'}`}
                   text={t.hero.headline}
                   speed={24}
                   delay={100}
@@ -79,12 +87,14 @@ export default function HeroEditorial() {
                 initial={{ opacity: 0, y: 15, filter: 'blur(6px)' }}
                 animate={titleDone ? { opacity: 1, y: 0, filter: 'blur(0px)' } : { opacity: 0, y: 15 }}
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="max-w-xl sm:max-w-2xl text-xs sm:text-base md:text-lg text-zinc-200/95 font-sans leading-relaxed drop-shadow-[0_2px_14px_rgba(0,0,0,0.95)]"
+                className={`max-w-xl sm:max-w-2xl text-xs sm:text-base md:text-lg font-sans leading-relaxed ${
+                  isLight ? 'text-slate-700' : 'text-zinc-200/95 drop-shadow-[0_2px_14px_rgba(0,0,0,0.95)]'
+                }`}
               >
                 {t.hero.subtitle}
               </motion.p>
 
-              {/* Botones de Conversión del Hero (Visibles y Ergonómicos en Celular) */}
+              {/* Botones de Conversión del Hero */}
               <motion.div
                 initial={{ opacity: 0, y: 15 }}
                 animate={titleDone ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
@@ -101,7 +111,11 @@ export default function HeroEditorial() {
 
                 <a
                   href="/#filosofia"
-                  className="px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/15 text-zinc-300 hover:text-white font-sans text-xs font-semibold uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className={`px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl font-sans text-xs font-semibold uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                    isLight 
+                      ? 'bg-slate-200/80 hover:bg-slate-300 border border-slate-300 text-slate-900 shadow-sm'
+                      : 'bg-white/[0.04] hover:bg-white/[0.08] border border-white/15 text-zinc-300 hover:text-white'
+                  }`}
                 >
                   <span>{t.hero.ctaFilosofia}</span>
                 </a>

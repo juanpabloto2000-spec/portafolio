@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Settings } from 'lucide-react';
+import { Menu, X, Settings, Sun, Moon } from 'lucide-react';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
+import { soundFx } from '../../utils/audioEffects';
 import AppearanceModal from './AppearanceModal';
 
 export default function Navbar({ currentHash = '#/' }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [appearanceOpen, setAppearanceOpen] = useState(false);
-  const { t } = useThemeLanguage();
+  const { t, theme, toggleTheme, isLight } = useThemeLanguage();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -94,6 +95,23 @@ export default function Navbar({ currentHash = '#/' }) {
               </a>
             </nav>
 
+            {/* Botón Rápido de Toggle Sol / Luna (Modo Oscuro vs Modo Claro Apple) */}
+            <button
+              onClick={() => {
+                soundFx.playBlip(isLight ? 520 : 640);
+                toggleTheme();
+              }}
+              className="p-2 rounded-xl text-zinc-400 hover:text-amber-400 hover:bg-white/10 border border-transparent hover:border-amber-500/30 transition-all duration-300 group cursor-pointer"
+              title={isLight ? 'Cambiar a Modo Oscuro Cósmico' : 'Cambiar a Modo Claro Editorial (Apple)'}
+              aria-label="Alternar tema visual"
+            >
+              {isLight ? (
+                <Moon className="w-4 h-4 text-indigo-600 transition-transform duration-300 group-hover:-rotate-12" />
+              ) : (
+                <Sun className="w-4 h-4 text-amber-400 transition-transform duration-300 group-hover:rotate-45" />
+              )}
+            </button>
+
             {/* Botón Tuerca Táctica de Apariencia e Idioma */}
             <button
               onClick={() => setAppearanceOpen(true)}
@@ -106,13 +124,23 @@ export default function Navbar({ currentHash = '#/' }) {
           </div>
 
           {/* Botones Mobile Menu */}
-          <div className="md:hidden flex items-center gap-2 ml-auto">
+          <div className="md:hidden flex items-center gap-1.5 ml-auto">
+            <button
+              onClick={() => {
+                soundFx.playBlip(isLight ? 520 : 640);
+                toggleTheme();
+              }}
+              className="p-2 text-zinc-400 hover:text-amber-400 border border-white/10 rounded-xl bg-white/[0.02]"
+              aria-label="Alternar tema visual"
+            >
+              {isLight ? <Moon className="w-4 h-4 text-indigo-600" /> : <Sun className="w-4 h-4 text-amber-400" />}
+            </button>
             <button
               onClick={() => setAppearanceOpen(true)}
               className="p-2 text-zinc-400 hover:text-cyan-400 border border-white/10 rounded-xl bg-white/[0.02]"
               aria-label={t.nav.configuracion}
             >
-              <Settings className="w-5 h-5" />
+              <Settings className="w-4 h-4" />
             </button>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

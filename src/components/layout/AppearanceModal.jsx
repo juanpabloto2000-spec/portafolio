@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Check, Globe, Square, Sparkles } from 'lucide-react';
+import { X, Check, Globe, Square, Sparkles, Sun, Moon } from 'lucide-react';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import { getFlagComponent } from '../common/FlagIcons';
 
 export default function AppearanceModal({ isOpen, onClose }) {
-  const { borderStyle, setBorderStyle, language, setLanguage, t } = useThemeLanguage();
+  const { theme, setTheme, borderStyle, setBorderStyle, language, setLanguage, t } = useThemeLanguage();
 
   // Cerrar con tecla Escape
   useEffect(() => {
@@ -99,6 +99,65 @@ export default function AppearanceModal({ isOpen, onClose }) {
           </div>
 
           <div className="py-6 space-y-6 max-h-[70vh] overflow-y-auto pr-1">
+            {/* Sección 0: Tema Visual (Oscuro Cósmico vs Claro Apple) */}
+            <div>
+              <div className="flex items-center gap-2 mb-3 text-sm font-semibold tracking-wide text-cyan-400 uppercase">
+                <Sun className="w-4 h-4" />
+                <span>Tema & Iluminación</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setTheme('obsidian')}
+                  className={`flex items-center justify-between p-4 rounded-xl border text-left transition-all cursor-pointer ${
+                    theme !== 'alabaster'
+                      ? 'border-cyan-400 bg-cyan-950/40 shadow-lg shadow-cyan-500/20 ring-1 ring-cyan-400'
+                      : 'border-white/10 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/20'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg bg-[#030508] border border-white/20 flex items-center justify-center text-cyan-400 shadow-inner">
+                      <Moon className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-white uppercase">Modo Oscuro Cósmico</div>
+                      <div className="text-[11px] text-zinc-400">Obsidian profundo con nebulosas y estrellas</div>
+                    </div>
+                  </div>
+                  {theme !== 'alabaster' && (
+                    <div className="w-5 h-5 rounded-full bg-cyan-400 text-black flex items-center justify-center shrink-0">
+                      <Check className="w-3.5 h-3.5 stroke-[3]" />
+                    </div>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setTheme('alabaster')}
+                  className={`flex items-center justify-between p-4 rounded-xl border text-left transition-all cursor-pointer ${
+                    theme === 'alabaster'
+                      ? 'border-cyan-400 bg-cyan-950/40 shadow-lg shadow-cyan-500/20 ring-1 ring-cyan-400'
+                      : 'border-white/10 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/20'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg bg-slate-100 border border-slate-300 flex items-center justify-center text-amber-500 shadow-sm">
+                      <Sun className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-white uppercase">Modo Claro Apple</div>
+                      <div className="text-[11px] text-zinc-400">Blanco Alabastro suizo y hardware pro</div>
+                    </div>
+                  </div>
+                  {theme === 'alabaster' && (
+                    <div className="w-5 h-5 rounded-full bg-cyan-400 text-black flex items-center justify-center shrink-0">
+                      <Check className="w-3.5 h-3.5 stroke-[3]" />
+                    </div>
+                  )}
+                </button>
+              </div>
+            </div>
+
             {/* Sección Morfología de Bordes */}
             <div>
               <div className="flex items-center gap-2 mb-3 text-sm font-semibold tracking-wide text-cyan-400 uppercase">

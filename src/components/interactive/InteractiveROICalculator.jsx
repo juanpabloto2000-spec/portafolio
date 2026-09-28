@@ -6,7 +6,7 @@ import Tilt3DCard from '../ui/Tilt3DCard';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 
 export default function InteractiveROICalculator() {
-  const { t, language } = useThemeLanguage();
+  const { t, language, isLight } = useThemeLanguage();
   const c = t.calculator;
 
   const [dailyMessages, setDailyMessages] = useState(50);
@@ -56,15 +56,21 @@ export default function InteractiveROICalculator() {
   ];
 
   return (
-    <section className="py-24 sm:py-32 border-b border-white/10 bg-transparent relative overflow-hidden">
+    <section className={`py-24 sm:py-32 border-b bg-transparent relative overflow-hidden transition-colors duration-500 ${
+      isLight ? 'border-slate-200' : 'border-white/10'
+    }`}>
       <div className="max-w-7xl mx-auto px-6 sm:px-12 space-y-14">
         
         {/* Encabezado Limpio */}
         <RevealSection direction="up" className="max-w-3xl space-y-3">
-          <h2 className="font-display font-bold text-3xl sm:text-5xl text-white tracking-tight">
+          <h2 className={`font-display font-bold text-3xl sm:text-5xl tracking-tight ${
+            isLight ? 'text-[#090d16]' : 'text-white'
+          }`}>
             {c.title}
           </h2>
-          <p className="text-sm sm:text-base font-sans text-zinc-300 leading-relaxed">
+          <p className={`text-sm sm:text-base font-sans leading-relaxed ${
+            isLight ? 'text-slate-600' : 'text-zinc-300'
+          }`}>
             {c.desc}
           </p>
         </RevealSection>
@@ -91,8 +97,8 @@ export default function InteractiveROICalculator() {
                     }}
                     className={`p-2.5 sm:p-3 rounded-xl font-mono text-xs text-center transition-all cursor-pointer ${
                       businessType === b.id
-                        ? 'bg-white text-black font-bold shadow-monolith'
-                        : 'bg-white/[0.03] text-zinc-400 border border-white/10 hover:text-white hover:border-white/20'
+                        ? (isLight ? 'bg-slate-900 text-white font-bold shadow-md' : 'bg-white text-black font-bold shadow-monolith')
+                        : (isLight ? 'bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200' : 'bg-white/[0.03] text-zinc-400 border border-white/10 hover:text-white hover:border-white/20')
                     }`}
                   >
                     {b.label}
