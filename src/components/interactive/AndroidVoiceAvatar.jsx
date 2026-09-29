@@ -153,7 +153,11 @@ export default function AndroidVoiceAvatar({
     switch (size) {
       case 'hero':
       case 'xl':
-        return { w: 310, h: 410, tiltFactor: 8 };
+        return { w: 290, h: 380, tiltFactor: 8 };
+      case 'modal':
+        return { w: 240, h: 315, tiltFactor: 7 };
+      case 'compact-modal':
+        return { w: 145, h: 190, tiltFactor: 5 };
       case 'lg':
         return { w: 220, h: 290, tiltFactor: 6 };
       case 'sm':

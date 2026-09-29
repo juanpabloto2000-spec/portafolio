@@ -1,6 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { motion } from 'framer-motion';
-import DynamindAIAssistantModal from '../interactive/DynamindAIAssistantModal';
+
+// 🔮 Carga bajo demanda de AURA para aligerar el bundle inicial de entrada
+const DynamindAIAssistantModal = React.lazy(() => import('../interactive/DynamindAIAssistantModal'));
+
+// Prefetch en segundo plano al aproximar el puntero
+const prefetchAssistantModal = () => {
+  try {
+    import('../interactive/DynamindAIAssistantModal');
+  } catch (e) {
+    // Silencioso
+  }
+};
 
 export default function FloatingAIOrb() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -21,7 +32,11 @@ export default function FloatingAIOrb() {
           <motion.button
             type="button"
             onClick={() => setModalOpen(true)}
-            onMouseEnter={() => setIsWarpSpeed(true)}
+            onMouseEnter={() => {
+              setIsWarpSpeed(true);
+              prefetchAssistantModal();
+            }}
+            onFocus={() => prefetchAssistantModal()}
             onMouseLeave={() => setIsWarpSpeed(false)}
             whileHover={{ 
               scale: 1.15,
@@ -153,11 +168,15 @@ export default function FloatingAIOrb() {
         </div>
       </aside>
 
-      {/* Modal Interactivo de Asistencia */}
-      <DynamindAIAssistantModal 
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-      />
+      {/* Modal Interactivo de Asistencia cargado bajo demanda */}
+      {modalOpen && (
+        <Suspense fallback={null}>
+          <DynamindAIAssistantModal 
+            isOpen={modalOpen}
+            onClose={() => setModalOpen(false)}
+          />
+        </Suspense>
+      )}
     </>
   );
 }

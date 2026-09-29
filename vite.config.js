@@ -15,5 +15,19 @@ export default defineConfig({
     watch: {
       ignored: ['**/scratch/**', '**/dist/**']
     }
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-motion': ['framer-motion'],
+          'vendor-icons': ['lucide-react'],
+          'vendor-supabase': ['@supabase/supabase-js'],
+          'vendor-confetti': ['canvas-confetti']
+        }
+      }
+    },
+    chunkSizeWarningLimit: 600
   }
 });

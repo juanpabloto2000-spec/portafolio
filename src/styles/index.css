@@ -390,3 +390,12 @@ html.radius-rounded a.shadow-monolith {
   border-radius: 9999px !important;
 }
 
+/* Utilidad para ocultar barra de scroll en contenedores deslizables táctiles */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+

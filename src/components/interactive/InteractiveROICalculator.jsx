@@ -5,6 +5,32 @@ import RevealSection from '../motion/RevealSection';
 import Tilt3DCard from '../ui/Tilt3DCard';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 
+// Web Audio API sintetizador de micro-tick analógico a 60 FPS (0 dependencias)
+let hapticAudioCtx = null;
+const playHapticTick = () => {
+  try {
+    const AudioContextClass = typeof window !== 'undefined' ? (window.AudioContext || window.webkitAudioContext) : null;
+    if (!AudioContextClass) return;
+    if (!hapticAudioCtx) hapticAudioCtx = new AudioContextClass();
+    if (hapticAudioCtx.state === 'suspended') {
+      hapticAudioCtx.resume();
+    }
+    const osc = hapticAudioCtx.createOscillator();
+    const gain = hapticAudioCtx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(700, hapticAudioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(200, hapticAudioCtx.currentTime + 0.016);
+    gain.gain.setValueAtTime(0.03, hapticAudioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, hapticAudioCtx.currentTime + 0.016);
+    osc.connect(gain);
+    gain.connect(hapticAudioCtx.destination);
+    osc.start();
+    osc.stop(hapticAudioCtx.currentTime + 0.018);
+  } catch (e) {
+    // Silencioso
+  }
+};
+
 export default function InteractiveROICalculator() {
   const { t, language, isLight } = useThemeLanguage();
   const c = t.calculator;
@@ -81,7 +107,7 @@ export default function InteractiveROICalculator() {
           {/* Controles y Sliders Táctiles (7 Cols) */}
           <div className="lg:col-span-7 p-4 sm:p-8 lg:p-10 border border-white/15 bg-[#080b13]/95 backdrop-blur-2xl rounded-3xl space-y-5 sm:space-y-8 shadow-monolith">
             
-            {/* Selector de Nicho */}
+            {/* Selector de Nicho con Touch Target de 44px */}
             <div className="space-y-2 sm:space-y-3">
               <label className="text-xs font-mono uppercase text-zinc-400 block tracking-wider">
                 {c.activityLabel}
@@ -92,10 +118,11 @@ export default function InteractiveROICalculator() {
                     key={b.id}
                     type="button"
                     onClick={() => {
+                      playHapticTick();
                       setBusinessType(b.id);
                       setAvgTicket(b.ticket);
                     }}
-                    className={`p-2.5 sm:p-3 rounded-xl font-mono text-xs text-center transition-all cursor-pointer ${
+                    className={`min-h-[44px] p-2.5 sm:p-3 rounded-xl font-mono text-xs text-center transition-all cursor-pointer flex items-center justify-center ${
                       businessType === b.id
                         ? (isLight ? 'bg-slate-900 text-white font-bold shadow-md' : 'bg-white text-black font-bold shadow-monolith')
                         : (isLight ? 'bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200' : 'bg-white/[0.03] text-zinc-400 border border-white/10 hover:text-white hover:border-white/20')
@@ -107,23 +134,29 @@ export default function InteractiveROICalculator() {
               </div>
             </div>
 
-            {/* Slider 1: Mensajes por Día */}
-            <div className="space-y-2 sm:space-y-3">
+            {/* Slider 1: Mensajes por Día con Touch Target Expandido */}
+            <div className="space-y-1 sm:space-y-2">
               <div className="flex items-center justify-between text-xs font-mono">
                 <span className="text-zinc-300">{c.messagesLabel}</span>
-                <span className="text-white font-bold text-sm px-2.5 py-1 bg-white/[0.05] rounded-lg border border-white/10">
+                <span className="text-white font-bold text-sm px-2.5 py-1 bg-white/[0.05] rounded-lg border border-white/10 tabular-nums">
                   {dailyMessages} / día
                 </span>
               </div>
-              <input
-                type="range"
-                min="10"
-                max="200"
-                step="5"
-                value={dailyMessages}
-                onChange={(e) => setDailyMessages(Number(e.target.value))}
-                className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-white"
-              />
+              <div className="py-2 touch-pan-x">
+                <input
+                  type="range"
+                  min="10"
+                  max="200"
+                  step="5"
+                  value={dailyMessages}
+                  onChange={(e) => {
+                    playHapticTick();
+                    setDailyMessages(Number(e.target.value));
+                  }}
+                  className="w-full h-2.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-white focus:outline-none"
+                  aria-label={c.messagesLabel}
+                />
+              </div>
               <div className="flex justify-between text-[10px] font-mono text-zinc-400">
                 <span>10 / día</span>
                 <span>100 / día</span>
@@ -132,22 +165,28 @@ export default function InteractiveROICalculator() {
             </div>
 
             {/* Slider 2: Horas en Pantalla */}
-            <div className="space-y-2 sm:space-y-3">
+            <div className="space-y-1 sm:space-y-2">
               <div className="flex items-center justify-between text-xs font-mono">
                 <span className="text-zinc-300">{c.hoursLabel}</span>
-                <span className="text-emerald-400 font-bold text-sm px-2.5 py-1 bg-emerald-500/10 rounded-lg border border-emerald-500/20">
+                <span className="text-emerald-400 font-bold text-sm px-2.5 py-1 bg-emerald-500/10 rounded-lg border border-emerald-500/20 tabular-nums">
                   {hoursSpent} {c.hoursPerMonth.split('/')[0]}
                 </span>
               </div>
-              <input
-                type="range"
-                min="1"
-                max="8"
-                step="0.5"
-                value={hoursSpent}
-                onChange={(e) => setHoursSpent(Number(e.target.value))}
-                className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-emerald-400"
-              />
+              <div className="py-2 touch-pan-x">
+                <input
+                  type="range"
+                  min="1"
+                  max="8"
+                  step="0.5"
+                  value={hoursSpent}
+                  onChange={(e) => {
+                    playHapticTick();
+                    setHoursSpent(Number(e.target.value));
+                  }}
+                  className="w-full h-2.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-emerald-400 focus:outline-none"
+                  aria-label={c.hoursLabel}
+                />
+              </div>
               <div className="flex justify-between text-[10px] font-mono text-zinc-400">
                 <span>1h</span>
                 <span>4h</span>
@@ -156,22 +195,28 @@ export default function InteractiveROICalculator() {
             </div>
 
             {/* Slider 3: Ticket Promedio */}
-            <div className="space-y-2 sm:space-y-3">
+            <div className="space-y-1 sm:space-y-2">
               <div className="flex items-center justify-between text-xs font-mono">
                 <span className="text-zinc-300">{c.ticketLabel}</span>
-                <span className="text-white font-bold text-sm px-2.5 py-1 bg-white/[0.05] rounded-lg border border-white/10">
+                <span className="text-white font-bold text-sm px-2.5 py-1 bg-white/[0.05] rounded-lg border border-white/10 tabular-nums">
                   {formatCurrency(avgTicket)}
                 </span>
               </div>
-              <input
-                type="range"
-                min={language === 'es' ? 30000 : 20}
-                max={language === 'es' ? 800000 : 500}
-                step={language === 'es' ? 10000 : 10}
-                value={avgTicket}
-                onChange={(e) => setAvgTicket(Number(e.target.value))}
-                className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-white"
-              />
+              <div className="py-2 touch-pan-x">
+                <input
+                  type="range"
+                  min={language === 'es' ? 30000 : 20}
+                  max={language === 'es' ? 800000 : 500}
+                  step={language === 'es' ? 10000 : 10}
+                  value={avgTicket}
+                  onChange={(e) => {
+                    playHapticTick();
+                    setAvgTicket(Number(e.target.value));
+                  }}
+                  className="w-full h-2.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-white focus:outline-none"
+                  aria-label={c.ticketLabel}
+                />
+              </div>
             </div>
 
           </div>
@@ -188,39 +233,50 @@ export default function InteractiveROICalculator() {
                   </div>
                   <button
                     onClick={triggerCelebration}
-                    className="p-1.5 text-zinc-400 hover:text-white transition-colors cursor-pointer"
+                    className="p-2 text-zinc-400 hover:text-white transition-colors cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center"
                     title="Celebrar"
+                    aria-label="Celebrar métricas"
                   >
                     🎉
                   </button>
                 </div>
 
-                {/* Métricas lado a lado (Side by Side) para ergonomía móvil limpia */}
-                <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
+                {/* Métricas lado a lado con Anti-Quiebre Móvil Tabular */}
+                <div className="grid grid-cols-2 gap-2 sm:gap-4">
                   {/* Métrica 1: Horas de Vida Libres */}
-                  <div className="p-3 sm:p-5 bg-[#0f1422]/95 border border-white/10 rounded-2xl flex flex-col justify-between space-y-1 sm:space-y-1.5">
+                  <div className="p-3 sm:p-5 bg-[#0f1422]/95 border border-white/10 rounded-2xl flex flex-col justify-between space-y-1.5 sm:space-y-2 min-w-0">
                     <div className="flex items-center gap-1.5 text-[10px] sm:text-xs font-mono text-zinc-400 uppercase truncate">
                       <Clock className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                       <span className="truncate">{c.recoveredTimeTitle}</span>
                     </div>
-                    <div className="font-display font-extrabold text-xl sm:text-3xl text-white">
-                      +{hoursSavedPerMonth} <span className="text-xs sm:text-sm font-mono text-emerald-400 font-normal">{c.hoursPerMonth}</span>
+                    <div className="flex flex-col min-w-0">
+                      <div className="font-mono font-extrabold text-lg min-[360px]:text-xl sm:text-2xl lg:text-3xl text-white tracking-tight tabular-nums">
+                        +{hoursSavedPerMonth}h
+                      </div>
+                      <span className="text-[9px] min-[360px]:text-[10px] sm:text-xs font-mono text-emerald-400 font-normal">
+                        {c.hoursPerMonth}
+                      </span>
                     </div>
-                    <p className="text-[10px] sm:text-[11px] font-sans text-zinc-300 line-clamp-2">
+                    <p className="text-[10px] sm:text-[11px] font-sans text-zinc-300 line-clamp-2 leading-tight">
                       {c.recoveredTimeDesc}
                     </p>
                   </div>
 
-                  {/* Métrica 2: Dinero Adicional en el Bolsillo */}
-                  <div className="p-3 sm:p-5 bg-[#071912]/95 border border-emerald-500/30 rounded-2xl flex flex-col justify-between space-y-1 sm:space-y-1.5">
+                  {/* Métrica 2: Dinero Adicional en el Bolsillo (Zero Desbordes) */}
+                  <div className="p-3 sm:p-5 bg-[#071912]/95 border border-emerald-500/30 rounded-2xl flex flex-col justify-between space-y-1.5 sm:space-y-2 min-w-0">
                     <div className="flex items-center gap-1.5 text-[10px] sm:text-xs font-mono text-emerald-400 uppercase truncate">
                       <DollarSign className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                       <span className="truncate">{c.financialImpactTitle}</span>
                     </div>
-                    <div className="font-display font-extrabold text-sm sm:text-2xl text-emerald-300 truncate">
-                      +{formatCurrency(totalMonthlyGain)} <span className="text-[10px] sm:text-xs font-mono text-zinc-300 font-normal">/ mes</span>
+                    <div className="flex flex-col min-w-0">
+                      <div className="font-mono font-bold text-xs min-[360px]:text-sm sm:text-lg lg:text-xl text-emerald-300 tracking-tight whitespace-nowrap overflow-hidden text-ellipsis tabular-nums" title={formatCurrency(totalMonthlyGain)}>
+                        +{formatCurrency(totalMonthlyGain)}
+                      </div>
+                      <span className="text-[9px] min-[360px]:text-[10px] sm:text-xs font-mono text-zinc-400 font-normal">
+                        / mes recuperado
+                      </span>
                     </div>
-                    <p className="text-[10px] sm:text-[11px] font-sans text-emerald-400/80 line-clamp-2">
+                    <p className="text-[10px] sm:text-[11px] font-sans text-emerald-400/80 line-clamp-2 leading-tight">
                       {c.financialImpactDesc}
                     </p>
                   </div>
@@ -231,7 +287,7 @@ export default function InteractiveROICalculator() {
               <div className="pt-2 sm:pt-4 space-y-3">
                 <a
                   href="/#/diagnostico"
-                  className={`w-full py-3.5 sm:py-4 rounded-xl font-mono text-xs font-bold uppercase tracking-wider text-center flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                  className={`w-full min-h-[48px] py-3.5 sm:py-4 rounded-xl font-mono text-xs font-bold uppercase tracking-wider text-center flex items-center justify-center gap-2 transition-all cursor-pointer ${
                     isLight ? 'bg-slate-900 text-white hover:bg-black shadow-lg shadow-slate-900/10' : 'bg-white text-black hover:bg-platinum shadow-monolith'
                   }`}
                 >

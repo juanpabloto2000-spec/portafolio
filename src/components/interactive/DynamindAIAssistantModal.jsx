@@ -333,6 +333,14 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
   const audioRef = useRef(null);
   const [avatarAction, setAvatarAction] = useState(null);
 
+  // Detección reactiva de resolución móvil para adaptar el tamaño del avatar
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth < 640 : false);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const triggerAction = (act) => {
     setAvatarAction(act);
     setTimeout(() => setAvatarAction(null), 2500);
@@ -556,9 +564,9 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/85 backdrop-blur-md animate-in fade-in duration-200 font-sans">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-5 bg-black/85 backdrop-blur-md animate-in fade-in duration-200 font-sans">
       <div 
-        className={`relative w-full max-w-4xl border rounded-3xl shadow-2xl overflow-hidden flex flex-col sm:flex-row h-[90vh] max-h-[740px] backdrop-blur-2xl transition-colors duration-300 ${
+        className={`relative w-full max-w-4xl border rounded-3xl shadow-2xl overflow-hidden flex flex-col sm:flex-row h-[94dvh] sm:h-[90vh] max-h-[760px] backdrop-blur-2xl transition-colors duration-300 ${
           isLight 
             ? 'bg-white/95 border-slate-200 text-slate-900 shadow-indigo-500/10' 
             : 'bg-[#060913]/98 border-purple-500/30 text-white shadow-[0_0_80px_rgba(124,58,237,0.18)]'
@@ -584,14 +592,14 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
         {/* ========================================================================= */}
         {/* COLUMNA IZQUIERDA: BUSTO HOLOGRÁFICO LIBRE DE AURA (CERO CÍRCULOS/CAJAS)  */}
         {/* ========================================================================= */}
-        <div className={`relative z-10 w-full sm:w-[310px] md:w-[350px] shrink-0 flex flex-col items-center justify-between p-5 sm:p-6 border-b sm:border-b-0 sm:border-r transition-colors ${
+        <div className={`relative z-10 w-full sm:w-[310px] md:w-[350px] shrink-0 flex flex-col items-center justify-between p-3.5 sm:p-6 border-b sm:border-b-0 sm:border-r transition-colors ${
           isLight 
             ? 'border-slate-200 bg-slate-50/70' 
             : 'border-purple-500/20 bg-gradient-to-b from-purple-950/25 via-[#060913]/40 to-indigo-950/25'
         }`}>
           
           {/* Nombre Limpio Solicitado Arriba de Ella: Asistente AURA */}
-          <div className="w-full flex items-center justify-between pt-1">
+          <div className="w-full flex items-center justify-between pt-0.5 sm:pt-1">
             <h3 className={`font-display font-bold text-base sm:text-lg tracking-tight flex items-center gap-2 ${
               isLight ? 'text-slate-900' : 'text-white'
             }`}>
@@ -618,10 +626,10 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
             </button>
           </div>
 
-          {/* Busto de AURA en Traje de Secretaria Ejecutiva Azul y Morado */}
-          <div className="relative flex-1 flex items-center justify-center py-2 sm:py-0 w-full overflow-visible">
+          {/* Busto de AURA en Traje de Secretaria Ejecutiva Azul y Morado (Escalado ergonómico) */}
+          <div className="relative flex-1 flex items-center justify-center py-1 sm:py-2 w-full overflow-visible min-h-[170px] sm:min-h-0">
             <AndroidVoiceAvatar 
-              size="hero" 
+              size={isMobile ? 'compact-modal' : 'modal'} 
               isSpeaking={isSpeaking} 
               forcedAction={avatarAction}
               onActionComplete={() => setAvatarAction(null)}
@@ -766,17 +774,17 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
             ))}
           </div>
 
-          {/* Prompts Rápidos Sugeridos Dinámicos */}
-          <div className={`space-y-1.5 pt-2.5 border-t mt-2 ${isLight ? 'border-slate-200' : 'border-white/10'}`}>
-            <div className={`text-[11px] font-sans font-medium uppercase tracking-wider ${isLight ? 'text-slate-500' : 'text-zinc-400'}`}>
+          {/* Prompts Rápidos Sugeridos Dinámicos con Scroll Táctil Horizontal en Móvil */}
+          <div className={`space-y-1 sm:space-y-1.5 pt-2 sm:pt-2.5 border-t mt-1.5 sm:mt-2 ${isLight ? 'border-slate-200' : 'border-white/10'}`}>
+            <div className={`text-[10px] sm:text-[11px] font-sans font-medium uppercase tracking-wider ${isLight ? 'text-slate-500' : 'text-zinc-400'}`}>
               {strings.promptsLabel}
             </div>
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-nowrap sm:flex-wrap gap-1.5 overflow-x-auto sm:overflow-visible pb-1 sm:pb-0 touch-pan-x no-scrollbar">
               {strings.prompts.map((qp, qIdx) => (
                 <button
                   key={qIdx}
                   onClick={() => handleSendQuery(qp.query)}
-                  className={`px-3 py-1.5 rounded-lg border font-sans text-xs leading-snug transition-all cursor-pointer text-left ${
+                  className={`shrink-0 sm:shrink px-2.5 sm:px-3 py-1.5 rounded-lg border font-sans text-xs leading-snug transition-all cursor-pointer text-left whitespace-nowrap sm:whitespace-normal ${
                     isLight 
                       ? 'bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-700 hover:text-black' 
                       : 'bg-white/[0.04] hover:bg-purple-950/40 border-white/10 text-zinc-200 hover:text-white hover:border-purple-400/50'

@@ -1,19 +1,22 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ThemeLanguageProvider } from './context/ThemeLanguageContext';
 import GalaxyAmbientBackground from './components/ui/GalaxyAmbientBackground';
 import Navbar from './components/layout/Navbar';
 import HomePage from './pages/HomePage';
-import WorksPage from './pages/WorksPage';
-import SystemsPage from './pages/SystemsPage';
-import TriagePage from './pages/TriagePage';
-import VisionPage from './pages/VisionPage';
-import PrivacyTermsPage from './pages/PrivacyTermsPage';
-import AdminDashboard from './components/admin/AdminDashboard';
-import AdminAuthGuard from './components/admin/AdminAuthGuard';
 import FloatingSocialsDock from './components/layout/FloatingSocialsDock';
 import FloatingAIOrb from './components/layout/FloatingAIOrb';
 import WelcomeGalaxyPreloader from './components/ui/WelcomeGalaxyPreloader';
+import CosmicPageFallback from './components/ui/CosmicPageFallback';
+
+// ⚡ Code-Splitting Dinámico: Rutas pesadas cargadas bajo demanda con edge caching
+const WorksPage = React.lazy(() => import('./pages/WorksPage'));
+const SystemsPage = React.lazy(() => import('./pages/SystemsPage'));
+const TriagePage = React.lazy(() => import('./pages/TriagePage'));
+const VisionPage = React.lazy(() => import('./pages/VisionPage'));
+const PrivacyTermsPage = React.lazy(() => import('./pages/PrivacyTermsPage'));
+const AdminDashboard = React.lazy(() => import('./components/admin/AdminDashboard'));
+const AdminAuthGuard = React.lazy(() => import('./components/admin/AdminAuthGuard'));
 
 const getPageIndex = (hash) => {
   if (hash.startsWith('#/privacidad') || hash.startsWith('#/terminos') || hash.startsWith('#/cookies')) return 5;
@@ -68,9 +71,11 @@ export default function App() {
         <div className="min-h-screen bg-transparent text-slate-100 overflow-x-hidden relative selection:bg-white/20">
           <GalaxyAmbientBackground />
           <div className="relative z-10">
-            <AdminAuthGuard>
-              <AdminDashboard />
-            </AdminAuthGuard>
+            <Suspense fallback={<CosmicPageFallback message="INICIALIZANDO BÚNKER ADMINISTRATIVO..." />}>
+              <AdminAuthGuard>
+                <AdminDashboard />
+              </AdminAuthGuard>
+            </Suspense>
           </div>
         </div>
       </ThemeLanguageProvider>
@@ -101,12 +106,14 @@ export default function App() {
               transition={{ duration: 0.15 }}
               className="w-full"
             >
-              {pageKey === 'privacidad' && <PrivacyTermsPage />}
-              {pageKey === 'diagnostico' && <TriagePage />}
-              {pageKey === 'sistemas' && <SystemsPage />}
-              {pageKey === 'obras' && <WorksPage />}
-              {pageKey === 'vision' && <VisionPage />}
-              {pageKey === 'home' && <HomePage />}
+              <Suspense fallback={<CosmicPageFallback />}>
+                {pageKey === 'privacidad' && <PrivacyTermsPage />}
+                {pageKey === 'diagnostico' && <TriagePage />}
+                {pageKey === 'sistemas' && <SystemsPage />}
+                {pageKey === 'obras' && <WorksPage />}
+                {pageKey === 'vision' && <VisionPage />}
+                {pageKey === 'home' && <HomePage />}
+              </Suspense>
             </motion.div>
           </AnimatePresence>
         </div>
