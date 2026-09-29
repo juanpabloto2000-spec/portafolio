@@ -551,9 +551,6 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
       // 🧠 Inferencia cognitiva real con Gemini AI + grounding Dynamind
       const result = await reasonAuraQuery(trimmedQuery, currentLang, messages);
 
-      // Tiempo humano de reflexión analítica (1.5s)
-      await new Promise(r => setTimeout(r, 1500));
-
       clearTimeout(phaseTimer1);
       clearTimeout(phaseTimer2);
 
