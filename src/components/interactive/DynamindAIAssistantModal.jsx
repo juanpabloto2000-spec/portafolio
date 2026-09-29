@@ -331,6 +331,12 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
   const [inputText, setInputText] = useState('');
   const speechRef = useRef(null);
   const audioRef = useRef(null);
+  const [avatarAction, setAvatarAction] = useState(null);
+
+  const triggerAction = (act) => {
+    setAvatarAction(act);
+    setTimeout(() => setAvatarAction(null), 2500);
+  };
 
   // Inicializar o resetear conversación cuando cambia el idioma
   useEffect(() => {
@@ -617,41 +623,94 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
             <AndroidVoiceAvatar 
               size="hero" 
               isSpeaking={isSpeaking} 
+              forcedAction={avatarAction}
+              onActionComplete={() => setAvatarAction(null)}
               className="drop-shadow-[0_12px_36px_rgba(124,58,237,0.22)]"
             />
           </div>
 
-          {/* Controles de Audio de AURA (Limpio: sin pills ni subtítulos repetidos) */}
-          <div className="w-full flex justify-center pt-2">
-            <button
-              onClick={toggleVoice}
-              className={`px-4 py-2 rounded-xl border text-xs font-sans font-medium transition-all cursor-pointer flex items-center gap-2 ${
-                isVoiceActive
-                  ? (isLight ? 'bg-indigo-50 border-indigo-300 text-indigo-600 shadow-sm' : 'bg-purple-950/70 border-purple-400/60 text-purple-200 shadow-[0_0_16px_rgba(168,85,247,0.25)]')
-                  : (isLight ? 'bg-slate-100 border-slate-200 text-slate-400 hover:text-black' : 'bg-white/[0.03] border-white/10 text-zinc-500 hover:text-white')
-              }`}
-              title={isVoiceActive ? 'Silenciar voz natural' : 'Activar voz natural'}
-              aria-label="Alternar voz de AURA"
-            >
-              {isVoiceActive ? (
-                <>
-                  <Volume2 className={`w-4 h-4 ${isLight ? 'text-indigo-600' : 'text-purple-300'}`} />
-                  <span>VOZ NATURAL ACTIVA</span>
-                  {isSpeaking && (
-                    <span className="flex items-center gap-0.5 h-2.5 ml-1">
-                      <span className={`w-0.5 h-2 rounded-full animate-bounce ${isLight ? 'bg-indigo-600' : 'bg-purple-400'}`} style={{ animationDelay: '0ms' }} />
-                      <span className={`w-0.5 h-3.5 rounded-full animate-bounce ${isLight ? 'bg-indigo-400' : 'bg-purple-300'}`} style={{ animationDelay: '150ms' }} />
-                      <span className={`w-0.5 h-2 rounded-full animate-bounce ${isLight ? 'bg-indigo-600' : 'bg-purple-400'}`} style={{ animationDelay: '300ms' }} />
-                    </span>
-                  )}
-                </>
-              ) : (
-                <>
-                  <VolumeX className={`w-4 h-4 ${isLight ? 'text-slate-400' : 'text-zinc-500'}`} />
-                  <span>VOZ SILENCIADA</span>
-                </>
-              )}
-            </button>
+          {/* Micro-Dock de Acciones Vivas (Salto, Saludo, Gafas) & Control de Audio */}
+          <div className="w-full space-y-2 pt-1">
+            {/* Botones de Gestos Expresivos para Demostrar que está Viva */}
+            <div className="flex items-center justify-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => triggerAction('jump')}
+                className={`px-2.5 py-1 rounded-lg border text-[11px] font-sans font-medium transition-all cursor-pointer flex items-center gap-1 ${
+                  avatarAction === 'jump'
+                    ? 'bg-purple-600 border-purple-400 text-white shadow-[0_0_12px_rgba(168,85,247,0.4)]'
+                    : isLight
+                    ? 'bg-slate-100 hover:bg-indigo-50 border-slate-200 text-slate-700 hover:text-indigo-600'
+                    : 'bg-white/[0.04] hover:bg-purple-950/40 border-white/10 text-zinc-300 hover:text-white hover:border-purple-400/50'
+                }`}
+                title="Hacer que Aura realice un salto cuántico antigravedad con squash & stretch"
+              >
+                <span>🚀 Saltar</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => triggerAction('wave')}
+                className={`px-2.5 py-1 rounded-lg border text-[11px] font-sans font-medium transition-all cursor-pointer flex items-center gap-1 ${
+                  avatarAction === 'wave'
+                    ? 'bg-purple-600 border-purple-400 text-white shadow-[0_0_12px_rgba(168,85,247,0.4)]'
+                    : isLight
+                    ? 'bg-slate-100 hover:bg-indigo-50 border-slate-200 text-slate-700 hover:text-indigo-600'
+                    : 'bg-white/[0.04] hover:bg-purple-950/40 border-white/10 text-zinc-300 hover:text-white hover:border-purple-400/50'
+                }`}
+                title="Hacer que Aura salude alegremente con la mano"
+              >
+                <span>👋 Saludar</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => triggerAction('glasses')}
+                className={`px-2.5 py-1 rounded-lg border text-[11px] font-sans font-medium transition-all cursor-pointer flex items-center gap-1 ${
+                  avatarAction === 'glasses'
+                    ? 'bg-purple-600 border-purple-400 text-white shadow-[0_0_12px_rgba(168,85,247,0.4)]'
+                    : isLight
+                    ? 'bg-slate-100 hover:bg-indigo-50 border-slate-200 text-slate-700 hover:text-indigo-600'
+                    : 'bg-white/[0.04] hover:bg-purple-950/40 border-white/10 text-zinc-300 hover:text-white hover:border-purple-400/50'
+                }`}
+                title="Hacer que Aura se acomode las gafas inteligentes con elegancia de secretaria"
+              >
+                <span>👓 Gafas</span>
+              </button>
+            </div>
+
+            {/* Control de Audio de AURA */}
+            <div className="flex justify-center">
+              <button
+                onClick={toggleVoice}
+                className={`px-4 py-1.5 rounded-xl border text-xs font-sans font-medium transition-all cursor-pointer flex items-center gap-2 ${
+                  isVoiceActive
+                    ? (isLight ? 'bg-indigo-50 border-indigo-300 text-indigo-600 shadow-sm' : 'bg-purple-950/70 border-purple-400/60 text-purple-200 shadow-[0_0_16px_rgba(168,85,247,0.25)]')
+                    : (isLight ? 'bg-slate-100 border-slate-200 text-slate-400 hover:text-black' : 'bg-white/[0.03] border-white/10 text-zinc-500 hover:text-white')
+                }`}
+                title={isVoiceActive ? 'Silenciar voz natural' : 'Activar voz natural'}
+                aria-label="Alternar voz de AURA"
+              >
+                {isVoiceActive ? (
+                  <>
+                    <Volume2 className={`w-4 h-4 ${isLight ? 'text-indigo-600' : 'text-purple-300'}`} />
+                    <span>VOZ NATURAL ACTIVA</span>
+                    {isSpeaking && (
+                      <span className="flex items-center gap-0.5 h-2.5 ml-1">
+                        <span className={`w-0.5 h-2 rounded-full animate-bounce ${isLight ? 'bg-indigo-600' : 'bg-purple-400'}`} style={{ animationDelay: '0ms' }} />
+                        <span className={`w-0.5 h-3.5 rounded-full animate-bounce ${isLight ? 'bg-indigo-400' : 'bg-purple-300'}`} style={{ animationDelay: '150ms' }} />
+                        <span className={`w-0.5 h-2 rounded-full animate-bounce ${isLight ? 'bg-indigo-600' : 'bg-purple-400'}`} style={{ animationDelay: '300ms' }} />
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <VolumeX className={`w-4 h-4 ${isLight ? 'text-slate-400' : 'text-zinc-500'}`} />
+                    <span>VOZ SILENCIADA</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
 
         </div>
