@@ -219,6 +219,62 @@ function pickNaturalHumanVoice(langCode) {
 }
 
 /**
+ * Formateador ligero de texto markdown para respuestas de IA (negritas, cursivas, código inline y viñetas)
+ */
+function formatMessageContent(text, isLight = false) {
+  if (!text) return '';
+  const paragraphs = text.split('\n\n');
+  return paragraphs.map((paragraph, pIdx) => {
+    const lines = paragraph.split('\n');
+    return (
+      <span key={pIdx} className={pIdx > 0 ? 'block mt-2' : 'block'}>
+        {lines.map((line, lIdx) => {
+          const isBullet = line.trim().startsWith('* ') || line.trim().startsWith('- ') || line.trim().startsWith('• ');
+          const cleanLine = isBullet ? line.trim().replace(/^[*•-]\s+/, '') : line;
+          const parts = cleanLine.split(/(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`)/g);
+
+          const formattedLine = parts.map((part, partIdx) => {
+            if (part.startsWith('**') && part.endsWith('**')) {
+              return (
+                <strong key={partIdx} className={`font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                  {part.slice(2, -2)}
+                </strong>
+              );
+            }
+            if (part.startsWith('*') && part.endsWith('*')) {
+              return (
+                <em key={partIdx} className={`italic ${isLight ? 'text-indigo-700' : 'text-purple-300'}`}>
+                  {part.slice(1, -1)}
+                </em>
+              );
+            }
+            if (part.startsWith('`') && part.endsWith('`')) {
+              return (
+                <code key={partIdx} className={`px-1.5 py-0.5 rounded font-mono text-[11px] ${
+                  isLight 
+                    ? 'bg-slate-200 text-indigo-800' 
+                    : 'bg-purple-950/70 border border-purple-500/30 text-purple-200'
+                }`}>
+                  {part.slice(1, -1)}
+                </code>
+              );
+            }
+            return part;
+          });
+
+          return (
+            <span key={lIdx} className={isBullet ? 'flex items-start gap-1.5 my-1 ml-1' : 'block'}>
+              {isBullet && <span className="text-purple-400 select-none font-bold shrink-0">•</span>}
+              <span>{formattedLine}</span>
+            </span>
+          );
+        })}
+      </span>
+    );
+  });
+}
+
+/**
  * 🌌 Canvas de Estrellas Cósmicas Vivas del Chatbot (Inspirado en el Index)
  * 120 estrellas titilantes a 60 FPS con nebulosas en violeta, índigo y azul cian.
  */
@@ -800,8 +856,8 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
                     </div>
                   )}
 
-                  {/* Contenido del Mensaje con Tipografía de Subtítulos Fluida */}
-                  <div className="whitespace-pre-line font-sans leading-relaxed break-words">{m.text}</div>
+                  {/* Contenido del Mensaje con Tipografía y Markdown Formateado */}
+                  <div className="font-sans leading-relaxed break-words text-xs sm:text-[13px]">{formatMessageContent(m.text, isLight)}</div>
                 </div>
               </div>
             ))}
