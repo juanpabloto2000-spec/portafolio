@@ -135,6 +135,39 @@ export default {
       });
     }
 
+    // 1.1 One-shot environment mock endpoints for Auth.md agents
+    if (url.pathname === "/x/one-shot-environments") {
+      return new Response(JSON.stringify({
+        clientId: "client_dym_01j8x9k2m4",
+        apiKey: "sk_dym_live_a89f72b1c4e9",
+        claimToken: "clm_dym_984f1a2e5c8",
+        authkitDomain: "auth.dynamindstudios.com",
+        accessToken: "eyJhGciOi...",
+        tokenType: "Bearer"
+      }), {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+          "Access-Control-Allow-Origin": "*",
+          "Cache-Control": "no-store"
+        }
+      });
+    }
+
+    if (url.pathname === "/x/one-shot-environments/claim-nonces") {
+      return new Response(JSON.stringify({
+        status: "ok",
+        claim_uri: "https://portafolio.juanpabloto2000.workers.dev/api/agents/claim"
+      }), {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+          "Access-Control-Allow-Origin": "*",
+          "Cache-Control": "no-store"
+        }
+      });
+    }
+
     // 2. Static Asset Resolution via env.ASSETS
     let response;
     try {
@@ -175,6 +208,9 @@ export default {
       const headers = new Headers(response.headers);
       headers.set("Access-Control-Allow-Origin", "*");
       headers.set("Vary", "Accept");
+      if (url.pathname.endsWith(".json") || url.pathname === "/.well-known/ai-catalog.json") {
+        headers.set("Content-Type", "application/json; charset=utf-8");
+      }
       return new Response(response.body, {
         status: response.status,
         statusText: response.statusText,

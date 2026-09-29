@@ -1,33 +1,59 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$schema": "https://agenticresourcediscovery.org/schemas/v1/ai-catalog.json",
   "specVersion": "1.0.0",
-  "name": "Dynamind Studios AI Catalog",
-  "version": "2.0.0",
-  "description": "Agent Resource Discovery (ARD) capability manifest for Dynamind Studios sovereign services",
-  "provider": {
+  "host": {
     "name": "Dynamind Studios",
-    "url": "https://portafolio.juanpabloto2000.workers.dev"
+    "url": "https://portafolio.juanpabloto2000.workers.dev",
+    "description": "Sovereign AI & Bespoke Software Engineering Consultancy"
   },
   "entries": [
     {
-      "id": "mcp",
-      "type": "mcp",
-      "url": "https://portafolio.juanpabloto2000.workers.dev/.well-known/mcp/server-card.json"
+      "identifier": "urn:air:portafolio.juanpabloto2000.workers.dev:mcp:server-card",
+      "displayName": "Dynamind MCP Server Card",
+      "type": "application/json",
+      "url": "https://portafolio.juanpabloto2000.workers.dev/.well-known/mcp/server-card.json",
+      "description": "Model Context Protocol capabilities, tools, and endpoints for Dynamind Studios systems.",
+      "representativeQueries": [
+        "What MCP tools does Dynamind Studios provide?",
+        "How can AI agents integrate with Dynamind PMS and booking APIs?",
+        "Access Model Context Protocol server capabilities"
+      ]
     },
     {
-      "id": "a2a",
-      "type": "a2a",
-      "url": "https://portafolio.juanpabloto2000.workers.dev/.well-known/agent-card.json"
+      "identifier": "urn:air:portafolio.juanpabloto2000.workers.dev:agent:a2a-card",
+      "displayName": "Dynamind A2A Agent Card",
+      "type": "application/json",
+      "url": "https://portafolio.juanpabloto2000.workers.dev/.well-known/agent-card.json",
+      "description": "Agent-to-Agent protocol descriptor for autonomous negotiation and lead qualification.",
+      "representativeQueries": [
+        "Find autonomous AI agents for hospitality and gastronomy",
+        "Agent-to-agent interface specification for Dynamind",
+        "Autonomous triage swarms for business bottlenecks"
+      ]
     },
     {
-      "id": "skills",
-      "type": "skills",
-      "url": "https://portafolio.juanpabloto2000.workers.dev/.well-known/agent-skills/index.json"
+      "identifier": "urn:air:portafolio.juanpabloto2000.workers.dev:api:openapi",
+      "displayName": "Dynamind OpenAPI 3.1 Specification",
+      "type": "application/json",
+      "url": "https://portafolio.juanpabloto2000.workers.dev/openapi.json",
+      "description": "Public REST endpoints for lead intake, business ROI calculator, and diagnostic triage.",
+      "representativeQueries": [
+        "REST API endpoints for business diagnostic",
+        "OpenAPI specification for Dynamind Studios",
+        "Calculate software ROI and register leads"
+      ]
     },
     {
-      "id": "openapi",
-      "type": "openapi",
-      "url": "https://portafolio.juanpabloto2000.workers.dev/openapi.json"
+      "identifier": "urn:air:portafolio.juanpabloto2000.workers.dev:skills:index",
+      "displayName": "Dynamind Agent Skills Directory",
+      "type": "application/json",
+      "url": "https://portafolio.juanpabloto2000.workers.dev/.well-known/agent-skills/index.json",
+      "description": "Verified cryptographic catalog of agent skills for architecture design and bottleneck diagnostics.",
+      "representativeQueries": [
+        "Agent skills index for business engineering",
+        "Download verified SKILL.md packages",
+        "Autonomous diagnostic skills for SME bottlenecks"
+      ]
     }
   ]
 }

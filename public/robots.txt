@@ -46,5 +46,8 @@ Allow: /
 Content-Signal: ai-train=yes, search=yes
 Content-Signal: crawl=yes
 
+# Agentic Resource Discovery & Agentmap Directives
+Agentmap: https://portafolio.juanpabloto2000.workers.dev/.well-known/ai-catalog.json
+
 # Sitemap Reference
 Sitemap: https://portafolio.juanpabloto2000.workers.dev/sitemap.xml
