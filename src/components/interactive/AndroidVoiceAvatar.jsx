@@ -1,276 +1,455 @@
-import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 /**
- * AndroidVoiceAvatar - Rostro holográfico de la Androide AURA
- * Totalmente libre (SIN círculos ni marcos de encierro).
- * Escala visible prominente, ojos biocibernéticos con parpadeo y boca articulada en tiempo real.
+ * HyperRealisticAndroidAvatar (AURA - Advanced Ultra-Realistic Android)
+ * Motor CGI Fotorrealista Multicapa a 60 FPS:
+ * - Retrato fotorrealista de alta definición con piel sintética de porcelana traslúcida y microcircuitos biocibernéticos.
+ * - 3D Head Parallax Tilt reactivo a la posición del cursor/pointer en tiempo real.
+ * - Iris biocibernético dinámico con eye-tracking reactivo y reflejos especulares de córnea.
+ * - Parpadeo orgánico fotomórfico (cierre 75ms, apertura elástica 130ms, intervalos biológicos pseudo-aleatorios con micro-doble parpadeo).
+ * - Articulación fonética viva en tiempo real con resonancia orofacial y ondas de choque acústicas al emitir voz (`isSpeaking`).
+ * - Micro-respiración bio-sintética idle a 60 FPS acelerada por GPU.
  */
 export default function AndroidVoiceAvatar({ size = 'md', isSpeaking = false, className = '' }) {
-  // Dimensiones prominentes y visibles
-  const dimensions = {
-    sm: { box: 'w-14 h-14 sm:w-16 sm:h-16', scale: 1.05 },         // Para mensajes de chat más visibles y prominentes (56px - 64px)
-    md: { box: 'w-20 h-20 sm:w-24 sm:h-24', scale: 1.15 }, // Para cabecera del modal (80px - 96px)
-    lg: { box: 'w-28 h-28', scale: 1.3 }        // Para vistas de gran formato
-  }[size] || { box: 'w-20 h-20 sm:w-24 sm:h-24', scale: 1.15 };
+  // Dimensiones configurables y responsive
+  const dimensions = useMemo(() => {
+    switch (size) {
+      case 'sm':
+        return {
+          container: 'w-14 h-14 sm:w-16 sm:h-16',
+          pupilRange: 2.4,
+          tiltFactor: 5,
+          glowSize: '-inset-1'
+        };
+      case 'lg':
+        return {
+          container: 'w-28 h-28 sm:w-36 sm:h-36',
+          pupilRange: 4.8,
+          tiltFactor: 9,
+          glowSize: '-inset-3'
+        };
+      case 'md':
+      default:
+        return {
+          container: 'w-20 h-20 sm:w-24 sm:h-24',
+          pupilRange: 3.4,
+          tiltFactor: 7,
+          glowSize: '-inset-2'
+        };
+    }
+  }, [size]);
 
-  // Parpadeo ocular bio-sintético
-  const [blink, setBlink] = useState(false);
+  // Coordenadas normalizadas del puntero (-1 a +1)
+  const [pointer, setPointer] = useState({ x: 0, y: 0 });
+  const containerRef = useRef(null);
 
+  // 1. Detección y seguimiento suave del cursor (Mouse & Pointer Tracking con Lerp)
   useEffect(() => {
-    let timeout;
-    const triggerBlink = () => {
-      setBlink(true);
-      setTimeout(() => setBlink(false), 130);
-      timeout = setTimeout(triggerBlink, 2800 + Math.random() * 3200);
+    let animationFrameId;
+    let targetX = 0;
+    let targetY = 0;
+    let currentX = 0;
+    let currentY = 0;
+
+    const handleMouseMove = (e) => {
+      const { innerWidth, innerHeight } = window;
+      targetX = (e.clientX / innerWidth) * 2 - 1;
+      targetY = (e.clientY / innerHeight) * 2 - 1;
     };
-    timeout = setTimeout(triggerBlink, 2000);
-    return () => clearTimeout(timeout);
+
+    const updateSpring = () => {
+      currentX += (targetX - currentX) * 0.085;
+      currentY += (targetY - currentY) * 0.085;
+
+      setPointer({
+        x: Math.max(-1, Math.min(1, currentX)),
+        y: Math.max(-1, Math.min(1, currentY))
+      });
+
+      animationFrameId = requestAnimationFrame(updateSpring);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    animationFrameId = requestAnimationFrame(updateSpring);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      cancelAnimationFrame(animationFrameId);
+    };
   }, []);
 
-  return (
-    <div className={`relative flex items-center justify-center shrink-0 select-none overflow-visible ${dimensions.box} ${className}`}>
-      
-      {/* 1. Ondas Holográficas Concéntricas al Hablar (Sin caja) */}
-      {isSpeaking && (
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0.8 }}
-          animate={{
-            scale: [0.9, 1.4, 1.6],
-            opacity: [0.7, 0.35, 0]
-          }}
-          transition={{
-            duration: 1.2,
-            repeat: Infinity,
-            ease: 'easeOut'
-          }}
-          className="absolute inset-0 rounded-full border border-cyan-400/50 pointer-events-none"
-        />
-      )}
+  // 2. Parpadeo Orgánico Multicapa (Blinking Motor)
+  const [blinkState, setBlinkState] = useState(false);
 
-      {/* 2. Halo de Plasma Libre Circundante (Bioluminiscencia orgánica) */}
+  useEffect(() => {
+    let blinkTimeout;
+    let isMounted = true;
+
+    const scheduleBlink = () => {
+      if (!isMounted) return;
+
+      // Tiempo pseudo-aleatorio entre parpadeos (2.6s a 5.0s)
+      const nextDelay = 2600 + Math.random() * 2400;
+
+      blinkTimeout = setTimeout(() => {
+        if (!isMounted) return;
+        setBlinkState(true);
+
+        // Duración biológica de cierre y apertura (90ms)
+        setTimeout(() => {
+          if (!isMounted) return;
+          setBlinkState(false);
+
+          // 18% de probabilidad de micro-doble parpadeo
+          if (Math.random() < 0.18) {
+            setTimeout(() => {
+              if (!isMounted) return;
+              setBlinkState(true);
+              setTimeout(() => {
+                if (isMounted) setBlinkState(false);
+              }, 75);
+            }, 130);
+          }
+
+          scheduleBlink();
+        }, 90);
+      }, nextDelay);
+    };
+
+    scheduleBlink();
+
+    return () => {
+      isMounted = false;
+      clearTimeout(blinkTimeout);
+    };
+  }, []);
+
+  // Inclinación 3D de cabeza calculada (Head Parallax)
+  const tiltX = pointer.x * dimensions.tiltFactor;
+  const tiltY = -pointer.y * dimensions.tiltFactor;
+
+  // Desplazamiento reactivo de iris / pupilas (Eye-Tracking)
+  const pupilOffsetX = pointer.x * dimensions.pupilRange;
+  const pupilOffsetY = pointer.y * (dimensions.pupilRange * 0.75);
+
+  return (
+    <div
+      ref={containerRef}
+      className={`relative flex items-center justify-center shrink-0 select-none overflow-visible ${dimensions.container} ${className}`}
+      style={{ perspective: '850px' }}
+    >
+      {/* ========================================================================= */}
+      {/* 1. ONDAS ACÚSTICAS HOLOGRÁFICAS AL HABLAR                               */}
+      {/* ========================================================================= */}
+      <AnimatePresence>
+        {isSpeaking && (
+          <>
+            <motion.div
+              initial={{ scale: 0.85, opacity: 0.85 }}
+              animate={{
+                scale: [0.95, 1.48, 1.75],
+                opacity: [0.75, 0.35, 0]
+              }}
+              transition={{
+                duration: 1.4,
+                repeat: Infinity,
+                ease: 'easeOut'
+              }}
+              className="absolute inset-0 rounded-full border border-cyan-400/60 pointer-events-none z-0"
+            />
+            <motion.div
+              initial={{ scale: 0.85, opacity: 0.65 }}
+              animate={{
+                scale: [0.9, 1.35, 1.6],
+                opacity: [0.65, 0.25, 0]
+              }}
+              transition={{
+                duration: 1.4,
+                delay: 0.45,
+                repeat: Infinity,
+                ease: 'easeOut'
+              }}
+              className="absolute inset-0 rounded-full border border-indigo-400/50 pointer-events-none z-0"
+            />
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* ========================================================================= */}
+      {/* 2. HALO CUÁNTICO Y BIOLUMINISCENCIA SUAVE                                  */}
+      {/* ========================================================================= */}
       <motion.div
         animate={
           isSpeaking
             ? {
-                scale: [1, 1.28, 1.12, 1.25, 1],
-                opacity: [0.65, 0.95, 0.75, 0.9, 0.65]
+                scale: [1, 1.25, 1.12, 1.24, 1],
+                opacity: [0.6, 0.95, 0.72, 0.9, 0.6]
               }
             : {
-                scale: [0.95, 1.05, 0.95],
-                opacity: [0.3, 0.45, 0.3]
+                scale: [0.96, 1.05, 0.96],
+                opacity: [0.32, 0.48, 0.32]
               }
         }
         transition={{
-          duration: isSpeaking ? 1.3 : 3.5,
+          duration: isSpeaking ? 1.2 : 3.8,
           repeat: Infinity,
           ease: 'easeInOut'
         }}
-        className="absolute -inset-3 rounded-full bg-gradient-to-tr from-cyan-500/35 via-purple-600/30 to-blue-500/25 blur-xl pointer-events-none"
+        className={`absolute ${dimensions.glowSize} rounded-full bg-gradient-to-tr from-cyan-500/40 via-blue-600/30 to-purple-600/35 blur-xl pointer-events-none z-0`}
       />
 
-      {/* 3. Rostro Flotante de la Androide AURA (Completamente desanclado, sin fondo ni recuadro) */}
-      <svg 
-        viewBox="0 0 100 100" 
-        className="w-full h-full overflow-visible filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.7)]"
+      {/* ========================================================================= */}
+      {/* 3. ROSTRO TRIDIMENSIONAL FOTORREALISTA CON HEAD PARALLAX 3D TILT          */}
+      {/* ========================================================================= */}
+      <div
+        className="relative w-full h-full p-[1.5px] rounded-full bg-gradient-to-b from-cyan-400/50 via-blue-500/25 to-purple-500/35 shadow-[0_8px_32px_rgba(0,0,0,0.85)] z-10"
+        style={{
+          transform: `rotateY(${tiltX}deg) rotateX(${tiltY}deg) scale(${isSpeaking ? 1.03 : 1})`,
+          transformStyle: 'preserve-3d',
+          transition: 'transform 0.12s cubic-bezier(0.16, 1, 0.3, 1)'
+        }}
       >
-        <defs>
-          {/* Cerámica de titanio bio-sintético */}
-          <linearGradient id="auraFaceGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#ffffff" />
-            <stop offset="35%" stopColor="#f1f5f9" />
-            <stop offset="70%" stopColor="#cbd5e1" />
-            <stop offset="100%" stopColor="#64748b" />
-          </linearGradient>
-
-          {/* Ojos biocibernéticos hiper-radiantes */}
-          <linearGradient id="auraEyeGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#ffffff" />
-            <stop offset="45%" stopColor="#22d3ee" />
-            <stop offset="100%" stopColor="#6366f1" />
-          </linearGradient>
-
-          {/* Luz orofacial al articular voz */}
-          <linearGradient id="auraMouthAperture" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#0891b2" stopOpacity="0.3" />
-            <stop offset="50%" stopColor="#22d3ee" stopOpacity="1" />
-            <stop offset="100%" stopColor="#a855f7" stopOpacity="0.5" />
-          </linearGradient>
-
-          {/* Resplandor de telemetría */}
-          <filter id="auraGlow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="2" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-          </filter>
-        </defs>
-
-        {/* Cuello biocibernético con núcleos de fibra óptica */}
-        <path d="M 43 75 L 43 93 L 57 93 L 57 75 Z" fill="#1e293b" stroke="#334155" strokeWidth="1.2" />
-        <line x1="50" y1="76" x2="50" y2="92" stroke="#22d3ee" strokeWidth="1.8" strokeOpacity="0.85" filter="url(#auraGlow)" />
-        <line x1="46" y1="79" x2="46" y2="89" stroke="#818cf8" strokeWidth="1" strokeOpacity="0.5" />
-        <line x1="54" y1="79" x2="54" y2="89" stroke="#818cf8" strokeWidth="1" strokeOpacity="0.5" />
-
-        {/* Silueta Mandibular y Pómulos Androide de Cerámica Perla */}
-        <path 
-          d="M 27 30 C 27 12, 73 12, 73 30 C 73 50, 69 71, 50 80 C 31 71, 27 50, 27 30 Z" 
-          fill="url(#auraFaceGrad)"
-          stroke="#94a3b8"
-          strokeWidth="1.4"
-        />
-
-        {/* Biseles anatómicos laterales (Placas de nano-arquitectura) */}
-        <path d="M 28 35 Q 36 48 38 62" fill="none" stroke="#64748b" strokeWidth="0.9" strokeDasharray="2,1.5" opacity="0.8" />
-        <path d="M 72 35 Q 64 48 62 62" fill="none" stroke="#64748b" strokeWidth="0.9" strokeDasharray="2,1.5" opacity="0.8" />
-
-        {/* Diadema frontal neural con gema cuántica */}
-        <path d="M 36 20 Q 50 23 64 20" fill="none" stroke="#0284c7" strokeWidth="1.2" opacity="0.9" />
-        <circle cx="50" cy="21.5" r="2.8" fill="#38bdf8" filter="url(#auraGlow)" />
-        <circle cx="50" cy="21.5" r="1.2" fill="#ffffff" />
-
-        {/* Cejas estilizadas bio-mecánicas */}
-        <path d="M 34 32 Q 41 29 46 32" fill="none" stroke="#0f172a" strokeWidth="1.4" strokeLinecap="round" />
-        <path d="M 54 32 Q 59 29 66 32" fill="none" stroke="#0f172a" strokeWidth="1.4" strokeLinecap="round" />
-
-        {/* Ojos Biocibernéticos con Parpadeo Autónomo y Mirada Viva */}
-        <g transform={`scale(1, ${blink ? 0.06 : 1})`} style={{ transformOrigin: '50% 39px', transition: 'transform 0.08s ease' }}>
-          {/* Ojo Izquierdo */}
-          <ellipse cx="40" cy="39" rx="6.2" ry="3.8" fill="#090d16" stroke="#334155" strokeWidth="0.9" />
-          <ellipse cx="40" cy="39" rx="3.8" ry="3.8" fill="url(#auraEyeGlow)" filter="drop-shadow(0 0 2px #22d3ee)" />
-          <circle cx="41.2" cy="37.8" r="1.3" fill="#ffffff" />
-          <circle cx="39" cy="40.5" r="0.6" fill="#a5f3fc" />
-
-          {/* Ojo Derecho */}
-          <ellipse cx="60" cy="39" rx="6.2" ry="3.8" fill="#090d16" stroke="#334155" strokeWidth="0.9" />
-          <ellipse cx="60" cy="39" rx="3.8" ry="3.8" fill="url(#auraEyeGlow)" filter="drop-shadow(0 0 2px #22d3ee)" />
-          <circle cx="61.2" cy="37.8" r="1.3" fill="#ffffff" />
-          <circle cx="59" cy="40.5" r="0.6" fill="#a5f3fc" />
-        </g>
-
-        {/* Nariz minimalista de precisión */}
-        <path d="M 50 40 L 50 49 L 52.5 51.5" fill="none" stroke="#64748b" strokeWidth="1.2" strokeLinecap="round" />
-
-        {/* Resonadores Acústicos en Pómulos (Ecualizadores de voz vibrando al hablar) */}
-        <g opacity={isSpeaking ? 1 : 0.4}>
-          {/* Lado izquierdo */}
-          <motion.line 
-            x1="31" y1="48" x2="31" y2="55" 
-            stroke="#22d3ee" strokeWidth="1.5" strokeLinecap="round"
-            animate={isSpeaking ? { y1: [47, 43, 49, 45, 47], y2: [56, 60, 54, 58, 56] } : {}}
-            transition={{ duration: 0.28, repeat: Infinity, ease: 'easeInOut' }}
-          />
-          <motion.line 
-            x1="33.5" y1="46" x2="33.5" y2="57" 
-            stroke="#a855f7" strokeWidth="1.5" strokeLinecap="round"
-            animate={isSpeaking ? { y1: [45, 41, 47, 43, 45], y2: [58, 62, 56, 60, 58] } : {}}
-            transition={{ duration: 0.32, repeat: Infinity, ease: 'easeInOut', delay: 0.04 }}
+        <div className="relative w-full h-full rounded-full overflow-hidden bg-slate-950">
+          
+          {/* Retrato Fotorrealista Maestro de AURA con Primer Plano Close-Up */}
+          <motion.img
+            src="/aura_face_portrait.webp"
+            alt="AURA AI Neural Android"
+            animate={{
+              scale: isSpeaking ? [1.25, 1.27, 1.25] : [1.24, 1.255, 1.24]
+            }}
+            transition={{
+              duration: isSpeaking ? 0.35 : 3.6,
+              repeat: Infinity,
+              ease: 'easeInOut'
+            }}
+            className="w-full h-full object-cover object-[50%_48%] select-none pointer-events-none"
+            loading="eager"
+            decoding="async"
           />
 
-          {/* Lado derecho */}
-          <motion.line 
-            x1="69" y1="48" x2="69" y2="55" 
-            stroke="#22d3ee" strokeWidth="1.5" strokeLinecap="round"
-            animate={isSpeaking ? { y1: [47, 43, 49, 45, 47], y2: [56, 60, 54, 58, 56] } : {}}
-            transition={{ duration: 0.28, repeat: Infinity, ease: 'easeInOut' }}
+          {/* Viñeta Cinematográfica Perimetral de Fusión Orgánica */}
+          <div
+            className="absolute inset-0 pointer-events-none rounded-full"
+            style={{
+              background:
+                'radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 56%, rgba(8,12,22,0.4) 80%, rgba(5,7,14,0.92) 100%)'
+            }}
           />
-          <motion.line 
-            x1="66.5" y1="46" x2="66.5" y2="57" 
-            stroke="#a855f7" strokeWidth="1.5" strokeLinecap="round"
-            animate={isSpeaking ? { y1: [45, 41, 47, 43, 45], y2: [58, 62, 56, 60, 58] } : {}}
-            transition={{ duration: 0.32, repeat: Infinity, ease: 'easeInOut', delay: 0.04 }}
+
+          {/* Brillo especular de luz ambiental móvil interactiva */}
+          <div
+            className="absolute inset-0 pointer-events-none mix-blend-screen opacity-30 rounded-full"
+            style={{
+              background: `radial-gradient(circle at ${50 + pointer.x * 25}% ${40 + pointer.y * 25}%, rgba(34,211,238,0.55) 0%, rgba(99,102,241,0.2) 42%, transparent 70%)`
+            }}
           />
-        </g>
 
-        {/* 👄 BOCA DE LA ANDROIDE: Articulación fonética viva en tiempo real */}
-        {isSpeaking ? (
-          <g>
-            {/* Cámara acústica orofacial iluminada */}
-            <motion.ellipse 
-              cx="50" 
-              cy="63" 
-              rx="8.5" 
-              ry="5" 
-              fill="url(#auraMouthAperture)"
-              filter="url(#auraGlow)"
-              animate={{
-                ry: [2.5, 6.5, 3, 7.5, 2.5],
-                rx: [6.5, 9.5, 7.5, 10, 6.5],
-                opacity: [0.75, 1, 0.85, 1, 0.75]
-              }}
-              transition={{
-                duration: 0.4,
-                repeat: Infinity,
-                ease: 'easeInOut'
-              }}
-            />
-            {/* Labio superior articulando */}
-            <motion.path 
-              d="M 42 61 Q 50 58 58 61" 
-              fill="none" 
-              stroke="#0f172a" 
-              strokeWidth="1.5" 
-              strokeLinecap="round"
-              animate={{
-                d: [
-                  "M 42 61 Q 50 58 58 61",
-                  "M 41 59.5 Q 50 57 59 59.5",
-                  "M 42 61 Q 50 58 58 61"
-                ]
-              }}
-              transition={{ duration: 0.4, repeat: Infinity }}
-            />
-            {/* Labio inferior articulando con cadencia de habla */}
-            <motion.path 
-              d="M 43 65 Q 50 67 57 65" 
-              fill="none" 
-              stroke="#22d3ee" 
-              strokeWidth="1.6" 
-              strokeLinecap="round"
-              animate={{
-                d: [
-                  "M 43 65 Q 50 67 57 65",
-                  "M 42 68 Q 50 73 58 68",
-                  "M 43 65 Q 50 67 57 65"
-                ]
-              }}
-              transition={{ duration: 0.4, repeat: Infinity }}
-            />
-          </g>
-        ) : (
-          <g>
-            {/* Boca cerrada serena en reposo */}
-            <path 
-              d="M 43 62.5 Q 50 64.5 57 62.5" 
-              fill="none" 
-              stroke="#334155" 
-              strokeWidth="1.5" 
-              strokeLinecap="round" 
-            />
-            <path 
-              d="M 45 63.5 Q 50 64.2 55 63.5" 
-              fill="none" 
-              stroke="#38bdf8" 
-              strokeWidth="1" 
-              opacity="0.7"
-            />
-          </g>
-        )}
+          {/* ===================================================================== */}
+          {/* 4. MOTOR OCULAR: EYE-TRACKING + IRIS LUMINISCENTE + REFLEJOS          */}
+          {/* ===================================================================== */}
 
-        {/* Micro-sensor de telemetría en el mentón */}
-        <circle cx="50" cy="72" r="1.3" fill="#38bdf8" opacity={isSpeaking ? 1 : 0.5} filter="url(#auraGlow)" />
-      </svg>
+          {/* OJO IZQUIERDO (Coord calibrada para scale 1.25: x: 26.5%, y: 41.5%) */}
+          <div
+            className="absolute pointer-events-none"
+            style={{
+              left: '26.8%',
+              top: '41.8%',
+              width: '18%',
+              height: '9%',
+              transform: 'translate(-50%, -50%)',
+              overflow: 'hidden',
+              borderRadius: '50% / 60%'
+            }}
+          >
+            {/* Pupila & Iris Biocibernético Dinámico */}
+            <div
+              className="absolute rounded-full transition-transform duration-75 ease-out"
+              style={{
+                left: '50%',
+                top: '50%',
+                width: '44%',
+                height: '82%',
+                transform: `translate(calc(-50% + ${pupilOffsetX}px), calc(-50% + ${pupilOffsetY}px))`,
+                background: 'radial-gradient(circle at 45% 45%, #ffffff 0%, #38bdf8 30%, #0284c7 70%, #032147 100%)',
+                boxShadow: '0 0 8px rgba(56, 189, 248, 0.95), inset 0 0 4px rgba(255, 255, 255, 0.85)'
+              }}
+            >
+              {/* Núcleo de Pupila Cuántica */}
+              <div className="absolute inset-[30%] bg-black rounded-full" />
+              {/* Destello Especular de Córnea */}
+              <div className="absolute top-[18%] left-[22%] w-[28%] h-[28%] bg-white rounded-full shadow-[0_0_3px_#ffffff]" />
+            </div>
+          </div>
 
-      {/* 4. Telemetría de estado flotante orgánicamente anclada al hombro cibernético */}
-      <span 
-        className={`absolute bottom-1 right-1 w-2.5 h-2.5 rounded-full ${
-          isSpeaking 
-            ? 'bg-cyan-400 shadow-[0_0_10px_#22d3ee] animate-ping' 
+          {/* OJO DERECHO (Coord calibrada para scale 1.25: x: 73.2%, y: 41.5%) */}
+          <div
+            className="absolute pointer-events-none"
+            style={{
+              left: '73.2%',
+              top: '41.8%',
+              width: '18%',
+              height: '9%',
+              transform: 'translate(-50%, -50%)',
+              overflow: 'hidden',
+              borderRadius: '50% / 60%'
+            }}
+          >
+            {/* Pupila & Iris Biocibernético Dinámico */}
+            <div
+              className="absolute rounded-full transition-transform duration-75 ease-out"
+              style={{
+                left: '50%',
+                top: '50%',
+                width: '44%',
+                height: '82%',
+                transform: `translate(calc(-50% + ${pupilOffsetX}px), calc(-50% + ${pupilOffsetY}px))`,
+                background: 'radial-gradient(circle at 45% 45%, #ffffff 0%, #38bdf8 30%, #0284c7 70%, #032147 100%)',
+                boxShadow: '0 0 8px rgba(56, 189, 248, 0.95), inset 0 0 4px rgba(255, 255, 255, 0.85)'
+              }}
+            >
+              {/* Núcleo de Pupila Cuántica */}
+              <div className="absolute inset-[30%] bg-black rounded-full" />
+              {/* Destello Especular de Córnea */}
+              <div className="absolute top-[18%] left-[22%] w-[28%] h-[28%] bg-white rounded-full shadow-[0_0_3px_#ffffff]" />
+            </div>
+          </div>
+
+          {/* ===================================================================== */}
+          {/* 5. PÁRPADOS FOTOMÓRFICOS BIO-SINTÉTICOS (PARPADEO NATURAL 60 FPS)      */}
+          {/* ===================================================================== */}
+
+          {/* Párpado Ojo Izquierdo */}
+          <div
+            className="absolute pointer-events-none transition-all duration-75 ease-in-out"
+            style={{
+              left: '17.8%',
+              top: '36.8%',
+              width: '18%',
+              height: '10%',
+              overflow: 'hidden',
+              transform: blinkState ? 'scaleY(1)' : 'scaleY(0.04)',
+              transformOrigin: '50% 50%',
+              background: 'linear-gradient(to bottom, #dcd7d2 0%, #c4bcb5 100%)',
+              borderRadius: '50% / 55%',
+              boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.45), 0 2px 4px rgba(0,0,0,0.3)',
+              zIndex: 25
+            }}
+          >
+            {/* Sombra de Pestañas Finas */}
+            <div className="absolute bottom-0 inset-x-0 h-[2.5px] bg-slate-900/85" />
+          </div>
+
+          {/* Párpado Ojo Derecho */}
+          <div
+            className="absolute pointer-events-none transition-all duration-75 ease-in-out"
+            style={{
+              left: '64.2%',
+              top: '36.8%',
+              width: '18%',
+              height: '10%',
+              overflow: 'hidden',
+              transform: blinkState ? 'scaleY(1)' : 'scaleY(0.04)',
+              transformOrigin: '50% 50%',
+              background: 'linear-gradient(to bottom, #dcd7d2 0%, #c4bcb5 100%)',
+              borderRadius: '50% / 55%',
+              boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.45), 0 2px 4px rgba(0,0,0,0.3)',
+              zIndex: 25
+            }}
+          >
+            {/* Sombra de Pestañas Finas */}
+            <div className="absolute bottom-0 inset-x-0 h-[2.5px] bg-slate-900/85" />
+          </div>
+
+          {/* ===================================================================== */}
+          {/* 6. ARTICULACIÓN VOCAL VIVA & RESONANCIA OROFACIAL (LIPSYNC & GLOW)    */}
+          {/* ===================================================================== */}
+          {isSpeaking && (
+            <div
+              className="absolute pointer-events-none"
+              style={{
+                left: '50%',
+                top: '90.5%',
+                width: '32%',
+                height: '8%',
+                transform: 'translate(-50%, -50%)',
+                zIndex: 20
+              }}
+            >
+              {/* Apertura Fonética y Brillo de Resonancia Cuántica */}
+              <motion.div
+                animate={{
+                  scaleY: [0.6, 1.45, 0.75, 1.65, 0.6],
+                  scaleX: [0.9, 1.12, 0.95, 1.18, 0.9],
+                  opacity: [0.75, 1, 0.85, 1, 0.75]
+                }}
+                transition={{
+                  duration: 0.36,
+                  repeat: Infinity,
+                  ease: 'easeInOut'
+                }}
+                className="w-full h-full rounded-[50%] bg-gradient-to-r from-cyan-400 via-sky-300 to-indigo-400 mix-blend-screen"
+                style={{
+                  filter: 'drop-shadow(0 0 6px rgba(34, 211, 238, 0.95))'
+                }}
+              />
+
+              {/* Micro-destello de apertura labial sintética */}
+              <motion.div
+                animate={{
+                  opacity: [0.4, 0.95, 0.5, 0.92, 0.4]
+                }}
+                transition={{
+                  duration: 0.26,
+                  repeat: Infinity,
+                  ease: 'linear'
+                }}
+                className="absolute inset-x-1 top-[42%] h-[1.5px] bg-white rounded-full shadow-[0_0_4px_#38bdf8]"
+              />
+            </div>
+          )}
+
+          {/* ===================================================================== */}
+          {/* 7. ECUALIZADORES Y REDES NEURONALES LATERALES AL HABLAR               */}
+          {/* ===================================================================== */}
+          {isSpeaking && (
+            <div className="absolute inset-0 pointer-events-none z-15 mix-blend-screen opacity-75">
+              {/* Redes neuronales izquierda (mejilla) */}
+              <motion.div
+                animate={{ opacity: [0.35, 0.85, 0.4, 0.95, 0.35] }}
+                transition={{ duration: 0.3, repeat: Infinity }}
+                className="absolute left-[10%] top-[62%] w-6 h-6 rounded-full bg-cyan-400/35 blur-sm"
+              />
+              {/* Redes neuronales derecha (mejilla) */}
+              <motion.div
+                animate={{ opacity: [0.4, 0.95, 0.35, 0.85, 0.4] }}
+                transition={{ duration: 0.34, repeat: Infinity, delay: 0.04 }}
+                className="absolute right-[10%] top-[62%] w-6 h-6 rounded-full bg-indigo-400/35 blur-sm"
+              />
+            </div>
+          )}
+
+          {/* Micro-filtro CRT / Holográfico ultra sutil para textura de androide */}
+          <div
+            className="absolute inset-0 pointer-events-none opacity-[0.05] mix-blend-overlay"
+            style={{
+              backgroundImage:
+                'repeating-linear-gradient(0deg, #000, #000 1px, transparent 1px, transparent 2px)'
+            }}
+          />
+        </div>
+      </div>
+
+      {/* ========================================================================= */}
+      {/* 8. BADGE TÁCTICO DE ESTADO TELEMÉTRICO                                     */}
+      {/* ========================================================================= */}
+      <span
+        className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-slate-950 z-30 transition-colors ${
+          isSpeaking
+            ? 'bg-cyan-400 shadow-[0_0_12px_#22d3ee] animate-pulse'
             : 'bg-emerald-400 shadow-[0_0_8px_#34d399]'
-        }`} 
-      />
-      <span 
-        className={`absolute bottom-1 right-1 w-2.5 h-2.5 rounded-full ${
-          isSpeaking ? 'bg-cyan-300' : 'bg-emerald-400'
-        }`} 
+        }`}
       />
     </div>
   );
