@@ -13,6 +13,42 @@ const prefetchAssistantModal = () => {
   }
 };
 
+// Componente Escudo Defensivo (Error Boundary) para el Modal de Aura
+class ModalErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error, errorInfo) {
+    console.error('Aura Modal Caught Error:', error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md font-sans">
+          <div className="bg-[#0b0f19] border border-purple-500/30 rounded-2xl p-6 max-w-sm text-center text-white space-y-4 shadow-2xl">
+            <p className="text-sm font-sans text-purple-200">Aura está reiniciando sus circuitos cuánticos...</p>
+            <button
+              type="button"
+              onClick={() => {
+                this.setState({ hasError: false });
+                this.props.onClose?.();
+              }}
+              className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
+            >
+              Cerrar y Reintentar
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default function FloatingAIOrb() {
   const [modalOpen, setModalOpen] = useState(false);
   const [isWarpSpeed, setIsWarpSpeed] = useState(false);
@@ -168,19 +204,21 @@ export default function FloatingAIOrb() {
         </div>
       </aside>
 
-      {/* Modal Interactivo de Asistencia cargado bajo demanda */}
+      {/* Modal Interactivo de Asistencia cargado bajo demanda con Error Boundary */}
       {modalOpen && (
-        <Suspense fallback={null}>
-          <DynamindAIAssistantModal 
-            isOpen={modalOpen}
-            onClose={() => {
-              if (typeof window !== 'undefined' && window.speechSynthesis) {
-                try { window.speechSynthesis.cancel(); } catch (e) {}
-              }
-              setModalOpen(false);
-            }}
-          />
-        </Suspense>
+        <ModalErrorBoundary onClose={() => setModalOpen(false)}>
+          <Suspense fallback={null}>
+            <DynamindAIAssistantModal 
+              isOpen={modalOpen}
+              onClose={() => {
+                if (typeof window !== 'undefined' && window.speechSynthesis) {
+                  try { window.speechSynthesis.cancel(); } catch (e) {}
+                }
+                setModalOpen(false);
+              }}
+            />
+          </Suspense>
+        </ModalErrorBoundary>
       )}
     </>
   );

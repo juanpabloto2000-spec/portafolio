@@ -39,6 +39,10 @@ temp_captures/
 server_wa/node_modules/
 server_wa/auth_info/
 
+# Wrangler & scratch
+.wrangler/
+scratch/
+
 # Temporary user feedback recordings
 public/videos/demostracion.mp4
 public/videos/bug movil.mp4

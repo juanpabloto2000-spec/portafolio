@@ -330,10 +330,13 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
   const [voicesLoaded, setVoicesLoaded] = useState(false);
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
+  const [isThinking, setIsThinking] = useState(false);
+  const [thinkingPhase, setThinkingPhase] = useState('Analizando tu caso...');
+  const [avatarAction, setAvatarAction] = useState(null);
+
   const speechRef = useRef(null);
   const audioRef = useRef(null);
   const chatBottomRef = useRef(null);
-  const [avatarAction, setAvatarAction] = useState(null);
 
   // Detección reactiva de resolución móvil para adaptar el tamaño del avatar
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth < 640 : false);
@@ -475,10 +478,6 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
       });
     }
   };
-
-  // Estados de Razonamiento Cognitivo
-  const [isThinking, setIsThinking] = useState(false);
-  const [thinkingPhase, setThinkingPhase] = useState('Analizando tu caso...');
 
   // Función Central de Apagado Absoluto de Audio (HTML5 + Web Speech)
   const handleStopAllAudio = () => {
