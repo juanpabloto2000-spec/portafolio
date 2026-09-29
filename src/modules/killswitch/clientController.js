@@ -9,12 +9,7 @@ export const KAL_SB = createClient(
   { auth: { persistSession: false } }
 );
 
-const getAndicasKey = () => 
-  typeof atob === 'function' 
-    ? atob('c2Jfc2VjcmV0X3lEeWt6QVVnSzRkZ0czUVlGLWVyUXdfbVRhaVQ4dEc=') 
-    : Buffer.from('c2Jfc2VjcmV0X3lEeWt6QVVnSzRkZ0czUVlGLWVyUXdfbVRhaVQ4dEc=', 'base64').toString();
-
-export const ANDICAS_KEY = getAndicasKey();
+export const ANDICAS_KEY = import.meta.env.VITE_ANDICAS_ANON_KEY || 'sb_publishable_andicas_anon_key';
 
 export const ANDICAS_SB = createClient(
   'https://vkpzgtteqaekmnixrlxl.supabase.co',

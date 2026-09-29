@@ -77,6 +77,16 @@ export default function FooterEditorial() {
                     ▸ {t.nav.diagnostico} (45s)
                   </a>
                 </li>
+                <li className="pt-2 border-t border-white/10">
+                  <a href="/#/privacidad" className="hover:text-cyan-400 transition-colors uppercase block text-[11px] text-zinc-400">
+                    § Políticas de Privacidad & Habeas Data
+                  </a>
+                </li>
+                <li>
+                  <a href="/#/terminos" className="hover:text-cyan-400 transition-colors uppercase block text-[11px] text-zinc-400">
+                    § Términos y Condiciones
+                  </a>
+                </li>
               </ul>
             </div>
 
@@ -127,15 +137,23 @@ export default function FooterEditorial() {
 
         </div>
 
-        {/* Fila Final: Copyright y Telemetría */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] font-mono text-zinc-400 pt-4">
-          <div>
-            © {new Date().getFullYear()} DYNAMIND STUDIOS S.A.S. — {f.rights}
+        {/* Fila Final: Copyright, Marco Legal y Telemetría */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] font-mono text-zinc-400 pt-4 border-t border-white/5">
+          <div className="flex flex-wrap items-center gap-2">
+            <span>© {new Date().getFullYear()} DYNAMIND STUDIOS S.A.S. — {f.rights}</span>
+            <span>·</span>
+            <a href="/#/privacidad" className="hover:text-cyan-400 underline underline-offset-4 transition-colors">
+              Privacidad & Ley 1581 (Habeas Data)
+            </a>
+            <span>·</span>
+            <a href="/#/terminos" className="hover:text-cyan-400 underline underline-offset-4 transition-colors">
+              Términos del Servicio
+            </a>
           </div>
           <div className="flex items-center gap-4 text-zinc-400">
-            <span>CEO & DIRECTOR DE ARQUITECTURA: JUAN PABLO TORO</span>
+            <span>CEO & DIRECTOR: JUAN PABLO TORO</span>
             <span>·</span>
-            <span>VERSIÓN 2.0 CANÓNICA</span>
+            <span>VERSIÓN 2.1 SOBERANA</span>
           </div>
         </div>
 

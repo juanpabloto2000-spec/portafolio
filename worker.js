@@ -99,9 +99,84 @@ const LINK_HEADERS = [
   '</.well-known/oauth-protected-resource>; rel="oauth-protected-resource"'
 ].join(", ");
 
+// ============================================================================
+// HARDENING DE SEGURIDAD EN EL EDGE (OWASP & ENTERPRISE STANDARDS)
+// ============================================================================
+const SECURITY_HEADERS = {
+  "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+  "X-Content-Type-Options": "nosniff",
+  "X-Frame-Options": "SAMEORIGIN",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=()"
+};
+
+// Rate limiter en memoria para endpoints de API y autenticación (60 req/min por IP)
+const RATE_LIMIT_CACHE = new Map();
+const RATE_LIMIT_WINDOW_MS = 60 * 1000;
+const MAX_REQUESTS_PER_WINDOW = 60;
+
+function isRateLimited(clientIp) {
+  if (!clientIp) return false;
+  const now = Date.now();
+  const entry = RATE_LIMIT_CACHE.get(clientIp) || { count: 0, resetAt: now + RATE_LIMIT_WINDOW_MS };
+  if (now > entry.resetAt) {
+    entry.count = 1;
+    entry.resetAt = now + RATE_LIMIT_WINDOW_MS;
+  } else {
+    entry.count++;
+  }
+  RATE_LIMIT_CACHE.set(clientIp, entry);
+  return entry.count > MAX_REQUESTS_PER_WINDOW;
+}
+
+function withSecurityHeaders(response) {
+  const headers = new Headers(response.headers);
+  for (const [key, value] of Object.entries(SECURITY_HEADERS)) {
+    if (!headers.has(key)) {
+      headers.set(key, value);
+    }
+  }
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers
+  });
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    const clientIp = request.headers.get("cf-connecting-ip") || request.headers.get("x-forwarded-for") || "unknown";
+
+    // 0. Fuerza HTTPS (Redirect 301 en producción si entra por HTTP)
+    const proto = request.headers.get("x-forwarded-proto") || url.protocol.replace(":", "");
+    if (proto === "http" && !url.hostname.includes("localhost") && !url.hostname.includes("127.0.0.1")) {
+      url.protocol = "https:";
+      return Response.redirect(url.toString(), 301);
+    }
+
+    // 0.1 Google Search Console Verification Auto-Handler (Soporte nativo para archivos google<token>.html)
+    if (/^\/google[a-zA-Z0-9_-]+\.html$/.test(url.pathname)) {
+      const token = url.pathname.replace(/^\/google/, "").replace(/\.html$/, "");
+      return withSecurityHeaders(new Response(`google-site-verification: google${token}.html`, {
+        status: 200,
+        headers: { "Content-Type": "text/html; charset=utf-8" }
+      }));
+    }
+
+    // 0.2 Rate Limiting en API y endpoints sensibles
+    if (url.pathname.startsWith("/x/") || url.pathname.startsWith("/api/")) {
+      if (isRateLimited(clientIp)) {
+        return withSecurityHeaders(new Response(JSON.stringify({
+          error: "Too Many Requests",
+          message: "Rate limit per IP exceeded (60 req/min). Please try again later."
+        }), {
+          status: 429,
+          headers: { "Content-Type": "application/json; charset=utf-8", "Retry-After": "60" }
+        }));
+      }
+    }
+
     const accept = (request.headers.get("accept") || "").toLowerCase();
 
     // 1. AEO: Content Negotiation for AI Agents (Markdown Negotiation)
@@ -123,7 +198,7 @@ export default {
         // Fallback to embedded MARKDOWN_DOSSIER guaranteed
       }
 
-      return new Response(markdownBody, {
+      return withSecurityHeaders(new Response(markdownBody, {
         status: 200,
         headers: {
           "Content-Type": "text/markdown; charset=utf-8",
@@ -132,12 +207,12 @@ export default {
           "Access-Control-Allow-Origin": "*",
           "Cache-Control": "public, max-age=3600"
         }
-      });
+      }));
     }
 
     // 1.1 One-shot environment mock endpoints for Auth.md agents
     if (url.pathname === "/x/one-shot-environments") {
-      return new Response(JSON.stringify({
+      return withSecurityHeaders(new Response(JSON.stringify({
         clientId: "client_dym_01j8x9k2m4",
         apiKey: "sk_dym_live_a89f72b1c4e9",
         claimToken: "clm_dym_984f1a2e5c8",
@@ -151,11 +226,11 @@ export default {
           "Access-Control-Allow-Origin": "*",
           "Cache-Control": "no-store"
         }
-      });
+      }));
     }
 
     if (url.pathname === "/x/one-shot-environments/claim-nonces") {
-      return new Response(JSON.stringify({
+      return withSecurityHeaders(new Response(JSON.stringify({
         status: "ok",
         claim_uri: "https://portafolio.juanpabloto2000.workers.dev/api/agents/claim"
       }), {
@@ -165,7 +240,7 @@ export default {
           "Access-Control-Allow-Origin": "*",
           "Cache-Control": "no-store"
         }
-      });
+      }));
     }
 
     // 2. Static Asset Resolution via env.ASSETS
@@ -179,7 +254,7 @@ export default {
     // 3. Guarantee Content-Type and Metadata for AEO files
     if (url.pathname === "/auth.md") {
       const text = await response.text();
-      return new Response(text, {
+      return withSecurityHeaders(new Response(text, {
         status: response.status,
         headers: {
           "Content-Type": "text/markdown; charset=utf-8",
@@ -187,12 +262,12 @@ export default {
           "Access-Control-Allow-Origin": "*",
           "Cache-Control": "public, max-age=3600"
         }
-      });
+      }));
     }
 
     if (url.pathname === "/llms.txt" || url.pathname === "/llms-full.txt") {
       const text = await response.text();
-      return new Response(text, {
+      return withSecurityHeaders(new Response(text, {
         status: response.status,
         headers: {
           "Content-Type": "text/markdown; charset=utf-8",
@@ -201,7 +276,7 @@ export default {
           "Access-Control-Allow-Origin": "*",
           "Cache-Control": "public, max-age=3600"
         }
-      });
+      }));
     }
 
     if (url.pathname.startsWith("/.well-known/")) {
@@ -211,11 +286,11 @@ export default {
       if (url.pathname.endsWith(".json") || url.pathname === "/.well-known/ai-catalog.json") {
         headers.set("Content-Type", "application/json; charset=utf-8");
       }
-      return new Response(response.body, {
+      return withSecurityHeaders(new Response(response.body, {
         status: response.status,
         statusText: response.statusText,
         headers
-      });
+      }));
     }
 
     // 4. HTML Responses: Inject Vary: Accept and RFC 8288 Link Headers
@@ -225,13 +300,13 @@ export default {
       headers.set("Vary", "Accept");
       headers.set("Link", LINK_HEADERS);
       headers.set("Access-Control-Allow-Origin", "*");
-      return new Response(response.body, {
+      return withSecurityHeaders(new Response(response.body, {
         status: response.status,
         statusText: response.statusText,
         headers
-      });
+      }));
     }
 
-    return response;
+    return withSecurityHeaders(response);
   }
 };

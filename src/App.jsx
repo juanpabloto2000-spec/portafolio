@@ -8,6 +8,7 @@ import WorksPage from './pages/WorksPage';
 import SystemsPage from './pages/SystemsPage';
 import TriagePage from './pages/TriagePage';
 import VisionPage from './pages/VisionPage';
+import PrivacyTermsPage from './pages/PrivacyTermsPage';
 import AdminDashboard from './components/admin/AdminDashboard';
 import AdminAuthGuard from './components/admin/AdminAuthGuard';
 import FloatingSocialsDock from './components/layout/FloatingSocialsDock';
@@ -15,6 +16,7 @@ import FloatingAIOrb from './components/layout/FloatingAIOrb';
 import WelcomeGalaxyPreloader from './components/ui/WelcomeGalaxyPreloader';
 
 const getPageIndex = (hash) => {
+  if (hash.startsWith('#/privacidad') || hash.startsWith('#/terminos') || hash.startsWith('#/cookies')) return 5;
   if (hash.startsWith('#/diagnostico')) return 4;
   if (hash.startsWith('#/sistemas')) return 3;
   if (hash.startsWith('#/obras')) return 2;
@@ -23,6 +25,7 @@ const getPageIndex = (hash) => {
 };
 
 const getPageKey = (hash) => {
+  if (hash.startsWith('#/privacidad') || hash.startsWith('#/terminos') || hash.startsWith('#/cookies')) return 'privacidad';
   if (hash.startsWith('#/diagnostico')) return 'diagnostico';
   if (hash.startsWith('#/sistemas')) return 'sistemas';
   if (hash.startsWith('#/obras')) return 'obras';
@@ -98,6 +101,7 @@ export default function App() {
               transition={{ duration: 0.15 }}
               className="w-full"
             >
+              {pageKey === 'privacidad' && <PrivacyTermsPage />}
               {pageKey === 'diagnostico' && <TriagePage />}
               {pageKey === 'sistemas' && <SystemsPage />}
               {pageKey === 'obras' && <WorksPage />}
