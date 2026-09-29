@@ -2,16 +2,17 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 
 /**
- * AndroidVoiceAvatar - AURA (Advanced Ultra-Realistic Android)
- * Motor Vectorial Mecha Femenino a 60 FPS (Estándar Agent Mission Control):
- * - Estética Mecha con rasgos y silueta femenina:
- *   * Cabello biomecánico en capas (melena posterior fluida, mechones laterales enmarcantes, flequillo y tiara cuántica).
- *   * Ojos expresivos con pestañas biónicas curvadas, iris de plasma cian y parpadeo procedural.
- *   * Chasis continuo con cintura pélvica, reactor cuántico en el pecho y propulsor de suspensión anti-gravedad.
- *   * Sintetizador bucal fono-reactivo con ecualizador de ondas vocales dinámicas al hablar.
- *   * Gestos vivos autónomos en reposo (hovering orgánico) y animación oratoria al hablar.
- *   * 3D Parallax Tilt interactivo al mover el cursor por la pantalla.
- * - 100% vectorial SVG GPU-acelerado sin tiempos de carga ni artefactos rasterizados.
+ * AndroidVoiceAvatar - Asistente AURA
+ * Motor Vectorial Mecha Femenino a 60 FPS en Azul y Morado:
+ * - Traje de secretaria ejecutiva biónica (blazer morado imperial con solapas satinadas, blusa blanca con cuello camisero y broche estelar).
+ * - Chignon / recogido biónico ejecutivo pulido en la parte superior sin cabellos sueltos ni mechones raros.
+ * - Gafas inteligentes de secretaria (montura estilizada con lentes tintadas y reflejo de cristal).
+ * - Bolso de mano de diseñador cibernético llevado con elegancia en el brazo.
+ * - Conexiones anatómicas continuas y ensambladas (cuello camisero integrado y tobera de propulsión encajada a la cadera).
+ * - Pestañas curvadas biónicas, rubor en mejillas, maquillaje y ojos vivaces con parpadeo procedural.
+ * - Sintetizador bucal fono-reactivo con ecualizador dinámico al hablar y labios con sonrisa en reposo.
+ * - 3D Parallax Tilt interactivo al mover el mouse.
+ * - 100% SVG vectorial GPU-acelerado a 60 FPS sin imágenes rasterizadas.
  */
 export default function AndroidVoiceAvatar({
   size = 'md',
@@ -19,7 +20,7 @@ export default function AndroidVoiceAvatar({
   showBadge = false,
   className = ''
 }) {
-  // Parpadeo aleatorio procedural realista (cada 3.2s a 5.2s con parpadeo rápido de 140ms)
+  // Parpadeo procedural humano (cada 3.0s a 5.5s)
   const [blink, setBlink] = useState(false);
 
   useEffect(() => {
@@ -32,28 +33,28 @@ export default function AndroidVoiceAvatar({
       setTimeout(() => {
         if (!isMounted) return;
         setBlink(false);
-        // 20% probabilidad de micro-doble parpadeo
-        if (Math.random() < 0.2) {
+        // Micro-doble parpadeo ocasional
+        if (Math.random() < 0.22) {
           setTimeout(() => {
             if (!isMounted) return;
             setBlink(true);
             setTimeout(() => {
               if (isMounted) setBlink(false);
             }, 90);
-          }, 130);
+          }, 120);
         }
-        blinkTimeout = setTimeout(triggerBlink, 3000 + Math.random() * 2500);
+        blinkTimeout = setTimeout(triggerBlink, 3000 + Math.random() * 2600);
       }, 130);
     };
 
-    blinkTimeout = setTimeout(triggerBlink, 2200);
+    blinkTimeout = setTimeout(triggerBlink, 2000);
     return () => {
       isMounted = false;
       clearTimeout(blinkTimeout);
     };
   }, []);
 
-  // Coordenadas normalizadas del puntero (-1 a +1) para 3D Parallax Tilt reactivo
+  // Coordenadas del puntero para 3D Parallax Tilt
   const [pointer, setPointer] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
@@ -88,19 +89,19 @@ export default function AndroidVoiceAvatar({
     };
   }, []);
 
-  // Dimensiones configurables y responsive
+  // Dimensiones según el tamaño
   const dimensions = useMemo(() => {
     switch (size) {
       case 'hero':
       case 'xl':
-        return { w: 310, h: 400, tiltFactor: 8 };
+        return { w: 310, h: 410, tiltFactor: 8 };
       case 'lg':
-        return { w: 220, h: 285, tiltFactor: 6 };
+        return { w: 220, h: 290, tiltFactor: 6 };
       case 'sm':
-        return { w: 75, h: 98, tiltFactor: 3 };
+        return { w: 80, h: 105, tiltFactor: 3 };
       case 'md':
       default:
-        return { w: 155, h: 200, tiltFactor: 5 };
+        return { w: 160, h: 210, tiltFactor: 5 };
     }
   }, [size]);
 
@@ -116,26 +117,26 @@ export default function AndroidVoiceAvatar({
         perspective: '900px'
       }}
     >
-      {/* 1. Aura Volumétrica Ambiental Reactiva en el Cosmos */}
+      {/* 1. Aura Volumétrica Ambiental en Púrpura y Azul Cósmico */}
       <motion.div
         animate={{
-          scale: isSpeaking ? [1, 1.25, 1.12, 1.2, 1] : [1, 1.08, 1],
-          opacity: isSpeaking ? [0.45, 0.75, 0.55, 0.7, 0.45] : [0.25, 0.4, 0.25]
+          scale: isSpeaking ? [1, 1.28, 1.15, 1.24, 1] : [1, 1.08, 1],
+          opacity: isSpeaking ? [0.55, 0.85, 0.65, 0.8, 0.55] : [0.3, 0.48, 0.3]
         }}
         transition={{
-          duration: isSpeaking ? 1.2 : 3.4,
+          duration: isSpeaking ? 1.2 : 3.5,
           repeat: Infinity,
           ease: 'easeInOut'
         }}
         className="absolute rounded-full blur-3xl pointer-events-none z-0"
         style={{
-          width: dimensions.w * 0.92,
-          height: dimensions.h * 0.92,
-          background: 'radial-gradient(circle, rgba(34,211,238,0.5) 0%, rgba(99,102,241,0.25) 45%, transparent 70%)'
+          width: dimensions.w * 0.95,
+          height: dimensions.h * 0.95,
+          background: 'radial-gradient(circle, rgba(168,85,247,0.45) 0%, rgba(59,130,246,0.35) 45%, rgba(99,102,241,0.15) 70%, transparent 80%)'
         }}
       />
 
-      {/* 2. Cuerpo Androide Articulado con 3D Parallax Tilt y Hover Flotante */}
+      {/* 2. Cuerpo Androide Articulado con 3D Parallax Tilt */}
       <motion.div
         animate={{
           y: isSpeaking ? [0, -7, 2, -5, 0] : [0, -5, 0],
@@ -153,43 +154,71 @@ export default function AndroidVoiceAvatar({
         }}
       >
         <svg
-          viewBox="0 0 200 260"
-          className="w-full h-full filter drop-shadow-[0_14px_30px_rgba(6,182,212,0.25)] pointer-events-none"
+          viewBox="0 0 210 275"
+          className="w-full h-full filter drop-shadow-[0_16px_36px_rgba(124,58,237,0.3)] pointer-events-none"
           xmlns="http://www.w3.org/2000/svg"
         >
           <defs>
-            {/* Gradientes Metálicos del Chasis */}
+            {/* Gradiente Chasis Principal (Azul Noche Profundo & Púrpura) */}
             <linearGradient id="auraChassisGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#1e293b" />
-              <stop offset="50%" stopColor="#0f172a" />
-              <stop offset="100%" stopColor="#060913" />
+              <stop offset="0%" stopColor="#1e1b4b" />
+              <stop offset="45%" stopColor="#0f172a" />
+              <stop offset="100%" stopColor="#2e1065" />
             </linearGradient>
 
-            {/* Gradiente de Blindaje Blanco/Perla Pulido */}
-            <linearGradient id="auraArmorPearl" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#f8fafc" />
-              <stop offset="70%" stopColor="#cbd5e1" />
-              <stop offset="100%" stopColor="#94a3b8" />
+            {/* Gradiente Traje de Secretaria Ejecutiva (Púrpura Imperial a Índigo Real) */}
+            <linearGradient id="auraSuitGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#6d28d9" />
+              <stop offset="40%" stopColor="#581c87" />
+              <stop offset="100%" stopColor="#312e81" />
             </linearGradient>
 
-            {/* Gradiente del Cabello Biomecánico */}
-            <linearGradient id="auraHairGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.95" />
-              <stop offset="35%" stopColor="#6366f1" />
-              <stop offset="75%" stopColor="#1e1b4b" />
-              <stop offset="100%" stopColor="#090d1a" />
+            {/* Gradiente Solapa de Blazer (Morado Vibrante Satinado) */}
+            <linearGradient id="auraLapelGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#8b5cf6" />
+              <stop offset="50%" stopColor="#7c3aed" />
+              <stop offset="100%" stopColor="#4c1d95" />
             </linearGradient>
 
-            {/* Gradiente de la Visera Panorámica */}
-            <linearGradient id="auraVisorGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#030712" />
-              <stop offset="50%" stopColor="#0b1329" />
-              <stop offset="100%" stopColor="#020617" />
+            {/* Gradiente Blusa Interior Ejecutiva Cuello V (Blanco Perla Tecnológico) */}
+            <linearGradient id="auraBlouseGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#ffffff" />
+              <stop offset="70%" stopColor="#e0e7ff" />
+              <stop offset="100%" stopColor="#c7d2fe" />
             </linearGradient>
 
-            {/* Filtro de Glow para Ojos, Reactor y Pelo */}
+            {/* Gradiente Chignon / Recogido Ejecutivo Biónico */}
+            <linearGradient id="auraBunGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#7c3aed" />
+              <stop offset="50%" stopColor="#4c1d95" />
+              <stop offset="100%" stopColor="#1e1b4b" />
+            </linearGradient>
+
+            {/* Gradiente Casco/Chasis de Cabeza Femenina (Azul Cobalto & Violeta Oscuro) */}
+            <linearGradient id="auraHeadGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#1e1b4b" />
+              <stop offset="35%" stopColor="#312e81" />
+              <stop offset="70%" stopColor="#4c1d95" />
+              <stop offset="100%" stopColor="#0f172a" />
+            </linearGradient>
+
+            {/* Gradiente Montura de Gafas Inteligentes */}
+            <linearGradient id="auraGlassesGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#a855f7" />
+              <stop offset="50%" stopColor="#38bdf8" />
+              <stop offset="100%" stopColor="#c084fc" />
+            </linearGradient>
+
+            {/* Gradiente Bolso de Mano Cibernético */}
+            <linearGradient id="auraBagGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#7c3aed" />
+              <stop offset="50%" stopColor="#581c87" />
+              <stop offset="100%" stopColor="#1e1b4b" />
+            </linearGradient>
+
+            {/* Filtro de Resplandor Neón */}
             <filter id="auraGlow" x="-30%" y="-30%" width="160%" height="160%">
-              <feGaussianBlur stdDeviation="3.5" result="blur" />
+              <feGaussianBlur stdDeviation="3.2" result="blur" />
               <feMerge>
                 <feMergeNode in="blur" />
                 <feMergeNode in="SourceGraphic" />
@@ -198,339 +227,435 @@ export default function AndroidVoiceAvatar({
           </defs>
 
           {/* ========================================================= */}
-          {/* A. CABELLO BIOMECÁNICO FEMENINO (CAPA TRASERA EXTENDIDA)  */}
+          {/* A. RECOGIDO / CHIGNON EJECUTIVO SUPERIOR (Elegancia Pura)  */}
           {/* ========================================================= */}
-          <g transform="translate(100, 78)">
-            {/* Melena posterior fluida que cae a los lados del torso */}
-            <path
-              d="M -36 -22 C -62 15 -58 70 -46 112 C -36 85 -30 38 -24 15 Z"
-              fill="url(#auraHairGrad)"
-              opacity="0.9"
-            />
-            <path
-              d="M 36 -22 C 62 15 58 70 46 112 C 36 85 30 38 24 15 Z"
-              fill="url(#auraHairGrad)"
-              opacity="0.9"
-            />
-            {/* Destellos de filamentos de fibra óptica traseros */}
-            <line x1="-50" y1="35" x2="-42" y2="95" stroke="#38bdf8" strokeWidth="1.4" opacity="0.65" strokeDasharray="4 3" />
-            <line x1="50" y1="35" x2="42" y2="95" stroke="#38bdf8" strokeWidth="1.4" opacity="0.65" strokeDasharray="4 3" />
-          </g>
-
-          {/* ========================================================= */}
-          {/* B. TORSO, CHASIS Y CINTURA PÉLVICA CONTINUA              */}
-          {/* ========================================================= */}
-          <g transform="translate(100, 155)">
-            {/* Chasis Pectoral Estilizado */}
-            <path
-              d="M -28 -24 L 28 -24 L 22 18 L -22 18 Z"
-              fill="url(#auraChassisGrad)"
-              stroke="#22d3ee"
-              strokeWidth="2"
-            />
-
-            {/* Placas de Blindaje Pectoral Femenino en Perla */}
-            <path
-              d="M -25 -20 C -12 -20 -4 -10 -4 2 C -14 4 -22 -2 -25 -20 Z"
-              fill="url(#auraArmorPearl)"
-              stroke="#38bdf8"
-              strokeWidth="1"
-              opacity="0.95"
-            />
-            <path
-              d="M 25 -20 C 12 -20 4 -10 4 2 C 14 4 22 -2 25 -20 Z"
-              fill="url(#auraArmorPearl)"
-              stroke="#38bdf8"
-              strokeWidth="1"
-              opacity="0.95"
-            />
-
-            {/* Líneas de Iluminación Lateral */}
-            <line x1="-16" y1="10" x2="-6" y2="10" stroke="#22d3ee" strokeWidth="1.5" />
-            <line x1="6" y1="10" x2="16" y2="10" stroke="#22d3ee" strokeWidth="1.5" />
-
-            {/* Reactor Cuántico Central (Gema Estelar Diamante ✦) */}
-            <g transform="translate(0, -6)">
-              {/* Anillo de Contención Exterior */}
-              <circle
-                cx="0"
-                cy="0"
-                r="11"
-                fill="#050814"
-                stroke="#22d3ee"
-                strokeWidth="1.8"
-              />
-              {/* Prisma Diamante de Plasma Pulsante */}
-              <motion.path
-                d="M 0 -8 L 7 0 L 0 8 L -7 0 Z"
-                fill="#38bdf8"
-                filter="url(#auraGlow)"
-                animate={{
-                  scale: isSpeaking ? [1, 1.3, 1] : [1, 1.1, 1],
-                  opacity: isSpeaking ? [0.85, 1, 0.85] : [0.7, 0.95, 0.7]
-                }}
-                transition={{
-                  duration: isSpeaking ? 0.6 : 1.6,
-                  repeat: Infinity,
-                  ease: 'easeInOut'
-                }}
-              />
-              {/* Núcleo Blanco Puro de Singularidad */}
-              <circle cx="0" cy="0" r="2.5" fill="#ffffff" />
-            </g>
-
-            {/* Cintura y Cadera Pélvica Metálica (Conexión Continua con el Propulsor) */}
-            <path
-              d="M -18 18 L 18 18 L 12 36 L -12 36 Z"
-              fill="url(#auraChassisGrad)"
-              stroke="#22d3ee"
+          <g transform="translate(105, 52)">
+            {/* Moño Biónico Ovalado Satinado */}
+            <ellipse
+              cx="0"
+              cy="0"
+              rx="20"
+              ry="12"
+              fill="url(#auraBunGrad)"
+              stroke="#8b5cf6"
               strokeWidth="1.8"
             />
-            <line x1="-9" y1="26" x2="9" y2="26" stroke="#38bdf8" strokeWidth="1.4" />
-            <line x1="-7" y1="31" x2="7" y2="31" stroke="#22d3ee" strokeWidth="1.2" />
-
-            {/* Cuello Estilizado con Anillos de Fibra Óptica */}
-            <rect
-              x="-9"
-              y="-32"
-              width="18"
-              height="9"
-              rx="3"
-              fill="#0f172a"
-              stroke="#22d3ee"
-              strokeWidth="1.5"
+            {/* Pasador / Tiara de Luz Azul Cian en el Recogido */}
+            <path
+              d="M -16 2 Q 0 -6 16 2"
+              stroke="#38bdf8"
+              strokeWidth="2"
+              fill="none"
+              strokeLinecap="round"
+              filter="url(#auraGlow)"
             />
-            <line x1="-7" y1="-28" x2="7" y2="-28" stroke="#38bdf8" strokeWidth="1" />
-            <line x1="-7" y1="-25" x2="7" y2="-25" stroke="#38bdf8" strokeWidth="1" />
+            <circle cx="0" cy="-2" r="2" fill="#ffffff" />
           </g>
 
           {/* ========================================================= */}
-          {/* C. PROPULSOR / BASE ANTI-GRAVEDAD ENSAMBLADA               */}
+          {/* B. PROPULSOR / BASE ANTI-GRAVEDAD ENSAMBLADA A LA CADERA  */}
           {/* ========================================================= */}
-          <g transform="translate(100, 191)">
-            {/* Llama de Plasma Cian de Levitación */}
+          <g transform="translate(105, 206)">
+            {/* Plasma Púrpura y Cian de Levitación */}
             <motion.ellipse
               cx="0"
               cy="16"
-              rx="15"
-              ry="8"
-              fill="#22d3ee"
+              rx="18"
+              ry="9"
+              fill="#a855f7"
               filter="url(#auraGlow)"
               animate={{
-                ry: isSpeaking ? [9, 16, 9] : [7, 12, 7],
-                opacity: isSpeaking ? [0.75, 1, 0.75] : [0.6, 0.85, 0.6],
-                scaleX: [1, 1.15, 1]
+                ry: isSpeaking ? [9, 18, 9] : [7, 13, 7],
+                opacity: isSpeaking ? [0.8, 1, 0.8] : [0.65, 0.9, 0.65],
+                scaleX: [1, 1.14, 1]
               }}
               transition={{ duration: 0.45, repeat: Infinity, ease: 'easeInOut' }}
             />
-            {/* Núcleo Blanco de Plasma */}
             <motion.ellipse
               cx="0"
               cy="14"
-              rx="7"
-              ry="4"
-              fill="#ffffff"
-              animate={{ opacity: [0.8, 1, 0.8] }}
-              transition={{ duration: 0.25, repeat: Infinity }}
+              rx="11"
+              ry="5"
+              fill="#38bdf8"
+              filter="url(#auraGlow)"
+              animate={{ opacity: [0.75, 1, 0.75] }}
+              transition={{ duration: 0.3, repeat: Infinity }}
             />
-            {/* Boquilla de Escape Metálica Ensamblada a la Cintura */}
+            {/* Núcleo Blanco de Flotación */}
+            <circle cx="0" cy="12" r="3.2" fill="#ffffff" />
+            
+            {/* Tobera Mecánica Ensamblada Directamente a la Falda */}
             <path
-              d="M -12 0 L -8 11 L 8 11 L 12 0 Z"
-              fill="#1e293b"
-              stroke="#22d3ee"
+              d="M -15 0 L -10 11 L 10 11 L 15 0 Z"
+              fill="#1e1b4b"
+              stroke="#8b5cf6"
               strokeWidth="1.8"
             />
-            <line x1="-7" y1="5" x2="7" y2="5" stroke="#38bdf8" strokeWidth="1.2" />
+            <line x1="-9" y1="5" x2="9" y2="5" stroke="#38bdf8" strokeWidth="1.4" />
           </g>
 
           {/* ========================================================= */}
-          {/* D. BRAZOS Y HOMBRERAS ARTICULADAS                         */}
+          {/* C. TORSO: TRAJE DE SECRETARIA EJECUTIVA (BLAZER & BLUSA)  */}
           {/* ========================================================= */}
-          {/* Brazo Izquierdo (Mano gesticulando) */}
+          <g transform="translate(105, 164)">
+            {/* Falda de Tubo / Cadera Ejecutiva Biónica */}
+            <path
+              d="M -22 22 L 22 22 L 15 42 L -15 42 Z"
+              fill="url(#auraSuitGrad)"
+              stroke="#8b5cf6"
+              strokeWidth="1.6"
+            />
+            {/* Cinturón Delgado Ejecutivo con Hebilla de Gema */}
+            <rect x="-21" y="20" width="42" height="5" rx="1.5" fill="#0f172a" stroke="#a855f7" strokeWidth="1" />
+            <circle cx="0" cy="22.5" r="2.8" fill="#38bdf8" filter="url(#auraGlow)" />
+
+            {/* Base del Blazer Ejecutivo */}
+            <path
+              d="M -30 -26 L 30 -26 L 22 22 L -22 22 Z"
+              fill="url(#auraSuitGrad)"
+              stroke="#7c3aed"
+              strokeWidth="1.8"
+            />
+
+            {/* Cuello y Garganta Biónica Elegante Conectada Continuamente */}
+            <rect
+              x="-9"
+              y="-40"
+              width="18"
+              height="15"
+              rx="4"
+              fill="#1e1b4b"
+              stroke="#8b5cf6"
+              strokeWidth="1.4"
+            />
+            <line x1="-7" y1="-34" x2="7" y2="-34" stroke="#38bdf8" strokeWidth="1.2" />
+            <line x1="-7" y1="-30" x2="7" y2="-30" stroke="#a855f7" strokeWidth="1.2" />
+
+            {/* Cuello Camisero Blanco de Secretaria */}
+            <path
+              d="M -16 -26 L -7 -38 L 0 -26 L 7 -38 L 16 -26 Z"
+              fill="#ffffff"
+              stroke="#c7d2fe"
+              strokeWidth="1"
+            />
+
+            {/* Blusa Interior Escote en V (Blanco Perla) */}
+            <path
+              d="M -13 -26 L 13 -26 L 0 -4 Z"
+              fill="url(#auraBlouseGrad)"
+              stroke="#c7d2fe"
+              strokeWidth="0.8"
+            />
+
+            {/* Broche / Corbata Cuántica Estelar de Secretaria */}
+            <g transform="translate(0, -14)">
+              <polygon points="0,-4 3.5,0 0,6 -3.5,0" fill="#38bdf8" filter="url(#auraGlow)" />
+              <circle cx="0" cy="0" r="1.5" fill="#ffffff" />
+            </g>
+
+            {/* Solapa Izquierda del Blazer (Corte Ejecutivo Cruzado) */}
+            <path
+              d="M -30 -26 L -10 -26 L -2 -4 L -18 10 L -25 -6 Z"
+              fill="url(#auraLapelGrad)"
+              stroke="#a855f7"
+              strokeWidth="1.4"
+            />
+            {/* Solapa Derecha del Blazer */}
+            <path
+              d="M 30 -26 L 10 -26 L 2 -4 L 18 10 L 25 -6 Z"
+              fill="url(#auraLapelGrad)"
+              stroke="#a855f7"
+              strokeWidth="1.4"
+            />
+
+            {/* Botones Biónicos Dorados/Cian del Traje */}
+            <circle cx="0" cy="6" r="2" fill="#38bdf8" stroke="#8b5cf6" strokeWidth="0.8" />
+            <circle cx="0" cy="14" r="2" fill="#38bdf8" stroke="#8b5cf6" strokeWidth="0.8" />
+
+            {/* Pañuelo de Bolsillo Ejecutivo en el Pecho */}
+            <path d="M -23 -14 L -16 -14 L -19 -18 Z" fill="#38bdf8" opacity="0.9" />
+          </g>
+
+          {/* ========================================================= */}
+          {/* D. BRAZO DERECHO: SOSTENIENDO EL BOLSO DE MANO             */}
+          {/* ========================================================= */}
           <motion.g
             animate={
               isSpeaking
-                ? { rotate: [4, 16, 6, 14, 4], y: [0, -3, 0] }
+                ? { rotate: [-1, 2, -1], y: [0, -1, 0] }
+                : { rotate: [0, 1, 0], y: [0, 0.5, 0] }
+            }
+            transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ transformOrigin: '142px 146px' }}
+          >
+            {/* Hombrera Ejecutiva de la Manga Derecha */}
+            <circle cx="140" cy="146" r="10" fill="url(#auraLapelGrad)" stroke="#a855f7" strokeWidth="1.8" />
+            
+            {/* Manga del Blazer (Brazo doblado sosteniendo el bolso) */}
+            <path
+              d="M 140 146 L 152 176 L 140 196"
+              stroke="#581c87"
+              strokeWidth="7"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              fill="none"
+            />
+            <path
+              d="M 140 146 L 152 176 L 140 196"
+              stroke="#8b5cf6"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              fill="none"
+            />
+
+            {/* Muñeca y Mano Femenina Sujetando el Asa */}
+            <circle cx="140" cy="196" r="4.2" fill="#e0e7ff" stroke="#7c3aed" strokeWidth="1.2" />
+
+            {/* 👜 BOLSO DE MANO DE DISEÑADORA CIBERNÉTICA */}
+            <g transform="translate(140, 196)">
+              {/* Asa Curva del Bolso (Sujetada por la mano) */}
+              <path
+                d="M -7 0 C -7 -14 7 -14 7 0"
+                stroke="#c084fc"
+                strokeWidth="2.4"
+                fill="none"
+                strokeLinecap="round"
+              />
+
+              {/* Cuerpo del Bolso Ejecutivo */}
+              <rect
+                x="-15"
+                y="0"
+                width="30"
+                height="24"
+                rx="4"
+                fill="url(#auraBagGrad)"
+                stroke="#a855f7"
+                strokeWidth="1.6"
+              />
+
+              {/* Solapa / Broche del Bolso */}
+              <path
+                d="M -15 0 L 15 0 L 12 11 L -12 11 Z"
+                fill="#6d28d9"
+                stroke="#c084fc"
+                strokeWidth="1"
+              />
+
+              {/* Cerradura Metálica de Lujo (Gema Azul Cian) */}
+              <rect x="-3.5" y="9" width="7" height="5" rx="1.5" fill="#0f172a" stroke="#38bdf8" strokeWidth="1" />
+              <circle cx="0" cy="11.5" r="1.5" fill="#38bdf8" filter="url(#auraGlow)" />
+
+              {/* Pespunte / Costura Biónica del Bolso */}
+              <line x1="-12" y1="20" x2="12" y2="20" stroke="#38bdf8" strokeWidth="0.8" strokeDasharray="2 1.5" opacity="0.8" />
+            </g>
+          </motion.g>
+
+          {/* ========================================================= */}
+          {/* E. BRAZO IZQUIERDO: GESTO ELEGANTE DE BIENVENIDA          */}
+          {/* ========================================================= */}
+          <motion.g
+            animate={
+              isSpeaking
+                ? { rotate: [3, 15, 5, 14, 3], y: [0, -3, 0] }
                 : { rotate: [0, 4, 0], y: [0, 1, 0] }
             }
             transition={{
-              duration: isSpeaking ? 1.2 : 3,
+              duration: isSpeaking ? 1.2 : 3.2,
               repeat: Infinity,
               ease: 'easeInOut'
             }}
-            style={{ transformOrigin: '65px 140px' }}
+            style={{ transformOrigin: '70px 146px' }}
           >
-            {/* Hombrera Curva Izquierda */}
-            <circle cx="65" cy="140" r="9" fill="url(#auraArmorPearl)" stroke="#22d3ee" strokeWidth="1.8" />
-            <circle cx="65" cy="140" r="3.5" fill="#38bdf8" />
-            {/* Brazo y antebrazo */}
-            <line x1="65" y1="140" x2="52" y2="168" stroke="#0f172a" strokeWidth="5.5" strokeLinecap="round" />
-            <line x1="65" y1="140" x2="52" y2="168" stroke="#22d3ee" strokeWidth="1.8" strokeLinecap="round" />
-            <circle cx="52" cy="168" r="4" fill="#1e293b" stroke="#38bdf8" strokeWidth="1.5" />
-            {/* Mano Mecha Estilizada */}
-            <path d="M 52 168 L 46 182 L 40 180" stroke="#cbd5e1" strokeWidth="2" strokeLinecap="round" fill="none" />
-          </motion.g>
-
-          {/* Brazo Derecho */}
-          <motion.g
-            animate={
-              isSpeaking
-                ? { rotate: [-4, -14, -6, -12, -4], y: [0, -2, 0] }
-                : { rotate: [0, -3, 0], y: [0, 1, 0] }
-            }
-            transition={{
-              duration: isSpeaking ? 1.3 : 3.2,
-              repeat: Infinity,
-              ease: 'easeInOut'
-            }}
-            style={{ transformOrigin: '135px 140px' }}
-          >
-            {/* Hombrera Curva Derecha */}
-            <circle cx="135" cy="140" r="9" fill="url(#auraArmorPearl)" stroke="#22d3ee" strokeWidth="1.8" />
-            <circle cx="135" cy="140" r="3.5" fill="#38bdf8" />
-            {/* Brazo */}
-            <line x1="135" y1="140" x2="148" y2="168" stroke="#0f172a" strokeWidth="5.5" strokeLinecap="round" />
-            <line x1="135" y1="140" x2="148" y2="168" stroke="#22d3ee" strokeWidth="1.8" strokeLinecap="round" />
-            <circle cx="148" cy="168" r="4" fill="#1e293b" stroke="#38bdf8" strokeWidth="1.5" />
-            {/* Mano Mecha Estilizada */}
-            <path d="M 148 168 L 154 182 L 160 180" stroke="#cbd5e1" strokeWidth="2" strokeLinecap="round" fill="none" />
-          </motion.g>
-
-          {/* ========================================================= */}
-          {/* E. CABEZA, CASCO Y ROSTRO FEMENINO DE AURA                */}
-          {/* ========================================================= */}
-          <g transform="translate(100, 84)">
+            {/* Hombrera Ejecutiva de la Manga Izquierda */}
+            <circle cx="70" cy="146" r="10" fill="url(#auraLapelGrad)" stroke="#a855f7" strokeWidth="1.8" />
             
-            {/* Auriculares / Receptores Auditivos Laterales con Halo */}
-            <rect x="-42" y="-14" width="9" height="28" rx="4.5" fill="#1e293b" stroke="#22d3ee" strokeWidth="1.8" />
-            <circle cx="-37.5" cy="0" r="2.5" fill="#38bdf8" filter="url(#auraGlow)" />
-            <rect x="33" y="-14" width="9" height="28" rx="4.5" fill="#1e293b" stroke="#22d3ee" strokeWidth="1.8" />
-            <circle cx="37.5" cy="0" r="2.5" fill="#38bdf8" filter="url(#auraGlow)" />
+            {/* Manga del Blazer */}
+            <line x1="70" y1="146" x2="56" y2="176" stroke="#581c87" strokeWidth="7" strokeLinecap="round" />
+            <line x1="70" y1="146" x2="56" y2="176" stroke="#8b5cf6" strokeWidth="2" strokeLinecap="round" />
 
-            {/* Casco Principal de Androide */}
-            <rect
-              x="-35"
-              y="-36"
-              width="70"
-              height="66"
-              rx="20"
-              fill="url(#auraChassisGrad)"
-              stroke="#22d3ee"
+            {/* Antebrazo Biónico Púrpura y Articulación */}
+            <circle cx="56" cy="176" r="4.2" fill="#1e1b4b" stroke="#38bdf8" strokeWidth="1.5" />
+            <line x1="56" y1="176" x2="44" y2="198" stroke="#1e1b4b" strokeWidth="4.5" strokeLinecap="round" />
+            <line x1="56" y1="176" x2="44" y2="198" stroke="#a855f7" strokeWidth="1.4" strokeLinecap="round" />
+
+            {/* Palma Femenina Biónica Abierta en Gesto de Acogida */}
+            <circle cx="44" cy="198" r="3.2" fill="#1e1b4b" stroke="#38bdf8" strokeWidth="1" />
+            <path
+              d="M 44 198 C 40 205 36 211 31 213 C 30 208 34 202 41 197 Z"
+              fill="#e0e7ff"
+              stroke="#a855f7"
+              strokeWidth="0.8"
+            />
+            <path
+              d="M 44 198 C 39 207 34 214 28 217"
+              stroke="#c084fc"
+              strokeWidth="1.4"
+              strokeLinecap="round"
+              fill="none"
+            />
+          </motion.g>
+
+          {/* ========================================================= */}
+          {/* F. CABEZA Y ROSTRO: AURA CON GAFAS Y MAQUILLAJE           */}
+          {/* ========================================================= */}
+          <g transform="translate(105, 86)">
+            {/* Contorno del Chasis Craneal Femenino y Elegante (Sin pelo raro) */}
+            <path
+              d="M -34 -20 C -34 -44 34 -44 34 -20 C 34 8 28 32 0 38 C -28 32 -34 8 -34 -20 Z"
+              fill="url(#auraHeadGrad)"
+              stroke="#8b5cf6"
               strokeWidth="2.2"
             />
 
-            {/* Visera Panorámica de Cristal Oscuro */}
+            {/* Placa Frontal Superior Estilizada en Morado Brillante */}
+            <path
+              d="M -26 -28 C -14 -40 14 -40 26 -28 C 16 -34 -16 -34 -26 -28 Z"
+              fill="#7c3aed"
+              stroke="#a855f7"
+              strokeWidth="1"
+              opacity="0.9"
+            />
+
+            {/* Auriculares / Pendientes Biónicos Ejecutivos a los Lados */}
+            <g transform="translate(-36, -6)">
+              <rect x="-4" y="-12" width="7" height="24" rx="3.5" fill="#1e1b4b" stroke="#38bdf8" strokeWidth="1.6" />
+              <circle cx="-0.5" cy="0" r="2.2" fill="#a855f7" filter="url(#auraGlow)" />
+            </g>
+            <g transform="translate(36, -6)">
+              <rect x="-3" y="-12" width="7" height="24" rx="3.5" fill="#1e1b4b" stroke="#38bdf8" strokeWidth="1.6" />
+              <circle cx="0.5" cy="0" r="2.2" fill="#a855f7" filter="url(#auraGlow)" />
+            </g>
+
+            {/* Visera Panorámica de Cristal Oscuro y Pulido */}
             <rect
               x="-27"
-              y="-22"
+              y="-20"
               width="54"
-              height="42"
-              rx="13"
-              fill="url(#auraVisorGrad)"
-              stroke="#38bdf8"
+              height="40"
+              rx="12"
+              fill="#060913"
+              stroke="#6366f1"
               strokeWidth="1.6"
             />
 
-            {/* Reflejo Especular Superior Curvo en el Visor */}
+            {/* Reflejo Especular Superior de Cristal */}
             <path
-              d="M -21 -18 L 15 -18 C 21 -18 21 -13 15 -13 L -21 -13 Z"
+              d="M -21 -16 L 16 -16 C 21 -16 21 -12 16 -12 L -21 -12 Z"
               fill="#ffffff"
-              opacity="0.16"
+              opacity="0.14"
             />
 
-            {/* Rubor Facial Dérmico Suave (Mejillas Femeninas) */}
-            <ellipse cx="-16" cy="6" rx="5" ry="2.5" fill="#f472b6" opacity="0.22" filter="url(#auraGlow)" />
-            <ellipse cx="16" cy="6" rx="5" ry="2.5" fill="#f472b6" opacity="0.22" filter="url(#auraGlow)" />
+            {/* ======================================================= */}
+            {/* MAQUILLAJE FEMENINO Y RUBOR EN MEJILLAS                */}
+            {/* ======================================================= */}
+            <ellipse cx="-16" cy="7" rx="5.5" ry="2.6" fill="#f472b6" opacity="0.32" filter="url(#auraGlow)" />
+            <ellipse cx="16" cy="7" rx="5.5" ry="2.6" fill="#f472b6" opacity="0.32" filter="url(#auraGlow)" />
 
             {/* ======================================================= */}
-            {/* OJOS FEMENINOS EXPRESIVOS CON PESTAÑAS Y EYE-TRACKING   */}
+            {/* OJOS FEMENINOS CON PESTAÑAS LARGAS Y PARPADEO           */}
             {/* ======================================================= */}
             <g filter="url(#auraGlow)">
-              {/* Ojo Izquierdo con Parpadeo */}
+              {/* Ojo Izquierdo */}
               <motion.g
                 animate={{ scaleY: blink ? 0.08 : 1 }}
                 transition={{ duration: 0.1 }}
                 style={{ transformOrigin: '-11px -4px' }}
               >
-                {/* Pestaña Superior Femenina Curva */}
+                {/* Pestañas Superiores Gruesas y Curvas */}
                 <path
-                  d="M -20 -8 C -14 -13 -6 -13 -2 -8"
+                  d="M -20 -9 C -14 -15 -7 -14 -2 -9"
                   stroke="#38bdf8"
-                  strokeWidth="2.2"
+                  strokeWidth="2.4"
                   strokeLinecap="round"
                   fill="none"
                 />
-                {/* Pestañas Exteriores */}
-                <line x1="-20" y1="-8" x2="-23" y2="-11" stroke="#38bdf8" strokeWidth="1.4" strokeLinecap="round" />
-                <line x1="-18" y1="-10" x2="-20" y2="-14" stroke="#38bdf8" strokeWidth="1.2" strokeLinecap="round" />
+                <line x1="-20" y1="-9" x2="-24" y2="-13" stroke="#a855f7" strokeWidth="1.6" strokeLinecap="round" />
+                <line x1="-18" y1="-12" x2="-21" y2="-16" stroke="#38bdf8" strokeWidth="1.4" strokeLinecap="round" />
+                <line x1="-14" y1="-14" x2="-15" y2="-18" stroke="#c084fc" strokeWidth="1.2" strokeLinecap="round" />
 
-                {/* Iris Ovalado Azul Cian */}
-                <ellipse
-                  cx="-11"
-                  cy="-4"
-                  rx="7.5"
-                  ry="8.5"
-                  fill="#0284c7"
-                />
-                {/* Centro Bioluminiscente */}
-                <circle cx="-11" cy="-4" r="5" fill="#38bdf8" />
-                {/* Pupila Cuántica */}
-                <circle cx="-11" cy="-4" r="2.8" fill="#032147" />
-                {/* Destello Especular Blanco Principal */}
+                {/* Iris Morado / Azul Cian */}
+                <ellipse cx="-11" cy="-4" rx="7.5" ry="8.5" fill="#4338ca" />
+                <circle cx="-11" cy="-4" r="5.2" fill="#38bdf8" />
+                <circle cx="-11" cy="-4" r="2.8" fill="#1e1b4b" />
+                {/* Destellos Especulares */}
                 <circle cx="-9" cy="-6" r="2.4" fill="#ffffff" />
-                {/* Micro-destello secundario */}
-                <circle cx="-13" cy="-2" r="1.1" fill="#ffffff" opacity="0.8" />
+                <circle cx="-13" cy="-2" r="1.1" fill="#ffffff" opacity="0.85" />
               </motion.g>
 
-              {/* Ojo Derecho con Parpadeo */}
+              {/* Ojo Derecho */}
               <motion.g
                 animate={{ scaleY: blink ? 0.08 : 1 }}
                 transition={{ duration: 0.1 }}
                 style={{ transformOrigin: '11px -4px' }}
               >
-                {/* Pestaña Superior Femenina Curva */}
+                {/* Pestañas Superiores Gruesas y Curvas */}
                 <path
-                  d="M 2 -8 C 6 -13 14 -13 20 -8"
+                  d="M 2 -9 C 7 -14 14 -15 20 -9"
                   stroke="#38bdf8"
-                  strokeWidth="2.2"
+                  strokeWidth="2.4"
                   strokeLinecap="round"
                   fill="none"
                 />
-                {/* Pestañas Exteriores */}
-                <line x1="20" y1="-8" x2="23" y2="-11" stroke="#38bdf8" strokeWidth="1.4" strokeLinecap="round" />
-                <line x1="18" y1="-10" x2="20" y2="-14" stroke="#38bdf8" strokeWidth="1.2" strokeLinecap="round" />
+                <line x1="20" y1="-9" x2="24" y2="-13" stroke="#a855f7" strokeWidth="1.6" strokeLinecap="round" />
+                <line x1="18" y1="-12" x2="21" y2="-16" stroke="#38bdf8" strokeWidth="1.4" strokeLinecap="round" />
+                <line x1="14" y1="-14" x2="15" y2="-18" stroke="#c084fc" strokeWidth="1.2" strokeLinecap="round" />
 
-                {/* Iris Ovalado Azul Cian */}
-                <ellipse
-                  cx="11"
-                  cy="-4"
-                  rx="7.5"
-                  ry="8.5"
-                  fill="#0284c7"
-                />
-                {/* Centro Bioluminiscente */}
-                <circle cx="11" cy="-4" r="5" fill="#38bdf8" />
-                {/* Pupila Cuántica */}
-                <circle cx="11" cy="-4" r="2.8" fill="#032147" />
-                {/* Destello Especular Blanco Principal */}
+                {/* Iris Morado / Azul Cian */}
+                <ellipse cx="11" cy="-4" rx="7.5" ry="8.5" fill="#4338ca" />
+                <circle cx="11" cy="-4" r="5.2" fill="#38bdf8" />
+                <circle cx="11" cy="-4" r="2.8" fill="#1e1b4b" />
+                {/* Destellos Especulares */}
                 <circle cx="13" cy="-6" r="2.4" fill="#ffffff" />
-                {/* Micro-destello secundario */}
-                <circle cx="9" cy="-2" r="1.1" fill="#ffffff" opacity="0.8" />
+                <circle cx="9" cy="-2" r="1.1" fill="#ffffff" opacity="0.85" />
               </motion.g>
+            </g>
+
+            {/* ======================================================= */}
+            {/* 👓 GAFAS EJECUTIVAS INTELIGENTES DE SECRETARIA          */}
+            {/* ======================================================= */}
+            <g>
+              {/* Lente Izquierda Tintada con Montura Cat-Eye */}
+              <path
+                d="M -23 -13 L -3 -11 C -2 1 -6 6 -12 6 C -19 6 -24 1 -23 -13 Z"
+                fill="rgba(56, 189, 248, 0.12)"
+                stroke="url(#auraGlassesGrad)"
+                strokeWidth="1.8"
+              />
+              {/* Reflejo Angular en el Cristal Izquierdo */}
+              <line x1="-20" y1="-8" x2="-8" y2="3" stroke="#ffffff" strokeWidth="1" opacity="0.45" strokeLinecap="round" />
+
+              {/* Lente Derecha Tintada con Montura Cat-Eye */}
+              <path
+                d="M 3 -11 L 23 -13 C 24 1 19 6 12 6 C 6 6 2 1 3 -11 Z"
+                fill="rgba(56, 189, 248, 0.12)"
+                stroke="url(#auraGlassesGrad)"
+                strokeWidth="1.8"
+              />
+              {/* Reflejo Angular en el Cristal Derecho */}
+              <line x1="7" y1="-8" x2="19" y2="3" stroke="#ffffff" strokeWidth="1" opacity="0.45" strokeLinecap="round" />
+
+              {/* Puente Central Elegante de las Gafas */}
+              <path d="M -3 -8 Q 0 -11 3 -8" stroke="#c084fc" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+
+              {/* Patillas de las Gafas Hacia las Orejas */}
+              <line x1="-23" y1="-12" x2="-32" y2="-10" stroke="#a855f7" strokeWidth="1.6" strokeLinecap="round" />
+              <line x1="23" y1="-12" x2="32" y2="-10" stroke="#a855f7" strokeWidth="1.6" strokeLinecap="round" />
             </g>
 
             {/* ======================================================= */}
             {/* BOCA / SINTETIZADOR FONO-REACTIVO DINÁMICO              */}
             {/* ======================================================= */}
             {isSpeaking ? (
-              // Ecualizador Dinámico de Voz cuando AURA está hablando
-              <g transform="translate(0, 11)" filter="url(#auraGlow)">
+              // Ecualizador Dinámico de Voz cuando AURA habla
+              <g transform="translate(0, 15)" filter="url(#auraGlow)">
                 <motion.line
                   x1="-10"
                   y1="0"
                   x2="-10"
                   y2="0"
-                  stroke="#22d3ee"
+                  stroke="#a855f7"
                   strokeWidth="2"
                   strokeLinecap="round"
                   animate={{ y1: [-2, -5, -1, -4, -2], y2: [2, 5, 1, 4, 2] }}
@@ -541,7 +666,7 @@ export default function AndroidVoiceAvatar({
                   y1="0"
                   x2="-5"
                   y2="0"
-                  stroke="#ffffff"
+                  stroke="#38bdf8"
                   strokeWidth="2.2"
                   strokeLinecap="round"
                   animate={{ y1: [-3, -8, -2, -7, -3], y2: [3, 8, 2, 7, 3] }}
@@ -552,7 +677,7 @@ export default function AndroidVoiceAvatar({
                   y1="0"
                   x2="0"
                   y2="0"
-                  stroke="#38bdf8"
+                  stroke="#ffffff"
                   strokeWidth="2.8"
                   strokeLinecap="round"
                   animate={{ y1: [-4, -10, -3, -9, -4], y2: [4, 10, 3, 9, 4] }}
@@ -563,7 +688,7 @@ export default function AndroidVoiceAvatar({
                   y1="0"
                   x2="5"
                   y2="0"
-                  stroke="#ffffff"
+                  stroke="#38bdf8"
                   strokeWidth="2.2"
                   strokeLinecap="round"
                   animate={{ y1: [-3, -7, -2, -6, -3], y2: [3, 7, 2, 6, 3] }}
@@ -574,7 +699,7 @@ export default function AndroidVoiceAvatar({
                   y1="0"
                   x2="10"
                   y2="0"
-                  stroke="#22d3ee"
+                  stroke="#a855f7"
                   strokeWidth="2"
                   strokeLinecap="round"
                   animate={{ y1: [-2, -4, -1, -3, -2], y2: [2, 4, 1, 3, 2] }}
@@ -582,61 +707,20 @@ export default function AndroidVoiceAvatar({
                 />
               </g>
             ) : (
-              // Boca Amigable Femenina en Reposo
-              <path
-                d="M -5 10 Q 0 14 5 10"
-                fill="none"
-                stroke="#38bdf8"
-                strokeWidth="2"
-                strokeLinecap="round"
-                opacity="0.85"
-              />
+              // Labios Femeninos y Sonrisa Amable de Asistente en Reposo
+              <g transform="translate(0, 15)">
+                <path
+                  d="M -6 -1 Q 0 4 6 -1"
+                  fill="none"
+                  stroke="#f472b6"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  opacity="0.9"
+                />
+                {/* Brillo labial */}
+                <circle cx="0" cy="1.5" r="1" fill="#ffffff" opacity="0.75" />
+              </g>
             )}
-
-            {/* ======================================================= */}
-            {/* CABELLO FRONTAL / MECHONES BIOMECÁNICOS Y TIARA CUÁNTICA */}
-            {/* ======================================================= */}
-            {/* Mechón Izquierdo que enmarca la cara con física suave */}
-            <motion.path
-              d="M -26 -32 C -36 -10 -34 18 -27 34 C -29 20 -30 -5 -23 -26 Z"
-              fill="url(#auraHairGrad)"
-              stroke="#38bdf8"
-              strokeWidth="1"
-              animate={{ rotate: isSpeaking ? [-1.2, 1.8, -1.2] : [-0.6, 0.8, -0.6] }}
-              transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
-              style={{ transformOrigin: '-26px -32px' }}
-            />
-            {/* Mechón Derecho que enmarca la cara */}
-            <motion.path
-              d="M 26 -32 C 36 -10 34 18 27 34 C 29 20 30 -5 23 -26 Z"
-              fill="url(#auraHairGrad)"
-              stroke="#38bdf8"
-              strokeWidth="1"
-              animate={{ rotate: isSpeaking ? [1.2, -1.8, 1.2] : [0.6, -0.8, 0.6] }}
-              transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
-              style={{ transformOrigin: '26px -32px' }}
-            />
-
-            {/* Flequillo Cibernético Curvo en la Frente */}
-            <path
-              d="M -24 -24 Q -12 -16 0 -22 Q 12 -16 24 -24 Q 10 -27 0 -27 Q -10 -27 -24 -24 Z"
-              fill="url(#auraArmorPearl)"
-              stroke="#22d3ee"
-              strokeWidth="1.2"
-              opacity="0.95"
-            />
-
-            {/* Tiara / Corona Cuántica Superior con Gema Central */}
-            <path
-              d="M -20 -36 L 0 -48 L 20 -36 L 10 -35 L 0 -42 L -10 -35 Z"
-              fill="url(#auraArmorPearl)"
-              stroke="#22d3ee"
-              strokeWidth="1.5"
-              filter="url(#auraGlow)"
-            />
-            {/* Gema Central de la Tiara */}
-            <circle cx="0" cy="-42" r="3" fill="#38bdf8" filter="url(#auraGlow)" />
-            <circle cx="0" cy="-42" r="1.2" fill="#ffffff" />
           </g>
 
         </svg>
@@ -647,7 +731,7 @@ export default function AndroidVoiceAvatar({
         <span
           className={`absolute bottom-1 right-2 w-2.5 h-2.5 rounded-full z-30 transition-colors ${
             isSpeaking
-              ? 'bg-cyan-400 shadow-[0_0_12px_#22d3ee] animate-pulse'
+              ? 'bg-purple-400 shadow-[0_0_12px_#c084fc] animate-pulse'
               : 'bg-emerald-400 shadow-[0_0_8px_#34d399]'
           }`}
         />

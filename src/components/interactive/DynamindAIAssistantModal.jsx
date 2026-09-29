@@ -174,7 +174,6 @@ const AURA_I18N = {
 
 /**
  * Selector de Voz Humana Natural de Alta Definición
- * Prioriza voces Neural, Natural, Online y Google del sistema operativo con formantes humanos.
  */
 function pickNaturalHumanVoice(langCode) {
   if (typeof window === 'undefined' || !window.speechSynthesis) return null;
@@ -185,7 +184,6 @@ function pickNaturalHumanVoice(langCode) {
   const matching = voices.filter(v => v.lang.toLowerCase().startsWith(langPrefix));
   if (!matching.length) return voices[0] || null;
 
-  // Nivel 1: Voces "Natural" / "Neural" / "Online" de Microsoft Edge, Windows 11 o Chrome OS
   const naturalFemale = matching.find(v => {
     const name = v.name.toLowerCase();
     const isNatural = name.includes('natural') || name.includes('neural') || name.includes('online');
@@ -198,18 +196,15 @@ function pickNaturalHumanVoice(langCode) {
   });
   if (naturalFemale) return naturalFemale;
 
-  // Nivel 2: Cualquier voz natural/neural para ese idioma
   const anyNatural = matching.find(v => {
     const name = v.name.toLowerCase();
     return name.includes('natural') || name.includes('neural') || name.includes('online');
   });
   if (anyNatural) return anyNatural;
 
-  // Nivel 3: Voces Google de alta fidelidad
   const googleVoice = matching.find(v => v.name.toLowerCase().includes('google'));
   if (googleVoice) return googleVoice;
 
-  // Nivel 4: Voces femeninas tradicionales del sistema
   const femaleVoice = matching.find(v => {
     const name = v.name.toLowerCase();
     return name.includes('female') || name.includes('sabina') || name.includes('monica') || 
@@ -219,8 +214,109 @@ function pickNaturalHumanVoice(langCode) {
   });
   if (femaleVoice) return femaleVoice;
 
-  // Fallback: primera voz coincidente para el idioma
   return matching[0];
+}
+
+/**
+ * 🌌 Canvas de Estrellas Cósmicas Vivas del Chatbot (Inspirado en el Index)
+ * 120 estrellas titilantes a 60 FPS con nebulosas en violeta, índigo y azul cian.
+ */
+function ModalCosmicStarfield() {
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animationFrameId;
+    let width = (canvas.width = canvas.parentElement?.clientWidth || 900);
+    let height = (canvas.height = canvas.parentElement?.clientHeight || 700);
+
+    const handleResize = () => {
+      if (!canvas || !canvas.parentElement) return;
+      width = canvas.width = canvas.parentElement.clientWidth;
+      height = canvas.height = canvas.parentElement.clientHeight;
+    };
+    window.addEventListener('resize', handleResize);
+
+    const starCount = 140;
+    const stars = Array.from({ length: starCount }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      size: Math.random() * 1.8 + 0.5,
+      speedX: (Math.random() - 0.5) * 0.16,
+      speedY: (Math.random() - 0.5) * 0.16,
+      baseAlpha: Math.random() * 0.6 + 0.35,
+      pulseSpeed: Math.random() * 0.02 + 0.008,
+      phase: Math.random() * Math.PI * 2,
+      color: Math.random() > 0.45 ? '#ffffff' : Math.random() > 0.5 ? '#38bdf8' : Math.random() > 0.3 ? '#c084fc' : '#fbbf24'
+    }));
+
+    let frame = 0;
+
+    const render = () => {
+      frame++;
+      ctx.clearRect(0, 0, width, height);
+
+      // Nebulosa Cósmica 1 (Violeta / Púrpura Imperial)
+      const cx1 = width * 0.25 + Math.sin(frame * 0.0018) * (width * 0.06);
+      const cy1 = height * 0.35 + Math.cos(frame * 0.0018) * (height * 0.06);
+      const grad1 = ctx.createRadialGradient(cx1, cy1, 10, cx1, cy1, width * 0.45);
+      grad1.addColorStop(0, 'rgba(124, 58, 237, 0.14)');
+      grad1.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad1;
+      ctx.fillRect(0, 0, width, height);
+
+      // Nebulosa Cósmica 2 (Azul Cian Cósmico)
+      const cx2 = width * 0.82 + Math.cos(frame * 0.0015) * (width * 0.08);
+      const cy2 = height * 0.65 + Math.sin(frame * 0.0015) * (height * 0.08);
+      const grad2 = ctx.createRadialGradient(cx2, cy2, 10, cx2, cy2, width * 0.5);
+      grad2.addColorStop(0, 'rgba(56, 189, 248, 0.10)');
+      grad2.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad2;
+      ctx.fillRect(0, 0, width, height);
+
+      // Estrellas en movimiento y centelleo
+      for (let i = 0; i < stars.length; i++) {
+        const star = stars[i];
+        star.x += star.speedX;
+        star.y += star.speedY;
+
+        if (star.x < 0) star.x = width;
+        if (star.x > width) star.x = 0;
+        if (star.y < 0) star.y = height;
+        if (star.y > height) star.y = 0;
+
+        const currentAlpha = star.baseAlpha + Math.sin(frame * star.pulseSpeed + star.phase) * 0.35;
+        const clampedAlpha = Math.max(0.15, Math.min(1, currentAlpha));
+
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        ctx.fillStyle = star.color;
+        ctx.globalAlpha = clampedAlpha;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+
+      animationFrameId = requestAnimationFrame(render);
+    };
+
+    render();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 w-full h-full pointer-events-none z-0"
+    />
+  );
 }
 
 export default function DynamindAIAssistantModal({ isOpen, onClose }) {
@@ -280,7 +376,6 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
       return;
     }
 
-    // Limpieza de caracteres y signos fonéticamente disruptivos
     const cleanText = textToSpeak
       .replace(/[*_#`~]/g, '')
       .replace(/[🔮🍽️🏨💆‍♀️⚡💎👀✓✕●•→]/g, '')
@@ -291,14 +386,12 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
     const utterance = new SpeechSynthesisUtterance(cleanText);
     utterance.lang = strings.locale;
 
-    // Seleccionar la mejor voz natural para el idioma actual
     const bestVoice = pickNaturalHumanVoice(strings.locale);
     if (bestVoice) {
       utterance.voice = bestVoice;
       utterance.lang = bestVoice.lang;
     }
 
-    // Calibración acústica humana natural
     utterance.pitch = 1.0;
     utterance.rate = 0.96;
     utterance.volume = 1.0;
@@ -314,7 +407,6 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
 
   // Reproductor de Audio Neuronal de Estudio Oficial (Microsoft Azure Neural)
   const playAuraAudio = (audioKey, fallbackText) => {
-    // Si la voz está desactivada, silenciar todo y no reproducir
     if (!isVoiceActive) {
       if (audioRef.current) {
         audioRef.current.pause();
@@ -327,7 +419,6 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
       return;
     }
 
-    // Detener cualquier audio o síntesis previa
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
@@ -351,7 +442,6 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
     };
 
     audio.onerror = () => {
-      // Fallback transparente a SpeechSynthesis si el archivo no existe o falla la red
       audioRef.current = null;
       speakText(fallbackText);
     };
@@ -359,7 +449,6 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
     const playPromise = audio.play();
     if (playPromise !== undefined) {
       playPromise.catch(err => {
-        // Bloqueo de autoplay u otro impedimento
         audioRef.current = null;
         speakText(fallbackText);
       });
@@ -434,7 +523,6 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
     setMessages(prev => [...prev, userMsg, { sender: 'ai', text: reply, replyKey }]);
     setInputText('');
 
-    // Reproducir con audio neuronal de estudio en el idioma seleccionado
     playAuraAudio(replyKey, reply);
   };
 
@@ -467,68 +555,50 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
         className={`relative w-full max-w-4xl border rounded-3xl shadow-2xl overflow-hidden flex flex-col sm:flex-row h-[90vh] max-h-[740px] backdrop-blur-2xl transition-colors duration-300 ${
           isLight 
             ? 'bg-white/95 border-slate-200 text-slate-900 shadow-indigo-500/10' 
-            : 'bg-[#060913]/98 border-cyan-500/25 text-white shadow-[0_0_70px_rgba(6,182,212,0.14)]'
+            : 'bg-[#060913]/98 border-purple-500/30 text-white shadow-[0_0_80px_rgba(124,58,237,0.18)]'
         }`}
       >
         
-        {/* Fondo Estelar Sutil del Chatbot (Polvo Cósmico & Nebulosa Tenue sin saturar) */}
-        {!isLight && (
-          <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-0">
-            {/* Velo de nebulosa etérea */}
-            <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-cyan-500/[0.05] blur-3xl" />
-            <div className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-indigo-600/[0.05] blur-3xl" />
-            
-            {/* Constelación y micro-estrellas centelleantes estelares tenues */}
-            <svg className="absolute inset-0 w-full h-full opacity-35" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <radialGradient id="starGlow" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
-                  <stop offset="40%" stopColor="#38bdf8" stopOpacity="0.4" />
-                  <stop offset="100%" stopColor="#0284c7" stopOpacity="0" />
-                </radialGradient>
-              </defs>
-              {/* Estrellas microscópicas fijas y titilantes */}
-              <circle cx="8%" cy="14%" r="1" fill="#ffffff" opacity="0.6" />
-              <circle cx="85%" cy="10%" r="1.5" fill="url(#starGlow)" className="animate-pulse" style={{ animationDuration: '4s' }} />
-              <circle cx="42%" cy="6%" r="0.8" fill="#a5f3fc" opacity="0.5" />
-              <circle cx="94%" cy="40%" r="1" fill="#ffffff" opacity="0.4" />
-              <circle cx="5%" cy="70%" r="1.2" fill="url(#starGlow)" className="animate-pulse" style={{ animationDuration: '5.5s' }} />
-              <circle cx="78%" cy="80%" r="0.8" fill="#cbd5e1" opacity="0.5" />
-              <circle cx="24%" cy="90%" r="1" fill="#38bdf8" opacity="0.6" />
-              <circle cx="60%" cy="26%" r="0.8" fill="#ffffff" opacity="0.4" />
-              <circle cx="16%" cy="38%" r="1.2" fill="#a5f3fc" opacity="0.5" />
-              {/* Líneas tenues de constelación cuántica */}
-              <line x1="85%" y1="10%" x2="94%" y2="40%" stroke="#38bdf8" strokeWidth="0.5" strokeDasharray="3 3" opacity="0.12" />
-              <line x1="8%" y1="14%" x2="16%" y2="38%" stroke="#818cf8" strokeWidth="0.5" strokeDasharray="3 3" opacity="0.1" />
-            </svg>
-          </div>
-        )}
+        {/* 🌌 FONDO ESTELAR CÓSMICO RICO Y DINÁMICO (Idéntico a la atmósfera estelar del Index) */}
+        {!isLight && <ModalCosmicStarfield />}
+
+        {/* Botón Cerrar Absoluto (Desktop & Tablet) */}
+        <button
+          onClick={onClose}
+          className={`absolute top-4 right-4 z-30 p-2 rounded-xl transition-all cursor-pointer ${
+            isLight 
+              ? 'text-slate-500 hover:text-black hover:bg-slate-100' 
+              : 'text-zinc-400 hover:text-white hover:bg-white/[0.08] hover:border-purple-400/40 border border-transparent'
+          }`}
+          aria-label="Cerrar asistente"
+        >
+          <X className="w-5 h-5" />
+        </button>
 
         {/* ========================================================================= */}
-        {/* COLUMNA IZQUIERDA: ESCENARIO HOLOGRÁFICO LIBRE DE AURA (CERO CÍRCULOS/CAJAS) */}
+        {/* COLUMNA IZQUIERDA: BUSTO HOLOGRÁFICO LIBRE DE AURA (CERO CÍRCULOS/CAJAS)  */}
         {/* ========================================================================= */}
         <div className={`relative z-10 w-full sm:w-[310px] md:w-[350px] shrink-0 flex flex-col items-center justify-between p-5 sm:p-6 border-b sm:border-b-0 sm:border-r transition-colors ${
           isLight 
             ? 'border-slate-200 bg-slate-50/70' 
-            : 'border-cyan-500/20 bg-gradient-to-b from-cyan-950/20 via-[#060913]/40 to-indigo-950/20'
+            : 'border-purple-500/20 bg-gradient-to-b from-purple-950/25 via-[#060913]/40 to-indigo-950/25'
         }`}>
-          {/* Header Superior del Holograma */}
-          <div className="w-full flex items-center justify-between">
-            <div className="flex items-center gap-2">
+          
+          {/* Nombre Limpio Solicitado Arriba de Ella: Asistente AURA */}
+          <div className="w-full flex items-center justify-between pt-1">
+            <h3 className={`font-display font-bold text-base sm:text-lg tracking-tight flex items-center gap-2 ${
+              isLight ? 'text-slate-900' : 'text-white'
+            }`}>
               <span className="relative flex h-2 w-2">
                 <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
-                  isSpeaking ? 'bg-cyan-400' : 'bg-emerald-400'
+                  isSpeaking ? 'bg-purple-400' : 'bg-indigo-400'
                 }`} />
                 <span className={`relative inline-flex rounded-full h-2 w-2 ${
-                  isSpeaking ? 'bg-cyan-500' : 'bg-emerald-500'
+                  isSpeaking ? 'bg-purple-500' : 'bg-indigo-500'
                 }`} />
               </span>
-              <span className={`text-[10px] font-mono tracking-widest uppercase font-semibold ${
-                isLight ? 'text-indigo-600' : 'text-cyan-300'
-              }`}>
-                ✦ AURA · NEURAL CORE
-              </span>
-            </div>
+              <span>Asistente <span className="text-purple-400 font-extrabold">AURA</span></span>
+            </h3>
 
             {/* Botón cerrar visible en móvil en este bloque */}
             <button
@@ -542,199 +612,104 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
             </button>
           </div>
 
-          {/* Busto Desencapsulado de Medio Cuerpo de AURA (Flotando Libremente en el Espacio) */}
+          {/* Busto de AURA en Traje de Secretaria Ejecutiva Azul y Morado */}
           <div className="relative flex-1 flex items-center justify-center py-2 sm:py-0 w-full overflow-visible">
             <AndroidVoiceAvatar 
               size="hero" 
               isSpeaking={isSpeaking} 
-              className="drop-shadow-[0_12px_32px_rgba(6,182,212,0.18)]"
+              className="drop-shadow-[0_12px_36px_rgba(124,58,237,0.22)]"
             />
           </div>
 
-          {/* Telemetría y Controles de Audio de AURA */}
-          <div className="w-full space-y-3 text-center">
-            {/* Pill de Estado Dinámico */}
-            <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-mono border transition-all ${
-              isSpeaking 
-                ? (isLight ? 'bg-indigo-50 border-indigo-300 text-indigo-700 animate-pulse' : 'bg-cyan-500/20 border-cyan-400/50 text-cyan-300 animate-pulse')
-                : (isLight ? 'bg-slate-100 border-slate-200 text-slate-600' : 'bg-white/[0.04] border-white/10 text-zinc-400')
-            }`}>
-              <Sparkles className="w-3 h-3 text-cyan-400" />
-              <span>{isSpeaking ? strings.badgeSpeaking : 'STANDBY · LISTA PARA DIAGNÓSTICO'}</span>
-            </div>
-
-            {/* Control de Voz Natural de Estudio con Ecualizador */}
-            <div className="flex items-center justify-center gap-2">
-              <button
-                onClick={toggleVoice}
-                className={`px-3 py-1.5 rounded-xl border text-[11px] font-mono transition-all cursor-pointer flex items-center gap-2 ${
-                  isVoiceActive
-                    ? (isLight ? 'bg-indigo-50 border-indigo-300 text-indigo-600 shadow-sm' : 'bg-cyan-950/70 border-cyan-400/60 text-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.25)]')
-                    : (isLight ? 'bg-slate-100 border-slate-200 text-slate-400 hover:text-black' : 'bg-white/[0.03] border-white/10 text-zinc-500 hover:text-white')
-                }`}
-                title={isVoiceActive ? 'Silenciar voz natural' : 'Activar voz natural'}
-                aria-label="Alternar voz de AURA"
-              >
-                {isVoiceActive ? (
-                  <>
-                    <Volume2 className={`w-3.5 h-3.5 ${isLight ? 'text-indigo-600' : 'text-cyan-400'}`} />
-                    <span>VOZ NATURAL ACTIVA</span>
-                    {isSpeaking && (
-                      <span className="flex items-center gap-0.5 h-2.5">
-                        <span className={`w-0.5 h-2 rounded-full animate-bounce ${isLight ? 'bg-indigo-600' : 'bg-cyan-400'}`} style={{ animationDelay: '0ms' }} />
-                        <span className={`w-0.5 h-3 rounded-full animate-bounce ${isLight ? 'bg-indigo-400' : 'bg-cyan-300'}`} style={{ animationDelay: '150ms' }} />
-                        <span className={`w-0.5 h-1.5 rounded-full animate-bounce ${isLight ? 'bg-indigo-600' : 'bg-cyan-400'}`} style={{ animationDelay: '300ms' }} />
-                      </span>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <VolumeX className={`w-3.5 h-3.5 ${isLight ? 'text-slate-400' : 'text-zinc-500'}`} />
-                    <span>VOZ SILENCIADA</span>
-                  </>
-                )}
-              </button>
-            </div>
-
-            <p className={`text-[10px] font-mono hidden sm:block ${
-              isLight ? 'text-slate-400' : 'text-zinc-500'
-            }`}>
-              {strings.subtitle}
-            </p>
-          </div>
-        </div>
-
-        {/* ========================================================================= */}
-        {/* COLUMNA DERECHA: CONVERSACIÓN INTERACTIVA & TRIAGE DE ARQUITECTURA         */}
-        {/* ========================================================================= */}
-        <div className="relative z-10 flex-1 flex flex-col p-5 sm:p-6 overflow-hidden">
-          
-          {/* Fondo Estelar Dedicado del Chat (Cielo Cósmico con Estrellas Titilantes) */}
-          {!isLight && (
-            <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-0">
-              <svg className="w-full h-full opacity-65" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <radialGradient id="chatStarGlow" cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
-                    <stop offset="30%" stopColor="#38bdf8" stopOpacity="0.8" />
-                    <stop offset="70%" stopColor="#0284c7" stopOpacity="0.3" />
-                    <stop offset="100%" stopColor="#0284c7" stopOpacity="0" />
-                  </radialGradient>
-                  <radialGradient id="goldStarGlow" cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
-                    <stop offset="35%" stopColor="#fbbf24" stopOpacity="0.75" />
-                    <stop offset="100%" stopColor="#d97706" stopOpacity="0" />
-                  </radialGradient>
-                </defs>
-
-                {/* Estrellas Titilantes Distribuidas por el Chat */}
-                <circle cx="12%" cy="10%" r="1.2" fill="#ffffff" className="animate-pulse" style={{ animationDuration: '3.2s' }} />
-                <circle cx="82%" cy="8%" r="1.8" fill="url(#chatStarGlow)" className="animate-pulse" style={{ animationDuration: '4.5s' }} />
-                <circle cx="94%" cy="26%" r="1" fill="#a5f3fc" opacity="0.8" />
-                <circle cx="28%" cy="30%" r="1.4" fill="url(#goldStarGlow)" className="animate-pulse" style={{ animationDuration: '5.2s' }} />
-                <circle cx="75%" cy="42%" r="2" fill="url(#chatStarGlow)" className="animate-pulse" style={{ animationDuration: '2.8s' }} />
-                <circle cx="16%" cy="58%" r="1.1" fill="#ffffff" opacity="0.75" />
-                <circle cx="88%" cy="68%" r="1.6" fill="#38bdf8" className="animate-pulse" style={{ animationDuration: '3.8s' }} />
-                <circle cx="32%" cy="78%" r="1.2" fill="#cbd5e1" opacity="0.8" />
-                <circle cx="68%" cy="86%" r="1.8" fill="url(#chatStarGlow)" className="animate-pulse" style={{ animationDuration: '4.2s' }} />
-                <circle cx="8%" cy="88%" r="1" fill="#a5f3fc" opacity="0.7" />
-
-                {/* Estrellas de 4 Puntas Grandes (Sparkles Cuánticos ✦) */}
-                <path d="M 50 45 Q 50 55 40 55 Q 50 55 50 65 Q 50 55 60 55 Q 50 55 50 45 Z" fill="#ffffff" opacity="0.75" className="animate-pulse" style={{ animationDuration: '3.8s' }} />
-                <path d="M 390 170 Q 390 179 381 179 Q 390 179 390 188 Q 390 179 399 179 Q 390 179 390 170 Z" fill="#38bdf8" opacity="0.7" className="animate-pulse" style={{ animationDuration: '3.2s' }} />
-                <path d="M 210 360 Q 210 368 202 368 Q 210 368 210 376 Q 210 368 218 368 Q 210 368 210 360 Z" fill="#a5f3fc" opacity="0.65" className="animate-pulse" style={{ animationDuration: '4.8s' }} />
-                <path d="M 110 240 Q 110 246 104 246 Q 110 246 110 252 Q 110 246 116 246 Q 110 246 110 240 Z" fill="#ffffff" opacity="0.6" className="animate-pulse" style={{ animationDuration: '4.2s' }} />
-
-                {/* Constelación Tenue Conectando Estrellas */}
-                <line x1="82%" y1="8%" x2="94%" y2="26%" stroke="#38bdf8" strokeWidth="0.6" strokeDasharray="3 3" opacity="0.25" />
-                <line x1="12%" y1="10%" x2="28%" y2="30%" stroke="#818cf8" strokeWidth="0.6" strokeDasharray="3 3" opacity="0.2" />
-                <line x1="75%" y1="42%" x2="88%" y2="68%" stroke="#38bdf8" strokeWidth="0.6" strokeDasharray="3 3" opacity="0.22" />
-
-                {/* Micro-polvo cósmico */}
-                <circle cx="48%" cy="16%" r="0.8" fill="#ffffff" opacity="0.45" />
-                <circle cx="58%" cy="54%" r="0.7" fill="#38bdf8" opacity="0.5" />
-                <circle cx="42%" cy="72%" r="0.8" fill="#ffffff" opacity="0.45" />
-                <circle cx="85%" cy="85%" r="0.6" fill="#a5f3fc" opacity="0.4" />
-                <circle cx="20%" cy="40%" r="0.7" fill="#ffffff" opacity="0.45" />
-              </svg>
-            </div>
-          )}
-          
-          {/* Header de la conversación (Desktop) */}
-          <div className="relative z-10 hidden sm:flex items-center justify-between pb-3 mb-2 border-b border-white/10">
-            <div>
-              <h3 className={`font-display font-bold text-base sm:text-lg tracking-wide ${
-                isLight ? 'text-slate-900' : 'text-white'
-              }`}>
-                {strings.title} <span className="text-cyan-400 text-sm font-normal">· Asistente Soberano</span>
-              </h3>
-              <p className={`text-[11px] font-mono ${
-                isLight ? 'text-slate-500' : 'text-zinc-400'
-              }`}>
-                {strings.subtitle}
-              </p>
-            </div>
-
+          {/* Controles de Audio de AURA (Limpio: sin pills ni subtítulos repetidos) */}
+          <div className="w-full flex justify-center pt-2">
             <button
-              onClick={onClose}
-              className={`p-2 rounded-xl transition-colors cursor-pointer ${
-                isLight ? 'text-slate-500 hover:text-black hover:bg-slate-100' : 'text-zinc-400 hover:text-white hover:bg-white/[0.05]'
+              onClick={toggleVoice}
+              className={`px-4 py-2 rounded-xl border text-xs font-sans font-medium transition-all cursor-pointer flex items-center gap-2 ${
+                isVoiceActive
+                  ? (isLight ? 'bg-indigo-50 border-indigo-300 text-indigo-600 shadow-sm' : 'bg-purple-950/70 border-purple-400/60 text-purple-200 shadow-[0_0_16px_rgba(168,85,247,0.25)]')
+                  : (isLight ? 'bg-slate-100 border-slate-200 text-slate-400 hover:text-black' : 'bg-white/[0.03] border-white/10 text-zinc-500 hover:text-white')
               }`}
-              aria-label="Cerrar asistente"
+              title={isVoiceActive ? 'Silenciar voz natural' : 'Activar voz natural'}
+              aria-label="Alternar voz de AURA"
             >
-              <X className="w-5 h-5" />
+              {isVoiceActive ? (
+                <>
+                  <Volume2 className={`w-4 h-4 ${isLight ? 'text-indigo-600' : 'text-purple-300'}`} />
+                  <span>VOZ NATURAL ACTIVA</span>
+                  {isSpeaking && (
+                    <span className="flex items-center gap-0.5 h-2.5 ml-1">
+                      <span className={`w-0.5 h-2 rounded-full animate-bounce ${isLight ? 'bg-indigo-600' : 'bg-purple-400'}`} style={{ animationDelay: '0ms' }} />
+                      <span className={`w-0.5 h-3.5 rounded-full animate-bounce ${isLight ? 'bg-indigo-400' : 'bg-purple-300'}`} style={{ animationDelay: '150ms' }} />
+                      <span className={`w-0.5 h-2 rounded-full animate-bounce ${isLight ? 'bg-indigo-600' : 'bg-purple-400'}`} style={{ animationDelay: '300ms' }} />
+                    </span>
+                  )}
+                </>
+              ) : (
+                <>
+                  <VolumeX className={`w-4 h-4 ${isLight ? 'text-slate-400' : 'text-zinc-500'}`} />
+                  <span>VOZ SILENCIADA</span>
+                </>
+              )}
             </button>
           </div>
 
-          {/* Zona de Mensajes con Scroll Suave */}
-          <div className="flex-1 overflow-y-auto space-y-3.5 pr-1.5 text-xs sm:text-sm">
+        </div>
+
+        {/* ========================================================================= */}
+        {/* COLUMNA DERECHA: ÚNICAMENTE EL CHAT (CON TIPOGRAFÍA EDITORIAL DE SUBTÍTULOS) */}
+        {/* ========================================================================= */}
+        <div className="relative z-10 flex-1 flex flex-col p-4 sm:p-6 overflow-hidden">
+          
+          {/* Zona de Mensajes del Chat con Scroll Suave */}
+          <div className="flex-1 overflow-y-auto space-y-3.5 pr-2 pt-6 sm:pt-4">
             {messages.map((m, idx) => (
               <div
                 key={idx}
                 className={`flex flex-col ${m.sender === 'user' ? 'items-end' : 'items-start'}`}
               >
                 <div
-                  className={`p-4 rounded-2xl max-w-[90%] leading-relaxed relative group ${
+                  className={`p-3.5 sm:p-4 rounded-2xl max-w-[88%] sm:max-w-[85%] font-sans text-xs sm:text-sm leading-relaxed tracking-normal break-words relative group ${
                     m.sender === 'user'
-                      ? (isLight ? 'bg-indigo-600 text-white font-medium shadow-sm' : 'bg-white text-black font-medium shadow-md')
-                      : (isLight ? 'bg-slate-100/90 border border-slate-200 text-slate-800' : 'bg-slate-900/60 border border-cyan-500/20 text-zinc-100 shadow-[0_4px_24px_rgba(0,0,0,0.4)] backdrop-blur-md')
+                      ? (isLight ? 'bg-indigo-600 text-white font-medium shadow-sm' : 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium shadow-md')
+                      : (isLight ? 'bg-slate-100/90 border border-slate-200 text-slate-800' : 'bg-[#0b1021]/80 border border-purple-500/25 text-zinc-100 shadow-[0_4px_24px_rgba(0,0,0,0.4)] backdrop-blur-md')
                   }`}
                 >
                   {/* Encabezado elegante de mensaje AI */}
                   {m.sender === 'ai' && (
                     <div className="flex items-center justify-between gap-2 mb-2 pb-1.5 border-b border-white/10">
-                      <div className="flex items-center gap-1.5 text-[10px] font-mono font-semibold text-cyan-400">
-                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                      <div className="flex items-center gap-1.5 font-sans text-[11px] font-semibold text-purple-300">
+                        <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
                         <span>✦ AURA</span>
-                        <span className="text-[9px] text-zinc-500">· DYNAMIND AI</span>
+                        <span className="text-[10px] text-zinc-400 font-normal">· DYNAMIND AI</span>
                       </div>
 
                       {/* Botón táctil para volver a escuchar la respuesta */}
                       <button
                         type="button"
                         onClick={() => playAuraAudio(m.replyKey || 'general', m.text)}
-                        className={`flex items-center gap-1 text-[10px] font-sans transition-colors cursor-pointer ${
-                          isLight ? 'text-indigo-600 hover:text-indigo-700' : 'text-cyan-400/90 hover:text-cyan-300'
+                        className={`flex items-center gap-1 text-[11px] font-sans transition-colors cursor-pointer ${
+                          isLight ? 'text-indigo-600 hover:text-indigo-700' : 'text-purple-300 hover:text-purple-200'
                         }`}
                         title="Escuchar a Aura"
                         aria-label="Escuchar mensaje de Aura"
                       >
-                        <Volume2 className="w-3 h-3" />
+                        <Volume2 className="w-3.5 h-3.5" />
                         <span>{strings.listenBtn}</span>
                       </button>
                     </div>
                   )}
 
-                  {/* Contenido del Mensaje */}
-                  <div className="whitespace-pre-line">{m.text}</div>
+                  {/* Contenido del Mensaje con Tipografía de Subtítulos Fluida */}
+                  <div className="whitespace-pre-line font-sans leading-relaxed break-words">{m.text}</div>
                 </div>
               </div>
             ))}
           </div>
 
           {/* Prompts Rápidos Sugeridos Dinámicos */}
-          <div className={`space-y-1.5 pt-3 border-t mt-2 ${isLight ? 'border-slate-200' : 'border-white/10'}`}>
-            <div className={`text-[10px] font-mono uppercase tracking-wider ${isLight ? 'text-slate-500' : 'text-zinc-400'}`}>
+          <div className={`space-y-1.5 pt-2.5 border-t mt-2 ${isLight ? 'border-slate-200' : 'border-white/10'}`}>
+            <div className={`text-[11px] font-sans font-medium uppercase tracking-wider ${isLight ? 'text-slate-500' : 'text-zinc-400'}`}>
               {strings.promptsLabel}
             </div>
             <div className="flex flex-wrap gap-1.5">
@@ -742,10 +717,10 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
                 <button
                   key={qIdx}
                   onClick={() => handleSendQuery(qp.query)}
-                  className={`px-2.5 py-1 rounded-lg border text-[11px] transition-colors cursor-pointer text-left ${
+                  className={`px-3 py-1.5 rounded-lg border font-sans text-xs leading-snug transition-all cursor-pointer text-left ${
                     isLight 
                       ? 'bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-700 hover:text-black' 
-                      : 'bg-white/[0.03] hover:bg-white/[0.08] border-white/10 text-zinc-300 hover:text-white hover:border-cyan-400/40'
+                      : 'bg-white/[0.04] hover:bg-purple-950/40 border-white/10 text-zinc-200 hover:text-white hover:border-purple-400/50'
                   }`}
                 >
                   {qp.label}
@@ -768,16 +743,18 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder={strings.placeholder}
-                className={`flex-1 px-4 py-2.5 border rounded-xl text-xs font-mono focus:outline-none transition-colors ${
+                className={`flex-1 px-4 py-2.5 border rounded-xl font-sans text-xs sm:text-sm leading-normal focus:outline-none transition-colors ${
                   isLight 
                     ? 'bg-slate-100/90 border-slate-200 text-slate-900 placeholder:text-slate-400 focus:border-indigo-500' 
-                    : 'bg-white/[0.03] border-white/15 text-white placeholder:text-zinc-500 focus:border-cyan-400/60'
+                    : 'bg-white/[0.04] border-white/15 text-white placeholder:text-zinc-500 focus:border-purple-400/70 focus:bg-white/[0.06]'
                 }`}
               />
               <button
                 type="submit"
-                className={`p-2.5 rounded-xl transition-colors cursor-pointer ${
-                  isLight ? 'bg-indigo-600 text-white hover:bg-indigo-700' : 'bg-white text-black hover:bg-zinc-200'
+                className={`p-2.5 rounded-xl transition-all cursor-pointer ${
+                  isLight 
+                    ? 'bg-indigo-600 text-white hover:bg-indigo-700' 
+                    : 'bg-purple-600 hover:bg-purple-500 text-white shadow-[0_0_16px_rgba(168,85,247,0.35)]'
                 }`}
                 aria-label="Enviar pregunta a Aura"
               >
@@ -785,19 +762,19 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
               </button>
             </form>
 
-            <div className={`flex items-center justify-between text-[11px] font-mono ${
+            <div className={`flex items-center justify-between font-sans text-xs ${
               isLight ? 'text-slate-500' : 'text-zinc-400'
             }`}>
               <span>{strings.preferHuman}</span>
               <a
                 href="/#/diagnostico"
                 onClick={onClose}
-                className={`flex items-center gap-1 font-bold underline ${
-                  isLight ? 'text-indigo-600 hover:text-indigo-700' : 'text-cyan-400 hover:text-cyan-300'
+                className={`flex items-center gap-1 font-bold font-sans underline ${
+                  isLight ? 'text-indigo-600 hover:text-indigo-700' : 'text-purple-400 hover:text-purple-300'
                 }`}
               >
                 <span>{strings.ctaDiagnostic}</span>
-                <ArrowRight className="w-3 h-3" />
+                <ArrowRight className="w-3.5 h-3.5" />
               </a>
             </div>
           </div>
