@@ -18,6 +18,7 @@ const AURA_I18N = {
     prompts: [
       { label: '🍽️ ¿Qué solución hay para un Gastrobar?', query: '¿Qué solución tienen para un restaurante o gastrobar con demoras en mesa?' },
       { label: '🏨 ¿Cómo eliminar comisiones de Booking?', query: 'Tengo un glamping o cabañas, ¿cómo puedo cobrar anticipos y reservas directas sin intermediarios?' },
+      { label: '💎 ¿Cómo retener y fidelizar clientes?', query: '¿Cómo funciona su sistema de fidelización, puntos y membresías VIP?' },
       { label: '💆‍♀️ ¿Cómo filtrar curiosos en clínicas?', query: 'Tengo una clínica o marca personal, ¿cómo filtro curiosos de WhatsApp?' },
       { label: '⚡ ¿Cuánto tarda la entrega?', query: '¿Cuál es el tiempo de desarrollo e implementación de una plataforma completa?' }
     ],
@@ -28,6 +29,7 @@ const AURA_I18N = {
     answers: {
       gastro: 'Para gastronomía y bares implementamos nuestro Menú Táctil QR en Mesa junto con Comandas KDS y Caja en Vivo. El comensal pide desde su celular, la orden entra a cocina con semáforo de tiempos y el pago se procesa sin comisiones del 20% a apps externas. Esto eleva el ticket promedio hasta un 25%.',
       hotel: 'Para hospedajes eliminamos intermediarios con el Motor de Reservas Directas, Calendario Atómico y Anticipo del 50%. El cliente reserva su fecha en vivo, se bloquean las suites automáticamente y el dinero entra directo a tu cuenta de banco, ahorrándote miles de dólares en comisiones a Booking o Airbnb.',
+      loyalty: 'Para retención y fidelización desplegamos nuestro sistema de puntos por consumo, membresías VIP escalonadas y billetera digital en WhatsApp. El cliente acumula saldo en cada visita sin descargar aplicaciones y el sistema reactiva automáticamente a clientes inactivos tras 30 días, triplicando la recompra sin regalar descuentos.',
       clinic: 'Para clínicas y marcas personales desplegamos el Triaje Visual de 45 segundos con odómetro de fricción. En lugar de pasar horas chateando con personas que solo preguntan precios, el sistema califica el interés y solo agenda llamadas con clientes verdaderamente cualificados.',
       time: 'Construimos e implementamos plataformas completas en un promedio de 10 a 18 días hábiles, con código nativo en React 18, Vite y Tailwind, incluyendo el Core Administrativo privado y capacitación personalizada para todo tu equipo.',
       general: 'En Dynamind Studios construimos software soberano a la medida que elimina cuellos de botella reales: overbooking, saturación en WhatsApp, descuadres de caja o folletos mudos. Te sugiero iniciar el Diagnóstico de 45 segundos para estructurar tu solución directamente con Juan Pablo.'
@@ -43,6 +45,7 @@ const AURA_I18N = {
     prompts: [
       { label: '🍽️ Solution for Gastrobars?', query: 'What solution do you offer for a restaurant or bar with ordering delays?' },
       { label: '🏨 Eliminate Booking fees?', query: 'I run a glamping or resort, how can I accept direct bookings without commission fees?' },
+      { label: '💎 Loyalty & VIP Retention?', query: 'How does your loyalty, point accumulation and VIP membership system work?' },
       { label: '💆‍♀️ Filter unqualified leads?', query: 'I have a clinic or brand, how do I stop wasting hours on WhatsApp price shoppers?' },
       { label: '⚡ Delivery timeframe?', query: 'How long does development and deployment take?' }
     ],
@@ -53,6 +56,7 @@ const AURA_I18N = {
     answers: {
       gastro: 'For gastronomy and bars, we deploy our Tabletop QR Interactive Menu paired with Kitchen KDS and Live Cash Register. Guests order instantly from their smartphones, kitchen tickets display real-time prep timers, and payments process directly without 20% aggregator fees. This increases average order value by up to 25%.',
       hotel: 'For hospitality, we eliminate third-party commissions using our Direct Booking Engine, Atomic Availability Calendar, and 50% automated deposit checkout. Rooms lock in real time, funds transfer straight to your bank account, saving you thousands on Booking and Airbnb fees.',
+      loyalty: 'For customer retention, we deploy sovereign point accumulation, tiered VIP memberships, and 1-tap WhatsApp digital wallets. Clients earn rewards on every visit without installing heavy apps, while smart triggers reactivate inactive buyers after 30 days.',
       clinic: 'For specialized clinics and personal brands, we build a 45-second Visual Triage Funnel. Instead of losing hours chatting with casual price shoppers on WhatsApp, the system pre-qualifies intent and books appointments only with high-value clients.',
       time: 'We design, code, and deploy complete living platforms within 10 to 18 business days using native React 18, Vite, and Tailwind, including a private operational core dashboard and full team training.',
       general: 'At Dynamind Studios we engineer custom sovereign software solving actual bottlenecks: overbooking, endless manual WhatsApp inquiries, cash register discrepancies, or lifeless brochure websites. I recommend taking the 45-second Diagnostic to structure your project directly with Juan Pablo.'
@@ -68,6 +72,7 @@ const AURA_I18N = {
     prompts: [
       { label: '🍽️ Solution pour Restaurant / Bar ?', query: 'Quelle solution pour un restaurant ou bar avec des retards de service ?' },
       { label: '🏨 Supprimer commissions Booking ?', query: 'J\'ai un glamping, comment encaisser des réservations directes sans commissions ?' },
+      { label: '💎 Fidélisation & Membres VIP ?', query: 'Comment fonctionne votre système de fidélisation, points et adhésions VIP ?' },
       { label: '💆‍♀️ Filtrer les curieux sur WhatsApp ?', query: 'J\'ai une clinique ou marque, comment filtrer les demandes stériles ?' },
       { label: '⚡ Délai de livraison ?', query: 'Quel est le temps de développement et de mise en production ?' }
     ],
@@ -78,6 +83,7 @@ const AURA_I18N = {
     answers: {
       gastro: 'Pour la gastronomie et les bars, nous intégrons notre Menu QR Tactile à table couplé aux commandes KDS en cuisine et à la caisse en direct. Le client commande depuis son mobile, la cuisine gère les priorités en temps réel et le paiement s\'effectue sans commissions de 20% reversées aux plateformes tierces.',
       hotel: 'Pour l\'hôtellerie, nous supprimons les intermédiaires grâce à notre Moteur de Réservation Directe avec calendrier atomique et acompte de 50%. Les disponibilités se bloquent instantanément et les fonds arrivent directement sur votre compte bancaire.',
+      loyalty: 'Pour la rétention et la fidélisation, nous déployons un système de points par consommation, des abonnements VIP et un portefeuille numérique sur WhatsApp sans application à télécharger.',
       clinic: 'Pour les cliniques esthétiques et marques d\'auteur, nous déployons un Triage Visuel de 45 secondes. Au lieu d\'échanger des heures sur WhatsApp avec de simples curieux, le système qualifie l\'intérêt et ne planifie des appels qu\'avec des prospects sérieux.',
       time: 'Nous concevons et déployons des plateformes complètes en 10 à 18 jours ouvrés en code React natif, avec tableau de bord opérationnel privé et formation complète de vos équipes.',
       general: 'Chez Dynamind Studios, nous bâtissons des logiciels souverains qui éliminent les frictions opérationnelles réelles. Je vous invite à lancer le Diagnostic de 45 secondes pour définir votre architecture avec Juan Pablo.'
@@ -93,6 +99,7 @@ const AURA_I18N = {
     prompts: [
       { label: '🍽️ Lösung für Gastronomie / Bar?', query: 'Welche Lösung bieten Sie für ein Restaurant mit Bestellverzögerungen?' },
       { label: '🏨 Booking-Gebühren vermeiden?', query: 'Ich betreibe ein Glamping, wie kann ich Direktbuchungen ohne Provisionen annehmen?' },
+      { label: '💎 Treuesystem & VIP-Punkte?', query: 'Wie funktioniert Ihr System für Kundenbindung, Punkte und VIP-Mitgliedschaften?' },
       { label: '💆‍♀️ Zeitfresser in WhatsApp stoppen?', query: 'Wie filtere ich unqualifizierte Preisanfragen bei einer Klinik oder Marke?' },
       { label: '⚡ Lieferzeit?', query: 'Wie lange dauert die vollständige Entwicklung und Implementierung?' }
     ],
@@ -103,6 +110,7 @@ const AURA_I18N = {
     answers: {
       gastro: 'Für Gastronomie und Bars implementieren wir unsere interaktive QR-Tischkarte in Verbindung mit Küchen-KDS und Schichtkassenbuch. Gäste bestellen direkt über ihr Smartphone, Küchenbestellungen erhalten automatisierte Zeiterfassung und Zahlungen erfolgen ohne 20% Plattformgebühren.',
       hotel: 'Für Hotellerie und Glamping beseitigen wir Zwischenhändler durch eine Direktbuchungs-Engine mit atomarem Verfügbarkeitskalender und 50% Anzahlungs-Checkout. Zimmer blockieren in Echtzeit und Einnahmen landen direkt auf Ihrem Bankkonto.',
+      loyalty: 'Für Kundenbindung bieten wir ein punktebasiertes Treuesystem, VIP-Mitgliedschaften und eine WhatsApp-Wallet ohne zusätzliche App-Downloads.',
       clinic: 'Für Kliniken und persönliche Marken erstellen wir ein 45-Sekunden-Qualifizierungs-Funnel. Anstatt Stunden mit reinen Preisanfragen auf WhatsApp zu vergeuden, filtert das System automatisch und vergibt Termine nur an qualifizierte Interessenten.',
       time: 'Wir entwickeln und implementieren vollständige Systeme innerhalb von 10 bis 18 Werktagen in nativem React 18, Vite und Tailwind, inklusive privatem Admin-Bunker und Team-Schulung.',
       general: 'Bei Dynamind Studios entwickeln wir maßgeschneiderte souveräne Software, die reale operative Hürden beseitigt: Überbuchungen, Chat-Fluten oder Kassenfehler. Starten Sie jetzt die 45-Sekunden-Diagnose mit Juan Pablo.'
@@ -118,6 +126,7 @@ const AURA_I18N = {
     prompts: [
       { label: '🍽️ Solução para Gastronomia / Bar?', query: 'Qual a solução para restaurante ou bar com lentidão no atendimento?' },
       { label: '🏨 Eliminar taxas do Booking?', query: 'Tenho um glamping, como posso receber reservas diretas sem pagar comissões?' },
+      { label: '💎 Retenção & Fidelização VIP?', query: 'Como funciona o sistema de fidelização, pontos e membros VIP?' },
       { label: '💆‍♀️ Filtrar curiosos no WhatsApp?', query: 'Tenho uma clínica ou marca, como parar de perder tempo respondendo curiosos?' },
       { label: '⚡ Prazo de entrega?', query: 'Qual o tempo de desenvolvimento e implementação completa?' }
     ],
@@ -128,6 +137,7 @@ const AURA_I18N = {
     answers: {
       gastro: 'Para gastronomia e bares, implementamos nosso Cardápio QR Interativo na Mesa com KDS de cozinha e Caixa em Tempo Real. O cliente pede pelo celular, os pedidos entram com semáforo de tempo e os pagamentos são processados sem 20% de taxas para aplicativos externos.',
       hotel: 'Para hotelaria e glampings, eliminamos intermediários com Motor de Reservas Diretas, Calendário Atômico e adiantamento de 50%. A acomodação é bloqueada em tempo real e o valor cai direto na sua conta bancária sem comissões do Booking ou Airbnb.',
+      loyalty: 'Para retenção e fidelização, oferecemos carteira digital no WhatsApp, acúmulo de pontos por consumo e planos VIP sem necessidade de baixar aplicativos.',
       clinic: 'Para clínicas e marcas de autor, criamos um Triagem Visual de 45 segundos. Em vez de passar o dia respondendo curiosos no WhatsApp, o sistema pré-qualifica o cliente e agenda chamadas apenas com quem realmente tem interesse e orçamento.',
       time: 'Desenvolvemos e entregamos plataformas completas em média de 10 a 18 dias úteis em React 18 nativo, com búnker operacional privativo e treinamento individual para sua equipe.',
       general: 'Na Dynamind Studios construímos software soberano sob medida que elimina gargalos operacionais reais. Recomendo iniciar o Diagnóstico de 45 segundos para desenhar sua solução diretamente com Juan Pablo.'
@@ -143,6 +153,7 @@ const AURA_I18N = {
     prompts: [
       { label: '🍽️ 飲食・ガストロバーの解決策は？', query: '飲食店の注文遅延やオペレーション改善のソリューションは？' },
       { label: '🏨 予約サイトの手数料をなくすには？', query: '宿泊施設でOTA手数料をゼロにして直販予約を受けるには？' },
+      { label: '💎 リピート＆VIP会員制度？', query: 'ポイント還元やVIP会員制度、リピート促進システムの仕組みは？' },
       { label: '💆‍♀️ 冷やかし問い合わせを減らすには？', query: 'クリニックや著者ブランドで冷やかしを排除して予約を自動化するには？' },
       { label: '⚡ 開発期間と納期は？', query: '完全なプラットフォームの開発と導入にはどれくらいかかりますか？' }
     ],
@@ -153,7 +164,8 @@ const AURA_I18N = {
     answers: {
       gastro: '飲食・ガストロバー向けには、テーブルQRモバイルオーダー、厨房KDS、リアルタイム売上レジを統合導入します。お客様がスマホから直接注文し、厨房タイマーと連動。デリバリー等の20%手数料を削減し、客単価を最大25%向上させます。',
       hotel: '宿泊・グランピングでは、自社直販予約エンジン、空室同期カレンダー、事前決済システムを導入。Booking.comなどの巨額手数料を排除し、売上を直接自社口座に確保します。',
-      clinic: 'クリニックや著者ブランド向けには、45秒ビジュアルトリアージを構築。価格だけを聞く冷やかしを自動スクリーニングし、真剣度の高いお客様のみを予約へと導きます。',
+      loyalty: '顧客維持とリピート促進のため、利用額に応じたポイント還元、VIP会員制度、アプリ不要のWhatsAppデジタルウォレットを導入します。',
+      clinic: 'クリニックや著者ブランド向けには、45秒ビジュアルトリアージを構築。価格だけを聞く冷やかしを自動スクリーニングし、真剣度の高いお客様のみを予約へと导きます。',
       time: 'React 18・Vite・Tailwindネイティブコードにより、プライベート管理ダッシュボードとチーム研修を含め、通常10〜18営業日で本番導入まで完了します。',
       general: 'Dynamind Studiosでは、ダブルブッキングやチャット対応のパンクなど、現場の深刻なボトルネックを解消する主権型ソフトウェアを構築します。まずは45秒診断をお試しください。'
     }
@@ -222,18 +234,20 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
   const speechRef = useRef(null);
+  const audioRef = useRef(null);
 
   // Inicializar o resetear conversación cuando cambia el idioma
   useEffect(() => {
     setMessages([
       {
         sender: 'ai',
-        text: strings.welcome
+        text: strings.welcome,
+        replyKey: 'welcome'
       }
     ]);
   }, [currentLang]);
 
-  // Precargar las voces del sintetizador
+  // Precargar las voces del sintetizador como fallback
   useEffect(() => {
     if (typeof window === 'undefined' || !window.speechSynthesis) return;
 
@@ -254,7 +268,7 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
     };
   }, []);
 
-  // Función de Síntesis de Voz Humana, Natural y Multilingüe
+  // Función de Síntesis de Voz Fallback (Web Speech API)
   const speakText = (textToSpeak) => {
     if (typeof window === 'undefined' || !window.speechSynthesis) return;
 
@@ -284,9 +298,7 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
       utterance.lang = bestVoice.lang;
     }
 
-    // CALIBRACIÓN ACÚSTICA HUMANA Y NATURAL (Anti-Robótica):
-    // Pitch 1.0 (tono natural de la actriz de voz, CERO efecto ardilla/metálico)
-    // Rate 0.96 (cadencia tranquila, reflexiva y articulada)
+    // Calibración acústica humana natural
     utterance.pitch = 1.0;
     utterance.rate = 0.96;
     utterance.volume = 1.0;
@@ -300,10 +312,71 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
     window.speechSynthesis.speak(utterance);
   };
 
+  // Reproductor de Audio Neuronal de Estudio Oficial (Microsoft Azure Neural)
+  const playAuraAudio = (audioKey, fallbackText) => {
+    // Si la voz está desactivada, silenciar todo y no reproducir
+    if (!isVoiceActive) {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+      setIsSpeaking(false);
+      return;
+    }
+
+    // Detener cualquier audio o síntesis previa
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      audioRef.current = null;
+    }
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+
+    const audioUrl = `/audio/aura/aura_${currentLang}_${audioKey}.mp3`;
+    const audio = new Audio(audioUrl);
+    audioRef.current = audio;
+
+    audio.onplay = () => {
+      setIsSpeaking(true);
+    };
+
+    audio.onended = () => {
+      setIsSpeaking(false);
+      audioRef.current = null;
+    };
+
+    audio.onerror = () => {
+      // Fallback transparente a SpeechSynthesis si el archivo no existe o falla la red
+      audioRef.current = null;
+      speakText(fallbackText);
+    };
+
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(err => {
+        // Bloqueo de autoplay u otro impedimento
+        audioRef.current = null;
+        speakText(fallbackText);
+      });
+    }
+  };
+
   // Detener voz si se cierra el modal
   useEffect(() => {
-    if (!isOpen && typeof window !== 'undefined' && window.speechSynthesis) {
-      window.speechSynthesis.cancel();
+    if (!isOpen) {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+        audioRef.current = null;
+      }
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
       setIsSpeaking(false);
     }
   }, [isOpen]);
@@ -318,6 +391,7 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
     const userMsg = { sender: 'user', text: query };
     const q = query.toLowerCase();
     let reply = strings.answers.general;
+    let replyKey = 'general';
 
     if (
       q.includes('gastro') || q.includes('restauran') || q.includes('bar') || 
@@ -325,35 +399,52 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
       q.includes('comida') || q.includes('essen') || q.includes('飲食')
     ) {
       reply = strings.answers.gastro;
+      replyKey = 'gastro';
     } else if (
       q.includes('glamping') || q.includes('booking') || q.includes('hotel') || 
       q.includes('cabaña') || q.includes('cabin') || q.includes('reserva') || 
       q.includes('hospedaje') || q.includes('zimmer') || q.includes('chambre') || q.includes('宿泊')
     ) {
       reply = strings.answers.hotel;
+      replyKey = 'hotel';
+    } else if (
+      q.includes('fideliz') || q.includes('loyalt') || q.includes('punto') || 
+      q.includes('puntos') || q.includes('vip') || q.includes('retenc') || 
+      q.includes('wallet') || q.includes('billetera') || q.includes('recompra') || 
+      q.includes('kundenbindung') || q.includes('リピート')
+    ) {
+      reply = strings.answers.loyalty;
+      replyKey = 'loyalty';
     } else if (
       q.includes('clínic') || q.includes('clinic') || q.includes('curios') || 
       q.includes('whatsapp') || q.includes('cita') || q.includes('lead') || 
       q.includes('termin') || q.includes('rendez-vous') || q.includes('クリニック')
     ) {
       reply = strings.answers.clinic;
+      replyKey = 'clinic';
     } else if (
       q.includes('tiempo') || q.includes('tarda') || q.includes('plazo') || 
       q.includes('time') || q.includes('delivery') || q.includes('délai') || 
       q.includes('dauer') || q.includes('prazo') || q.includes('納期')
     ) {
       reply = strings.answers.time;
+      replyKey = 'time';
     }
 
-    setMessages(prev => [...prev, userMsg, { sender: 'ai', text: reply }]);
+    setMessages(prev => [...prev, userMsg, { sender: 'ai', text: reply, replyKey }]);
     setInputText('');
 
-    // Reproducir con voz natural en el idioma de la página
-    speakText(reply);
+    // Reproducir con audio neuronal de estudio en el idioma seleccionado
+    playAuraAudio(replyKey, reply);
   };
 
   const toggleVoice = () => {
     if (isVoiceActive) {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+        audioRef.current = null;
+      }
       if (typeof window !== 'undefined' && window.speechSynthesis) {
         window.speechSynthesis.cancel();
       }
@@ -363,7 +454,7 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
       setIsVoiceActive(true);
       const lastAiMessage = [...messages].reverse().find(m => m.sender === 'ai');
       if (lastAiMessage) {
-        speakText(lastAiMessage.text);
+        playAuraAudio(lastAiMessage.replyKey || 'general', lastAiMessage.text);
       }
     }
   };
@@ -473,7 +564,7 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
                 {m.sender === 'ai' && (
                   <button
                     type="button"
-                    onClick={() => speakText(m.text)}
+                    onClick={() => playAuraAudio(m.replyKey || 'general', m.text)}
                     className={`mt-2.5 pt-1.5 border-t flex items-center gap-1.5 text-[11px] font-sans transition-colors cursor-pointer ${
                       isLight ? 'border-slate-200 text-indigo-600 hover:text-indigo-700' : 'border-white/10 text-cyan-400/90 hover:text-cyan-300'
                     }`}
