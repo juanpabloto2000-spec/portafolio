@@ -609,8 +609,59 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
         {/* ========================================================================= */}
         <div className="relative z-10 flex-1 flex flex-col p-5 sm:p-6 overflow-hidden">
           
+          {/* Fondo Estelar Dedicado del Chat (Cielo Cósmico con Estrellas Titilantes) */}
+          {!isLight && (
+            <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-0">
+              <svg className="w-full h-full opacity-65" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <radialGradient id="chatStarGlow" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
+                    <stop offset="30%" stopColor="#38bdf8" stopOpacity="0.8" />
+                    <stop offset="70%" stopColor="#0284c7" stopOpacity="0.3" />
+                    <stop offset="100%" stopColor="#0284c7" stopOpacity="0" />
+                  </radialGradient>
+                  <radialGradient id="goldStarGlow" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
+                    <stop offset="35%" stopColor="#fbbf24" stopOpacity="0.75" />
+                    <stop offset="100%" stopColor="#d97706" stopOpacity="0" />
+                  </radialGradient>
+                </defs>
+
+                {/* Estrellas Titilantes Distribuidas por el Chat */}
+                <circle cx="12%" cy="10%" r="1.2" fill="#ffffff" className="animate-pulse" style={{ animationDuration: '3.2s' }} />
+                <circle cx="82%" cy="8%" r="1.8" fill="url(#chatStarGlow)" className="animate-pulse" style={{ animationDuration: '4.5s' }} />
+                <circle cx="94%" cy="26%" r="1" fill="#a5f3fc" opacity="0.8" />
+                <circle cx="28%" cy="30%" r="1.4" fill="url(#goldStarGlow)" className="animate-pulse" style={{ animationDuration: '5.2s' }} />
+                <circle cx="75%" cy="42%" r="2" fill="url(#chatStarGlow)" className="animate-pulse" style={{ animationDuration: '2.8s' }} />
+                <circle cx="16%" cy="58%" r="1.1" fill="#ffffff" opacity="0.75" />
+                <circle cx="88%" cy="68%" r="1.6" fill="#38bdf8" className="animate-pulse" style={{ animationDuration: '3.8s' }} />
+                <circle cx="32%" cy="78%" r="1.2" fill="#cbd5e1" opacity="0.8" />
+                <circle cx="68%" cy="86%" r="1.8" fill="url(#chatStarGlow)" className="animate-pulse" style={{ animationDuration: '4.2s' }} />
+                <circle cx="8%" cy="88%" r="1" fill="#a5f3fc" opacity="0.7" />
+
+                {/* Estrellas de 4 Puntas Grandes (Sparkles Cuánticos ✦) */}
+                <path d="M 50 45 Q 50 55 40 55 Q 50 55 50 65 Q 50 55 60 55 Q 50 55 50 45 Z" fill="#ffffff" opacity="0.75" className="animate-pulse" style={{ animationDuration: '3.8s' }} />
+                <path d="M 390 170 Q 390 179 381 179 Q 390 179 390 188 Q 390 179 399 179 Q 390 179 390 170 Z" fill="#38bdf8" opacity="0.7" className="animate-pulse" style={{ animationDuration: '3.2s' }} />
+                <path d="M 210 360 Q 210 368 202 368 Q 210 368 210 376 Q 210 368 218 368 Q 210 368 210 360 Z" fill="#a5f3fc" opacity="0.65" className="animate-pulse" style={{ animationDuration: '4.8s' }} />
+                <path d="M 110 240 Q 110 246 104 246 Q 110 246 110 252 Q 110 246 116 246 Q 110 246 110 240 Z" fill="#ffffff" opacity="0.6" className="animate-pulse" style={{ animationDuration: '4.2s' }} />
+
+                {/* Constelación Tenue Conectando Estrellas */}
+                <line x1="82%" y1="8%" x2="94%" y2="26%" stroke="#38bdf8" strokeWidth="0.6" strokeDasharray="3 3" opacity="0.25" />
+                <line x1="12%" y1="10%" x2="28%" y2="30%" stroke="#818cf8" strokeWidth="0.6" strokeDasharray="3 3" opacity="0.2" />
+                <line x1="75%" y1="42%" x2="88%" y2="68%" stroke="#38bdf8" strokeWidth="0.6" strokeDasharray="3 3" opacity="0.22" />
+
+                {/* Micro-polvo cósmico */}
+                <circle cx="48%" cy="16%" r="0.8" fill="#ffffff" opacity="0.45" />
+                <circle cx="58%" cy="54%" r="0.7" fill="#38bdf8" opacity="0.5" />
+                <circle cx="42%" cy="72%" r="0.8" fill="#ffffff" opacity="0.45" />
+                <circle cx="85%" cy="85%" r="0.6" fill="#a5f3fc" opacity="0.4" />
+                <circle cx="20%" cy="40%" r="0.7" fill="#ffffff" opacity="0.45" />
+              </svg>
+            </div>
+          )}
+          
           {/* Header de la conversación (Desktop) */}
-          <div className="hidden sm:flex items-center justify-between pb-3 mb-2 border-b border-white/10">
+          <div className="relative z-10 hidden sm:flex items-center justify-between pb-3 mb-2 border-b border-white/10">
             <div>
               <h3 className={`font-display font-bold text-base sm:text-lg tracking-wide ${
                 isLight ? 'text-slate-900' : 'text-white'
