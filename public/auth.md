@@ -1,19 +1,27 @@
 ---
 agent_auth:
   register_uri: https://portafolio.juanpabloto2000.workers.dev/api/agents/register
+  identity_endpoint: https://portafolio.juanpabloto2000.workers.dev/api/agents/register
   authorization_server: https://portafolio.juanpabloto2000.workers.dev/.well-known/oauth-authorization-server
   protected_resource: https://portafolio.juanpabloto2000.workers.dev/.well-known/oauth-protected-resource
   supported_identity_types:
+    - agent
+    - human
+    - service_auth
+  identity_types_supported:
+    - service_auth
     - agent
     - human
   credential_types:
     - api_key
     - bearer_token
   revocation_uri: https://portafolio.juanpabloto2000.workers.dev/oauth/revoke
+  revocation_endpoint: https://portafolio.juanpabloto2000.workers.dev/oauth/revoke
   claim_uri: https://portafolio.juanpabloto2000.workers.dev/api/agents/claim
+  claim_endpoint: https://portafolio.juanpabloto2000.workers.dev/api/agents/claim
 ---
 
-# Auth.md — Agent Authentication & Registration Protocol
+# auth.md — agent registration
 
 An introduction to authentication, dynamic client registration, and access control for autonomous AI agents on **Dynamind Studios**.
 
@@ -23,12 +31,16 @@ An introduction to authentication, dynamic client registration, and access contr
 {
   "agent_auth": {
     "register_uri": "https://portafolio.juanpabloto2000.workers.dev/api/agents/register",
+    "identity_endpoint": "https://portafolio.juanpabloto2000.workers.dev/api/agents/register",
     "authorization_server": "https://portafolio.juanpabloto2000.workers.dev/.well-known/oauth-authorization-server",
     "protected_resource": "https://portafolio.juanpabloto2000.workers.dev/.well-known/oauth-protected-resource",
-    "supported_identity_types": ["agent", "human"],
+    "supported_identity_types": ["agent", "human", "service_auth"],
+    "identity_types_supported": ["service_auth", "agent", "human"],
     "credential_types": ["api_key", "bearer_token"],
     "revocation_uri": "https://portafolio.juanpabloto2000.workers.dev/oauth/revoke",
-    "claim_uri": "https://portafolio.juanpabloto2000.workers.dev/api/agents/claim"
+    "revocation_endpoint": "https://portafolio.juanpabloto2000.workers.dev/oauth/revoke",
+    "claim_uri": "https://portafolio.juanpabloto2000.workers.dev/api/agents/claim",
+    "claim_endpoint": "https://portafolio.juanpabloto2000.workers.dev/api/agents/claim"
   }
 }
 ```

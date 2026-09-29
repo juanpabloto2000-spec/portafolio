@@ -23,9 +23,13 @@
     "skill": "https://portafolio.juanpabloto2000.workers.dev/auth.md",
     "skill_url": "https://portafolio.juanpabloto2000.workers.dev/auth.md",
     "register_uri": "https://portafolio.juanpabloto2000.workers.dev/api/agents/register",
-    "supported_identity_types": ["agent", "human"],
+    "identity_endpoint": "https://portafolio.juanpabloto2000.workers.dev/api/agents/register",
+    "supported_identity_types": ["agent", "human", "service_auth"],
+    "identity_types_supported": ["service_auth", "agent", "human"],
     "credential_types": ["api_key", "bearer_token"],
     "claim_uri": "https://portafolio.juanpabloto2000.workers.dev/api/agents/claim",
-    "revocation_uri": "https://portafolio.juanpabloto2000.workers.dev/oauth/revoke"
+    "claim_endpoint": "https://portafolio.juanpabloto2000.workers.dev/api/agents/claim",
+    "revocation_uri": "https://portafolio.juanpabloto2000.workers.dev/oauth/revoke",
+    "revocation_endpoint": "https://portafolio.juanpabloto2000.workers.dev/oauth/revoke"
   }
 }
