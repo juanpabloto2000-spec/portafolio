@@ -462,68 +462,168 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200 font-sans">
-      <div className={`relative w-full max-w-xl border rounded-3xl p-6 sm:p-8 space-y-5 shadow-2xl overflow-hidden flex flex-col max-h-[85vh] backdrop-blur-2xl transition-colors duration-300 ${
-        isLight 
-          ? 'bg-white/95 border-slate-200 text-slate-900 shadow-indigo-500/10' 
-          : 'bg-[#080b13]/98 border-white/15 text-white glow-card'
-      }`}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/85 backdrop-blur-md animate-in fade-in duration-200 font-sans">
+      <div 
+        className={`relative w-full max-w-4xl border rounded-3xl shadow-2xl overflow-hidden flex flex-col sm:flex-row h-[90vh] max-h-[740px] backdrop-blur-2xl transition-colors duration-300 ${
+          isLight 
+            ? 'bg-white/95 border-slate-200 text-slate-900 shadow-indigo-500/10' 
+            : 'bg-[#060913]/98 border-cyan-500/25 text-white shadow-[0_0_70px_rgba(6,182,212,0.14)]'
+        }`}
+      >
         
-        {/* Cabecera Limpia del Asistente AURA */}
-        <div className={`flex items-center justify-between border-b pb-4 ${
-          isLight ? 'border-slate-200' : 'border-white/10'
-        }`}>
-          <div className="flex items-center gap-3">
+        {/* Fondo Estelar Sutil del Chatbot (Polvo Cósmico & Nebulosa Tenue sin saturar) */}
+        {!isLight && (
+          <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-0">
+            {/* Velo de nebulosa etérea */}
+            <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-cyan-500/[0.05] blur-3xl" />
+            <div className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-indigo-600/[0.05] blur-3xl" />
             
-            {/* Cara de la Androide AURA hablando en vivo (Desencapsulada, sin círculo) */}
-            <AndroidVoiceAvatar size="md" isSpeaking={isSpeaking} />
+            {/* Constelación y micro-estrellas centelleantes estelares tenues */}
+            <svg className="absolute inset-0 w-full h-full opacity-35" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <radialGradient id="starGlow" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
+                  <stop offset="40%" stopColor="#38bdf8" stopOpacity="0.4" />
+                  <stop offset="100%" stopColor="#0284c7" stopOpacity="0" />
+                </radialGradient>
+              </defs>
+              {/* Estrellas microscópicas fijas y titilantes */}
+              <circle cx="8%" cy="14%" r="1" fill="#ffffff" opacity="0.6" />
+              <circle cx="85%" cy="10%" r="1.5" fill="url(#starGlow)" className="animate-pulse" style={{ animationDuration: '4s' }} />
+              <circle cx="42%" cy="6%" r="0.8" fill="#a5f3fc" opacity="0.5" />
+              <circle cx="94%" cy="40%" r="1" fill="#ffffff" opacity="0.4" />
+              <circle cx="5%" cy="70%" r="1.2" fill="url(#starGlow)" className="animate-pulse" style={{ animationDuration: '5.5s' }} />
+              <circle cx="78%" cy="80%" r="0.8" fill="#cbd5e1" opacity="0.5" />
+              <circle cx="24%" cy="90%" r="1" fill="#38bdf8" opacity="0.6" />
+              <circle cx="60%" cy="26%" r="0.8" fill="#ffffff" opacity="0.4" />
+              <circle cx="16%" cy="38%" r="1.2" fill="#a5f3fc" opacity="0.5" />
+              {/* Líneas tenues de constelación cuántica */}
+              <line x1="85%" y1="10%" x2="94%" y2="40%" stroke="#38bdf8" strokeWidth="0.5" strokeDasharray="3 3" opacity="0.12" />
+              <line x1="8%" y1="14%" x2="16%" y2="38%" stroke="#818cf8" strokeWidth="0.5" strokeDasharray="3 3" opacity="0.1" />
+            </svg>
+          </div>
+        )}
 
-            <div>
-              <div className={`font-display font-bold text-lg tracking-wider flex items-center gap-2 ${
-                isLight ? 'text-slate-900' : 'text-white'
+        {/* ========================================================================= */}
+        {/* COLUMNA IZQUIERDA: ESCENARIO HOLOGRÁFICO LIBRE DE AURA (CERO CÍRCULOS/CAJAS) */}
+        {/* ========================================================================= */}
+        <div className={`relative z-10 w-full sm:w-[310px] md:w-[350px] shrink-0 flex flex-col items-center justify-between p-5 sm:p-6 border-b sm:border-b-0 sm:border-r transition-colors ${
+          isLight 
+            ? 'border-slate-200 bg-slate-50/70' 
+            : 'border-cyan-500/20 bg-gradient-to-b from-cyan-950/20 via-[#060913]/40 to-indigo-950/20'
+        }`}>
+          {/* Header Superior del Holograma */}
+          <div className="w-full flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="relative flex h-2 w-2">
+                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
+                  isSpeaking ? 'bg-cyan-400' : 'bg-emerald-400'
+                }`} />
+                <span className={`relative inline-flex rounded-full h-2 w-2 ${
+                  isSpeaking ? 'bg-cyan-500' : 'bg-emerald-500'
+                }`} />
+              </span>
+              <span className={`text-[10px] font-mono tracking-widest uppercase font-semibold ${
+                isLight ? 'text-indigo-600' : 'text-cyan-300'
               }`}>
-                <span>{strings.title}</span>
-                {isSpeaking && (
-                  <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-400/50 animate-pulse">
-                    {strings.badgeSpeaking}
-                  </span>
-                )}
-              </div>
-              <p className={`text-[11px] font-mono ${
-                isLight ? 'text-slate-500' : 'text-zinc-400'
-              }`}>{strings.subtitle}</p>
+                ✦ AURA · NEURAL CORE
+              </span>
             </div>
+
+            {/* Botón cerrar visible en móvil en este bloque */}
+            <button
+              onClick={onClose}
+              className={`sm:hidden p-1.5 rounded-lg transition-colors cursor-pointer ${
+                isLight ? 'text-slate-500 hover:text-black' : 'text-zinc-400 hover:text-white'
+              }`}
+              aria-label="Cerrar asistente"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
 
-          <div className="flex items-center gap-2">
-            {/* Botón de Control de Voz Femenina Natural (Mute / Unmute) */}
-            <button
-              onClick={toggleVoice}
-              className={`p-2.5 rounded-xl border transition-all cursor-pointer flex items-center gap-1.5 ${
-                isVoiceActive
-                  ? (isLight ? 'bg-indigo-50 border-indigo-300 text-indigo-600 shadow-sm' : 'bg-cyan-950/60 border-cyan-400/60 text-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.25)]')
-                  : (isLight ? 'bg-slate-100 border-slate-200 text-slate-400 hover:text-black' : 'bg-white/[0.03] border-white/10 text-zinc-500 hover:text-white')
-              }`}
-              title={isVoiceActive ? 'Silenciar voz natural' : 'Activar voz natural'}
-              aria-label="Alternar voz de AURA"
-            >
-              {isVoiceActive ? (
-                <>
-                  <Volume2 className={`w-4 h-4 ${isLight ? 'text-indigo-600' : 'text-cyan-400'}`} />
-                  {isSpeaking && (
-                    <span className="flex items-center gap-0.5 h-3">
-                      <span className={`w-0.5 h-2.5 rounded-full animate-bounce ${isLight ? 'bg-indigo-600' : 'bg-cyan-400'}`} style={{ animationDelay: '0ms' }} />
-                      <span className={`w-0.5 h-3 rounded-full animate-bounce ${isLight ? 'bg-indigo-400' : 'bg-cyan-300'}`} style={{ animationDelay: '150ms' }} />
-                      <span className={`w-0.5 h-2 rounded-full animate-bounce ${isLight ? 'bg-indigo-600' : 'bg-cyan-400'}`} style={{ animationDelay: '300ms' }} />
-                    </span>
-                  )}
-                </>
-              ) : (
-                <VolumeX className={`w-4 h-4 ${isLight ? 'text-slate-400' : 'text-zinc-500'}`} />
-              )}
-            </button>
+          {/* Busto Desencapsulado de Medio Cuerpo de AURA (Flotando Libremente en el Espacio) */}
+          <div className="relative flex-1 flex items-center justify-center py-2 sm:py-0 w-full overflow-visible">
+            <AndroidVoiceAvatar 
+              size="hero" 
+              isSpeaking={isSpeaking} 
+              className="drop-shadow-[0_12px_32px_rgba(6,182,212,0.18)]"
+            />
+          </div>
 
-            {/* Botón Cerrar */}
+          {/* Telemetría y Controles de Audio de AURA */}
+          <div className="w-full space-y-3 text-center">
+            {/* Pill de Estado Dinámico */}
+            <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-mono border transition-all ${
+              isSpeaking 
+                ? (isLight ? 'bg-indigo-50 border-indigo-300 text-indigo-700 animate-pulse' : 'bg-cyan-500/20 border-cyan-400/50 text-cyan-300 animate-pulse')
+                : (isLight ? 'bg-slate-100 border-slate-200 text-slate-600' : 'bg-white/[0.04] border-white/10 text-zinc-400')
+            }`}>
+              <Sparkles className="w-3 h-3 text-cyan-400" />
+              <span>{isSpeaking ? strings.badgeSpeaking : 'STANDBY · LISTA PARA DIAGNÓSTICO'}</span>
+            </div>
+
+            {/* Control de Voz Natural de Estudio con Ecualizador */}
+            <div className="flex items-center justify-center gap-2">
+              <button
+                onClick={toggleVoice}
+                className={`px-3 py-1.5 rounded-xl border text-[11px] font-mono transition-all cursor-pointer flex items-center gap-2 ${
+                  isVoiceActive
+                    ? (isLight ? 'bg-indigo-50 border-indigo-300 text-indigo-600 shadow-sm' : 'bg-cyan-950/70 border-cyan-400/60 text-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.25)]')
+                    : (isLight ? 'bg-slate-100 border-slate-200 text-slate-400 hover:text-black' : 'bg-white/[0.03] border-white/10 text-zinc-500 hover:text-white')
+                }`}
+                title={isVoiceActive ? 'Silenciar voz natural' : 'Activar voz natural'}
+                aria-label="Alternar voz de AURA"
+              >
+                {isVoiceActive ? (
+                  <>
+                    <Volume2 className={`w-3.5 h-3.5 ${isLight ? 'text-indigo-600' : 'text-cyan-400'}`} />
+                    <span>VOZ NATURAL ACTIVA</span>
+                    {isSpeaking && (
+                      <span className="flex items-center gap-0.5 h-2.5">
+                        <span className={`w-0.5 h-2 rounded-full animate-bounce ${isLight ? 'bg-indigo-600' : 'bg-cyan-400'}`} style={{ animationDelay: '0ms' }} />
+                        <span className={`w-0.5 h-3 rounded-full animate-bounce ${isLight ? 'bg-indigo-400' : 'bg-cyan-300'}`} style={{ animationDelay: '150ms' }} />
+                        <span className={`w-0.5 h-1.5 rounded-full animate-bounce ${isLight ? 'bg-indigo-600' : 'bg-cyan-400'}`} style={{ animationDelay: '300ms' }} />
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <VolumeX className={`w-3.5 h-3.5 ${isLight ? 'text-slate-400' : 'text-zinc-500'}`} />
+                    <span>VOZ SILENCIADA</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            <p className={`text-[10px] font-mono hidden sm:block ${
+              isLight ? 'text-slate-400' : 'text-zinc-500'
+            }`}>
+              {strings.subtitle}
+            </p>
+          </div>
+        </div>
+
+        {/* ========================================================================= */}
+        {/* COLUMNA DERECHA: CONVERSACIÓN INTERACTIVA & TRIAGE DE ARQUITECTURA         */}
+        {/* ========================================================================= */}
+        <div className="relative z-10 flex-1 flex flex-col p-5 sm:p-6 overflow-hidden">
+          
+          {/* Header de la conversación (Desktop) */}
+          <div className="hidden sm:flex items-center justify-between pb-3 mb-2 border-b border-white/10">
+            <div>
+              <h3 className={`font-display font-bold text-base sm:text-lg tracking-wide ${
+                isLight ? 'text-slate-900' : 'text-white'
+              }`}>
+                {strings.title} <span className="text-cyan-400 text-sm font-normal">· Asistente Soberano</span>
+              </h3>
+              <p className={`text-[11px] font-mono ${
+                isLight ? 'text-slate-500' : 'text-zinc-400'
+              }`}>
+                {strings.subtitle}
+              </p>
+            </div>
+
             <button
               onClick={onClose}
               className={`p-2 rounded-xl transition-colors cursor-pointer ${
@@ -534,118 +634,123 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
               <X className="w-5 h-5" />
             </button>
           </div>
-        </div>
 
-        {/* Zona de Mensajes */}
-        <div className="flex-1 overflow-y-auto space-y-4 pr-1 text-xs sm:text-sm">
-          {messages.map((m, idx) => (
-            <div
-              key={idx}
-              className={`flex gap-3 ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
-              {m.sender === 'ai' && (
-                <AndroidVoiceAvatar 
-                  size="sm" 
-                  isSpeaking={isSpeaking && idx === messages.length - 1} 
-                  className="mt-0.5" 
-                />
-              )}
+          {/* Zona de Mensajes con Scroll Suave */}
+          <div className="flex-1 overflow-y-auto space-y-3.5 pr-1.5 text-xs sm:text-sm">
+            {messages.map((m, idx) => (
               <div
-                className={`p-4 rounded-2xl max-w-[85%] leading-relaxed relative group ${
-                  m.sender === 'user'
-                    ? (isLight ? 'bg-indigo-600 text-white font-medium' : 'bg-white text-black font-medium')
-                    : (isLight ? 'bg-slate-100/90 border border-slate-200 text-slate-800 whitespace-pre-line' : 'bg-white/[0.04] border border-white/10 text-zinc-200 whitespace-pre-line')
-                }`}
+                key={idx}
+                className={`flex flex-col ${m.sender === 'user' ? 'items-end' : 'items-start'}`}
               >
-                {/* Texto del Mensaje */}
-                <div>{m.text}</div>
+                <div
+                  className={`p-4 rounded-2xl max-w-[90%] leading-relaxed relative group ${
+                    m.sender === 'user'
+                      ? (isLight ? 'bg-indigo-600 text-white font-medium shadow-sm' : 'bg-white text-black font-medium shadow-md')
+                      : (isLight ? 'bg-slate-100/90 border border-slate-200 text-slate-800' : 'bg-slate-900/60 border border-cyan-500/20 text-zinc-100 shadow-[0_4px_24px_rgba(0,0,0,0.4)] backdrop-blur-md')
+                  }`}
+                >
+                  {/* Encabezado elegante de mensaje AI */}
+                  {m.sender === 'ai' && (
+                    <div className="flex items-center justify-between gap-2 mb-2 pb-1.5 border-b border-white/10">
+                      <div className="flex items-center gap-1.5 text-[10px] font-mono font-semibold text-cyan-400">
+                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                        <span>✦ AURA</span>
+                        <span className="text-[9px] text-zinc-500">· DYNAMIND AI</span>
+                      </div>
 
-                {/* Botón táctil para volver a escuchar el mensaje de Aura */}
-                {m.sender === 'ai' && (
-                  <button
-                    type="button"
-                    onClick={() => playAuraAudio(m.replyKey || 'general', m.text)}
-                    className={`mt-2.5 pt-1.5 border-t flex items-center gap-1.5 text-[11px] font-sans transition-colors cursor-pointer ${
-                      isLight ? 'border-slate-200 text-indigo-600 hover:text-indigo-700' : 'border-white/10 text-cyan-400/90 hover:text-cyan-300'
-                    }`}
-                    title="Escuchar a Aura"
-                    aria-label="Escuchar mensaje de Aura"
-                  >
-                    <Volume2 className="w-3.5 h-3.5" />
-                    <span>{strings.listenBtn}</span>
-                  </button>
-                )}
+                      {/* Botón táctil para volver a escuchar la respuesta */}
+                      <button
+                        type="button"
+                        onClick={() => playAuraAudio(m.replyKey || 'general', m.text)}
+                        className={`flex items-center gap-1 text-[10px] font-sans transition-colors cursor-pointer ${
+                          isLight ? 'text-indigo-600 hover:text-indigo-700' : 'text-cyan-400/90 hover:text-cyan-300'
+                        }`}
+                        title="Escuchar a Aura"
+                        aria-label="Escuchar mensaje de Aura"
+                      >
+                        <Volume2 className="w-3 h-3" />
+                        <span>{strings.listenBtn}</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Contenido del Mensaje */}
+                  <div className="whitespace-pre-line">{m.text}</div>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Prompts Rápidos Sugeridos Dinámicos en el Idioma de la Página */}
-        <div className={`space-y-1.5 pt-2 border-t ${isLight ? 'border-slate-200' : 'border-white/10'}`}>
-          <div className={`text-[10px] font-mono uppercase ${isLight ? 'text-slate-500' : 'text-zinc-400'}`}>{strings.promptsLabel}</div>
-          <div className="flex flex-wrap gap-1.5">
-            {strings.prompts.map((qp, qIdx) => (
-              <button
-                key={qIdx}
-                onClick={() => handleSendQuery(qp.query)}
-                className={`px-2.5 py-1 rounded-lg border text-[11px] transition-colors cursor-pointer text-left ${
-                  isLight 
-                    ? 'bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-700 hover:text-black' 
-                    : 'bg-white/[0.03] hover:bg-white/[0.08] border-white/10 text-zinc-300 hover:text-white'
-                }`}
-              >
-                {qp.label}
-              </button>
             ))}
           </div>
-        </div>
 
-        {/* Barra de Entrada y Enlace a Diagnóstico */}
-        <div className="space-y-3 pt-1">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSendQuery(inputText);
-            }}
-            className="flex items-center gap-2"
-          >
-            <input
-              type="text"
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              placeholder={strings.placeholder}
-              className={`flex-1 px-4 py-3 border rounded-xl text-xs font-mono focus:outline-none transition-colors ${
-                isLight 
-                  ? 'bg-slate-100/90 border-slate-200 text-slate-900 placeholder:text-slate-400 focus:border-indigo-500' 
-                  : 'bg-white/[0.03] border-white/15 text-white placeholder:text-zinc-500 focus:border-cyan-400/60'
-              }`}
-            />
-            <button
-              type="submit"
-              className={`p-3 rounded-xl transition-colors cursor-pointer ${
-                isLight ? 'bg-indigo-600 text-white hover:bg-indigo-700' : 'bg-white text-black hover:bg-zinc-200'
-              }`}
-              aria-label="Enviar pregunta a Aura"
-            >
-              <Send className="w-4 h-4" />
-            </button>
-          </form>
-
-          <div className={`flex items-center justify-between text-[11px] font-mono pt-1 ${
-            isLight ? 'text-slate-500' : 'text-zinc-400'
-          }`}>
-            <span>{strings.preferHuman}</span>
-            <a
-              href="/#/diagnostico"
-              onClick={onClose}
-              className={`flex items-center gap-1 font-bold underline ${
-                isLight ? 'text-indigo-600 hover:text-indigo-700' : 'text-cyan-400 hover:text-cyan-300'
-              }`}
-            >
-              <span>{strings.ctaDiagnostic}</span>
-              <ArrowRight className="w-3 h-3" />
-            </a>
+          {/* Prompts Rápidos Sugeridos Dinámicos */}
+          <div className={`space-y-1.5 pt-3 border-t mt-2 ${isLight ? 'border-slate-200' : 'border-white/10'}`}>
+            <div className={`text-[10px] font-mono uppercase tracking-wider ${isLight ? 'text-slate-500' : 'text-zinc-400'}`}>
+              {strings.promptsLabel}
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {strings.prompts.map((qp, qIdx) => (
+                <button
+                  key={qIdx}
+                  onClick={() => handleSendQuery(qp.query)}
+                  className={`px-2.5 py-1 rounded-lg border text-[11px] transition-colors cursor-pointer text-left ${
+                    isLight 
+                      ? 'bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-700 hover:text-black' 
+                      : 'bg-white/[0.03] hover:bg-white/[0.08] border-white/10 text-zinc-300 hover:text-white hover:border-cyan-400/40'
+                  }`}
+                >
+                  {qp.label}
+                </button>
+              ))}
+            </div>
           </div>
+
+          {/* Formulario de Entrada y Enlace a Diagnóstico */}
+          <div className="space-y-2.5 pt-2">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSendQuery(inputText);
+              }}
+              className="flex items-center gap-2"
+            >
+              <input
+                type="text"
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                placeholder={strings.placeholder}
+                className={`flex-1 px-4 py-2.5 border rounded-xl text-xs font-mono focus:outline-none transition-colors ${
+                  isLight 
+                    ? 'bg-slate-100/90 border-slate-200 text-slate-900 placeholder:text-slate-400 focus:border-indigo-500' 
+                    : 'bg-white/[0.03] border-white/15 text-white placeholder:text-zinc-500 focus:border-cyan-400/60'
+                }`}
+              />
+              <button
+                type="submit"
+                className={`p-2.5 rounded-xl transition-colors cursor-pointer ${
+                  isLight ? 'bg-indigo-600 text-white hover:bg-indigo-700' : 'bg-white text-black hover:bg-zinc-200'
+                }`}
+                aria-label="Enviar pregunta a Aura"
+              >
+                <Send className="w-4 h-4" />
+              </button>
+            </form>
+
+            <div className={`flex items-center justify-between text-[11px] font-mono ${
+              isLight ? 'text-slate-500' : 'text-zinc-400'
+            }`}>
+              <span>{strings.preferHuman}</span>
+              <a
+                href="/#/diagnostico"
+                onClick={onClose}
+                className={`flex items-center gap-1 font-bold underline ${
+                  isLight ? 'text-indigo-600 hover:text-indigo-700' : 'text-cyan-400 hover:text-cyan-300'
+                }`}
+              >
+                <span>{strings.ctaDiagnostic}</span>
+                <ArrowRight className="w-3 h-3" />
+              </a>
+            </div>
+          </div>
+
         </div>
 
       </div>

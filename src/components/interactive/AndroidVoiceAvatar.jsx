@@ -3,39 +3,50 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 /**
  * HyperRealisticAndroidAvatar (AURA - Advanced Ultra-Realistic Android)
- * Motor CGI Fotorrealista Multicapa a 60 FPS:
- * - Retrato fotorrealista de alta definición con piel sintética de porcelana traslúcida y microcircuitos biocibernéticos.
- * - 3D Head Parallax Tilt reactivo a la posición del cursor/pointer en tiempo real.
- * - Iris biocibernético dinámico con eye-tracking reactivo y reflejos especulares de córnea.
- * - Parpadeo orgánico fotomórfico (cierre 75ms, apertura elástica 130ms, intervalos biológicos pseudo-aleatorios con micro-doble parpadeo).
- * - Articulación fonética viva en tiempo real con resonancia orofacial y ondas de choque acústicas al emitir voz (`isSpeaking`).
- * - Micro-respiración bio-sintética idle a 60 FPS acelerada por GPU.
+ * Motor CGI Fotorrealista Desencapsulado (Sin Círculo / Busto Libre) a 60 FPS:
+ * - Silueta de busto completa sin marco ni círculo (cabeza, cuello biónico y hombros con exoesqueleto).
+ * - Desvanecimiento etéreo perimetral e inferior (mask-image continua que funde los hombros en el espacio cósmico).
+ * - Gestos vivos y dinámicos:
+ *   * Gestos en reposo (idle): micro head-tilts reflexivos periódicos, respiración orgánica de torso y hombros.
+ *   * Gestos al hablar (speaking): micro-asentimiento oratorio con la cabeza y hombros, inclinación expresiva.
+ * - 3D Head Parallax Tilt reactivo al cursor vía Lerp elástico (0.085).
+ * - Motor ocular biocibernético con eye-tracking, iris bioluminiscente cuántico y reflejos especulares de córnea.
+ * - Parpadeo orgánico fotomórfico (cierre 85ms, apertura elástica 130ms, intervalos biológicos con micro-doble parpadeo).
+ * - Articulación fonética viva en tiempo real con resonancia orofacial y ondas de choque sónicas concéntricas.
  */
-export default function AndroidVoiceAvatar({ size = 'md', isSpeaking = false, className = '' }) {
-  // Dimensiones configurables y responsive
+export default function AndroidVoiceAvatar({ size = 'md', isSpeaking = false, showBadge = false, className = '' }) {
+  // Dimensiones configurables y responsive de busto libre
   const dimensions = useMemo(() => {
     switch (size) {
+      case 'hero':
+      case 'xl':
+        return {
+          container: 'w-56 h-76 sm:w-64 sm:h-84 md:w-72 md:h-96',
+          pupilRange: 4.8,
+          tiltFactor: 8,
+          haloSize: '-inset-6'
+        };
       case 'sm':
         return {
-          container: 'w-14 h-14 sm:w-16 sm:h-16',
-          pupilRange: 2.4,
-          tiltFactor: 5,
-          glowSize: '-inset-1'
+          container: 'w-12 h-16 sm:w-14 sm:h-18',
+          pupilRange: 2.0,
+          tiltFactor: 4,
+          haloSize: '-inset-2'
         };
       case 'lg':
         return {
-          container: 'w-28 h-28 sm:w-36 sm:h-36',
-          pupilRange: 4.8,
-          tiltFactor: 9,
-          glowSize: '-inset-3'
+          container: 'w-36 h-50 sm:w-44 sm:h-60',
+          pupilRange: 4.2,
+          tiltFactor: 7,
+          haloSize: '-inset-5'
         };
       case 'md':
       default:
         return {
-          container: 'w-20 h-20 sm:w-24 sm:h-24',
-          pupilRange: 3.4,
-          tiltFactor: 7,
-          glowSize: '-inset-2'
+          container: 'w-24 h-34 sm:w-28 sm:h-40',
+          pupilRange: 3.2,
+          tiltFactor: 6,
+          haloSize: '-inset-4'
         };
     }
   }, [size]);
@@ -44,7 +55,7 @@ export default function AndroidVoiceAvatar({ size = 'md', isSpeaking = false, cl
   const [pointer, setPointer] = useState({ x: 0, y: 0 });
   const containerRef = useRef(null);
 
-  // 1. Detección y seguimiento suave del cursor (Mouse & Pointer Tracking con Lerp)
+  // 1. Detección y seguimiento suave del cursor (Mouse Tracking con Lerp)
   useEffect(() => {
     let animationFrameId;
     let targetX = 0;
@@ -79,7 +90,7 @@ export default function AndroidVoiceAvatar({ size = 'md', isSpeaking = false, cl
     };
   }, []);
 
-  // 2. Parpadeo Orgánico Multicapa (Blinking Motor)
+  // 2. Parpadeo Orgánico Fotomórfico (Blinking Motor)
   const [blinkState, setBlinkState] = useState(false);
 
   useEffect(() => {
@@ -89,19 +100,17 @@ export default function AndroidVoiceAvatar({ size = 'md', isSpeaking = false, cl
     const scheduleBlink = () => {
       if (!isMounted) return;
 
-      // Tiempo pseudo-aleatorio entre parpadeos (2.6s a 5.0s)
       const nextDelay = 2600 + Math.random() * 2400;
 
       blinkTimeout = setTimeout(() => {
         if (!isMounted) return;
         setBlinkState(true);
 
-        // Duración biológica de cierre y apertura (90ms)
         setTimeout(() => {
           if (!isMounted) return;
           setBlinkState(false);
 
-          // 18% de probabilidad de micro-doble parpadeo
+          // 18% probabilidad de micro-doble parpadeo
           if (Math.random() < 0.18) {
             setTimeout(() => {
               if (!isMounted) return;
@@ -125,6 +134,29 @@ export default function AndroidVoiceAvatar({ size = 'md', isSpeaking = false, cl
     };
   }, []);
 
+  // 3. Gestos Autónomos en Reposo (Idle Gesture Engine)
+  // Inclinación reflexiva periódica de cabeza (head-tilt)
+  const [idleTiltZ, setIdleTiltZ] = useState(0);
+
+  useEffect(() => {
+    if (isSpeaking) return;
+
+    let gestureTimer;
+    const triggerIdleGesture = () => {
+      // Inclinación sutil entre -1.8deg y +1.8deg
+      const targetTilt = (Math.random() - 0.5) * 3.6;
+      setIdleTiltZ(targetTilt);
+
+      // Regresar al centro tras 2 segundos
+      setTimeout(() => setIdleTiltZ(0), 2200);
+
+      gestureTimer = setTimeout(triggerIdleGesture, 5500 + Math.random() * 4500);
+    };
+
+    gestureTimer = setTimeout(triggerIdleGesture, 3000);
+    return () => clearTimeout(gestureTimer);
+  }, [isSpeaking]);
+
   // Inclinación 3D de cabeza calculada (Head Parallax)
   const tiltX = pointer.x * dimensions.tiltFactor;
   const tiltY = -pointer.y * dimensions.tiltFactor;
@@ -140,55 +172,55 @@ export default function AndroidVoiceAvatar({ size = 'md', isSpeaking = false, cl
       style={{ perspective: '850px' }}
     >
       {/* ========================================================================= */}
-      {/* 1. ONDAS ACÚSTICAS HOLOGRÁFICAS AL HABLAR                               */}
+      {/* 1. ONDAS HOLOGRÁFICAS Y RESPLANDOR CUÁNTICO LIBRE (SIN CÍRCULO)           */}
       {/* ========================================================================= */}
       <AnimatePresence>
         {isSpeaking && (
           <>
             <motion.div
-              initial={{ scale: 0.85, opacity: 0.85 }}
+              initial={{ scale: 0.85, opacity: 0.8 }}
               animate={{
-                scale: [0.95, 1.48, 1.75],
-                opacity: [0.75, 0.35, 0]
+                scale: [0.9, 1.25, 1.45],
+                opacity: [0.55, 0.25, 0]
               }}
               transition={{
-                duration: 1.4,
+                duration: 1.6,
                 repeat: Infinity,
                 ease: 'easeOut'
               }}
-              className="absolute inset-0 rounded-full border border-cyan-400/60 pointer-events-none z-0"
+              className="absolute -inset-2 rounded-[45%] bg-gradient-to-t from-cyan-400/25 via-blue-500/15 to-transparent blur-lg pointer-events-none z-0"
             />
             <motion.div
-              initial={{ scale: 0.85, opacity: 0.65 }}
+              initial={{ scale: 0.85, opacity: 0.6 }}
               animate={{
-                scale: [0.9, 1.35, 1.6],
-                opacity: [0.65, 0.25, 0]
+                scale: [0.88, 1.18, 1.35],
+                opacity: [0.45, 0.15, 0]
               }}
               transition={{
-                duration: 1.4,
-                delay: 0.45,
+                duration: 1.6,
+                delay: 0.5,
                 repeat: Infinity,
                 ease: 'easeOut'
               }}
-              className="absolute inset-0 rounded-full border border-indigo-400/50 pointer-events-none z-0"
+              className="absolute -inset-1 rounded-[45%] bg-gradient-to-t from-indigo-500/20 via-cyan-400/10 to-transparent blur-md pointer-events-none z-0"
             />
           </>
         )}
       </AnimatePresence>
 
       {/* ========================================================================= */}
-      {/* 2. HALO CUÁNTICO Y BIOLUMINISCENCIA SUAVE                                  */}
+      {/* 2. HALO ESTELAR DE PLASMA CUÁNTICO                                        */}
       {/* ========================================================================= */}
       <motion.div
         animate={
           isSpeaking
             ? {
-                scale: [1, 1.25, 1.12, 1.24, 1],
-                opacity: [0.6, 0.95, 0.72, 0.9, 0.6]
+                scale: [1, 1.15, 1.08, 1.12, 1],
+                opacity: [0.4, 0.7, 0.5, 0.65, 0.4]
               }
             : {
-                scale: [0.96, 1.05, 0.96],
-                opacity: [0.32, 0.48, 0.32]
+                scale: [0.98, 1.04, 0.98],
+                opacity: [0.2, 0.35, 0.2]
               }
         }
         transition={{
@@ -196,68 +228,69 @@ export default function AndroidVoiceAvatar({ size = 'md', isSpeaking = false, cl
           repeat: Infinity,
           ease: 'easeInOut'
         }}
-        className={`absolute ${dimensions.glowSize} rounded-full bg-gradient-to-tr from-cyan-500/40 via-blue-600/30 to-purple-600/35 blur-xl pointer-events-none z-0`}
+        className={`absolute ${dimensions.haloSize} rounded-[50%] bg-gradient-to-tr from-cyan-500/25 via-blue-600/15 to-purple-600/20 blur-2xl pointer-events-none z-0`}
       />
 
       {/* ========================================================================= */}
-      {/* 3. ROSTRO TRIDIMENSIONAL FOTORREALISTA CON HEAD PARALLAX 3D TILT          */}
+      {/* 3. BUSTO DESENCAPSULADO CON GESTOS, 3D PARALLAX Y RESPIRACIÓN VIVA        */}
       {/* ========================================================================= */}
-      <div
-        className="relative w-full h-full p-[1.5px] rounded-full bg-gradient-to-b from-cyan-400/50 via-blue-500/25 to-purple-500/35 shadow-[0_8px_32px_rgba(0,0,0,0.85)] z-10"
+      <motion.div
+        className="relative w-full h-full z-10"
         style={{
-          transform: `rotateY(${tiltX}deg) rotateX(${tiltY}deg) scale(${isSpeaking ? 1.03 : 1})`,
           transformStyle: 'preserve-3d',
-          transition: 'transform 0.12s cubic-bezier(0.16, 1, 0.3, 1)'
+          transform: `rotateY(${tiltX}deg) rotateX(${tiltY}deg) rotateZ(${idleTiltZ}deg)`
+        }}
+        animate={
+          isSpeaking
+            ? {
+                // Gestos oratorios al hablar: micro-asentimiento, hombros y énfasis
+                y: [0, -3, 1, -2, 0],
+                rotateX: [0, 3.5, -1.5, 2.5, 0],
+                rotateZ: [-0.8, 1.2, -0.6, 1, 0]
+              }
+            : {
+                // Micro-respiración orgánica de torso en reposo
+                y: [0, -2, 0],
+                rotateX: [0, 0.8, 0]
+              }
+        }
+        transition={{
+          duration: isSpeaking ? 0.75 : 3.8,
+          repeat: Infinity,
+          ease: 'easeInOut'
         }}
       >
-        <div className="relative w-full h-full rounded-full overflow-hidden bg-slate-950">
-          
-          {/* Retrato Fotorrealista Maestro de AURA con Primer Plano Close-Up */}
-          <motion.img
-            src="/aura_face_portrait.webp"
-            alt="AURA AI Neural Android"
-            animate={{
-              scale: isSpeaking ? [1.25, 1.27, 1.25] : [1.24, 1.255, 1.24]
-            }}
-            transition={{
-              duration: isSpeaking ? 0.35 : 3.6,
-              repeat: Infinity,
-              ease: 'easeInOut'
-            }}
-            className="w-full h-full object-cover object-[50%_48%] select-none pointer-events-none"
+        {/* Contenedor Flotante Desencapsulado 100% Libre (CERO CÍRCULOS, CERO MÁSCARAS OVALADAS) */}
+        <div className="relative w-full h-full overflow-visible">
+          {/* Retrato Fotorrealista de Busto Completo */}
+          <img
+            src="/aura_unboxed_bust.webp"
+            alt="AURA AI Autonomous Android"
+            className="w-full h-full object-contain select-none pointer-events-none"
             loading="eager"
             decoding="async"
           />
 
-          {/* Viñeta Cinematográfica Perimetral de Fusión Orgánica */}
+          {/* Brillo especular estelar reactivo al puntero */}
           <div
-            className="absolute inset-0 pointer-events-none rounded-full"
+            className="absolute inset-0 pointer-events-none mix-blend-screen opacity-25"
             style={{
-              background:
-                'radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 56%, rgba(8,12,22,0.4) 80%, rgba(5,7,14,0.92) 100%)'
+              background: `radial-gradient(circle at ${50 + pointer.x * 25}% ${35 + pointer.y * 25}%, rgba(34,211,238,0.55) 0%, rgba(99,102,241,0.2) 40%, transparent 68%)`
             }}
           />
 
-          {/* Brillo especular de luz ambiental móvil interactiva */}
-          <div
-            className="absolute inset-0 pointer-events-none mix-blend-screen opacity-30 rounded-full"
-            style={{
-              background: `radial-gradient(circle at ${50 + pointer.x * 25}% ${40 + pointer.y * 25}%, rgba(34,211,238,0.55) 0%, rgba(99,102,241,0.2) 42%, transparent 70%)`
-            }}
-          />
+          {/* =================================================================== */}
+          {/* 4. MOTOR OCULAR BIOCIBERNÉTICO (EYE-TRACKING + IRIS LUMINISCENTE)   */}
+          {/* =================================================================== */}
 
-          {/* ===================================================================== */}
-          {/* 4. MOTOR OCULAR: EYE-TRACKING + IRIS LUMINISCENTE + REFLEJOS          */}
-          {/* ===================================================================== */}
-
-          {/* OJO IZQUIERDO (Coord calibrada para scale 1.25: x: 26.5%, y: 41.5%) */}
+          {/* OJO IZQUIERDO (Coord: x: 29.7%, y: 34.9%) */}
           <div
             className="absolute pointer-events-none"
             style={{
-              left: '26.8%',
-              top: '41.8%',
-              width: '18%',
-              height: '9%',
+              left: '29.7%',
+              top: '34.9%',
+              width: '15%',
+              height: '5.5%',
               transform: 'translate(-50%, -50%)',
               overflow: 'hidden',
               borderRadius: '50% / 60%'
@@ -272,25 +305,27 @@ export default function AndroidVoiceAvatar({ size = 'md', isSpeaking = false, cl
                 width: '44%',
                 height: '82%',
                 transform: `translate(calc(-50% + ${pupilOffsetX}px), calc(-50% + ${pupilOffsetY}px))`,
-                background: 'radial-gradient(circle at 45% 45%, #ffffff 0%, #38bdf8 30%, #0284c7 70%, #032147 100%)',
-                boxShadow: '0 0 8px rgba(56, 189, 248, 0.95), inset 0 0 4px rgba(255, 255, 255, 0.85)'
+                background:
+                  'radial-gradient(circle at 45% 45%, #ffffff 0%, #38bdf8 30%, #0284c7 70%, #032147 100%)',
+                boxShadow:
+                  '0 0 8px rgba(56, 189, 248, 0.95), inset 0 0 4px rgba(255, 255, 255, 0.85)'
               }}
             >
-              {/* Núcleo de Pupila Cuántica */}
+              {/* Núcleo cuántico */}
               <div className="absolute inset-[30%] bg-black rounded-full" />
-              {/* Destello Especular de Córnea */}
+              {/* Reflejo corneal */}
               <div className="absolute top-[18%] left-[22%] w-[28%] h-[28%] bg-white rounded-full shadow-[0_0_3px_#ffffff]" />
             </div>
           </div>
 
-          {/* OJO DERECHO (Coord calibrada para scale 1.25: x: 73.2%, y: 41.5%) */}
+          {/* OJO DERECHO (Coord: x: 70.3%, y: 34.9%) */}
           <div
             className="absolute pointer-events-none"
             style={{
-              left: '73.2%',
-              top: '41.8%',
-              width: '18%',
-              height: '9%',
+              left: '70.3%',
+              top: '34.9%',
+              width: '15%',
+              height: '5.5%',
               transform: 'translate(-50%, -50%)',
               overflow: 'hidden',
               borderRadius: '50% / 60%'
@@ -305,29 +340,31 @@ export default function AndroidVoiceAvatar({ size = 'md', isSpeaking = false, cl
                 width: '44%',
                 height: '82%',
                 transform: `translate(calc(-50% + ${pupilOffsetX}px), calc(-50% + ${pupilOffsetY}px))`,
-                background: 'radial-gradient(circle at 45% 45%, #ffffff 0%, #38bdf8 30%, #0284c7 70%, #032147 100%)',
-                boxShadow: '0 0 8px rgba(56, 189, 248, 0.95), inset 0 0 4px rgba(255, 255, 255, 0.85)'
+                background:
+                  'radial-gradient(circle at 45% 45%, #ffffff 0%, #38bdf8 30%, #0284c7 70%, #032147 100%)',
+                boxShadow:
+                  '0 0 8px rgba(56, 189, 248, 0.95), inset 0 0 4px rgba(255, 255, 255, 0.85)'
               }}
             >
-              {/* Núcleo de Pupila Cuántica */}
+              {/* Núcleo cuántico */}
               <div className="absolute inset-[30%] bg-black rounded-full" />
-              {/* Destello Especular de Córnea */}
+              {/* Reflejo corneal */}
               <div className="absolute top-[18%] left-[22%] w-[28%] h-[28%] bg-white rounded-full shadow-[0_0_3px_#ffffff]" />
             </div>
           </div>
 
-          {/* ===================================================================== */}
-          {/* 5. PÁRPADOS FOTOMÓRFICOS BIO-SINTÉTICOS (PARPADEO NATURAL 60 FPS)      */}
-          {/* ===================================================================== */}
+          {/* =================================================================== */}
+          {/* 5. PÁRPADOS FOTOMÓRFICOS BIO-SINTÉTICOS (PARPADEO NATURAL 90MS)     */}
+          {/* =================================================================== */}
 
           {/* Párpado Ojo Izquierdo */}
           <div
             className="absolute pointer-events-none transition-all duration-75 ease-in-out"
             style={{
-              left: '17.8%',
-              top: '36.8%',
-              width: '18%',
-              height: '10%',
+              left: '22.0%',
+              top: '31.5%',
+              width: '15.5%',
+              height: '6.8%',
               overflow: 'hidden',
               transform: blinkState ? 'scaleY(1)' : 'scaleY(0.04)',
               transformOrigin: '50% 50%',
@@ -337,18 +374,17 @@ export default function AndroidVoiceAvatar({ size = 'md', isSpeaking = false, cl
               zIndex: 25
             }}
           >
-            {/* Sombra de Pestañas Finas */}
-            <div className="absolute bottom-0 inset-x-0 h-[2.5px] bg-slate-900/85" />
+            <div className="absolute bottom-0 inset-x-0 h-[2px] bg-slate-900/85" />
           </div>
 
           {/* Párpado Ojo Derecho */}
           <div
             className="absolute pointer-events-none transition-all duration-75 ease-in-out"
             style={{
-              left: '64.2%',
-              top: '36.8%',
-              width: '18%',
-              height: '10%',
+              left: '62.5%',
+              top: '31.5%',
+              width: '15.5%',
+              height: '6.8%',
               overflow: 'hidden',
               transform: blinkState ? 'scaleY(1)' : 'scaleY(0.04)',
               transformOrigin: '50% 50%',
@@ -358,30 +394,29 @@ export default function AndroidVoiceAvatar({ size = 'md', isSpeaking = false, cl
               zIndex: 25
             }}
           >
-            {/* Sombra de Pestañas Finas */}
-            <div className="absolute bottom-0 inset-x-0 h-[2.5px] bg-slate-900/85" />
+            <div className="absolute bottom-0 inset-x-0 h-[2px] bg-slate-900/85" />
           </div>
 
-          {/* ===================================================================== */}
-          {/* 6. ARTICULACIÓN VOCAL VIVA & RESONANCIA OROFACIAL (LIPSYNC & GLOW)    */}
-          {/* ===================================================================== */}
+          {/* =================================================================== */}
+          {/* 6. ARTICULACIÓN VOCAL VIVA & RESONANCIA OROFACIAL (LIPSYNC & GLOW)  */}
+          {/* =================================================================== */}
           {isSpeaking && (
             <div
               className="absolute pointer-events-none"
               style={{
                 left: '50%',
-                top: '90.5%',
-                width: '32%',
-                height: '8%',
+                top: '65.8%',
+                width: '26%',
+                height: '5.5%',
                 transform: 'translate(-50%, -50%)',
                 zIndex: 20
               }}
             >
-              {/* Apertura Fonética y Brillo de Resonancia Cuántica */}
+              {/* Resonancia de cavidad orofacial de plasma */}
               <motion.div
                 animate={{
-                  scaleY: [0.6, 1.45, 0.75, 1.65, 0.6],
-                  scaleX: [0.9, 1.12, 0.95, 1.18, 0.9],
+                  scaleY: [0.6, 1.5, 0.75, 1.65, 0.6],
+                  scaleX: [0.92, 1.12, 0.95, 1.18, 0.92],
                   opacity: [0.75, 1, 0.85, 1, 0.75]
                 }}
                 transition={{
@@ -395,7 +430,7 @@ export default function AndroidVoiceAvatar({ size = 'md', isSpeaking = false, cl
                 }}
               />
 
-              {/* Micro-destello de apertura labial sintética */}
+              {/* Micro-apertura labial */}
               <motion.div
                 animate={{
                   opacity: [0.4, 0.95, 0.5, 0.92, 0.4]
@@ -410,47 +445,46 @@ export default function AndroidVoiceAvatar({ size = 'md', isSpeaking = false, cl
             </div>
           )}
 
-          {/* ===================================================================== */}
-          {/* 7. ECUALIZADORES Y REDES NEURONALES LATERALES AL HABLAR               */}
-          {/* ===================================================================== */}
+          {/* =================================================================== */}
+          {/* 7. REDES NEURONALES LATERALES Y FIBRA ÓPTICA DEL CUELLO AL HABLAR  */}
+          {/* =================================================================== */}
           {isSpeaking && (
-            <div className="absolute inset-0 pointer-events-none z-15 mix-blend-screen opacity-75">
-              {/* Redes neuronales izquierda (mejilla) */}
+            <div className="absolute inset-0 pointer-events-none z-15 mix-blend-screen opacity-70">
+              {/* Redes mejilla izquierda */}
               <motion.div
                 animate={{ opacity: [0.35, 0.85, 0.4, 0.95, 0.35] }}
                 transition={{ duration: 0.3, repeat: Infinity }}
-                className="absolute left-[10%] top-[62%] w-6 h-6 rounded-full bg-cyan-400/35 blur-sm"
+                className="absolute left-[14%] top-[48%] w-5 h-5 rounded-full bg-cyan-400/35 blur-sm"
               />
-              {/* Redes neuronales derecha (mejilla) */}
+              {/* Redes mejilla derecha */}
               <motion.div
                 animate={{ opacity: [0.4, 0.95, 0.35, 0.85, 0.4] }}
                 transition={{ duration: 0.34, repeat: Infinity, delay: 0.04 }}
-                className="absolute right-[10%] top-[62%] w-6 h-6 rounded-full bg-indigo-400/35 blur-sm"
+                className="absolute right-[14%] top-[48%] w-5 h-5 rounded-full bg-indigo-400/35 blur-sm"
+              />
+              {/* Fibra óptica en cuello */}
+              <motion.div
+                animate={{ opacity: [0.3, 0.8, 0.4, 0.9, 0.3] }}
+                transition={{ duration: 0.4, repeat: Infinity }}
+                className="absolute left-[38%] top-[72%] w-16 h-8 rounded-full bg-cyan-400/25 blur-md"
               />
             </div>
           )}
-
-          {/* Micro-filtro CRT / Holográfico ultra sutil para textura de androide */}
-          <div
-            className="absolute inset-0 pointer-events-none opacity-[0.05] mix-blend-overlay"
-            style={{
-              backgroundImage:
-                'repeating-linear-gradient(0deg, #000, #000 1px, transparent 1px, transparent 2px)'
-            }}
-          />
         </div>
-      </div>
+      </motion.div>
 
       {/* ========================================================================= */}
-      {/* 8. BADGE TÁCTICO DE ESTADO TELEMÉTRICO                                     */}
+      {/* 8. BADGE TÁCTICO DE ESTADO TELEMÉTRICO FLOTANTE (OPCIONAL)               */}
       {/* ========================================================================= */}
-      <span
-        className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-slate-950 z-30 transition-colors ${
-          isSpeaking
-            ? 'bg-cyan-400 shadow-[0_0_12px_#22d3ee] animate-pulse'
-            : 'bg-emerald-400 shadow-[0_0_8px_#34d399]'
-        }`}
-      />
+      {showBadge && (
+        <span
+          className={`absolute bottom-1 right-2 w-2.5 h-2.5 rounded-full z-30 transition-colors ${
+            isSpeaking
+              ? 'bg-cyan-400 shadow-[0_0_12px_#22d3ee] animate-pulse'
+              : 'bg-emerald-400 shadow-[0_0_8px_#34d399]'
+          }`}
+        />
+      )}
     </div>
   );
 }
