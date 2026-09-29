@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Sparkles, Send, ArrowRight, Volume2, VolumeX } from 'lucide-react';
+import { X, Sparkles, Send, ArrowRight, Volume2, VolumeX, BrainCircuit } from 'lucide-react';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import AndroidVoiceAvatar from './AndroidVoiceAvatar';
+import { reasonAuraQuery } from '../../utils/auraReasoningEngine';
 
 // --------------------------------------------------------------------------
 // DICCIONARIO MULTILINGÜE DE AUTOR PARA AURA
@@ -331,6 +332,7 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
   const [inputText, setInputText] = useState('');
   const speechRef = useRef(null);
   const audioRef = useRef(null);
+  const chatBottomRef = useRef(null);
   const [avatarAction, setAvatarAction] = useState(null);
 
   // Detección reactiva de resolución móvil para adaptar el tamaño del avatar
@@ -340,6 +342,11 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Auto-scroll fluido al último mensaje o estado de razonamiento
+  useEffect(() => {
+    chatBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, isThinking, thinkingPhase]);
 
   const triggerAction = (act) => {
     setAvatarAction(act);
@@ -469,94 +476,124 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
     }
   };
 
-  // Detener voz si se cierra el modal
-  useEffect(() => {
-    if (!isOpen) {
-      if (audioRef.current) {
+  // Estados de Razonamiento Cognitivo
+  const [isThinking, setIsThinking] = useState(false);
+  const [thinkingPhase, setThinkingPhase] = useState('Analizando tu caso...');
+
+  // Función Central de Apagado Absoluto de Audio (HTML5 + Web Speech)
+  const handleStopAllAudio = () => {
+    if (audioRef.current) {
+      try {
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
-        audioRef.current = null;
-      }
-      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        audioRef.current.src = '';
+      } catch (e) {}
+      audioRef.current = null;
+    }
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      try {
         window.speechSynthesis.cancel();
-      }
-      setIsSpeaking(false);
+      } catch (e) {}
+    }
+    setIsSpeaking(false);
+  };
+
+  // Cierre limpio del modal cortando cualquier audio activo de inmediato
+  const handleCloseModal = () => {
+    handleStopAllAudio();
+    if (onClose) onClose();
+  };
+
+  // Cleanup de audio garantizado al desmontar el modal
+  useEffect(() => {
+    return () => {
+      handleStopAllAudio();
+    };
+  }, []);
+
+  // También detener si isOpen cambia a false
+  useEffect(() => {
+    if (!isOpen) {
+      handleStopAllAudio();
     }
   }, [isOpen]);
 
-  const handleSendQuery = (query) => {
-    if (!query.trim()) return;
+  // Manejador de Consultas con Razonamiento Cognitivo y Grounding Real
+  const handleSendQuery = async (query) => {
+    if (!query || !query.trim() || isThinking) return;
+
+    handleStopAllAudio();
 
     if (typeof window !== 'undefined' && window.speechSynthesis) {
       window.speechSynthesis.resume();
     }
 
-    const userMsg = { sender: 'user', text: query };
-    const q = query.toLowerCase();
-    let reply = strings.answers.general;
-    let replyKey = 'general';
-
-    if (
-      q.includes('gastro') || q.includes('restauran') || q.includes('bar') || 
-      q.includes('mesa') || q.includes('table') || q.includes('food') || 
-      q.includes('comida') || q.includes('essen') || q.includes('飲食')
-    ) {
-      reply = strings.answers.gastro;
-      replyKey = 'gastro';
-    } else if (
-      q.includes('glamping') || q.includes('booking') || q.includes('hotel') || 
-      q.includes('cabaña') || q.includes('cabin') || q.includes('reserva') || 
-      q.includes('hospedaje') || q.includes('zimmer') || q.includes('chambre') || q.includes('宿泊')
-    ) {
-      reply = strings.answers.hotel;
-      replyKey = 'hotel';
-    } else if (
-      q.includes('fideliz') || q.includes('loyalt') || q.includes('punto') || 
-      q.includes('puntos') || q.includes('vip') || q.includes('retenc') || 
-      q.includes('wallet') || q.includes('billetera') || q.includes('recompra') || 
-      q.includes('kundenbindung') || q.includes('リピート')
-    ) {
-      reply = strings.answers.loyalty;
-      replyKey = 'loyalty';
-    } else if (
-      q.includes('clínic') || q.includes('clinic') || q.includes('curios') || 
-      q.includes('whatsapp') || q.includes('cita') || q.includes('lead') || 
-      q.includes('termin') || q.includes('rendez-vous') || q.includes('クリニック')
-    ) {
-      reply = strings.answers.clinic;
-      replyKey = 'clinic';
-    } else if (
-      q.includes('tiempo') || q.includes('tarda') || q.includes('plazo') || 
-      q.includes('time') || q.includes('delivery') || q.includes('délai') || 
-      q.includes('dauer') || q.includes('prazo') || q.includes('納期')
-    ) {
-      reply = strings.answers.time;
-      replyKey = 'time';
-    }
-
-    setMessages(prev => [...prev, userMsg, { sender: 'ai', text: reply, replyKey }]);
+    const trimmedQuery = query.trim();
+    const userMsg = { sender: 'user', text: trimmedQuery };
+    
+    // Inmediatamente mostrar mensaje del usuario y limpiar input
+    setMessages(prev => [...prev, userMsg]);
     setInputText('');
+    setIsThinking(true);
+    setThinkingPhase('Identificando sector y variables operativas...');
 
-    playAuraAudio(replyKey, reply);
+    // Aura gesticula para analizar (gesto de pensar o acomodarse las gafas)
+    triggerAction('glasses');
+
+    const phaseTimer1 = setTimeout(() => {
+      setThinkingPhase('Consultando arquitectura y base de conocimiento Dynamind...');
+    }, 600);
+
+    const phaseTimer2 = setTimeout(() => {
+      setThinkingPhase('Formulando diagnóstico técnico y solución de ingeniería...');
+    }, 1200);
+
+    try {
+      // 🧠 Inferencia cognitiva en motor de razonamiento
+      const result = await reasonAuraQuery(trimmedQuery, currentLang);
+
+      // Tiempo humano de reflexión analítica (1.5s)
+      await new Promise(r => setTimeout(r, 1500));
+
+      clearTimeout(phaseTimer1);
+      clearTimeout(phaseTimer2);
+
+      const aiMsg = { 
+        sender: 'ai', 
+        text: result.reply, 
+        replyKey: 'dynamic',
+        thought: result.thoughtProcess 
+      };
+
+      setMessages(prev => [...prev, aiMsg]);
+      setIsThinking(false);
+
+      // Vocalizar respuesta si la voz está activa
+      if (isVoiceActive) {
+        speakText(result.reply);
+      }
+    } catch (err) {
+      clearTimeout(phaseTimer1);
+      clearTimeout(phaseTimer2);
+      setIsThinking(false);
+
+      const fallbackMsg = { sender: 'ai', text: strings.answers.general, replyKey: 'general' };
+      setMessages(prev => [...prev, fallbackMsg]);
+      if (isVoiceActive) {
+        speakText(strings.answers.general);
+      }
+    }
   };
 
   const toggleVoice = () => {
     if (isVoiceActive) {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
-        audioRef.current = null;
-      }
-      if (typeof window !== 'undefined' && window.speechSynthesis) {
-        window.speechSynthesis.cancel();
-      }
-      setIsSpeaking(false);
+      handleStopAllAudio();
       setIsVoiceActive(false);
     } else {
       setIsVoiceActive(true);
       const lastAiMessage = [...messages].reverse().find(m => m.sender === 'ai');
       if (lastAiMessage) {
-        playAuraAudio(lastAiMessage.replyKey || 'general', lastAiMessage.text);
+        speakText(lastAiMessage.text);
       }
     }
   };
@@ -578,7 +615,7 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
 
         {/* Botón Cerrar Absoluto (Desktop & Tablet) */}
         <button
-          onClick={onClose}
+          onClick={handleCloseModal}
           className={`absolute top-4 right-4 z-30 p-2 rounded-xl transition-all cursor-pointer ${
             isLight 
               ? 'text-slate-500 hover:text-black hover:bg-slate-100' 
@@ -616,7 +653,7 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
 
             {/* Botón cerrar visible en móvil en este bloque */}
             <button
-              onClick={onClose}
+              onClick={handleCloseModal}
               className={`sm:hidden p-1.5 rounded-lg transition-colors cursor-pointer ${
                 isLight ? 'text-slate-500 hover:text-black' : 'text-zinc-400 hover:text-white'
               }`}
@@ -754,7 +791,7 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
                       {/* Botón táctil para volver a escuchar la respuesta */}
                       <button
                         type="button"
-                        onClick={() => playAuraAudio(m.replyKey || 'general', m.text)}
+                        onClick={() => speakText(m.text)}
                         className={`flex items-center gap-1 text-[11px] font-sans transition-colors cursor-pointer ${
                           isLight ? 'text-indigo-600 hover:text-indigo-700' : 'text-purple-300 hover:text-purple-200'
                         }`}
@@ -772,6 +809,23 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
                 </div>
               </div>
             ))}
+
+            {/* 🧠 Indicador de Pensamiento y Razonamiento Cognitivo de AURA */}
+            {isThinking && (
+              <div className="flex items-start">
+                <div className="p-3 sm:p-4 rounded-2xl bg-purple-950/40 border border-purple-500/35 text-purple-200 text-xs font-sans space-y-1.5 shadow-[0_0_24px_rgba(168,85,247,0.18)] backdrop-blur-md animate-in fade-in duration-200 max-w-[88%]">
+                  <div className="flex items-center gap-2 font-bold text-purple-300 text-[11px] font-mono">
+                    <BrainCircuit className="w-3.5 h-3.5 text-purple-400 animate-spin" style={{ animationDuration: '3s' }} />
+                    <span>✦ AURA · PROCESANDO Y RAZONANDO...</span>
+                  </div>
+                  <p className="text-xs text-zinc-200 leading-relaxed flex items-center gap-1.5 font-sans">
+                    <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-ping inline-block shrink-0" />
+                    <span>{thinkingPhase}</span>
+                  </p>
+                </div>
+              </div>
+            )}
+            <div ref={chatBottomRef} className="h-1" />
           </div>
 
           {/* Prompts Rápidos Sugeridos Dinámicos con Scroll Táctil Horizontal en Móvil */}
@@ -810,19 +864,21 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder={strings.placeholder}
+                disabled={isThinking}
                 className={`flex-1 px-4 py-2.5 border rounded-xl font-sans text-xs sm:text-sm leading-normal focus:outline-none transition-colors ${
                   isLight 
                     ? 'bg-slate-100/90 border-slate-200 text-slate-900 placeholder:text-slate-400 focus:border-indigo-500' 
                     : 'bg-white/[0.04] border-white/15 text-white placeholder:text-zinc-500 focus:border-purple-400/70 focus:bg-white/[0.06]'
-                }`}
+                } ${isThinking ? 'opacity-60 cursor-not-allowed' : ''}`}
               />
               <button
                 type="submit"
+                disabled={isThinking}
                 className={`p-2.5 rounded-xl transition-all cursor-pointer ${
                   isLight 
                     ? 'bg-indigo-600 text-white hover:bg-indigo-700' 
                     : 'bg-purple-600 hover:bg-purple-500 text-white shadow-[0_0_16px_rgba(168,85,247,0.35)]'
-                }`}
+                } ${isThinking ? 'opacity-60 cursor-not-allowed' : ''}`}
                 aria-label="Enviar pregunta a Aura"
               >
                 <Send className="w-4 h-4" />
@@ -835,7 +891,7 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
               <span>{strings.preferHuman}</span>
               <a
                 href="/#/diagnostico"
-                onClick={onClose}
+                onClick={handleCloseModal}
                 className={`flex items-center gap-1 font-bold font-sans underline ${
                   isLight ? 'text-indigo-600 hover:text-indigo-700' : 'text-purple-400 hover:text-purple-300'
                 }`}

@@ -173,7 +173,12 @@ export default function FloatingAIOrb() {
         <Suspense fallback={null}>
           <DynamindAIAssistantModal 
             isOpen={modalOpen}
-            onClose={() => setModalOpen(false)}
+            onClose={() => {
+              if (typeof window !== 'undefined' && window.speechSynthesis) {
+                try { window.speechSynthesis.cancel(); } catch (e) {}
+              }
+              setModalOpen(false);
+            }}
           />
         </Suspense>
       )}
