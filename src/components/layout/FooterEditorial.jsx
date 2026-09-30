@@ -108,11 +108,11 @@ export default function FooterEditorial() {
                 </li>
                 <li>
                   <a 
-                    href="mailto:contacto@dynamindstudios.com" 
+                    href="mailto:dynamindstudios@gmail.com" 
                     className="flex items-center gap-2 hover:text-white transition-colors"
                   >
                     <Mail className="w-3.5 h-3.5 text-zinc-400" />
-                    <span>contacto@dynamindstudios.com</span>
+                    <span>dynamindstudios@gmail.com</span>
                   </a>
                 </li>
                 <li>

@@ -125,7 +125,7 @@ export default function PrivacyTermsPage() {
                   isLight ? 'bg-slate-50 border-slate-200' : 'bg-white/[0.02] border-white/10'
                 }`}>
                   <div><strong>Razón Social:</strong> DYNAMIND STUDIOS S.A.S.</div>
-                  <div><strong>Correo de Notificaciones Judiciales y Habeas Data:</strong> contacto@dynamindstudios.com</div>
+                  <div><strong>Correo de Notificaciones Judiciales y Habeas Data:</strong> dynamindstudios@gmail.com</div>
                   <div><strong>Línea de Enlace Oficial:</strong> +57 312 295 2165 (wa.link/dynamind)</div>
                   <div><strong>Sede Operativa:</strong> Armenia, Quindío, Colombia (Atención global).</div>
                 </div>
@@ -208,7 +208,7 @@ export default function PrivacyTermsPage() {
                 }`}>
                   <div className="font-bold text-cyan-400 font-mono">PROCEDIMIENTO PARA EJERCER SUS DERECHOS:</div>
                   <p>
-                    Para ejercer sus derechos de consulta o reclamo, remita una comunicación formal al correo <strong>contacto@dynamindstudios.com</strong> con el asunto <em>"SOLICITUD HABEAS DATA - [Su Nombre]"</em>, especificando su pretensión y un número de contacto. Su solicitud será tramitada y resuelta en un plazo máximo de diez (10) días hábiles.
+                    Para ejercer sus derechos de consulta o reclamo, remita una comunicación formal al correo <strong>dynamindstudios@gmail.com</strong> con el asunto <em>"SOLICITUD HABEAS DATA - [Su Nombre]"</em>, especificando su pretensión y un número de contacto. Su solicitud será tramitada y resuelta en un plazo máximo de diez (10) días hábiles.
                   </p>
                 </div>
               </section>
@@ -387,7 +387,7 @@ export default function PrivacyTermsPage() {
                 <span>Canal Directo de Asesoría Legal & Habeas Data</span>
               </div>
               <p className="text-[11px] text-zinc-400">
-                contacto@dynamindstudios.com · WhatsApp Corporativo: +57 312 295 2165
+                dynamindstudios@gmail.com · WhatsApp Corporativo: +57 312 295 2165
               </p>
             </div>
             <a
