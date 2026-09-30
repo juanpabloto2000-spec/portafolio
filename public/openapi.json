@@ -97,7 +97,7 @@
       "post": {
         "summary": "Book a deep operational architectural audit",
         "operationId": "bookDeepAudit",
-        "description": "Comprehensive 1-on-1 engineering audit with chief architect Juan Pablo Toro.",
+        "description": "Comprehensive 1-on-1 engineering audit with chief architect Juan Pablo Orozco.",
         "x-payment-info": {
           "intent": "charge",
           "method": "stripe",

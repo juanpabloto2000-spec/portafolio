@@ -151,7 +151,7 @@ export default function FooterEditorial() {
             </a>
           </div>
           <div className="flex items-center gap-4 text-zinc-400">
-            <span>CEO & DIRECTOR: JUAN PABLO TORO</span>
+            <span>CEO & DIRECTOR: JUAN PABLO OROZCO</span>
             <span>·</span>
             <span>VERSIÓN 2.1 SOBERANA</span>
           </div>

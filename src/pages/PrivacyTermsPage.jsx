@@ -119,7 +119,7 @@ export default function PrivacyTermsPage() {
                   1. Identidad y Domicilio del Responsable del Tratamiento
                 </h3>
                 <p>
-                  El responsable del tratamiento de los datos personales recolectados a través de este portal y sus canales digitales es <strong>DYNAMIND STUDIOS S.A.S.</strong>, sociedad de ingeniería de software e inteligencia artificial constituida en la República de Colombia, con domicilio principal en el departamento del Quindío (Eje Cafetero), representada legalmente por su Director General y Arquitecto Principal, <strong>Juan Pablo Toro</strong>.
+                  El responsable del tratamiento de los datos personales recolectados a través de este portal y sus canales digitales es <strong>DYNAMIND STUDIOS S.A.S.</strong>, sociedad de ingeniería de software e inteligencia artificial constituida en la República de Colombia, con domicilio principal en el departamento del Quindío (Eje Cafetero), representada legalmente por su Director General y Arquitecto Principal, <strong>Juan Pablo Orozco</strong>.
                 </p>
                 <div className={`p-4 rounded-xl border font-mono text-xs space-y-1.5 ${
                   isLight ? 'bg-slate-50 border-slate-200' : 'bg-white/[0.02] border-white/10'
@@ -271,7 +271,7 @@ export default function PrivacyTermsPage() {
                   4. Propiedad Intelectual y Derechos Reservados
                 </h3>
                 <p>
-                  Todos los diseños, marcas, logotipos, código fuente maestro, micro-interacciones, animaciones cinemáticas y metodologías de ingeniería expuestos en este portal son propiedad intelectual exclusiva de <strong>DYNAMIND STUDIOS S.A.S.</strong> y Juan Pablo Toro, amparados por las leyes de propiedad intelectual de Colombia (Ley 23 de 1982) y convenios internacionales.
+                  Todos los diseños, marcas, logotipos, código fuente maestro, micro-interacciones, animaciones cinemáticas y metodologías de ingeniería expuestos en este portal son propiedad intelectual exclusiva de <strong>DYNAMIND STUDIOS S.A.S.</strong> y Juan Pablo Orozco, amparados por las leyes de propiedad intelectual de Colombia (Ley 23 de 1982) y convenios internacionales.
                 </p>
                 <p className="text-xs text-zinc-400">
                   Queda prohibida la reproducción, duplicación, ingeniería inversa o clonación de los componentes de software de esta plataforma sin la debida autorización expresa y por escrito.
