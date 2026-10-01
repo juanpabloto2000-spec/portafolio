@@ -126,7 +126,8 @@ export default defineConfig({
           'vendor-motion': ['framer-motion'],
           'vendor-icons': ['lucide-react'],
           'vendor-supabase': ['@supabase/supabase-js'],
-          'vendor-confetti': ['canvas-confetti']
+          'vendor-confetti': ['canvas-confetti'],
+          'vendor-three': ['three']
         }
       }
     },

@@ -138,3 +138,8 @@ class AudioManager {
 }
 
 export const soundFx = new AudioManager();
+
+export const playPlanetSelect = () => soundFx.playPlanetSelect();
+export const playOrbitWarp = () => soundFx.playOrbitWarp();
+export const playTap = () => soundFx.playBlip(620, 0.03);
+export const playSuccess = () => soundFx.playSuccessChord();
