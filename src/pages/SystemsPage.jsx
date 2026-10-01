@@ -231,9 +231,21 @@ export default function SystemsPage() {
         {/* MODO 1: GALAXIA 3D PANORÁMICA LIMPIA (SIN PANELES LATERALES)    */}
         {/* ============================================================== */}
         {viewMode === 'galaxy' ? (
-          <section className="max-w-[1440px] mx-auto px-2 sm:px-6">
-            <div className="relative w-full h-[620px] sm:h-[720px] rounded-3xl border border-white/10 overflow-hidden shadow-[0_25px_80px_rgba(0,0,0,0.9)] bg-neutral-950">
-              {/* 1. MOTOR 3D THREE.JS: VISTA PANORÁMICA ART-DIRECTED */}
+          <section className="max-w-[1440px] mx-auto px-3 sm:px-6 space-y-4">
+            {/* 1. BARRA SUPERIOR DE FILTROS & SISTEMAS (FUERA Y POR ENCIMA DEL LIENZO 3D) */}
+            <GalaxyTopFilterBar
+              selectedServiceId={selectedServiceId}
+              onSelectService={handleSelectService}
+              onResetToGalaxy={handleResetToGalaxy}
+              speedMultiplier={speedMultiplier}
+              onChangeSpeed={setSpeedMultiplier}
+              showTrajectories={showTrajectories}
+              onToggleTrajectories={() => setShowTrajectories((prev) => !prev)}
+            />
+
+            {/* 2. CONTENEDOR 100% LIMPIO DE LA GALAXIA 3D PANORÁMICA */}
+            <div className="relative w-full h-[640px] sm:h-[760px] rounded-3xl border border-white/10 overflow-hidden shadow-[0_25px_80px_rgba(0,0,0,0.9)] bg-neutral-950">
+              {/* MOTOR 3D THREE.JS: VISTA PANORÁMICA ART-DIRECTED */}
               <DynamindGalaxy3D
                 selectedServiceId={selectedServiceId}
                 onSelectService={handleSelectService}
@@ -241,18 +253,7 @@ export default function SystemsPage() {
                 showTrajectories={showTrajectories}
               />
 
-              {/* 2. FILTRO SUPERIOR HORIZONTAL CON ICONOS SVG Y BOTONES DE SERVICIO */}
-              <GalaxyTopFilterBar
-                selectedServiceId={selectedServiceId}
-                onSelectService={handleSelectService}
-                onResetToGalaxy={handleResetToGalaxy}
-                speedMultiplier={speedMultiplier}
-                onChangeSpeed={setSpeedMultiplier}
-                showTrajectories={showTrajectories}
-                onToggleTrajectories={() => setShowTrajectories((prev) => !prev)}
-              />
-
-              {/* 3. PANEL HOLOGRÁFICO ULTRA-LIMPIO DEL SERVICIO SELECCIONADO */}
+              {/* PANEL HOLOGRÁFICO ULTRA-LIMPIO DEL SERVICIO SELECCIONADO */}
               {isHUDOpen && (
                 <DynamindServiceHUD
                   selectedServiceId={selectedServiceId}
@@ -262,7 +263,7 @@ export default function SystemsPage() {
                 />
               )}
 
-              {/* 4. Botón Flotante para reabrir el HUD si fue cerrado */}
+              {/* Botón Flotante para reabrir el HUD si fue cerrado */}
               {!isHUDOpen && (
                 <button
                   onClick={() => setIsHUDOpen(true)}

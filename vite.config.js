@@ -127,7 +127,7 @@ export default defineConfig({
           'vendor-icons': ['lucide-react'],
           'vendor-supabase': ['@supabase/supabase-js'],
           'vendor-confetti': ['canvas-confetti'],
-          'vendor-three': ['three']
+          'vendor-three': ['three', 'postprocessing']
         }
       }
     },
