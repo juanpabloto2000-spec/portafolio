@@ -10,6 +10,7 @@ import RevealSection from '../components/motion/RevealSection';
 import DynamindGalaxy3D from '../components/systems/DynamindGalaxy3D';
 import GalaxyTopFilterBar from '../components/systems/GalaxyTopFilterBar';
 import DynamindServiceHUD from '../components/systems/DynamindServiceHUD';
+import { useCMS } from '../context/CMSContext';
 import { GALAXY_SERVICES } from '../data/dynamindGalaxyData';
 import {
   Sun,
@@ -62,6 +63,9 @@ const ICON_MAP = {
 };
 
 export default function SystemsPage() {
+  const { cms } = useCMS();
+  const sistemasCMS = cms?.pages?.sistemas;
+
   // Modo de vista: 'galaxy' (Simulación 3D Panorámica) | 'matrix' (Consola Matriz en Cuadrícula 2D)
   const [viewMode, setViewMode] = useState('galaxy');
 
@@ -140,28 +144,30 @@ export default function SystemsPage() {
         {/* ============================================================== */}
         <section className="max-w-7xl mx-auto px-6 sm:px-12 pt-2">
           <RevealSection direction="up" className="space-y-5">
-            {/* Badge de Posicionamiento */}
-            <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-mono font-bold tracking-wider uppercase backdrop-blur-md">
-              <ShieldCheck className="w-4 h-4 text-amber-400" />
-              <span>CONSULTORÍA DE IA & INGENIERÍA SOBERANA • NO SOMOS UNA AGENCIA</span>
-            </div>
-
             <div className="space-y-3 max-w-4xl">
               <h1 className="font-display font-black text-4xl sm:text-6xl text-white tracking-tight leading-[1.1]">
-                La Galaxia Tecnológica <br className="hidden sm:block" />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-white to-cyan-300">
-                  de Software & Consultoría de IA
-                </span>
+                {sistemasCMS?.heroTitle || (
+                  <>
+                    La Galaxia Tecnológica <br className="hidden sm:block" />
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-white to-cyan-300">
+                      de Software & Consultoría de IA
+                    </span>
+                  </>
+                )}
               </h1>
               <p className="text-sm sm:text-base font-sans text-zinc-300 leading-relaxed max-w-3xl font-light">
-                Cada planeta de este universo representa un servicio de ingeniería que construimos en Dynamind. 
-                Desde <strong>sistemas operativos mayores</strong> (Core DSB en /#/dsb, PMS Hotelero, Caja con Arqueo Ciego, KDS Comandas) 
-                hasta <strong>agentes autónomos de alta conversión y blindaje</strong> (WhatsApp CRM, OCR Facturas DIAN, n8n, Auditor 24/7). 
-                Todo con código propietario entregado en tu propio GitHub sin rentas mensuales.
+                {sistemasCMS?.heroSubtitle || (
+                  <>
+                    Cada planeta de este universo representa un servicio de ingeniería que construimos en Dynamind. 
+                    Desde <strong>sistemas operativos mayores</strong> (Core DSB en /#/dsb, PMS Hotelero, Caja con Arqueo Ciego, KDS Comandas) 
+                    hasta <strong>agentes autónomos de alta conversión y blindaje</strong> (WhatsApp CRM, OCR Facturas DIAN, n8n, Auditor 24/7). 
+                    Todo con código propietario entregado en tu propio GitHub sin rentas mensuales.
+                  </>
+                )}
               </p>
             </div>
 
-            {/* Switcher de Vista (Galaxia 3D vs Consola Matriz 2D) */}
+            {/* Switcher de Vista (Galaxia vs Tarjetas) */}
             <div className="flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-white/10">
               <div className="inline-flex p-1 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-xl">
                 <button
@@ -176,7 +182,7 @@ export default function SystemsPage() {
                   }`}
                 >
                   <Orbit className="w-4 h-4 text-cyan-400" />
-                  <span>GALAXIA 3D PANORÁMICA</span>
+                  <span>Galaxia</span>
                 </button>
 
                 <button
@@ -191,7 +197,7 @@ export default function SystemsPage() {
                   }`}
                 >
                   <Terminal className="w-4 h-4 text-amber-400" />
-                  <span>CONSOLA MATRIZ (18 SISTEMAS)</span>
+                  <span>Tarjetas</span>
                 </button>
               </div>
             </div>
@@ -272,17 +278,7 @@ export default function SystemsPage() {
                     />
 
                     <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span
-                          className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full border font-bold"
-                          style={{
-                            backgroundColor: `${service.color}15`,
-                            borderColor: `${service.color}35`,
-                            color: service.color,
-                          }}
-                        >
-                          {service.categoryLabel}
-                        </span>
+                      <div className="flex items-center justify-end">
                         <span className="text-xs font-mono font-bold text-white">
                           {service.metric.headline}
                         </span>
@@ -322,14 +318,7 @@ export default function SystemsPage() {
                       </div>
                     </div>
 
-                    <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs font-mono">
-                      <div className="flex gap-1">
-                        {service.technologies.slice(0, 2).map((t) => (
-                          <span key={t} className="text-[10px] text-neutral-400">
-                            #{t.split(' ')[0]}
-                          </span>
-                        ))}
-                      </div>
+                    <div className="pt-3 border-t border-white/10 flex items-center justify-end text-xs font-mono">
                       <button
                         onClick={() => {
                           setSelectedServiceId(service.id);

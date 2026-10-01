@@ -90,16 +90,6 @@ export default function DynamindServiceHUD({
           </div>
 
           <div className="space-y-0.5">
-            <span
-              className="text-[10px] font-mono uppercase tracking-wider font-bold px-2 py-0.5 rounded-full border inline-block"
-              style={{
-                backgroundColor: `${service.color}15`,
-                borderColor: `${service.color}35`,
-                color: service.color,
-              }}
-            >
-              {service.categoryLabel}
-            </span>
             <h3 className="text-base font-bold text-white tracking-tight leading-tight">
               {service.name}
             </h3>
@@ -173,18 +163,6 @@ export default function DynamindServiceHUD({
               </li>
             ))}
           </ul>
-        </div>
-
-        {/* Stack Tecnológico */}
-        <div className="flex flex-wrap gap-1 pt-1">
-          {service.technologies.map((tech) => (
-            <span
-              key={tech}
-              className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-neutral-900 border border-white/10 text-neutral-300"
-            >
-              {tech}
-            </span>
-          ))}
         </div>
 
         {/* Métrica Clave */}

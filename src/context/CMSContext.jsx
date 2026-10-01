@@ -36,15 +36,15 @@ export const DEFAULT_UNIVERSAL_CMS = {
       bannerActive: true
     },
     sistemas: {
-      name: 'Sistemas & Automatizaciones',
+      name: 'La Galaxia de Sistemas (3D)',
       hash: '#/sistemas',
-      heroBadge: '17 SISTEMAS NATIVOS DISPONIBLES',
-      heroTitle: 'Sistemas de Software & Automatizaciones Reales',
-      heroSubtitle: '17 sistemas propietarios gobernados por código nativo y diseñados para erradicar cada cuello de botella operativo, comercial y administrativo de tu negocio.',
-      ctaText: 'Solicitar Demo de un Sistema',
+      heroBadge: '',
+      heroTitle: 'La Galaxia Tecnológica de Software & Consultoría de IA',
+      heroSubtitle: 'Cada planeta de este universo representa un servicio de ingeniería que construimos en Dynamind. Desde sistemas operativos mayores (Core DSB en /#/dsb, PMS Hotelero, Caja con Arqueo Ciego, KDS Comandas) hasta agentes autónomos de alta conversión y blindaje (WhatsApp CRM, OCR Facturas DIAN, n8n, Auditor 24/7). Todo con código propietario entregado en tu propio GitHub sin rentas mensuales.',
+      ctaText: 'Iniciar Diagnóstico (45s)',
       whatsappNumber: '+57 300 000 0000',
-      announcementBanner: 'CERO DEPENDENCIAS DE CALENDLY NI WORDPRESS INFLADO',
-      bannerActive: true
+      announcementBanner: '18 SISTEMAS DE SOFTWARE PROPIETARIO DESPLEGADOS',
+      bannerActive: false
     },
     vision: {
       name: 'Visión & Filosofía',

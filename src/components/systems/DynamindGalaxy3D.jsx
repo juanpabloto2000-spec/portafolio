@@ -1386,10 +1386,6 @@ export default function DynamindGalaxy3D({
             <span className="text-white font-bold uppercase tracking-wider">
               {GALAXY_SERVICES.find((s) => s.id === hoveredService)?.name}
             </span>
-            <span className="text-neutral-500">•</span>
-            <span className="text-cyan-300 font-medium">
-              {GALAXY_SERVICES.find((s) => s.id === hoveredService)?.categoryLabel}
-            </span>
           </div>
           <span className="text-[10px] text-amber-400 font-mono uppercase bg-amber-950/60 px-2 py-0.5 rounded-full border border-amber-500/30">
             Click para Enfocar
