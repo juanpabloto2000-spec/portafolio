@@ -110,34 +110,6 @@ export default function GalaxyTopFilterBar({
             <span className="hidden md:inline">Órbitas</span>
           </button>
 
-          {/* Control de Velocidad */}
-          <div className="flex items-center bg-white/[0.03] rounded-xl border border-white/10 p-0.5">
-            <button
-              onClick={() => onChangeSpeed(speedMultiplier === 0 ? 1 : 0)}
-              className={`p-1.5 rounded-lg text-xs font-mono transition-colors ${
-                speedMultiplier === 0 ? "text-amber-400 bg-amber-500/20" : "text-neutral-400 hover:text-white"
-              }`}
-              title={speedMultiplier === 0 ? "Reanudar órbita" : "Pausar órbita"}
-            >
-              {speedMultiplier === 0 ? <Play className="w-3 h-3" /> : <Pause className="w-3 h-3" />}
-            </button>
-            <button
-              onClick={() => onChangeSpeed(1)}
-              className={`px-2 py-1 rounded-lg text-[10px] font-mono transition-colors ${
-                speedMultiplier === 1 ? "text-cyan-300 font-bold bg-cyan-500/20" : "text-neutral-400"
-              }`}
-            >
-              1x
-            </button>
-            <button
-              onClick={() => onChangeSpeed(2.5)}
-              className={`px-2 py-1 rounded-lg text-[10px] font-mono transition-colors ${
-                speedMultiplier === 2.5 ? "text-cyan-300 font-bold bg-cyan-500/20" : "text-neutral-400"
-              }`}
-            >
-              2.5x
-            </button>
-          </div>
         </div>
       </div>
 

@@ -288,6 +288,292 @@ function createAtmosphereMesh(radius, colorHex, isSun = false) {
 }
 
 // ============================================================================
+// GENERADORES DE TEXTURAS PARA ANILLOS DE FANTASÍA & CYBER (512x32)
+// ============================================================================
+function generateCyberGimbalTexture(colorHex) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 512;
+  canvas.height = 32;
+  const ctx = canvas.getContext("2d");
+
+  const grad = ctx.createLinearGradient(0, 0, canvas.width, 0);
+  grad.addColorStop(0, "rgba(0, 0, 0, 0)");
+  grad.addColorStop(0.12, `${colorHex}22`);
+  grad.addColorStop(0.38, `${colorHex}ff`);
+  grad.addColorStop(0.62, `${colorHex}ff`);
+  grad.addColorStop(0.88, `${colorHex}22`);
+  grad.addColorStop(1, "rgba(0, 0, 0, 0)");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Micro-segmentos punteados de telemetría y circuitos de datos
+  for (let x = 0; x < canvas.width; x += 16) {
+    if (x % 32 === 0) {
+      ctx.fillStyle = "rgba(255, 255, 255, 0.95)";
+      ctx.fillRect(x, 8, 8, 16);
+    } else {
+      ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+      ctx.fillRect(x, 12, 4, 8);
+    }
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.ClampToEdgeWrapping;
+  return texture;
+}
+
+function generateHexShieldTexture(colorHex) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 512;
+  canvas.height = 32;
+  const ctx = canvas.getContext("2d");
+
+  const grad = ctx.createLinearGradient(0, 0, canvas.width, 0);
+  grad.addColorStop(0, "rgba(0, 0, 0, 0)");
+  grad.addColorStop(0.18, `${colorHex}33`);
+  grad.addColorStop(0.50, `${colorHex}ee`);
+  grad.addColorStop(0.82, `${colorHex}33`);
+  grad.addColorStop(1, "rgba(0, 0, 0, 0)");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Rejilla de blindaje defensivo
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.65)";
+  ctx.lineWidth = 1.4;
+  for (let x = 0; x < canvas.width; x += 18) {
+    ctx.strokeRect(x, 5, 11, 22);
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.ClampToEdgeWrapping;
+  return texture;
+}
+
+function generateRadarTexture(colorHex) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 512;
+  canvas.height = 32;
+  const ctx = canvas.getContext("2d");
+
+  const grad = ctx.createLinearGradient(0, 0, canvas.width, 0);
+  grad.addColorStop(0, "rgba(0, 0, 0, 0)");
+  grad.addColorStop(0.25, `${colorHex}55`);
+  grad.addColorStop(0.50, `${colorHex}ff`);
+  grad.addColorStop(0.75, `${colorHex}55`);
+  grad.addColorStop(1, "rgba(0, 0, 0, 0)");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Marcadores de escala financiera y ticks de radar
+  for (let x = 0; x < canvas.width; x += 8) {
+    const isMajor = x % 32 === 0;
+    ctx.fillStyle = isMajor ? "rgba(255, 255, 255, 0.95)" : "rgba(255, 255, 255, 0.35)";
+    ctx.fillRect(x, isMajor ? 3 : 10, 2, isMajor ? 26 : 12);
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.ClampToEdgeWrapping;
+  return texture;
+}
+
+function generateSonicWaveTexture(colorHex) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 512;
+  canvas.height = 32;
+  const ctx = canvas.getContext("2d");
+
+  const grad = ctx.createLinearGradient(0, 0, canvas.width, 0);
+  grad.addColorStop(0, "rgba(0, 0, 0, 0)");
+  grad.addColorStop(0.20, `${colorHex}44`);
+  grad.addColorStop(0.50, `${colorHex}ff`);
+  grad.addColorStop(0.80, `${colorHex}44`);
+  grad.addColorStop(1, "rgba(0, 0, 0, 0)");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Ondas sinusoidales de comunicación sónica
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.75)";
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  for (let x = 0; x < canvas.width; x++) {
+    const y = 16 + Math.sin(x * 0.12) * 9;
+    if (x === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.ClampToEdgeWrapping;
+  return texture;
+}
+
+// ============================================================================
+// GENERADOR DE MAPA DE ENTORNO CÓSMICO (PMREM EQUIRRECTANGULAR) PARA CROMO
+// ============================================================================
+function generateCosmicEnvMap(renderer) {
+  const pmremGenerator = new THREE.PMREMGenerator(renderer);
+  pmremGenerator.compileEquirectangularShader();
+
+  const canvas = document.createElement("canvas");
+  canvas.width = 1024;
+  canvas.height = 512;
+  const ctx = canvas.getContext("2d");
+
+  // Fondo espacial profundo con gradiente cósmico
+  const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  bgGrad.addColorStop(0, "#01040a");
+  bgGrad.addColorStop(0.25, "#040e24");
+  bgGrad.addColorStop(0.5, "#091736");
+  bgGrad.addColorStop(0.75, "#050f26");
+  bgGrad.addColorStop(1, "#01040a");
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Nébula brillante central para reflejos en el cromo
+  const drawNebula = (cx, cy, r, color1, color2) => {
+    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+    grad.addColorStop(0, color1);
+    grad.addColorStop(0.5, color2);
+    grad.addColorStop(1, "transparent");
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fill();
+  };
+
+  drawNebula(canvas.width * 0.35, canvas.height * 0.45, 240, "rgba(6, 182, 212, 0.50)", "rgba(59, 130, 246, 0.15)");
+  drawNebula(canvas.width * 0.70, canvas.height * 0.55, 220, "rgba(168, 85, 247, 0.40)", "rgba(236, 72, 153, 0.15)");
+  drawNebula(canvas.width * 0.90, canvas.height * 0.40, 180, "rgba(245, 158, 11, 0.45)", "rgba(217, 119, 6, 0.12)");
+
+  // Estrellas hiperbrillantes para destellos especulares puntuales en la carrocería acromada
+  for (let i = 0; i < 350; i++) {
+    const x = Math.random() * canvas.width;
+    const y = Math.random() * canvas.height;
+    const r = 0.8 + Math.random() * 2.2;
+    ctx.fillStyle = Math.random() > 0.4 ? "#ffffff" : "#bae6fd";
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.mapping = THREE.EquirectangularReflectionMapping;
+  const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+  pmremGenerator.dispose();
+  texture.dispose();
+  return envMap;
+}
+
+// ============================================================================
+// MOTOR DE ESTELAS DE LUZ ORBITALES (DYNAMIC LIGHT TRAILS / COMET RIBBONS)
+// ============================================================================
+const TRAIL_SEGMENTS = 36;
+const TRAIL_TAIL_ANGLE = 0.72; // ~41.25 grados de cola luminosa detrás del planeta
+
+function createOrbitalLightTrail(orbitRadius, planetRadius, colorHex) {
+  const geom = new THREE.BufferGeometry();
+  const vertexCount = (TRAIL_SEGMENTS + 1) * 2;
+  const positions = new Float32Array(vertexCount * 3);
+  const alphas = new Float32Array(vertexCount);
+  const indices = new Uint16Array(TRAIL_SEGMENTS * 6);
+
+  let idx = 0;
+  for (let i = 0; i < TRAIL_SEGMENTS; i++) {
+    const v0 = i * 2;
+    const v1 = i * 2 + 1;
+    const v2 = (i + 1) * 2;
+    const v3 = (i + 1) * 2 + 1;
+
+    indices[idx++] = v0;
+    indices[idx++] = v1;
+    indices[idx++] = v2;
+
+    indices[idx++] = v1;
+    indices[idx++] = v3;
+    indices[idx++] = v2;
+  }
+
+  geom.setIndex(new THREE.BufferAttribute(indices, 1));
+  geom.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+  geom.setAttribute("alpha", new THREE.BufferAttribute(alphas, 1));
+
+  const mat = new THREE.ShaderMaterial({
+    vertexShader: `
+      attribute float alpha;
+      varying float vAlpha;
+      void main() {
+        vAlpha = alpha;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform vec3 trailColor;
+      varying float vAlpha;
+      void main() {
+        gl_FragColor = vec4(trailColor, vAlpha);
+      }
+    `,
+    uniforms: {
+      trailColor: { value: new THREE.Color(colorHex) },
+    },
+    transparent: true,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+  });
+
+  const mesh = new THREE.Mesh(geom, mat);
+  mesh.frustumCulled = false;
+  return mesh;
+}
+
+function updateOrbitalLightTrail(trailMesh, currentAngle, orbitRadius, planetRadius) {
+  if (!trailMesh || !trailMesh.geometry) return;
+  const geom = trailMesh.geometry;
+  const posAttr = geom.attributes.position;
+  const alphaAttr = geom.attributes.alpha;
+  if (!posAttr || !alphaAttr) return;
+
+  const pos = posAttr.array;
+  const alphas = alphaAttr.array;
+
+  for (let i = 0; i <= TRAIL_SEGMENTS; i++) {
+    const t = i / TRAIL_SEGMENTS;
+    const angle = currentAngle - t * TRAIL_TAIL_ANGLE;
+    const width = planetRadius * 0.55 * Math.pow(1.0 - t, 0.75);
+
+    const rInner = orbitRadius - width * 0.5;
+    const rOuter = orbitRadius + width * 0.5;
+
+    const cosA = Math.cos(angle);
+    const sinA = Math.sin(angle);
+
+    const vIdx = i * 2;
+    // Vértice interior
+    pos[vIdx * 3 + 0] = cosA * rInner;
+    pos[vIdx * 3 + 1] = 0;
+    pos[vIdx * 3 + 2] = sinA * rInner;
+
+    // Vértice exterior
+    pos[(vIdx + 1) * 3 + 0] = cosA * rOuter;
+    pos[(vIdx + 1) * 3 + 1] = 0;
+    pos[(vIdx + 1) * 3 + 2] = sinA * rOuter;
+
+    // Desvanecimiento suave de opacidad
+    const a = Math.pow(1.0 - t, 1.4) * 0.90;
+    alphas[vIdx] = a;
+    alphas[vIdx + 1] = a;
+  }
+
+  posAttr.needsUpdate = true;
+  alphaAttr.needsUpdate = true;
+}
+
+// ============================================================================
 // COMPONENTE PRINCIPAL: DYNAMIND GALAXY 3D
 // ============================================================================
 export default function DynamindGalaxy3D({
@@ -473,6 +759,10 @@ export default function DynamindGalaxy3D({
     container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
+    // Generar Mapa de Entorno Cósmico (PMREM) para los reflejos acromados
+    const cosmicEnvMap = generateCosmicEnvMap(renderer);
+    scene.environment = cosmicEnvMap;
+
     // 4. Pipeline de Post-Processing (Bloom de Unreal Engine)
     const composer = new EffectComposer(renderer);
     composer.addPass(new RenderPass(scene, camera));
@@ -579,13 +869,21 @@ export default function DynamindGalaxy3D({
           color: new THREE.Color(0xfffbeb),
         });
       } else {
-        mat = new THREE.MeshStandardMaterial({
+        // Acromado PBR de Ultra-Alta Definición: carrocería metálica espejo, barniz cristal y reflejos cósmicos 360°
+        mat = new THREE.MeshPhysicalMaterial({
           map: hdTexture,
-          roughness: 0.25,
-          metalness: 0.15,
-          flatShading: false,
+          color: new THREE.Color(service.color),
+          metalness: 0.94,
+          roughness: 0.12,
+          clearcoat: 1.0,
+          clearcoatRoughness: 0.06,
+          reflectivity: 0.95,
+          ior: 1.52,
+          sheen: 0.85,
+          sheenColor: new THREE.Color(service.color),
           emissive: new THREE.Color(service.color),
-          emissiveIntensity: 0.42,
+          emissiveIntensity: 0.35,
+          envMapIntensity: 1.6,
         });
       }
 
@@ -598,9 +896,14 @@ export default function DynamindGalaxy3D({
       const atmosphere = createAtmosphereMesh(r, service.color, isSun);
       planetMesh.add(atmosphere);
 
-      // Anillos de Cassini para Caja con Arqueo Ciego (Saturno)
+      // Anillos y Estructuras de Fantasía Sci-Fi
+      let ringObjects = [];
+      let satelliteObject = null;
+      let satelliteOrbitRadius = 0;
+
       if (service.id === "srv-caja") {
-        const ringGeom = new THREE.RingGeometry(r * 1.35, r * 2.25, 96);
+        // 🪐 Anillos de Cassini Clásicos para Saturno (Caja con Arqueo Ciego)
+        const ringGeom = new THREE.RingGeometry(r * 1.35, r * 2.35, 96);
         const ringTex = generateRingTexture(service.color);
         const ringMat = new THREE.MeshBasicMaterial({
           map: ringTex,
@@ -612,6 +915,128 @@ export default function DynamindGalaxy3D({
         const ringMesh = new THREE.Mesh(ringGeom, ringMat);
         ringMesh.rotation.x = Math.PI * 0.42;
         planetMesh.add(ringMesh);
+        ringObjects.push({ mesh: ringMesh, type: "cassini", speed: 0.1 });
+      } else if (service.id === "srv-dsb") {
+        // 🛰️ Gimbal Giroscópico Holográfico Doble (Core DSB Operativo)
+        const g1Geom = new THREE.RingGeometry(r * 1.35, r * 1.75, 96);
+        const g1Tex = generateCyberGimbalTexture(service.color);
+        const g1Mat = new THREE.MeshBasicMaterial({
+          map: g1Tex,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.92,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending,
+        });
+        const g1Mesh = new THREE.Mesh(g1Geom, g1Mat);
+        g1Mesh.rotation.x = Math.PI * 0.35;
+        planetMesh.add(g1Mesh);
+
+        const g2Geom = new THREE.RingGeometry(r * 1.95, r * 2.35, 96);
+        const g2Tex = generateCyberGimbalTexture("#38bdf8");
+        const g2Mat = new THREE.MeshBasicMaterial({
+          map: g2Tex,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.85,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending,
+        });
+        const g2Mesh = new THREE.Mesh(g2Geom, g2Mat);
+        g2Mesh.rotation.z = Math.PI * 0.45;
+        g2Mesh.rotation.y = Math.PI * 0.20;
+        planetMesh.add(g2Mesh);
+
+        ringObjects.push({ mesh: g1Mesh, type: "gimbal1", speed: 0.75 });
+        ringObjects.push({ mesh: g2Mesh, type: "gimbal2", speed: -0.55 });
+      } else if (service.id === "srv-security") {
+        // 🛡️ Campo de Fuerza Hexagonal (Blindaje Defensivo RLS & HMAC)
+        const secGeom = new THREE.RingGeometry(r * 1.35, r * 2.25, 96);
+        const secTex = generateHexShieldTexture(service.color);
+        const secMat = new THREE.MeshBasicMaterial({
+          map: secTex,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.85,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending,
+        });
+        const secMesh = new THREE.Mesh(secGeom, secMat);
+        secMesh.rotation.x = Math.PI * 0.28;
+        secMesh.rotation.y = Math.PI * 0.15;
+        planetMesh.add(secMesh);
+        ringObjects.push({ mesh: secMesh, type: "shield", speed: 0.25 });
+      } else if (service.id === "srv-pricing") {
+        // 📈 Radar Polar Financiero (Tarifas Dinámicas PMS)
+        const prcGeom = new THREE.RingGeometry(r * 1.35, r * 2.15, 96);
+        const prcTex = generateRadarTexture(service.color);
+        const prcMat = new THREE.MeshBasicMaterial({
+          map: prcTex,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.88,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending,
+        });
+        const prcMesh = new THREE.Mesh(prcGeom, prcMat);
+        prcMesh.rotation.x = Math.PI * 0.38;
+        planetMesh.add(prcMesh);
+        ringObjects.push({ mesh: prcMesh, type: "radar", speed: 0.45 });
+      } else if (service.id === "srv-whatsapp") {
+        // 💬 Ondas de Comunicación Sónica (Agente WhatsApp AI)
+        const w1Geom = new THREE.RingGeometry(r * 1.32, r * 1.58, 96);
+        const w1Tex = generateSonicWaveTexture(service.color);
+        const w1Mat = new THREE.MeshBasicMaterial({
+          map: w1Tex,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.82,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending,
+        });
+        const w1Mesh = new THREE.Mesh(w1Geom, w1Mat);
+        w1Mesh.rotation.x = Math.PI * 0.40;
+        planetMesh.add(w1Mesh);
+
+        const w2Geom = new THREE.RingGeometry(r * 1.72, r * 1.98, 96);
+        const w2Mat = new THREE.MeshBasicMaterial({
+          map: w1Tex,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.65,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending,
+        });
+        const w2Mesh = new THREE.Mesh(w2Geom, w2Mat);
+        w2Mesh.rotation.x = Math.PI * 0.40;
+        planetMesh.add(w2Mesh);
+        ringObjects.push({ mesh: w1Mesh, type: "wave1", speed: 0.2 });
+        ringObjects.push({ mesh: w2Mesh, type: "wave2", speed: -0.15 });
+      } else if (service.id === "srv-analytics") {
+        // 📊 Órbita Atómica Cuántica con Micro-Nodo de Datos (Data Lake & Business BI)
+        const anGeom = new THREE.RingGeometry(r * 1.45, r * 1.85, 96);
+        const anTex = generateCyberGimbalTexture(service.color);
+        const anMat = new THREE.MeshBasicMaterial({
+          map: anTex,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.85,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending,
+        });
+        const anMesh = new THREE.Mesh(anGeom, anMat);
+        anMesh.rotation.x = Math.PI * 0.60;
+        anMesh.rotation.z = Math.PI * 0.20;
+        planetMesh.add(anMesh);
+        ringObjects.push({ mesh: anMesh, type: "quantum", speed: 0.35 });
+
+        // Micro-satélite cuántico
+        const satGeom = new THREE.SphereGeometry(r * 0.18, 16, 16);
+        const satMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
+        const satMesh = new THREE.Mesh(satGeom, satMat);
+        anMesh.add(satMesh);
+        satelliteObject = satMesh;
+        satelliteOrbitRadius = r * 1.65;
       }
 
       if (service.orbitRadius === 0) {
@@ -623,6 +1048,10 @@ export default function DynamindGalaxy3D({
           mesh: planetMesh,
           serviceData: service,
           trajectory: null,
+          lightTrail: null,
+          rings: ringObjects,
+          satellite: null,
+          satelliteOrbitRadius: 0,
           currentAngle: 0,
         };
       } else {
@@ -633,6 +1062,10 @@ export default function DynamindGalaxy3D({
 
         const trajectory = createTrajectoryRing(service.orbitRadius, service.color);
         scene.add(trajectory);
+
+        // Estela de Luz Orbital Luminiscente (Comet Trail)
+        const lightTrail = createOrbitalLightTrail(service.orbitRadius, r, service.color);
+        scene.add(lightTrail);
 
         // Distribución armónica con Proporción Áurea (Golden Angle ~137.5077°):
         // Garantiza que cada planeta quede en un cuadrante distinto y disperso, erradicando cualquier aspecto de fila india
@@ -646,11 +1079,18 @@ export default function DynamindGalaxy3D({
 
         orbitPivot.add(planetMesh);
 
+        // Inicializar coordenadas de la estela de luz en el ángulo inicial
+        updateOrbitalLightTrail(lightTrail, initialAngle, service.orbitRadius, r);
+
         celestialMap[service.id] = {
           pivot: orbitPivot,
           mesh: planetMesh,
           serviceData: service,
           trajectory,
+          lightTrail,
+          rings: ringObjects,
+          satellite: satelliteObject,
+          satelliteOrbitRadius,
           currentAngle: initialAngle,
         };
       }
@@ -690,11 +1130,11 @@ export default function DynamindGalaxy3D({
             // Restaurar previo
             if (currentHoverMesh && currentHoverMesh.material && currentHoverMesh.material.emissive) {
               const prevSrv = currentHoverMesh.userData?.serviceData;
-              currentHoverMesh.material.emissiveIntensity = prevSrv?.id === "srv-core" ? 1.0 : 0.42;
+              currentHoverMesh.material.emissiveIntensity = prevSrv?.id === "srv-core" ? 1.0 : 0.35;
             }
             // Resaltar actual con brillo intenso
             if (hit.material && hit.material.emissive) {
-              hit.material.emissiveIntensity = 0.95;
+              hit.material.emissiveIntensity = 1.05;
             }
             currentHoverMesh = hit;
 
@@ -714,7 +1154,7 @@ export default function DynamindGalaxy3D({
       if (currentHoverMesh) {
         if (currentHoverMesh.material && currentHoverMesh.material.emissive) {
           const prevSrv = currentHoverMesh.userData?.serviceData;
-          currentHoverMesh.material.emissiveIntensity = prevSrv?.id === "srv-core" ? 1.0 : 0.42;
+          currentHoverMesh.material.emissiveIntensity = prevSrv?.id === "srv-core" ? 1.0 : 0.35;
         }
         currentHoverMesh = null;
       }
@@ -770,15 +1210,17 @@ export default function DynamindGalaxy3D({
         solarDustRef.current.rotation.y += delta * 0.012;
       }
 
-      // Traslación orbital continua
+      // Traslación orbital continua y actualización de efectos cinemáticos a 60 FPS
+      const elapsedTime = clock.getElapsedTime();
+
       Object.entries(celestialObjectsRef.current).forEach(([id, entry]) => {
-        const { mesh, serviceData } = entry;
+        const { mesh, serviceData, lightTrail, rings, satellite, satelliteOrbitRadius } = entry;
         if (!mesh) return;
 
         // Auto-rotación del planeta sobre su propio eje
         mesh.rotation.y += delta * 0.35 * (currentSpeed > 0 ? 1 : 0);
 
-        // Órbita
+        // Órbita y Estela de Luz Dinámica
         if (serviceData.orbitRadius > 0 && currentSpeed > 0) {
           const orbitalFactor = 0.022 * currentSpeed * (serviceData.speed || 0.5);
           entry.currentAngle += orbitalFactor * delta;
@@ -786,6 +1228,42 @@ export default function DynamindGalaxy3D({
           const r = serviceData.orbitRadius;
           mesh.position.x = Math.cos(entry.currentAngle) * r;
           mesh.position.z = Math.sin(entry.currentAngle) * r;
+
+          // Actualizar la cinta de plasma de la estela orbital
+          if (lightTrail) {
+            updateOrbitalLightTrail(lightTrail, entry.currentAngle, r, serviceData.size || 2.0);
+          }
+        }
+
+        // Animación dinámica de anillos de fantasía
+        if (rings && rings.length > 0) {
+          rings.forEach((ringItem) => {
+            const { mesh: rMesh, type, speed } = ringItem;
+            if (!rMesh) return;
+
+            if (type === "gimbal1" || type === "gimbal2" || type === "radar" || type === "quantum" || type === "cassini") {
+              rMesh.rotation.z += delta * (speed || 0.3);
+            } else if (type === "shield") {
+              rMesh.rotation.z += delta * 0.22;
+              const scale = 1.0 + Math.sin(elapsedTime * 3.2) * 0.04;
+              rMesh.scale.set(scale, scale, scale);
+            } else if (type === "wave1" || type === "wave2") {
+              if (rMesh.material) {
+                const wavePhase = type === "wave1" ? 0 : Math.PI * 0.5;
+                rMesh.material.opacity = 0.5 + Math.sin(elapsedTime * 3.0 + wavePhase) * 0.32;
+              }
+            }
+          });
+        }
+
+        // Animación de micro-satélite de datos (Data Lake)
+        if (satellite && satelliteOrbitRadius > 0) {
+          const satAngle = elapsedTime * 3.2;
+          satellite.position.set(
+            Math.cos(satAngle) * satelliteOrbitRadius,
+            Math.sin(satAngle) * satelliteOrbitRadius,
+            0
+          );
         }
       });
 
@@ -827,6 +1305,9 @@ export default function DynamindGalaxy3D({
       domElement.removeEventListener("pointermove", handlePointerMove);
       domElement.removeEventListener("pointerdown", handlePointerDown);
 
+      if (cosmicEnvMap) {
+        cosmicEnvMap.dispose();
+      }
       if (composerRef.current) {
         composerRef.current.dispose();
       }
@@ -837,11 +1318,14 @@ export default function DynamindGalaxy3D({
     };
   }, []);
 
-  // Actualización de visibilidad de órbitas
+  // Actualización de visibilidad de órbitas y estelas de luz
   useEffect(() => {
     Object.values(celestialObjectsRef.current).forEach((entry) => {
       if (entry.trajectory) {
         entry.trajectory.visible = showTrajectories;
+      }
+      if (entry.lightTrail) {
+        entry.lightTrail.visible = showTrajectories;
       }
     });
   }, [showTrajectories]);

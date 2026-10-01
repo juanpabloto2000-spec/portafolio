@@ -10,13 +10,12 @@ import RevealSection from '../components/motion/RevealSection';
 import DynamindGalaxy3D from '../components/systems/DynamindGalaxy3D';
 import GalaxyTopFilterBar from '../components/systems/GalaxyTopFilterBar';
 import DynamindServiceHUD from '../components/systems/DynamindServiceHUD';
-import { GALAXY_SERVICES, GALAXY_CATEGORIES } from '../data/dynamindGalaxyData';
+import { GALAXY_SERVICES } from '../data/dynamindGalaxyData';
 import {
   Sun,
   ShieldCheck,
   Orbit,
   Terminal,
-  Search,
   ChevronRight,
   AlertTriangle,
   RotateCcw,
@@ -78,10 +77,6 @@ export default function SystemsPage() {
   // Visibilidad del panel de información del servicio
   const [isHUDOpen, setIsHUDOpen] = useState(true);
 
-  // Filtros para la vista Matriz
-  const [matrixSearchQuery, setMatrixSearchQuery] = useState('');
-  const [matrixCategory, setMatrixCategory] = useState('all');
-
   // Manejador de selección de servicio
   const handleSelectService = useCallback((serviceId) => {
     playPlanetSelect();
@@ -134,22 +129,6 @@ export default function SystemsPage() {
   const handleOpenConsulting = useCallback(() => {
     window.location.hash = '#/diagnostico';
   }, []);
-
-  // Filtrado de servicios para la vista Matriz 2D
-  const filteredMatrixServices = useMemo(() => {
-    return GALAXY_SERVICES.filter((s) => {
-      const matchesSearch =
-        !matrixSearchQuery.trim() ||
-        s.name.toLowerCase().includes(matrixSearchQuery.toLowerCase()) ||
-        s.subtitle.toLowerCase().includes(matrixSearchQuery.toLowerCase()) ||
-        s.summary.toLowerCase().includes(matrixSearchQuery.toLowerCase()) ||
-        s.bottleneckD0.toLowerCase().includes(matrixSearchQuery.toLowerCase());
-
-      const matchesCat = matrixCategory === 'all' || s.category === matrixCategory;
-
-      return matchesSearch && matchesCat;
-    });
-  }, [matrixSearchQuery, matrixCategory]);
 
   return (
     <div className="bg-transparent min-h-screen text-platinum antialiased selection:bg-white/20 selection:text-white flex flex-col relative overflow-x-hidden grain-overlay">
@@ -215,14 +194,6 @@ export default function SystemsPage() {
                   <span>CONSOLA MATRIZ (18 SISTEMAS)</span>
                 </button>
               </div>
-
-              <div className="flex items-center gap-4 text-xs font-mono text-zinc-400">
-                <span className="hidden sm:inline">Haz clic en cualquier planeta visible en pantalla</span>
-                <div className="flex items-center gap-2 text-emerald-400 font-bold">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span>18 Planetas Activos</span>
-                </div>
-              </div>
             </div>
           </RevealSection>
         </section>
@@ -280,42 +251,9 @@ export default function SystemsPage() {
           /* MODO 2: CONSOLA MATRIZ EN RETÍCULA BENTO 2D                    */
           /* ============================================================== */
           <section className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 space-y-6">
-            {/* Barra de Búsqueda y Filtro de Categoría */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl bg-white/[0.02] border border-white/10 backdrop-blur-xl">
-              <div className="relative flex-1 max-w-md">
-                <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  value={matrixSearchQuery}
-                  onChange={(e) => setMatrixSearchQuery(e.target.value)}
-                  placeholder="Buscar servicio por nombre o cuello D0..."
-                  className="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-xs font-sans text-white placeholder-zinc-500 focus:outline-none focus:border-cyan-400"
-                />
-              </div>
-
-              <div className="flex flex-wrap items-center gap-1.5">
-                {GALAXY_CATEGORIES.map((cat) => (
-                  <button
-                    key={cat.id}
-                    onClick={() => {
-                      playTap();
-                      setMatrixCategory(cat.id);
-                    }}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all ${
-                      matrixCategory === cat.id
-                        ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-bold shadow-sm'
-                        : 'bg-neutral-900/60 text-neutral-400 hover:text-white border border-white/5'
-                    }`}
-                  >
-                    {cat.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
             {/* Cuadrícula de 18 Tarjetas de Servicio */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {filteredMatrixServices.map((service) => {
+              {GALAXY_SERVICES.map((service) => {
                 const SrvIcon = ICON_MAP[service.iconName] || Orbit;
                 const isSelected = selectedServiceId === service.id;
 
