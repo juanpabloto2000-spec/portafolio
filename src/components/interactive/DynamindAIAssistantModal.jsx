@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Sparkles, Send, ArrowRight, Volume2, VolumeX, BrainCircuit, Mic, MicOff, Radio, AlertCircle } from 'lucide-react';
+import { X, Sparkles, Send, ArrowRight, Volume2, VolumeX, BrainCircuit, Radio } from 'lucide-react';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import AndroidVoiceAvatar from './AndroidVoiceAvatar';
 import { reasonAuraQuery } from '../../utils/auraReasoningEngine';
@@ -398,228 +398,16 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
   const [thinkingPhase, setThinkingPhase] = useState('Analizando tu caso...');
   const [avatarAction, setAvatarAction] = useState(null);
 
-  // --------------------------------------------------------------------------
-  // ENTRADA DE VOZ EN TIEMPO REAL CON SPEECH-TO-TEXT & ORBE CÓSMICO REACTIVO
-  // --------------------------------------------------------------------------
-  const [isListening, setIsListening] = useState(false);
-  const [liveTranscript, setLiveTranscript] = useState('');
-  const [listeningError, setListeningError] = useState(null);
-  const recognitionRef = useRef(null);
-  const liveTranscriptRef = useRef('');
-
   const speechRef = useRef(null);
   const audioRef = useRef(null);
   const heartbeatRef = useRef(null);
   const chatBottomRef = useRef(null);
   const abortControllerRef = useRef(null);
   const isOpenRef = useRef(isOpen);
-  const activeStreamRef = useRef(null);
-
-  // Liberar el hardware de audio de forma segura
-  const releaseMediaStream = () => {
-    if (activeStreamRef.current) {
-      try {
-        activeStreamRef.current.getTracks().forEach(t => t.stop());
-      } catch (e) {}
-      activeStreamRef.current = null;
-    }
-  };
-
-  // Consulta proactiva del permiso de micrófono en el navegador
-  const checkMicrophonePermission = async () => {
-    if (typeof navigator !== 'undefined' && navigator.permissions && navigator.permissions.query) {
-      try {
-        const result = await navigator.permissions.query({ name: 'microphone' });
-        return result.state; // 'granted', 'prompt', 'denied'
-      } catch (e) {
-        return 'unknown';
-      }
-    }
-    return 'unknown';
-  };
-
-  // 1. Manejador Maestro de Entrada de Voz: Detección Inteligente & Solicitud de Permiso
-  const handleToggleVoiceInput = async () => {
-    // Si ya está escuchando, el usuario decide detener y procesar la pregunta de inmediato
-    if (isListening) {
-      stopVoiceRecognition(true);
-      return;
-    }
-
-    setListeningError(null);
-
-    const SpeechRecognition = typeof window !== 'undefined' 
-      ? (window.SpeechRecognition || window.webkitSpeechRecognition) 
-      : null;
-
-    if (!SpeechRecognition) {
-      setListeningError({
-        title: 'Reconocimiento de voz no soportado',
-        message: 'Tu navegador actual no admite SpeechRecognition nativo. Te sugerimos usar Google Chrome, Microsoft Edge o Safari.'
-      });
-      return;
-    }
-
-    // A. Detectar si el permiso ya fue concedido previamente
-    const permState = await checkMicrophonePermission();
-
-    if (permState === 'granted') {
-      // ✅ Si ya tiene permiso en el navegador, va DIRECTO a escuchar sin pasos redundantes ni bloqueos de audio
-      startVoiceRecognition();
-      return;
-    }
-
-    // B. Si no tiene permiso o está en 'prompt', pedimos explícitamente el permiso al usuario
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        // Guardamos el stream para mantener el canal de audio abierto sin causar error not-allowed en Chrome
-        activeStreamRef.current = stream;
-        // Iniciar reconocimiento de voz
-        startVoiceRecognition();
-      } catch (err) {
-        console.warn('[Microphone Permission Error]:', err);
-        releaseMediaStream();
-        setListeningError({
-          title: 'Permiso de micrófono requerido',
-          message: 'Para hablar con Aura, permite el acceso al micrófono en el icono del candado 🔒 de tu navegador (arriba a la izquierda de la URL).'
-        });
-      }
-    } else {
-      startVoiceRecognition();
-    }
-  };
-
-  // Iniciar Captura de Voz en Tiempo Real (Aura se transforma en el Orbe)
-  const startVoiceRecognition = () => {
-    setListeningError(null);
-    setLiveTranscript('');
-    liveTranscriptRef.current = '';
-
-    const SpeechRecognition = typeof window !== 'undefined' ? (window.SpeechRecognition || window.webkitSpeechRecognition) : null;
-    if (!SpeechRecognition) return;
-
-    try {
-      handleStopAllAudio();
-
-      const recognition = new SpeechRecognition();
-      recognitionRef.current = recognition;
-      recognition.continuous = true;
-      recognition.interimResults = true;
-
-      const langMap = {
-        es: 'es-CO',
-        en: 'en-US',
-        de: 'de-DE',
-        pt: 'pt-BR',
-        ja: 'ja-JP'
-      };
-      recognition.lang = langMap[currentLang] || 'es-CO';
-
-      recognition.onstart = () => {
-        // En este instante exacto, Aura se metamorfosea en el Orbe Cósmico
-        setIsListening(true);
-        setListeningError(null);
-      };
-
-      recognition.onresult = (event) => {
-        let currentText = '';
-        for (let i = 0; i < event.results.length; i++) {
-          currentText += event.results[i][0].transcript;
-        }
-        liveTranscriptRef.current = currentText;
-        setLiveTranscript(currentText);
-        setInputText(currentText);
-      };
-
-      recognition.onerror = (event) => {
-        console.warn('[Aura Voice Input Error]:', event.error);
-        releaseMediaStream();
-        if (event.error === 'not-allowed') {
-          setListeningError({
-            title: 'Permiso de micrófono bloqueado',
-            message: 'El navegador bloqueó el micrófono. Haz clic en "Volver a pedir permiso" o activa el micrófono en el icono del candado 🔒 en la barra de tu navegador.'
-          });
-        } else if (event.error === 'no-speech') {
-          // No hubo habla: se detiene suavemente sin alarma
-        } else if (event.error !== 'aborted') {
-          setListeningError({
-            title: 'No se detectó audio claro',
-            message: 'No logramos captar tu voz con claridad. Puedes presionar el micrófono para intentar de nuevo o escribir tu consulta.'
-          });
-        }
-        setIsListening(false);
-      };
-
-      recognition.onend = () => {
-        // Al terminar la escucha, Aura vuelve a ser Aura
-        releaseMediaStream();
-        setIsListening(false);
-        const textToSend = liveTranscriptRef.current.trim();
-        if (textToSend) {
-          liveTranscriptRef.current = '';
-          setLiveTranscript('');
-          // Pausa cinematográfica de 350ms para que Aura se rematerialice antes de hablar
-          setTimeout(() => {
-            handleSendQuery(textToSend);
-          }, 350);
-        }
-      };
-
-      recognition.start();
-    } catch (err) {
-      console.error('Error starting recognition:', err);
-      releaseMediaStream();
-      setIsListening(false);
-    }
-  };
-
-  // Detener y enviar pregunta: Aura regresa a su forma física y luego responde
-  const stopVoiceRecognition = (sendImmediately = true) => {
-    releaseMediaStream();
-    const textToSend = liveTranscriptRef.current.trim() || liveTranscript.trim();
-    if (recognitionRef.current) {
-      try {
-        recognitionRef.current.stop();
-      } catch (e) {}
-      recognitionRef.current = null;
-    }
-    
-    // Aura regresa a su forma física de inmediato
-    setIsListening(false);
-
-    if (sendImmediately && textToSend) {
-      liveTranscriptRef.current = '';
-      setLiveTranscript('');
-      // Delay de 350ms para que la animación de morphing de regreso a Aura finalice antes de que empiece a hablar
-      setTimeout(() => {
-        handleSendQuery(textToSend);
-      }, 350);
-    } else {
-      liveTranscriptRef.current = '';
-      setLiveTranscript('');
-    }
-  };
-
-  // Cancelar captura de voz y devolver a Aura a su forma normal
-  const cancelVoiceRecognition = () => {
-    releaseMediaStream();
-    if (recognitionRef.current) {
-      try {
-        recognitionRef.current.abort();
-      } catch (e) {}
-      recognitionRef.current = null;
-    }
-    liveTranscriptRef.current = '';
-    setIsListening(false);
-    setLiveTranscript('');
-    setInputText('');
-  };
 
   const handleCloseModal = () => {
     isOpenRef.current = false;
     handleStopAllAudio();
-    cancelVoiceRecognition();
     if (onClose) onClose();
   };
 
@@ -628,7 +416,6 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
     isOpenRef.current = isOpen;
     if (!isOpen) {
       handleStopAllAudio();
-      cancelVoiceRecognition();
     }
   }, [isOpen]);
 
@@ -649,9 +436,9 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
     return () => {
       isOpenRef.current = false;
       handleStopAllAudio();
-      cancelVoiceRecognition();
     };
   }, []);
+
 
   // Detección reactiva de resolución móvil para adaptar el tamaño del avatar
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth < 640 : false);
@@ -996,7 +783,6 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
     if (targetKey && strings.answers[targetKey]) {
       setIsThinking(true);
       setThinkingPhase('Consultando arquitectura Dynamind...');
-      triggerAction('glasses');
 
       setTimeout(() => {
         setIsThinking(false);
@@ -1007,25 +793,29 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
           replyKey: targetKey 
         };
         setMessages(prev => [...prev, aiMsg]);
+        // Una vez que el orbe se esconde y Aura vuelve a salir, ahí sí habla
         if (isVoiceActive) {
-          playAuraAudio(targetKey, replyText);
+          setTimeout(() => {
+            if (isOpenRef.current && isVoiceActive) {
+              playAuraAudio(targetKey, replyText);
+            }
+          }, 350);
         }
-      }, 420);
+      }, 950);
       return;
     }
 
     // 🧠 CASO 2: Inferencia cognitiva abierta / personalizada con Gemini AI
     setIsThinking(true);
     setThinkingPhase('Identificando sector y variables operativas...');
-    triggerAction('glasses');
 
     const phaseTimer1 = setTimeout(() => {
       setThinkingPhase('Consultando arquitectura y base de conocimiento Dynamind...');
-    }, 600);
+    }, 700);
 
     const phaseTimer2 = setTimeout(() => {
       setThinkingPhase('Formulando diagnóstico técnico y solución de ingeniería...');
-    }, 1200);
+    }, 1400);
 
     try {
       const result = await reasonAuraQuery(trimmedQuery, currentLang, messages);
@@ -1043,8 +833,13 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
       setMessages(prev => [...prev, aiMsg]);
       setIsThinking(false);
 
+      // Una vez que el orbe se esconde y Aura vuelve a salir, ahí sí habla
       if (isVoiceActive) {
-        playDynamicAuraAudio(result.reply);
+        setTimeout(() => {
+          if (isOpenRef.current && isVoiceActive) {
+            playDynamicAuraAudio(result.reply);
+          }
+        }, 350);
       }
     } catch (err) {
       clearTimeout(phaseTimer1);
@@ -1054,7 +849,11 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
       const fallbackMsg = { sender: 'ai', text: strings.answers.general, replyKey: 'general' };
       setMessages(prev => [...prev, fallbackMsg]);
       if (isVoiceActive) {
-        playAuraAudio('general', strings.answers.general);
+        setTimeout(() => {
+          if (isOpenRef.current && isVoiceActive) {
+            playAuraAudio('general', strings.answers.general);
+          }
+        }, 350);
       }
     }
   };
@@ -1141,99 +940,110 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
             </button>
           </div>
 
-          {/* Busto de AURA que se Transforma en el Orbe Cósmico al Escuchar Voz */}
+          {/* Busto de AURA que es Absorbido en el Vórtice hacia el Orbe Cósmico al Pensar */}
           <div className="relative flex-1 flex items-center justify-center py-1 sm:py-2 w-full overflow-visible min-h-[190px] sm:min-h-[220px]">
             <AnimatePresence mode="wait">
-              {isListening ? (
+              {isThinking ? (
                 <motion.div
-                  key="aura-cosmic-orb"
-                  initial={{ opacity: 0, scale: 0.35, filter: 'blur(12px)' }}
-                  animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-                  exit={{ opacity: 0, scale: 0.35, filter: 'blur(10px)' }}
-                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                  key="aura-thinking-cosmic-orb"
+                  initial={{ opacity: 0, scale: 0, rotate: 360, filter: 'blur(16px)' }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0, filter: 'blur(0px)' }}
+                  exit={{
+                    scale: [1, 0.7, 0],
+                    rotate: [0, 60, 720],
+                    filter: ['blur(0px)', 'blur(6px)', 'blur(20px) brightness(2)'],
+                    opacity: [1, 0.8, 0]
+                  }}
+                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
                   className="flex flex-col items-center justify-center relative w-full h-full py-2 select-none"
                 >
-                  {/* Orbe Cósmico Multidimensional (Púrpura Neón & Azul Cian) */}
+                  {/* Orbe Cósmico Multidimensional de Pensamiento */}
                   <div className="relative flex items-center justify-center w-36 h-36 sm:w-44 sm:h-44">
-                    {/* Anillo Exterior 3 (Azul Cian Neón con Pulsación de Ondas) */}
+                    {/* Anillo Exterior 3 (Azul Cian Neón con Pulsación Cuántica) */}
                     <motion.div
-                      animate={{ scale: [1, 1.45, 1], opacity: [0.4, 0.08, 0.4] }}
-                      transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
-                      className="absolute w-32 h-32 sm:w-40 sm:h-40 rounded-full border border-cyan-400/40 blur-[1px]"
+                      animate={{ scale: [1, 1.45, 1], opacity: [0.45, 0.1, 0.45] }}
+                      transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+                      className="absolute w-32 h-32 sm:w-40 sm:h-40 rounded-full border border-cyan-400/50 blur-[1px]"
                     />
-                    {/* Anillo Giroscópico Púrpura en 3D */}
+                    {/* Anillo Giroscópico Púrpura en 3D (Giro Acelerado de Procesamiento) */}
                     <motion.div
                       animate={{ rotate: 360, scale: [0.95, 1.08, 0.95] }}
                       transition={{
-                        rotate: { duration: 8, repeat: Infinity, ease: 'linear' },
-                        scale: { duration: 2.2, repeat: Infinity, ease: 'easeInOut' }
+                        rotate: { duration: 4, repeat: Infinity, ease: 'linear' },
+                        scale: { duration: 1.8, repeat: Infinity, ease: 'easeInOut' }
                       }}
-                      className="absolute w-28 h-28 sm:w-34 sm:h-34 rounded-full border-2 border-dashed border-purple-400/60"
+                      className="absolute w-28 h-28 sm:w-34 sm:h-34 rounded-full border-2 border-dashed border-purple-400/70"
                       style={{ transform: 'rotateX(55deg)' }}
                     />
                     {/* Anillo Giroscópico Azul Cian en 3D Contrarrotación */}
                     <motion.div
                       animate={{ rotate: -360 }}
-                      transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
-                      className="absolute w-28 h-28 sm:w-34 sm:h-34 rounded-full border border-cyan-400/50"
+                      transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
+                      className="absolute w-28 h-28 sm:w-34 sm:h-34 rounded-full border border-cyan-400/60"
                       style={{ transform: 'rotateY(60deg)' }}
                     />
                     {/* Resplandor Halo Cósmico */}
                     <motion.div
-                      animate={{ scale: [1, 1.25, 1], opacity: [0.6, 0.9, 0.6] }}
-                      transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+                      animate={{ scale: [1, 1.28, 1], opacity: [0.65, 0.95, 0.65] }}
+                      transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
                       className="absolute w-24 h-24 sm:w-28 sm:h-28 rounded-full blur-xl bg-gradient-to-r from-purple-500 via-indigo-500 to-cyan-400"
                     />
                     {/* Núcleo del Orbe Púrpura & Azul */}
                     <motion.div
-                      animate={{ scale: [1, 1.07, 1] }}
-                      transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
-                      className="w-20 h-20 sm:w-24 sm:h-24 rounded-full shadow-[0_0_35px_rgba(168,85,247,0.85),inset_0_0_18px_rgba(56,189,248,0.85)] relative z-10 flex flex-col items-center justify-center cursor-pointer group"
+                      animate={{ scale: [1, 1.08, 1] }}
+                      transition={{ duration: 1, repeat: Infinity, ease: 'easeInOut' }}
+                      className="w-20 h-20 sm:w-24 sm:h-24 rounded-full shadow-[0_0_40px_rgba(168,85,247,0.9),inset_0_0_20px_rgba(56,189,248,0.9)] relative z-10 flex flex-col items-center justify-center group"
                       style={{
                         background: 'radial-gradient(circle at 35% 35%, #ffffff 0%, #a855f7 38%, #2563eb 72%, #090d1a 100%)'
                       }}
-                      onClick={() => stopVoiceRecognition(true)}
-                      title="Toca para terminar de hablar y enviar a Aura"
                     >
-                      <Radio className="w-7 h-7 sm:w-8 sm:h-8 text-white animate-pulse" />
+                      <BrainCircuit className="w-8 h-8 sm:w-9 sm:h-9 text-white animate-spin" style={{ animationDuration: '4s' }} />
                     </motion.div>
                   </div>
 
-                  {/* Ecualizador de Barras de Audio Animadas */}
-                  <div className="flex items-center gap-1 mt-2">
-                    {[14, 26, 36, 22, 34, 18, 30].map((height, i) => (
+                  {/* Ecualizador de Barras de Pensamiento Cognitivo */}
+                  <div className="flex items-center gap-1 mt-2.5">
+                    {[14, 28, 40, 22, 34, 18, 30].map((height, i) => (
                       <motion.span
                         key={i}
                         animate={{ height: ['4px', `${height}px`, '4px'] }}
                         transition={{
-                          duration: 0.75 + (i * 0.1),
+                          duration: 0.65 + (i * 0.08),
                           repeat: Infinity,
                           ease: 'easeInOut',
-                          delay: i * 0.08
+                          delay: i * 0.07
                         }}
                         className="w-1 bg-gradient-to-t from-purple-500 to-cyan-400 rounded-full"
                       />
                     ))}
                   </div>
 
-                  {/* Etiqueta de Telemetría */}
-                  <div className="mt-1.5 text-center">
+                  {/* Telemetría de Pensamiento */}
+                  <div className="mt-2 text-center px-2">
                     <p className="text-[11px] font-mono font-bold uppercase tracking-wider text-cyan-300 flex items-center justify-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
-                      <span>Aura Escuchando...</span>
+                      <span>AURA RAZONANDO...</span>
                     </p>
-                    <p className="text-[10px] text-zinc-400 font-sans mt-0.5">
-                      Toca el orbe al terminar o haz silencio
+                    <p className="text-[10px] text-purple-300 font-sans mt-0.5 max-w-[210px] truncate mx-auto">
+                      {thinkingPhase || 'Procesando arquitectura...'}
                     </p>
                   </div>
                 </motion.div>
               ) : (
                 <motion.div
                   key="aura-android-buste"
-                  initial={{ opacity: 0, scale: 0.75, filter: 'blur(8px)' }}
-                  animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-                  exit={{ opacity: 0, scale: 0.4, filter: 'blur(10px)' }}
-                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                  initial={{ opacity: 0, scale: 0.1, rotate: -180, filter: 'blur(16px)' }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0, filter: 'blur(0px)' }}
+                  exit={{
+                    scale: [1, 0.7, 0],
+                    rotate: [0, -60, -720],
+                    filter: ['blur(0px)', 'blur(6px)', 'blur(20px) brightness(2)'],
+                    opacity: [1, 0.8, 0]
+                  }}
+                  transition={{
+                    duration: 0.5,
+                    ease: [0.7, 0, 0.84, 0] // Succión cuántica gravitacional hacia el agujero negro
+                  }}
                   className="w-full flex items-center justify-center"
                 >
                   <AndroidVoiceAvatar 
@@ -1250,24 +1060,13 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
 
           {/* Micro-Dock de Acciones Vivas (Salto, Saludo, Gafas) & Control de Audio */}
           <div className="w-full space-y-2 pt-1">
-            {isListening ? (
-              /* Controles Dinámicos mientras Aura es el Orbe */
-              <div className="flex items-center justify-center gap-2">
-                <button
-                  type="button"
-                  onClick={cancelVoiceRecognition}
-                  className="px-3 py-1.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white text-xs font-sans font-medium transition-all cursor-pointer"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="button"
-                  onClick={() => stopVoiceRecognition(true)}
-                  className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 text-white text-xs font-sans font-bold transition-all shadow-[0_0_15px_rgba(168,85,247,0.4)] cursor-pointer flex items-center gap-1.5"
-                >
-                  <span>Enviar</span>
-                  <Send className="w-3 h-3" />
-                </button>
+            {isThinking ? (
+              /* Indicador de Cómputo mientras Aura es el Orbe */
+              <div className="flex items-center justify-center py-1">
+                <div className="px-3 py-1 rounded-full bg-purple-950/60 border border-purple-500/40 text-[11px] font-mono text-purple-300 flex items-center gap-2 shadow-[0_0_15px_rgba(168,85,247,0.25)]">
+                  <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-spin" style={{ animationDuration: '3s' }} />
+                  <span>Pensamiento Cuántico Activo</span>
+                </div>
               </div>
             ) : (
               /* Botones de Gestos Expresivos para Demostrar que está Viva */
@@ -1360,55 +1159,7 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
         {/* ========================================================================= */}
         <div className="relative z-10 flex-1 flex flex-col p-4 sm:p-6 overflow-hidden">
           
-          {/* ========================================================================= */}
-          {/* CÁPSULA COMPACTA DE TRANSCRIPCIÓN DE VOZ EN VIVO (CHAT DESPEJADO Y VISIBLE) */}
-          {/* ========================================================================= */}
-          <AnimatePresence>
-            {isListening && (
-              <motion.div
-                initial={{ opacity: 0, y: -12, scale: 0.98 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -10, scale: 0.98 }}
-                transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-                className="mb-3 p-3 sm:p-3.5 bg-gradient-to-r from-purple-950/70 via-[#0a0f24]/80 to-cyan-950/70 border border-purple-500/40 rounded-2xl shadow-[0_0_30px_rgba(168,85,247,0.22)] backdrop-blur-xl flex items-center justify-between gap-3 shrink-0"
-              >
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="relative flex h-3 w-3 shrink-0">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-cyan-500" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-[10px] font-mono uppercase tracking-wider text-cyan-300 font-bold flex items-center gap-1.5">
-                      <span>Transcribiendo tu voz en tiempo real</span>
-                      <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
-                    </p>
-                    <p className="text-xs sm:text-sm text-white font-sans truncate italic font-medium">
-                      {liveTranscript ? `"${liveTranscript}"` : 'Habla con naturalidad, Aura te está escuchando...'}
-                    </p>
-                  </div>
-                </div>
 
-                <div className="flex items-center gap-2 shrink-0">
-                  <button
-                    type="button"
-                    onClick={cancelVoiceRecognition}
-                    className="px-2.5 py-1 text-zinc-400 hover:text-white text-xs font-sans rounded-lg transition-colors cursor-pointer"
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => stopVoiceRecognition(true)}
-                    disabled={!liveTranscript.trim()}
-                    className="px-3.5 py-1.5 bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-sans font-bold text-xs rounded-xl transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 shadow-[0_0_15px_rgba(56,189,248,0.35)]"
-                  >
-                    <span>Listo</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
 
           {/* Zona de Mensajes del Chat con Scroll Suave */}
           <div className="flex-1 overflow-y-auto space-y-3.5 pr-2 pt-6 sm:pt-4">
@@ -1508,7 +1259,7 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
                 type="text"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                placeholder={isListening ? 'Escuchando tu voz...' : strings.placeholder}
+                placeholder={isThinking ? 'Aura está procesando tu respuesta...' : strings.placeholder}
                 disabled={isThinking}
                 className={`flex-1 px-4 py-2.5 border rounded-xl font-sans text-xs sm:text-sm leading-normal focus:outline-none transition-colors ${
                   isLight 
@@ -1516,24 +1267,6 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
                     : 'bg-white/[0.04] border-white/15 text-white placeholder:text-zinc-500 focus:border-purple-400/70 focus:bg-white/[0.06]'
                 } ${isThinking ? 'opacity-60 cursor-not-allowed' : ''}`}
               />
-
-              {/* Botón de Entrada por Voz (Micrófono) con Permiso Previo y Transformación */}
-              <button
-                type="button"
-                onClick={handleToggleVoiceInput}
-                disabled={isThinking}
-                className={`p-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-center ${
-                  isListening
-                    ? 'bg-gradient-to-r from-red-600 to-purple-600 border-red-400 text-white shadow-[0_0_18px_rgba(239,68,68,0.5)] animate-pulse'
-                    : isLight
-                    ? 'bg-slate-100 hover:bg-indigo-50 border-slate-200 text-indigo-600 hover:border-indigo-300'
-                    : 'bg-white/[0.04] hover:bg-purple-950/60 border-white/15 text-purple-300 hover:text-white hover:border-purple-400/50'
-                }`}
-                title={isListening ? 'Detener y transformar de vuelta a Aura' : 'Hablar con Aura por voz (Solicita permiso al micrófono)'}
-                aria-label="Hablar con Aura por voz"
-              >
-                {isListening ? <MicOff className="w-4 h-4 text-white" /> : <Mic className="w-4 h-4" />}
-              </button>
 
               {/* Botón de Enviar */}
               <button
@@ -1549,40 +1282,6 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
                 <Send className="w-4 h-4" />
               </button>
             </form>
-
-            {/* Aviso Dinámico e Interactivo de Permiso de Micrófono */}
-            {listeningError && (
-              <div className="p-3 bg-gradient-to-r from-red-950/70 via-purple-950/40 to-slate-900/80 border border-red-500/40 rounded-2xl text-red-200 text-xs space-y-2 animate-in fade-in shadow-[0_0_20px_rgba(239,68,68,0.2)]">
-                <div className="flex items-start gap-2.5">
-                  <AlertCircle className="w-4 h-4 shrink-0 text-red-400 mt-0.5" />
-                  <div className="space-y-0.5 flex-1 min-w-0">
-                    <p className="font-bold text-red-100 text-xs font-mono uppercase tracking-wide">
-                      {typeof listeningError === 'object' ? listeningError.title : 'Permiso de micrófono requerido'}
-                    </p>
-                    <p className="text-[11px] text-zinc-300 font-sans leading-relaxed">
-                      {typeof listeningError === 'object' ? listeningError.message : listeningError}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-end gap-2 pt-1 border-t border-white/10">
-                  <button
-                    type="button"
-                    onClick={() => setListeningError(null)}
-                    className="px-2.5 py-1 text-zinc-400 hover:text-white text-[11px] font-sans rounded-lg transition-colors cursor-pointer"
-                  >
-                    Descartar
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleToggleVoiceInput()}
-                    className="px-3 py-1.5 bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 text-white font-sans font-bold text-xs rounded-xl transition-all cursor-pointer shadow-[0_0_12px_rgba(168,85,247,0.35)] flex items-center gap-1.5"
-                  >
-                    <span>🔄 Volver a pedir permiso</span>
-                  </button>
-                </div>
-              </div>
-            )}
 
             <div className={`flex items-center justify-between font-sans text-xs ${
               isLight ? 'text-slate-500' : 'text-zinc-400'
