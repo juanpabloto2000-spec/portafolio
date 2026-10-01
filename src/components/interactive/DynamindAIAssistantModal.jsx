@@ -413,10 +413,34 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
   const chatBottomRef = useRef(null);
   const abortControllerRef = useRef(null);
   const isOpenRef = useRef(isOpen);
+  const activeStreamRef = useRef(null);
 
-  // 1. Manejador Maestro de Entrada de Voz: Solicita Permiso Explícito Primero
+  // Liberar el hardware de audio de forma segura
+  const releaseMediaStream = () => {
+    if (activeStreamRef.current) {
+      try {
+        activeStreamRef.current.getTracks().forEach(t => t.stop());
+      } catch (e) {}
+      activeStreamRef.current = null;
+    }
+  };
+
+  // Consulta proactiva del permiso de micrófono en el navegador
+  const checkMicrophonePermission = async () => {
+    if (typeof navigator !== 'undefined' && navigator.permissions && navigator.permissions.query) {
+      try {
+        const result = await navigator.permissions.query({ name: 'microphone' });
+        return result.state; // 'granted', 'prompt', 'denied'
+      } catch (e) {
+        return 'unknown';
+      }
+    }
+    return 'unknown';
+  };
+
+  // 1. Manejador Maestro de Entrada de Voz: Detección Inteligente & Solicitud de Permiso
   const handleToggleVoiceInput = async () => {
-    // Si ya está escuchando, el usuario decide detener y procesar la pregunta
+    // Si ya está escuchando, el usuario decide detener y procesar la pregunta de inmediato
     if (isListening) {
       stopVoiceRecognition(true);
       return;
@@ -429,29 +453,41 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
       : null;
 
     if (!SpeechRecognition) {
-      setListeningError('Reconocimiento de voz no soportado en este navegador. Te sugerimos Chrome, Edge o Safari.');
+      setListeningError({
+        title: 'Reconocimiento de voz no soportado',
+        message: 'Tu navegador actual no admite SpeechRecognition nativo. Te sugerimos usar Google Chrome, Microsoft Edge o Safari.'
+      });
       return;
     }
 
-    // 🔒 REQUERIMIENTO 1: Solicitar explícitamente el permiso del micrófono al usuario en el navegador
+    // A. Detectar si el permiso ya fue concedido previamente
+    const permState = await checkMicrophonePermission();
+
+    if (permState === 'granted') {
+      // ✅ Si ya tiene permiso en el navegador, va DIRECTO a escuchar sin pasos redundantes ni bloqueos de audio
+      startVoiceRecognition();
+      return;
+    }
+
+    // B. Si no tiene permiso o está en 'prompt', pedimos explícitamente el permiso al usuario
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        // Liberar inmediatamente los tracks para que SpeechRecognition acceda al hardware sin colisiones
-        stream.getTracks().forEach(track => track.stop());
+        // Guardamos el stream para mantener el canal de audio abierto sin causar error not-allowed en Chrome
+        activeStreamRef.current = stream;
+        // Iniciar reconocimiento de voz
+        startVoiceRecognition();
       } catch (err) {
         console.warn('[Microphone Permission Error]:', err);
-        if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-          setListeningError('Permiso de micrófono denegado. Permite el acceso al micrófono en la barra de tu navegador para hablar con Aura.');
-        } else {
-          setListeningError('No se pudo acceder al micrófono. Por favor verifica la conexión de tus dispositivos de audio.');
-        }
-        return;
+        releaseMediaStream();
+        setListeningError({
+          title: 'Permiso de micrófono requerido',
+          message: 'Para hablar con Aura, permite el acceso al micrófono en el icono del candado 🔒 de tu navegador (arriba a la izquierda de la URL).'
+        });
       }
+    } else {
+      startVoiceRecognition();
     }
-
-    // Permiso concedido -> Proceder a iniciar el reconocimiento y transformar a Aura en el Orbe Cósmico
-    startVoiceRecognition();
   };
 
   // Iniciar Captura de Voz en Tiempo Real (Aura se transforma en el Orbe)
@@ -483,6 +519,7 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
       recognition.onstart = () => {
         // En este instante exacto, Aura se metamorfosea en el Orbe Cósmico
         setIsListening(true);
+        setListeningError(null);
       };
 
       recognition.onresult = (event) => {
@@ -497,16 +534,26 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
 
       recognition.onerror = (event) => {
         console.warn('[Aura Voice Input Error]:', event.error);
+        releaseMediaStream();
         if (event.error === 'not-allowed') {
-          setListeningError('Permiso de micrófono denegado en tu navegador.');
-        } else if (event.error !== 'no-speech') {
-          setListeningError('No se detectó audio claro. Intenta de nuevo.');
+          setListeningError({
+            title: 'Permiso de micrófono bloqueado',
+            message: 'El navegador bloqueó el micrófono. Haz clic en "Volver a pedir permiso" o activa el micrófono en el icono del candado 🔒 en la barra de tu navegador.'
+          });
+        } else if (event.error === 'no-speech') {
+          // No hubo habla: se detiene suavemente sin alarma
+        } else if (event.error !== 'aborted') {
+          setListeningError({
+            title: 'No se detectó audio claro',
+            message: 'No logramos captar tu voz con claridad. Puedes presionar el micrófono para intentar de nuevo o escribir tu consulta.'
+          });
         }
         setIsListening(false);
       };
 
       recognition.onend = () => {
         // Al terminar la escucha, Aura vuelve a ser Aura
+        releaseMediaStream();
         setIsListening(false);
         const textToSend = liveTranscriptRef.current.trim();
         if (textToSend) {
@@ -522,12 +569,14 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
       recognition.start();
     } catch (err) {
       console.error('Error starting recognition:', err);
+      releaseMediaStream();
       setIsListening(false);
     }
   };
 
   // Detener y enviar pregunta: Aura regresa a su forma física y luego responde
   const stopVoiceRecognition = (sendImmediately = true) => {
+    releaseMediaStream();
     const textToSend = liveTranscriptRef.current.trim() || liveTranscript.trim();
     if (recognitionRef.current) {
       try {
@@ -554,6 +603,7 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
 
   // Cancelar captura de voz y devolver a Aura a su forma normal
   const cancelVoiceRecognition = () => {
+    releaseMediaStream();
     if (recognitionRef.current) {
       try {
         recognitionRef.current.abort();
@@ -1500,11 +1550,37 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
               </button>
             </form>
 
-            {/* Aviso de Error de Micrófono si Aplica */}
+            {/* Aviso Dinámico e Interactivo de Permiso de Micrófono */}
             {listeningError && (
-              <div className="p-2.5 bg-red-950/50 border border-red-500/40 rounded-xl text-red-300 text-xs flex items-center gap-2 animate-in fade-in">
-                <AlertCircle className="w-3.5 h-3.5 shrink-0 text-red-400" />
-                <span>{listeningError}</span>
+              <div className="p-3 bg-gradient-to-r from-red-950/70 via-purple-950/40 to-slate-900/80 border border-red-500/40 rounded-2xl text-red-200 text-xs space-y-2 animate-in fade-in shadow-[0_0_20px_rgba(239,68,68,0.2)]">
+                <div className="flex items-start gap-2.5">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-red-400 mt-0.5" />
+                  <div className="space-y-0.5 flex-1 min-w-0">
+                    <p className="font-bold text-red-100 text-xs font-mono uppercase tracking-wide">
+                      {typeof listeningError === 'object' ? listeningError.title : 'Permiso de micrófono requerido'}
+                    </p>
+                    <p className="text-[11px] text-zinc-300 font-sans leading-relaxed">
+                      {typeof listeningError === 'object' ? listeningError.message : listeningError}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-2 pt-1 border-t border-white/10">
+                  <button
+                    type="button"
+                    onClick={() => setListeningError(null)}
+                    className="px-2.5 py-1 text-zinc-400 hover:text-white text-[11px] font-sans rounded-lg transition-colors cursor-pointer"
+                  >
+                    Descartar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleToggleVoiceInput()}
+                    className="px-3 py-1.5 bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 text-white font-sans font-bold text-xs rounded-xl transition-all cursor-pointer shadow-[0_0_12px_rgba(168,85,247,0.35)] flex items-center gap-1.5"
+                  >
+                    <span>🔄 Volver a pedir permiso</span>
+                  </button>
+                </div>
               </div>
             )}
 
