@@ -58,7 +58,7 @@ export const GALAXY_SERVICES = [
     color: "#06b6d4", // Cyan Eléctrico
     emissive: "#0891b2",
     size: 2.1,
-    orbitRadius: 22,
+    orbitRadius: 26,
     speed: 0.9,
     modelGlb: "earth.glb",
     summary: "Centro de comando táctico aislado en /#/dsb con RBAC estricto desacoplado de la vista pública comercial.",
@@ -88,7 +88,7 @@ export const GALAXY_SERVICES = [
     color: "#f43f5e", // Coral Carmesí
     emissive: "#e11d48",
     size: 2.0,
-    orbitRadius: 29,
+    orbitRadius: 34,
     speed: 0.78,
     modelGlb: "mars.glb",
     summary: "Gestión de propiedades con calendario atómico visual y sincronización bidireccional contra overbooking.",
@@ -118,7 +118,7 @@ export const GALAXY_SERVICES = [
     color: "#fbbf24", // Ámbar Oro
     emissive: "#d97706",
     size: 2.15,
-    orbitRadius: 36,
+    orbitRadius: 43,
     speed: 0.68,
     modelGlb: "saturn.glb",
     summary: "Control blindado de efectivo donde el operador cuenta billetes sin ver los números del sistema hasta cerrar.",
@@ -148,7 +148,7 @@ export const GALAXY_SERVICES = [
     color: "#f97316", // Naranja Fuego
     emissive: "#ea580c",
     size: 2.05,
-    orbitRadius: 43,
+    orbitRadius: 51,
     speed: 0.60,
     modelGlb: "neptune.glb",
     summary: "Pantallas de cocina en tiempo real con semáforo de tiempos y descarga de recetas estándar contra mermas.",
@@ -178,7 +178,7 @@ export const GALAXY_SERVICES = [
     color: "#3b82f6", // Azul Cobalto
     emissive: "#2563eb",
     size: 1.95,
-    orbitRadius: 50,
+    orbitRadius: 60,
     speed: 0.54,
     modelGlb: "uranus.glb",
     summary: "Venta directa sin comisiones abusivas de intermediarios con liquidación inmediata a tu cuenta bancaria.",
@@ -208,7 +208,7 @@ export const GALAXY_SERVICES = [
     color: "#ec4899", // Rosa Neón
     emissive: "#db2777",
     size: 1.95,
-    orbitRadius: 57,
+    orbitRadius: 68,
     speed: 0.49,
     modelGlb: "ganymede.glb",
     summary: "Monitoreo continuo de existencias críticas con alertas de reposición antes de que se agoten en servicio.",
@@ -242,7 +242,7 @@ export const GALAXY_SERVICES = [
     color: "#10b981", // Verde Esmeralda
     emissive: "#059669",
     size: 2.1,
-    orbitRadius: 65,
+    orbitRadius: 77,
     speed: 0.45,
     modelGlb: "venus.glb",
     summary: "Agente conversacional entrenado con la voz de tu marca que califica prospectos y cierra ventas las 24 horas.",
@@ -272,7 +272,7 @@ export const GALAXY_SERVICES = [
     color: "#a855f7", // Púrpura Neón
     emissive: "#9333ea",
     size: 2.2,
-    orbitRadius: 72,
+    orbitRadius: 85,
     speed: 0.41,
     modelGlb: "jupiter.glb",
     summary: "Algoritmo de elasticidad de precios que ajusta tarifas automáticamente según ocupación y temporada.",
@@ -302,7 +302,7 @@ export const GALAXY_SERVICES = [
     color: "#14b8a6", // Turquesa
     emissive: "#0d9488",
     size: 1.9,
-    orbitRadius: 79,
+    orbitRadius: 94,
     speed: 0.37,
     modelGlb: "callisto.glb",
     summary: "Generación automática de contratos de servicio y pagarés firmados digitalmente con validez jurídica.",
@@ -332,7 +332,7 @@ export const GALAXY_SERVICES = [
     color: "#84cc16", // Lima Neón
     emissive: "#65a30d",
     size: 1.9,
-    orbitRadius: 86,
+    orbitRadius: 102,
     speed: 0.34,
     modelGlb: "titan.glb",
     summary: "Monitoreo automatizado de precios y disponibilidad de la competencia directa para no quedar fuera de mercado.",
@@ -362,7 +362,7 @@ export const GALAXY_SERVICES = [
     color: "#8b5cf6", // Violeta Profundo
     emissive: "#7c3aed",
     size: 2.05,
-    orbitRadius: 93,
+    orbitRadius: 111,
     speed: 0.31,
     modelGlb: "europa.glb",
     summary: "Llamadas telefónicas atendidas con voz humana realista de baja latencia para reservas y consultas complejas.",
@@ -396,7 +396,7 @@ export const GALAXY_SERVICES = [
     color: "#22d3ee", // Cyan Brillante
     emissive: "#06b6d4",
     size: 2.0,
-    orbitRadius: 101,
+    orbitRadius: 119,
     speed: 0.28,
     modelGlb: "mercury.glb",
     summary: "Flujos de integración entre CRMs, hojas de cálculo y bases de datos que operan en segundo plano sin fallos.",
@@ -426,7 +426,7 @@ export const GALAXY_SERVICES = [
     color: "#34d399", // Menta Hielo
     emissive: "#10b981",
     size: 2.1,
-    orbitRadius: 108,
+    orbitRadius: 128,
     speed: 0.26,
     modelGlb: "io.glb",
     summary: "Extracción multimodal de facturas con visión artificial y conciliación automática contra tus extractos bancarios.",
@@ -456,7 +456,7 @@ export const GALAXY_SERVICES = [
     color: "#6366f1", // Índigo Oscuro
     emissive: "#4f46e5",
     size: 2.0,
-    orbitRadius: 115,
+    orbitRadius: 136,
     speed: 0.24,
     modelGlb: "triton.glb",
     summary: "Políticas de Row Level Security (RLS) en base de datos para que ningún usuario acceda a datos ajenos.",
@@ -486,7 +486,7 @@ export const GALAXY_SERVICES = [
     color: "#ef4444", // Rojo Alerta
     emissive: "#dc2626",
     size: 1.85,
-    orbitRadius: 122,
+    orbitRadius: 145,
     speed: 0.22,
     modelGlb: "moon.glb",
     summary: "Despacho instantáneo de notificaciones operativas a tu celular ante pagos, reservas o incidencias en <500ms.",
@@ -516,7 +516,7 @@ export const GALAXY_SERVICES = [
     color: "#cbd5e1", // Platino
     emissive: "#94a3b8",
     size: 1.9,
-    orbitRadius: 129,
+    orbitRadius: 153,
     speed: 0.20,
     modelGlb: "earth.glb",
     summary: "Motor de comprobantes de pago, folios de huésped y reportes financieros con formato editorial de lujo.",
@@ -546,7 +546,7 @@ export const GALAXY_SERVICES = [
     color: "#d97706", // Oro Antiguo
     emissive: "#b45309",
     size: 2.0,
-    orbitRadius: 136,
+    orbitRadius: 162,
     speed: 0.18,
     modelGlb: "mars.glb",
     summary: "Vigilante autónomo que inspecciona transacciones y saldos para detectar inconsistencias antes de que se vuelvan pérdidas.",

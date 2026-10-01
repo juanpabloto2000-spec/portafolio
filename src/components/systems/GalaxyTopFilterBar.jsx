@@ -1,10 +1,8 @@
 // src/components/systems/GalaxyTopFilterBar.jsx
-// Barra de control superior estilizada (fuera y por encima del lienzo 3D):
-// - Filtros por categoría con iconos SVG de Lucide.
-// - Tira horizontal de los 18 sistemas con iconos y colores representativos.
-// - Barra táctica con botón "Toda la Galaxia", visibilidad de órbitas y selector de velocidad.
+// Panel de servicios superior: Todos los 18 sistemas visibles a la vez, con sus iconos SVG y colores,
+// sin contenedores pesados ni barras de desplazamiento horizontal que oculten opciones.
 
-import React, { useState } from "react";
+import React from "react";
 import {
   Orbit,
   Sun,
@@ -32,12 +30,11 @@ import {
   Bell,
   Receipt,
   Database,
-  SlidersHorizontal,
 } from "lucide-react";
-import { GALAXY_CATEGORIES, GALAXY_SERVICES } from "../../data/dynamindGalaxyData";
+import { GALAXY_SERVICES } from "../../data/dynamindGalaxyData";
 import { playTap } from "../../utils/audioEffects";
 
-// Mapa de iconos SVG de Lucide para cada servicio
+// Mapa completo de iconos SVG de Lucide para los 18 servicios
 const ICON_MAP = {
   Orbit,
   Sun,
@@ -72,52 +69,28 @@ export default function GalaxyTopFilterBar({
   showTrajectories,
   onToggleTrajectories,
 }) {
-  const [activeCategory, setActiveCategory] = useState("all");
-
-  const filteredServices = GALAXY_SERVICES.filter(
-    (s) => activeCategory === "all" || s.category === activeCategory
-  );
-
-  const activeService = GALAXY_SERVICES.find((s) => s.id === selectedServiceId) || GALAXY_SERVICES[0];
-  const ActiveIcon = ICON_MAP[activeService.iconName] || Orbit;
-
   return (
     <div className="w-full flex flex-col gap-3 select-none">
-      {/* 1. FILA 1: PESTAÑAS DE CATEGORÍA CON ICONOS SVG & CONTROLES TÁCTICOS */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-2.5 rounded-2xl bg-neutral-950/70 backdrop-blur-xl border border-white/10 shadow-xl">
-        {/* Filtros de Categoría */}
-        <div className="flex flex-wrap items-center gap-1.5">
-          {GALAXY_CATEGORIES.map((cat) => {
-            const Icon = ICON_MAP[cat.icon] || Orbit;
-            const isActive = activeCategory === cat.id;
-
-            return (
-              <button
-                key={cat.id}
-                onClick={() => {
-                  playTap();
-                  setActiveCategory(cat.id);
-                }}
-                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-mono transition-all ${
-                  isActive
-                    ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 font-bold shadow-[0_0_15px_rgba(6,182,212,0.2)]"
-                    : "bg-white/[0.03] text-neutral-400 hover:text-white hover:bg-white/[0.08] border border-white/5"
-                }`}
-              >
-                <Icon className={`w-3.5 h-3.5 ${isActive ? "text-cyan-400" : "text-neutral-400"}`} />
-                <span>{cat.label}</span>
-              </button>
-            );
-          })}
+      {/* 1. BARRA DE TELEMETRÍA Y CONTROLES GLOBALES */}
+      <div className="flex flex-wrap items-center justify-between gap-3 px-1 py-1 text-xs font-mono">
+        <div className="flex items-center gap-2.5">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]" />
+          <span className="text-white font-bold tracking-wider uppercase text-[11px] sm:text-xs">
+            18 Sistemas Operativos & Agentes
+          </span>
+          <span className="text-zinc-500 hidden sm:inline">•</span>
+          <span className="text-zinc-400 text-[11px] hidden sm:inline">
+            Haz clic en cualquier servicio para enfocarlo en la Galaxia 3D
+          </span>
         </div>
 
-        {/* Barra de Acciones Galácticas: Botón Toda la Galaxia + Velocidad + Órbitas */}
+        {/* Acciones de Navegación 3D */}
         <div className="flex items-center gap-2">
-          {/* Botón Principal: Retornar al Panorama Completo */}
+          {/* Botón Reset a Vista Panorámica */}
           <button
             onClick={onResetToGalaxy}
-            title="Volver a la vista panorámica completa de la Galaxia Dynamind"
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500/20 via-amber-500/10 to-cyan-500/20 border border-amber-500/40 hover:border-amber-400 text-amber-300 hover:text-white text-xs font-mono font-bold transition-all shadow-md group"
+            title="Volver al panorama completo de la Galaxia Dynamind"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-cyan-500/20 border border-amber-500/40 hover:border-amber-300 text-amber-300 hover:text-white text-xs font-mono font-bold transition-all shadow-sm group"
           >
             <RotateCcw className="w-3.5 h-3.5 text-amber-400 group-hover:-rotate-90 transition-transform" />
             <span>⎌ TODA LA GALAXIA</span>
@@ -127,18 +100,18 @@ export default function GalaxyTopFilterBar({
           <button
             onClick={onToggleTrajectories}
             title={showTrajectories ? "Ocultar Anillos Orbitales" : "Mostrar Anillos Orbitales"}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-mono transition-colors ${
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-mono transition-all ${
               showTrajectories
-                ? "bg-cyan-500/20 border-cyan-500/40 text-cyan-300"
-                : "bg-neutral-900 border-white/10 text-neutral-500 hover:text-white"
+                ? "bg-cyan-500/15 border-cyan-500/40 text-cyan-300"
+                : "bg-white/[0.02] border-white/10 text-neutral-500 hover:text-white"
             }`}
           >
             <Eye className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Órbitas</span>
+            <span className="hidden md:inline">Órbitas</span>
           </button>
 
-          {/* Selector de Velocidad */}
-          <div className="flex items-center bg-neutral-900/90 rounded-xl border border-white/10 p-0.5">
+          {/* Control de Velocidad */}
+          <div className="flex items-center bg-white/[0.03] rounded-xl border border-white/10 p-0.5">
             <button
               onClick={() => onChangeSpeed(speedMultiplier === 0 ? 1 : 0)}
               className={`p-1.5 rounded-lg text-xs font-mono transition-colors ${
@@ -168,48 +141,65 @@ export default function GalaxyTopFilterBar({
         </div>
       </div>
 
-      {/* 2. FILA 2: TIRA ESTILIZADA DE SISTEMAS (BOTONES DE SERVICIO DE LA PÁGINA) */}
-      <div className="p-2 rounded-2xl bg-neutral-950/50 border border-white/10 backdrop-blur-md">
-        <div className="flex items-center gap-2 overflow-x-auto custom-scrollbar pb-1 pt-0.5 px-0.5">
-          {filteredServices.map((service) => {
-            const SrvIcon = ICON_MAP[service.iconName] || Orbit;
-            const isSelected = selectedServiceId === service.id;
+      {/* 2. RETÍCULA UNIFORME DE LOS 18 SERVICIOS (TODOS VISIBLES A LA VEZ SIN SCROLL) */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+        {GALAXY_SERVICES.map((service) => {
+          const SrvIcon = ICON_MAP[service.iconName] || Orbit;
+          const isSelected = selectedServiceId === service.id;
 
-            return (
-              <button
-                key={service.id}
-                onClick={() => onSelectService(service.id)}
-                className={`flex items-center gap-2.5 px-3.5 py-2 rounded-xl border whitespace-nowrap text-xs font-mono transition-all shrink-0 ${
-                  isSelected
-                    ? "bg-white/15 text-white font-bold shadow-[0_0_20px_rgba(255,255,255,0.2)] scale-[1.02]"
-                    : "bg-white/[0.02] border-white/10 text-neutral-300 hover:text-white hover:bg-white/[0.06] hover:border-white/20"
-                }`}
+          return (
+            <button
+              key={service.id}
+              onClick={() => {
+                playTap();
+                onSelectService(service.id);
+              }}
+              className={`group flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all relative overflow-hidden ${
+                isSelected
+                  ? "bg-white/10 text-white font-bold shadow-lg scale-[1.02]"
+                  : "bg-white/[0.02] border-white/10 text-neutral-300 hover:text-white hover:bg-white/[0.06] hover:border-white/20"
+              }`}
+              style={{
+                borderColor: isSelected ? service.color : undefined,
+                boxShadow: isSelected ? `0 0 16px ${service.color}45` : undefined,
+              }}
+            >
+              {/* Barra de acento superior si está activo */}
+              {isSelected && (
+                <div
+                  className="absolute top-0 left-0 right-0 h-0.5"
+                  style={{ backgroundColor: service.color }}
+                />
+              )}
+
+              {/* Punto de color con resplandor */}
+              <span
+                className="w-2 h-2 rounded-full shrink-0"
                 style={{
-                  borderColor: isSelected ? service.color : undefined,
-                  boxShadow: isSelected ? `0 0 15px ${service.color}40` : undefined,
+                  backgroundColor: service.color,
+                  boxShadow: `0 0 6px ${service.color}`,
+                }}
+              />
+
+              {/* Icono SVG Lucide */}
+              <div
+                className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0 border"
+                style={{
+                  backgroundColor: `${service.color}15`,
+                  borderColor: `${service.color}35`,
+                  color: isSelected ? "#ffffff" : service.color,
                 }}
               >
-                {/* Indicador de Color del Planeta con Resplandor */}
-                <span
-                  className="w-2.5 h-2.5 rounded-full shrink-0 shadow-sm"
-                  style={{
-                    backgroundColor: service.color,
-                    boxShadow: `0 0 8px ${service.color}`,
-                  }}
-                />
+                <SrvIcon className="w-3.5 h-3.5" />
+              </div>
 
-                {/* Icono SVG de Lucide */}
-                <SrvIcon
-                  className="w-3.5 h-3.5 shrink-0"
-                  style={{ color: isSelected ? "#ffffff" : service.color }}
-                />
-
-                {/* Nombre Oficial del Servicio */}
-                <span className="font-medium tracking-tight">{service.name}</span>
-              </button>
-            );
-          })}
-        </div>
+              {/* Nombre del Servicio */}
+              <span className="text-[11px] font-mono leading-tight line-clamp-1 group-hover:text-white">
+                {service.name}
+              </span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );

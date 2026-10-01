@@ -222,6 +222,30 @@ function adjustColor(col, amt) {
 }
 
 // ============================================================================
+// GENERADOR DE TEXTURA PARA POLVO CÓSMICO Y NÉBULAS (SPRITE RADIAL SUAVE)
+// ============================================================================
+function createCosmicDustTexture() {
+  const canvas = document.createElement("canvas");
+  canvas.width = 64;
+  canvas.height = 64;
+  const ctx = canvas.getContext("2d");
+
+  const rad = canvas.width / 2;
+  const grad = ctx.createRadialGradient(rad, rad, 0, rad, rad, rad);
+  grad.addColorStop(0, "rgba(255, 255, 255, 0.55)");
+  grad.addColorStop(0.3, "rgba(210, 235, 255, 0.32)");
+  grad.addColorStop(0.65, "rgba(130, 185, 255, 0.10)");
+  grad.addColorStop(0.88, "rgba(60, 110, 255, 0.02)");
+  grad.addColorStop(1, "rgba(0, 0, 0, 0)");
+
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  return texture;
+}
+
+// ============================================================================
 // SHADER DE ATMÓSFERA FRESNEL (GLSL)
 // ============================================================================
 function createAtmosphereMesh(radius, colorHex, isSun = false) {
@@ -280,12 +304,14 @@ export default function DynamindGalaxy3D({
   const controlsRef = useRef(null);
   const cameraRef = useRef(null);
   const celestialObjectsRef = useRef({});
+  const cosmicDustRef = useRef(null);
+  const solarDustRef = useRef(null);
   const animationFrameRef = useRef(null);
 
   const [hoveredService, setHoveredService] = useState(null);
 
   // Posición Panorámica Art-Directed Canónica: Todos los 18 planetas uniformemente visibles
-  const PANORAMA_CAM_POS = new THREE.Vector3(0, 95, 140);
+  const PANORAMA_CAM_POS = new THREE.Vector3(0, 118, 168);
   const PANORAMA_LOOK_AT = new THREE.Vector3(0, 0, 0);
 
   const targetCamPosRef = useRef(PANORAMA_CAM_POS.clone());
@@ -303,8 +329,8 @@ export default function DynamindGalaxy3D({
     const scene = new THREE.Scene();
     sceneRef.current = scene;
 
-    // Campo de estrellas en profundidad galáctica (4.500 estrellas multicromáticas)
-    const starCount = 4500;
+    // A. Campo de estrellas en profundidad galáctica (4.000 estrellas)
+    const starCount = 4000;
     const starGeometry = new THREE.BufferGeometry();
     const starPositions = new Float32Array(starCount * 3);
     const starColors = new Float32Array(starCount * 3);
@@ -334,13 +360,97 @@ export default function DynamindGalaxy3D({
     starGeometry.setAttribute("color", new THREE.BufferAttribute(starColors, 3));
 
     const starMaterial = new THREE.PointsMaterial({
-      size: 1.5,
+      size: 1.4,
       vertexColors: true,
       transparent: true,
-      opacity: 0.9,
+      opacity: 0.85,
     });
     const starField = new THREE.Points(starGeometry, starMaterial);
     scene.add(starField);
+
+    // B. Polvo Cósmico y Nébula Galáctica Suave (3.800 partículas difusas con Sprite)
+    // Opacidad calibrada (0.18): añade atmósfera espacial sin restar visibilidad a los planetas
+    const dustCount = 3800;
+    const dustGeometry = new THREE.BufferGeometry();
+    const dustPositions = new Float32Array(dustCount * 3);
+    const dustColors = new Float32Array(dustCount * 3);
+    const dustTex = createCosmicDustTexture();
+
+    for (let i = 0; i < dustCount * 3; i += 3) {
+      // Distribución en espiral galáctica con 2 brazos principales
+      const armIndex = i % 2;
+      const armOffset = armIndex * Math.PI;
+      const dist = 18 + Math.pow(Math.random(), 1.4) * 165;
+      const spiralAngle = dist * 0.045 + armOffset + (Math.random() - 0.5) * 0.95;
+
+      dustPositions[i] = Math.cos(spiralAngle) * dist + (Math.random() - 0.5) * 8;
+      dustPositions[i + 1] = (Math.random() - 0.5) * 16 * (1 - dist / 220); // Más denso en el plano central
+      dustPositions[i + 2] = Math.sin(spiralAngle) * dist + (Math.random() - 0.5) * 8;
+
+      // Colores de nébula con saturación armónica
+      const colorPicker = Math.random();
+      if (colorPicker > 0.65) {
+        dustColors[i] = 0.02; dustColors[i + 1] = 0.72; dustColors[i + 2] = 0.85; // Cyan
+      } else if (colorPicker > 0.40) {
+        dustColors[i] = 0.65; dustColors[i + 1] = 0.28; dustColors[i + 2] = 0.95; // Violeta
+      } else if (colorPicker > 0.20) {
+        dustColors[i] = 0.92; dustColors[i + 1] = 0.25; dustColors[i + 2] = 0.65; // Magenta
+      } else {
+        dustColors[i] = 0.96; dustColors[i + 1] = 0.72; dustColors[i + 2] = 0.15; // Ámbar
+      }
+    }
+
+    dustGeometry.setAttribute("position", new THREE.BufferAttribute(dustPositions, 3));
+    dustGeometry.setAttribute("color", new THREE.BufferAttribute(dustColors, 3));
+
+    const dustMaterial = new THREE.PointsMaterial({
+      map: dustTex,
+      size: 8.5,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.18, // Opacidad sutil y transparente para no tapar los planetas
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+    const cosmicDustMesh = new THREE.Points(dustGeometry, dustMaterial);
+    cosmicDustMesh.renderOrder = -1;
+    scene.add(cosmicDustMesh);
+    cosmicDustRef.current = cosmicDustMesh;
+
+    // C. Halo de Plasma alrededor del Sol Central (1.200 partículas doradas)
+    const solarDustCount = 1200;
+    const solarDustGeometry = new THREE.BufferGeometry();
+    const solarPositions = new Float32Array(solarDustCount * 3);
+    const solarColors = new Float32Array(solarDustCount * 3);
+
+    for (let i = 0; i < solarDustCount * 3; i += 3) {
+      const sDist = 6 + Math.random() * 26;
+      const sAngle = Math.random() * Math.PI * 2;
+      solarPositions[i] = Math.cos(sAngle) * sDist;
+      solarPositions[i + 1] = (Math.random() - 0.5) * 4;
+      solarPositions[i + 2] = Math.sin(sAngle) * sDist;
+
+      solarColors[i] = 1.0;
+      solarColors[i + 1] = 0.8 + Math.random() * 0.2;
+      solarColors[i + 2] = 0.2 + Math.random() * 0.3;
+    }
+
+    solarDustGeometry.setAttribute("position", new THREE.BufferAttribute(solarPositions, 3));
+    solarDustGeometry.setAttribute("color", new THREE.BufferAttribute(solarColors, 3));
+
+    const solarDustMaterial = new THREE.PointsMaterial({
+      map: dustTex,
+      size: 4.2,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.28, // Sutil y luminoso
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+    const solarDustMesh = new THREE.Points(solarDustGeometry, solarDustMaterial);
+    solarDustMesh.renderOrder = -1;
+    scene.add(solarDustMesh);
+    solarDustRef.current = solarDustMesh;
 
     // 2. Cámara Panorámica Fija (Art-Directed)
     const camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 2000);
@@ -524,8 +634,10 @@ export default function DynamindGalaxy3D({
         const trajectory = createTrajectoryRing(service.orbitRadius, service.color);
         scene.add(trajectory);
 
-        // Distribución armónica equilibrada en abanico
-        const initialAngle = ((index - 1) / (totalBodies - 1)) * Math.PI * 2 + 0.35;
+        // Distribución armónica con Proporción Áurea (Golden Angle ~137.5077°):
+        // Garantiza que cada planeta quede en un cuadrante distinto y disperso, erradicando cualquier aspecto de fila india
+        const GOLDEN_ANGLE = 2.399963229728653;
+        const initialAngle = (index * GOLDEN_ANGLE) + 0.45;
         planetMesh.position.set(
           Math.cos(initialAngle) * service.orbitRadius,
           0,
@@ -649,8 +761,14 @@ export default function DynamindGalaxy3D({
       const delta = clock.getDelta();
       const currentSpeed = speedMultiplier;
 
-      // Rotación suave del fondo estelar
-      starField.rotation.y += delta * 0.003;
+      // Rotación suave del fondo estelar y polvo cósmico
+      starField.rotation.y += delta * 0.0025;
+      if (cosmicDustRef.current) {
+        cosmicDustRef.current.rotation.y += delta * 0.0016;
+      }
+      if (solarDustRef.current) {
+        solarDustRef.current.rotation.y += delta * 0.012;
+      }
 
       // Traslación orbital continua
       Object.entries(celestialObjectsRef.current).forEach(([id, entry]) => {
@@ -742,7 +860,7 @@ export default function DynamindGalaxy3D({
       targetLookAtRef.current.copy(PANORAMA_LOOK_AT);
       targetCamPosRef.current.copy(PANORAMA_CAM_POS);
       controls.minDistance = 25;
-      controls.maxDistance = 280;
+      controls.maxDistance = 320;
       isTransitioningRef.current = true;
     } else if (entry && entry.mesh) {
       // Enfoque Focal Panorámico: El planeta queda centrado en plano medio,
