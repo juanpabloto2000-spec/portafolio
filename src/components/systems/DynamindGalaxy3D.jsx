@@ -232,10 +232,10 @@ function createCosmicDustTexture() {
 
   const rad = canvas.width / 2;
   const grad = ctx.createRadialGradient(rad, rad, 0, rad, rad, rad);
-  grad.addColorStop(0, "rgba(255, 255, 255, 0.55)");
-  grad.addColorStop(0.3, "rgba(210, 235, 255, 0.32)");
-  grad.addColorStop(0.65, "rgba(130, 185, 255, 0.10)");
-  grad.addColorStop(0.88, "rgba(60, 110, 255, 0.02)");
+  grad.addColorStop(0, "rgba(255, 255, 255, 0.28)");
+  grad.addColorStop(0.3, "rgba(210, 235, 255, 0.12)");
+  grad.addColorStop(0.65, "rgba(130, 185, 255, 0.03)");
+  grad.addColorStop(0.88, "rgba(60, 110, 255, 0.005)");
   grad.addColorStop(1, "rgba(0, 0, 0, 0)");
 
   ctx.fillStyle = grad;
@@ -405,10 +405,10 @@ export default function DynamindGalaxy3D({
 
     const dustMaterial = new THREE.PointsMaterial({
       map: dustTex,
-      size: 8.5,
+      size: 7.0,
       vertexColors: true,
       transparent: true,
-      opacity: 0.18, // Opacidad sutil y transparente para no tapar los planetas
+      opacity: 0.05, // Apenas perceptible: un halo etéreo casi invisible en el fondo
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     });
@@ -440,10 +440,10 @@ export default function DynamindGalaxy3D({
 
     const solarDustMaterial = new THREE.PointsMaterial({
       map: dustTex,
-      size: 4.2,
+      size: 3.2,
       vertexColors: true,
       transparent: true,
-      opacity: 0.28, // Sutil y luminoso
+      opacity: 0.12, // Suspiro sutil de plasma solar
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     });
