@@ -384,6 +384,177 @@ function ModalCosmicStarfield() {
   );
 }
 
+/**
+ * HyperrealisticCosmicOrb - Orbe Cósmico Cuántico Hiperrealista
+ * Renderizado físico volumétrico de alta fidelidad:
+ * - Capas de refracción óptica de cristal zafiro/fresnel.
+ * - Núcleo de plasma cósmico líquido con cáusticas giratorias en ebullición suave.
+ * - Singularity Core pulsante incandescente.
+ * - Anillos giroscópicos estelares ultra-finos en 3D (perspectiva orbital).
+ * - Partículas subatómicas gravitacionales flotantes.
+ * - 100% LIMPIO: Cero etiquetas de texto, telemetría o badges.
+ */
+function HyperrealisticCosmicOrb() {
+  return (
+    <div className="relative flex flex-col items-center justify-center w-full h-full py-1 select-none pointer-events-none">
+      <div className="relative flex items-center justify-center w-40 h-40 sm:w-48 sm:h-48">
+        
+        {/* 1. Sombra de oclusión gravitacional en la base con respiración */}
+        <motion.div
+          animate={{ scale: [1, 1.25, 1], opacity: [0.35, 0.65, 0.35] }}
+          transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute -bottom-3 w-28 h-5 sm:w-36 sm:h-6 rounded-[100%] bg-purple-950/70 blur-md pointer-events-none"
+        />
+
+        {/* 2. Halo electromagnético exterior difuso (Atmósfera Cósmica) */}
+        <motion.div
+          animate={{ scale: [1, 1.28, 1], opacity: [0.4, 0.8, 0.4] }}
+          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute w-36 h-36 sm:w-44 sm:h-44 rounded-full bg-gradient-to-tr from-purple-600/40 via-indigo-600/25 to-cyan-400/40 blur-2xl pointer-events-none"
+        />
+
+        {/* 3. Anillos Giroscópicos Estelares 3D (Astrolabio Cuántico de Precisión) */}
+        {/* Anillo A: Plano X-Y Inclinado con Micro-Gema Orbitante */}
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 9, repeat: Infinity, ease: 'linear' }}
+          className="absolute w-36 h-36 sm:w-44 sm:h-44 rounded-full border border-cyan-400/50 pointer-events-none"
+          style={{
+            transform: 'perspective(600px) rotateX(66deg) rotateY(18deg)',
+            boxShadow: '0 0 15px rgba(56, 189, 248, 0.3)'
+          }}
+        >
+          {/* Micro-fotón cian sobre el aro */}
+          <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-cyan-300 shadow-[0_0_8px_#38bdf8]" />
+        </motion.div>
+
+        {/* Anillo B: Plano Inclinado Transversal Púrpura en Contrarrotación */}
+        <motion.div
+          animate={{ rotate: -360 }}
+          transition={{ duration: 7, repeat: Infinity, ease: 'linear' }}
+          className="absolute w-32 h-32 sm:w-40 sm:h-40 rounded-full border border-purple-400/60 pointer-events-none"
+          style={{
+            transform: 'perspective(600px) rotateX(-55deg) rotateY(34deg)',
+            boxShadow: '0 0 15px rgba(168, 85, 247, 0.35)'
+          }}
+        >
+          {/* Micro-fotón púrpura */}
+          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-purple-200 shadow-[0_0_8px_#c084fc]" />
+        </motion.div>
+
+        {/* Anillo C: Aro Ecuatorial Delgado con Punteado Tecnológico de Precisión */}
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 14, repeat: Infinity, ease: 'linear' }}
+          className="absolute w-34 h-34 sm:w-42 sm:h-42 rounded-full border border-dashed border-indigo-300/40 pointer-events-none"
+          style={{ transform: 'perspective(600px) rotateX(78deg)' }}
+        />
+
+        {/* 4. ESFERA DE CRISTAL ZAFIRO & NÚCLEO DE PLASMA CÓSMICO (PBR) */}
+        <motion.div
+          animate={{ scale: [1, 1.05, 1] }}
+          transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+          className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden flex items-center justify-center pointer-events-none"
+          style={{
+            boxShadow: `
+              0 0 50px rgba(124, 58, 237, 0.75),
+              0 0 25px rgba(56, 189, 248, 0.5),
+              inset 0 0 35px rgba(6, 9, 24, 0.95),
+              inset 0 12px 22px rgba(168, 85, 247, 0.7),
+              inset 0 -12px 22px rgba(56, 189, 248, 0.7),
+              inset 0 0 10px rgba(255, 255, 255, 0.45)
+            `,
+            background: 'radial-gradient(circle at 35% 30%, #1e1b4b 0%, #0c0a24 55%, #050714 100%)'
+          }}
+        >
+          {/* Capa A: Cáusticas Giratorias de Plasma Cósmico Líquido */}
+          <motion.div
+            animate={{ rotate: 360, scale: [0.95, 1.14, 0.95] }}
+            transition={{
+              rotate: { duration: 6, repeat: Infinity, ease: 'linear' },
+              scale: { duration: 3, repeat: Infinity, ease: 'easeInOut' }
+            }}
+            className="absolute inset-[-20%] rounded-full opacity-75 blur-[2.5px]"
+            style={{
+              background: 'conic-gradient(from 0deg, #7c3aed, #06b6d4, #2563eb, #a855f7, #38bdf8, #7c3aed)'
+            }}
+          />
+
+          {/* Capa B: Vórtice Interior Contrarrotatorio con Difracción Cuántica */}
+          <motion.div
+            animate={{ rotate: -360, opacity: [0.5, 0.85, 0.5] }}
+            transition={{
+              rotate: { duration: 8, repeat: Infinity, ease: 'linear' },
+              opacity: { duration: 2, repeat: Infinity, ease: 'easeInOut' }
+            }}
+            className="absolute inset-[-10%] rounded-full blur-[2px]"
+            style={{
+              background: 'radial-gradient(circle at 60% 60%, rgba(56, 189, 248, 0.85) 0%, rgba(147, 51, 234, 0.55) 45%, transparent 75%)'
+            }}
+          />
+
+          {/* Capa C: Singularity Core (Corazón de Estrella Blanca Incandescente) */}
+          <motion.div
+            animate={{
+              scale: [0.85, 1.28, 0.85],
+              opacity: [0.85, 1, 0.85]
+            }}
+            transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+            className="relative z-10 w-7 h-7 sm:w-8 sm:h-8 rounded-full shadow-[0_0_20px_#ffffff,0_0_35px_#38bdf8]"
+            style={{
+              background: 'radial-gradient(circle, #ffffff 0%, #a5f3fc 35%, #818cf8 70%, transparent 100%)'
+            }}
+          />
+
+          {/* Capa D: Reflejo Especular Fresnel Curvado (Vidrio de Estudio de Alta Fidelidad) */}
+          <div
+            className="absolute top-1 left-2 w-14 h-8 rounded-[100%] pointer-events-none"
+            style={{
+              background: 'radial-gradient(ellipse at 35% 25%, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.28) 40%, transparent 70%)',
+              transform: 'rotate(-24deg)'
+            }}
+          />
+
+          {/* Capa E: Rim Light Especular Inferior (Luz de Rebote Cian) */}
+          <div
+            className="absolute bottom-1 right-2 w-12 h-6 rounded-[100%] pointer-events-none opacity-65"
+            style={{
+              background: 'radial-gradient(ellipse at 65% 75%, rgba(56, 189, 248, 0.75) 0%, transparent 65%)',
+              transform: 'rotate(15deg)'
+            }}
+          />
+        </motion.div>
+
+        {/* 5. Micro-Partículas Subatómicas Gravitacionales Orbitantes */}
+        {[
+          { r: 42, dur: 4.2, delay: 0, color: '#38bdf8' },
+          { r: 48, dur: 5.5, delay: 0.8, color: '#c084fc' },
+          { r: 54, dur: 6.8, delay: 1.5, color: '#ffffff' },
+          { r: 38, dur: 3.8, delay: 2.2, color: '#a855f7' }
+        ].map((p, idx) => (
+          <motion.div
+            key={idx}
+            animate={{ rotate: 360 }}
+            transition={{ duration: p.dur, repeat: Infinity, ease: 'linear', delay: p.delay }}
+            className="absolute pointer-events-none"
+            style={{ width: p.r * 2, height: p.r * 2 }}
+          >
+            <div
+              className="w-1.5 h-1.5 rounded-full shadow-[0_0_6px_currentColor]"
+              style={{
+                backgroundColor: p.color,
+                color: p.color,
+                transform: 'translateY(-50%)'
+              }}
+            />
+          </motion.div>
+        ))}
+
+      </div>
+    </div>
+  );
+}
+
 export default function DynamindAIAssistantModal({ isOpen, onClose }) {
   const { isLight, language } = useThemeLanguage();
   const currentLang = language || 'es';
@@ -395,7 +566,6 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
   const [isThinking, setIsThinking] = useState(false);
-  const [thinkingPhase, setThinkingPhase] = useState('Analizando tu caso...');
   const [avatarAction, setAvatarAction] = useState(null);
 
   const speechRef = useRef(null);
@@ -451,7 +621,7 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
   // Auto-scroll fluido al último mensaje o estado de razonamiento
   useEffect(() => {
     chatBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, isThinking, thinkingPhase]);
+  }, [messages, isThinking]);
 
   const triggerAction = (act) => {
     setAvatarAction(act);
@@ -703,6 +873,48 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
     }
   };
 
+  // Pre-carga silenciosa del audio TTS en segundo plano durante el estado de pensamiento del Orbe
+  const preloadDynamicAuraAudio = async (textToSpeak, langToUse) => {
+    if (!textToSpeak || !isVoiceActive) return null;
+    const cleanText = textToSpeak
+      .replace(/[*_#`~]/g, '')
+      .replace(/[🔮🍽️🏨💆‍♀️⚡💎👀✓✕●•→👋🚀👓😉✦]/g, '')
+      .replace(/\n+/g, '. ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    if (!cleanText) return null;
+    const cacheKey = `${langToUse}_${cleanText}`;
+    if (audioBlobCacheRef.current.has(cacheKey)) {
+      return audioBlobCacheRef.current.get(cacheKey);
+    }
+
+    try {
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+      const timeoutId = setTimeout(() => controller.abort(), 12000);
+
+      const res = await fetch('/api/aura-tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: cleanText, lang: langToUse }),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+      abortControllerRef.current = null;
+
+      if (!res.ok) return null;
+      const blob = await res.blob();
+      const audioUrl = URL.createObjectURL(blob);
+      audioBlobCacheRef.current.set(cacheKey, audioUrl);
+      return audioUrl;
+    } catch (e) {
+      abortControllerRef.current = null;
+      return null;
+    }
+  };
+
   // Reproductor inteligente de mensajes: Audio de estudio oficial vs Voz Neuronal Dinámica
   const handlePlayMessage = (msg) => {
     if (!msg || !isOpenRef.current) return;
@@ -727,6 +939,21 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
       if (timer) clearTimeout(timer);
     };
   }, [isOpen, currentLang]);
+
+  // Saludo gestual de bienvenida: Aura saluda con la mano levantada ÚNICAMENTE al abrir el chat
+  useEffect(() => {
+    let waveTimer;
+    if (isOpen) {
+      waveTimer = setTimeout(() => {
+        if (isOpenRef.current) {
+          triggerAction('wave');
+        }
+      }, 400);
+    }
+    return () => {
+      if (waveTimer) clearTimeout(waveTimer);
+    };
+  }, [isOpen]);
 
 
   // Detector semántico de pilares de negocio para reproducir audio humano oficial
@@ -778,83 +1005,106 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
 
     const targetKey = explicitReplyKey || detectPresetKey(trimmedQuery);
 
+    // Activamos el Orbe Cósmico Hiperrealista
+    setIsThinking(true);
+    const thinkingStartTime = Date.now();
+    const MIN_ORB_DISPLAY_TIME = 2800; // El orbe se aprecia un mínimo de 2.8s de forma relajada y estética
+
     // 🎙️ CASO 1: Si es un pilar canónico oficial (Gastro, Hotel, Loyalty, Clinic, Time)
-    // Se responde con la voz humana de estudio de Azure Neural Voice oficial
     if (targetKey && strings.answers[targetKey]) {
-      setIsThinking(true);
-      setThinkingPhase('Consultando arquitectura Dynamind...');
+      const replyText = strings.answers[targetKey];
+      const audioUrl = `/audio/aura/aura_${currentLang}_${targetKey}.mp3`;
+
+      // Pre-cargar audio de estudio mientras el orbe está en pantalla
+      try {
+        const pre = new Audio(audioUrl);
+        pre.preload = 'auto';
+      } catch (e) {}
+
+      const elapsedTime = Date.now() - thinkingStartTime;
+      const remainingTime = Math.max(0, MIN_ORB_DISPLAY_TIME - elapsedTime);
 
       setTimeout(() => {
-        setIsThinking(false);
-        const replyText = strings.answers[targetKey];
+        if (!isOpenRef.current) return;
         const aiMsg = { 
           sender: 'ai', 
           text: replyText, 
           replyKey: targetKey 
         };
         setMessages(prev => [...prev, aiMsg]);
-        // Una vez que el orbe se esconde y Aura vuelve a salir, ahí sí habla
+
+        // El orbe colapsa hacia el centro justo antes de que Aura empiece a hablar
+        setIsThinking(false);
+
+        // A los 450ms, cuando Aura se ha rematerializado por completo en pantalla, arranca su voz
         if (isVoiceActive) {
           setTimeout(() => {
             if (isOpenRef.current && isVoiceActive) {
               playAuraAudio(targetKey, replyText);
             }
-          }, 350);
+          }, 450);
         }
-      }, 950);
+      }, remainingTime);
       return;
     }
 
     // 🧠 CASO 2: Inferencia cognitiva abierta / personalizada con Gemini AI
-    setIsThinking(true);
-    setThinkingPhase('Identificando sector y variables operativas...');
-
-    const phaseTimer1 = setTimeout(() => {
-      setThinkingPhase('Consultando arquitectura y base de conocimiento Dynamind...');
-    }, 700);
-
-    const phaseTimer2 = setTimeout(() => {
-      setThinkingPhase('Formulando diagnóstico técnico y solución de ingeniería...');
-    }, 1400);
-
     try {
+      // 1. Obtener la respuesta de razonamiento
       const result = await reasonAuraQuery(trimmedQuery, currentLang, messages);
 
-      clearTimeout(phaseTimer1);
-      clearTimeout(phaseTimer2);
-
-      const aiMsg = { 
-        sender: 'ai', 
-        text: result.reply, 
-        replyKey: 'dynamic',
-        thought: result.thoughtProcess 
-      };
-
-      setMessages(prev => [...prev, aiMsg]);
-      setIsThinking(false);
-
-      // Una vez que el orbe se esconde y Aura vuelve a salir, ahí sí habla
-      if (isVoiceActive) {
-        setTimeout(() => {
-          if (isOpenRef.current && isVoiceActive) {
-            playDynamicAuraAudio(result.reply);
-          }
-        }, 350);
+      // 2. Pre-cargar el audio neuronal de Azure en segundo plano mientras el orbe sigue activo
+      if (isVoiceActive && result.reply) {
+        await preloadDynamicAuraAudio(result.reply, currentLang);
       }
+
+      // 3. Respetar el tiempo de contemplación del Orbe Hiperrealista
+      const elapsedTime = Date.now() - thinkingStartTime;
+      const remainingTime = Math.max(0, MIN_ORB_DISPLAY_TIME - elapsedTime);
+
+      setTimeout(() => {
+        if (!isOpenRef.current) return;
+
+        const aiMsg = { 
+          sender: 'ai', 
+          text: result.reply, 
+          replyKey: 'dynamic',
+          thought: result.thoughtProcess 
+        };
+        setMessages(prev => [...prev, aiMsg]);
+
+        // El orbe colapsa hacia el centro justo antes de que empiece a hablar
+        setIsThinking(false);
+
+        // Cuando Aura emerge del vórtice, arranca la voz de inmediato (audio ya en memoria)
+        if (isVoiceActive) {
+          setTimeout(() => {
+            if (isOpenRef.current && isVoiceActive) {
+              playDynamicAuraAudio(result.reply);
+            }
+          }, 450);
+        }
+      }, remainingTime);
+
     } catch (err) {
-      clearTimeout(phaseTimer1);
-      clearTimeout(phaseTimer2);
-      setIsThinking(false);
+      const elapsedTime = Date.now() - thinkingStartTime;
+      const remainingTime = Math.max(0, MIN_ORB_DISPLAY_TIME - elapsedTime);
 
-      const fallbackMsg = { sender: 'ai', text: strings.answers.general, replyKey: 'general' };
-      setMessages(prev => [...prev, fallbackMsg]);
-      if (isVoiceActive) {
-        setTimeout(() => {
-          if (isOpenRef.current && isVoiceActive) {
-            playAuraAudio('general', strings.answers.general);
-          }
-        }, 350);
-      }
+      setTimeout(() => {
+        if (!isOpenRef.current) return;
+
+        const fallbackMsg = { sender: 'ai', text: strings.answers.general, replyKey: 'general' };
+        setMessages(prev => [...prev, fallbackMsg]);
+        setIsThinking(false);
+
+        if (isVoiceActive) {
+          setTimeout(() => {
+            if (isOpenRef.current && isVoiceActive) {
+              playAuraAudio('general', strings.answers.general);
+            }
+          }, 450);
+        }
+      }, remainingTime);
     }
   };
 
@@ -955,79 +1205,9 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
                     opacity: [1, 0.8, 0]
                   }}
                   transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                  className="flex flex-col items-center justify-center relative w-full h-full py-2 select-none"
+                  className="flex flex-col items-center justify-center relative w-full h-full select-none"
                 >
-                  {/* Orbe Cósmico Multidimensional de Pensamiento */}
-                  <div className="relative flex items-center justify-center w-36 h-36 sm:w-44 sm:h-44">
-                    {/* Anillo Exterior 3 (Azul Cian Neón con Pulsación Cuántica) */}
-                    <motion.div
-                      animate={{ scale: [1, 1.45, 1], opacity: [0.45, 0.1, 0.45] }}
-                      transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-                      className="absolute w-32 h-32 sm:w-40 sm:h-40 rounded-full border border-cyan-400/50 blur-[1px]"
-                    />
-                    {/* Anillo Giroscópico Púrpura en 3D (Giro Acelerado de Procesamiento) */}
-                    <motion.div
-                      animate={{ rotate: 360, scale: [0.95, 1.08, 0.95] }}
-                      transition={{
-                        rotate: { duration: 4, repeat: Infinity, ease: 'linear' },
-                        scale: { duration: 1.8, repeat: Infinity, ease: 'easeInOut' }
-                      }}
-                      className="absolute w-28 h-28 sm:w-34 sm:h-34 rounded-full border-2 border-dashed border-purple-400/70"
-                      style={{ transform: 'rotateX(55deg)' }}
-                    />
-                    {/* Anillo Giroscópico Azul Cian en 3D Contrarrotación */}
-                    <motion.div
-                      animate={{ rotate: -360 }}
-                      transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
-                      className="absolute w-28 h-28 sm:w-34 sm:h-34 rounded-full border border-cyan-400/60"
-                      style={{ transform: 'rotateY(60deg)' }}
-                    />
-                    {/* Resplandor Halo Cósmico */}
-                    <motion.div
-                      animate={{ scale: [1, 1.28, 1], opacity: [0.65, 0.95, 0.65] }}
-                      transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
-                      className="absolute w-24 h-24 sm:w-28 sm:h-28 rounded-full blur-xl bg-gradient-to-r from-purple-500 via-indigo-500 to-cyan-400"
-                    />
-                    {/* Núcleo del Orbe Púrpura & Azul */}
-                    <motion.div
-                      animate={{ scale: [1, 1.08, 1] }}
-                      transition={{ duration: 1, repeat: Infinity, ease: 'easeInOut' }}
-                      className="w-20 h-20 sm:w-24 sm:h-24 rounded-full shadow-[0_0_40px_rgba(168,85,247,0.9),inset_0_0_20px_rgba(56,189,248,0.9)] relative z-10 flex flex-col items-center justify-center group"
-                      style={{
-                        background: 'radial-gradient(circle at 35% 35%, #ffffff 0%, #a855f7 38%, #2563eb 72%, #090d1a 100%)'
-                      }}
-                    >
-                      <BrainCircuit className="w-8 h-8 sm:w-9 sm:h-9 text-white animate-spin" style={{ animationDuration: '4s' }} />
-                    </motion.div>
-                  </div>
-
-                  {/* Ecualizador de Barras de Pensamiento Cognitivo */}
-                  <div className="flex items-center gap-1 mt-2.5">
-                    {[14, 28, 40, 22, 34, 18, 30].map((height, i) => (
-                      <motion.span
-                        key={i}
-                        animate={{ height: ['4px', `${height}px`, '4px'] }}
-                        transition={{
-                          duration: 0.65 + (i * 0.08),
-                          repeat: Infinity,
-                          ease: 'easeInOut',
-                          delay: i * 0.07
-                        }}
-                        className="w-1 bg-gradient-to-t from-purple-500 to-cyan-400 rounded-full"
-                      />
-                    ))}
-                  </div>
-
-                  {/* Telemetría de Pensamiento */}
-                  <div className="mt-2 text-center px-2">
-                    <p className="text-[11px] font-mono font-bold uppercase tracking-wider text-cyan-300 flex items-center justify-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
-                      <span>AURA RAZONANDO...</span>
-                    </p>
-                    <p className="text-[10px] text-purple-300 font-sans mt-0.5 max-w-[210px] truncate mx-auto">
-                      {thinkingPhase || 'Procesando arquitectura...'}
-                    </p>
-                  </div>
+                  <HyperrealisticCosmicOrb />
                 </motion.div>
               ) : (
                 <motion.div
@@ -1061,13 +1241,8 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
           {/* Micro-Dock de Acciones Vivas (Salto, Saludo, Gafas) & Control de Audio */}
           <div className="w-full space-y-2 pt-1">
             {isThinking ? (
-              /* Indicador de Cómputo mientras Aura es el Orbe */
-              <div className="flex items-center justify-center py-1">
-                <div className="px-3 py-1 rounded-full bg-purple-950/60 border border-purple-500/40 text-[11px] font-mono text-purple-300 flex items-center gap-2 shadow-[0_0_15px_rgba(168,85,247,0.25)]">
-                  <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-spin" style={{ animationDuration: '3s' }} />
-                  <span>Pensamiento Cuántico Activo</span>
-                </div>
-              </div>
+              /* Espaciado limpio sin ninguna etiqueta de texto mientras Aura es el Orbe */
+              <div className="h-7 w-full flex items-center justify-center opacity-0 pointer-events-none" />
             ) : (
               /* Botones de Gestos Expresivos para Demostrar que está Viva */
               <div className="flex items-center justify-center gap-1.5">
@@ -1206,18 +1381,13 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
               </div>
             ))}
 
-            {/* 🧠 Indicador de Pensamiento y Razonamiento Cognitivo de AURA */}
+            {/* Indicador de Escritura Minimalista sin texto: 3 micro-esferas cuánticas pulsantes */}
             {isThinking && (
               <div className="flex items-start">
-                <div className="p-3 sm:p-4 rounded-2xl bg-purple-950/40 border border-purple-500/35 text-purple-200 text-xs font-sans space-y-1.5 shadow-[0_0_24px_rgba(168,85,247,0.18)] backdrop-blur-md animate-in fade-in duration-200 max-w-[88%]">
-                  <div className="flex items-center gap-2 font-bold text-purple-300 text-[11px] font-mono">
-                    <BrainCircuit className="w-3.5 h-3.5 text-purple-400 animate-spin" style={{ animationDuration: '3s' }} />
-                    <span>✦ AURA · PROCESANDO Y RAZONANDO...</span>
-                  </div>
-                  <p className="text-xs text-zinc-200 leading-relaxed flex items-center gap-1.5 font-sans">
-                    <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-ping inline-block shrink-0" />
-                    <span>{thinkingPhase}</span>
-                  </p>
+                <div className="px-4 py-3 rounded-2xl bg-purple-950/35 border border-purple-500/25 backdrop-blur-md flex items-center gap-2 shadow-[0_0_20px_rgba(168,85,247,0.15)]">
+                  <span className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce" style={{ animationDuration: '0.9s', animationDelay: '0ms' }} />
+                  <span className="w-2 h-2 rounded-full bg-purple-400 animate-bounce" style={{ animationDuration: '0.9s', animationDelay: '180ms' }} />
+                  <span className="w-2 h-2 rounded-full bg-indigo-300 animate-bounce" style={{ animationDuration: '0.9s', animationDelay: '360ms' }} />
                 </div>
               </div>
             )}

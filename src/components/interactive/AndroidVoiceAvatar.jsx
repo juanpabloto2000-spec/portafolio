@@ -96,41 +96,27 @@ export default function AndroidVoiceAvatar({
   // --------------------------------------------------------------------------
   // MÁQUINA DE ACCIONES DINÁMICAS (SALTOS, SALUDOS, GAFAS, ORATORIA)
   // --------------------------------------------------------------------------
-  const [activeAction, setActiveAction] = useState('wave'); // Inicia con saludo visible
+  const [activeAction, setActiveAction] = useState('hover'); // En reposo natural siempre flota en 'hover'
   const [actionKey, setActionKey] = useState(0);
 
-  // Escuchar acciones forzadas desde botones externos
+  // Escuchar acciones forzadas desde botones externos o al entrar al chat
   useEffect(() => {
     if (forcedAction) {
       setActiveAction(forcedAction);
       setActionKey(k => k + 1);
+    } else if (!isSpeaking) {
+      setActiveAction('hover');
     }
-  }, [forcedAction]);
+  }, [forcedAction, isSpeaking]);
 
-  // Manejo de habla
+  // Manejo de habla: se activa en oratoria activa
   useEffect(() => {
     if (isSpeaking) {
       setActiveAction('speaking');
       setActionKey(k => k + 1);
-      return;
+    } else if (!forcedAction) {
+      setActiveAction('hover');
     }
-  }, [isSpeaking]);
-
-  // Ciclo autónomo variado cuando está en reposo
-  useEffect(() => {
-    if (isSpeaking || forcedAction) return;
-
-    // Rutina coreográfica: Saludo -> Flotar -> Salto Antigravedad -> Flotar -> Acomodarse Gafas
-    const actionList = ['wave', 'hover', 'jump', 'hover', 'glasses', 'hover', 'jump'];
-    let idx = 0;
-
-    const cycleTimer = setInterval(() => {
-      idx = (idx + 1) % actionList.length;
-      setActiveAction(actionList[idx]);
-      setActionKey(k => k + 1);
-    }, 4500);
-
-    return () => clearInterval(cycleTimer);
   }, [isSpeaking, forcedAction]);
 
   // Clic en Aura: Salto cuántico seguido de saludo
@@ -220,12 +206,12 @@ export default function AndroidVoiceAvatar({
           <defs>
             <style>{`
               @keyframes auraArmWave {
-                0%, 100% { transform: rotate(92deg); }
-                50% { transform: rotate(104deg); }
+                0%, 100% { transform: rotate(-105deg); }
+                50% { transform: rotate(-115deg); }
               }
               @keyframes auraForearmWave {
-                0%, 100% { transform: rotate(26deg); }
-                50% { transform: rotate(62deg); }
+                0%, 100% { transform: rotate(115deg); }
+                50% { transform: rotate(145deg); }
               }
               @keyframes auraGlassesArm {
                 0%, 100% { transform: rotate(0deg); }
@@ -598,9 +584,10 @@ export default function AndroidVoiceAvatar({
               </g>
             </g>
 
-            {/* ========================================================= */}
-            {/* D. BRAZO IZQUIERDO Y MANO: SALUDO ALTO, GAFAS Y ORATORIA   */}
-            {/* ========================================================= */}
+            {/* Hombrera Izquierda Base Fija al Torso (Anclada permanentemente, jamás se despega) */}
+            <circle cx="70" cy="146" r="10" fill="url(#auraLapelGrad)" stroke="#a855f7" strokeWidth="1.8" />
+
+            {/* Brazo Izquierdo y Antebrazo Articulados desde el Pivote del Hombro */}
             <g
               style={{
                 transformOrigin: '70px 146px',
@@ -615,9 +602,9 @@ export default function AndroidVoiceAvatar({
                 transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
               }}
             >
-              {/* Hombrera Ejecutiva de la Manga Izquierda */}
-              <circle cx="70" cy="146" r="10" fill="url(#auraLapelGrad)" stroke="#a855f7" strokeWidth="1.8" />
-              
+              {/* Rótula Articular Interna */}
+              <circle cx="70" cy="146" r="6" fill="#1e1b4b" stroke="#38bdf8" strokeWidth="1.2" />
+
               {/* Manga del Blazer */}
               <line x1="70" y1="146" x2="56" y2="176" stroke="#581c87" strokeWidth="7" strokeLinecap="round" />
               <line x1="70" y1="146" x2="56" y2="176" stroke="#8b5cf6" strokeWidth="2" strokeLinecap="round" />
