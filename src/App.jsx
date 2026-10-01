@@ -11,7 +11,7 @@ import CosmicPageFallback from './components/ui/CosmicPageFallback';
 
 // ⚡ Code-Splitting Dinámico: Rutas pesadas cargadas bajo demanda con edge caching
 const WorksPage = React.lazy(() => import('./pages/WorksPage'));
-const SystemsPage = React.lazy(() => import('./pages/SystemsPage'));
+import SystemsPage from './pages/SystemsPage';
 const TriagePage = React.lazy(() => import('./pages/TriagePage'));
 const VisionPage = React.lazy(() => import('./pages/VisionPage'));
 const PrivacyTermsPage = React.lazy(() => import('./pages/PrivacyTermsPage'));

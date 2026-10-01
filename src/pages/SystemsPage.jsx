@@ -6,7 +6,7 @@ import HyperframeHUDContainer from '../components/ui/HyperframeHUDContainer';
 import RevealSection from '../components/motion/RevealSection';
 import SolarSystemCanvas, { PLANETARY_WORLDS } from '../components/systems/SolarSystemCanvas';
 import { 
-  Layers, Calendar, Database, Utensils, DollarSign, Package, 
+  Sun, Layers, Calendar, Database, Utensils, DollarSign, Package, 
   BedDouble, Palette, ShieldAlert, LineChart, CheckCircle2, ArrowRight, Sparkles,
   FileSpreadsheet, Video, Workflow, Target, Inbox, Bot, Zap, Cpu, Activity, GitFork, Award,
   Globe, Compass, ShieldCheck, Orbit, Terminal, Check, X, Search, ChevronRight

@@ -2,11 +2,26 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function WelcomeGalaxyPreloader({ pageKey }) {
-  const [isVisible, setIsVisible] = useState(true);
+  // Solo se debe mostrar en la página de inicio (home), nunca en sistemas, obras o rutas internas
+  if (pageKey && pageKey !== 'home') {
+    return null;
+  }
+
+  const [isVisible, setIsVisible] = useState(() => {
+    // Si ya se mostró en esta sesión, no volver a bloquear
+    if (typeof window !== 'undefined' && sessionStorage.getItem('preloader_shown_v2')) {
+      return false;
+    }
+    return true;
+  });
   const [showLogo, setShowLogo] = useState(false);
   const videoRef = useRef(null);
 
   useEffect(() => {
+    if (!isVisible) return;
+    try {
+      sessionStorage.setItem('preloader_shown_v2', 'true');
+    } catch {}
     const video = videoRef.current;
     if (video) {
       video.muted = true;
