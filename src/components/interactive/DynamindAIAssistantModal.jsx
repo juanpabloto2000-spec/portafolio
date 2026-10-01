@@ -385,152 +385,212 @@ function ModalCosmicStarfield() {
 }
 
 /**
- * HyperrealisticCosmicOrb - Orbe Cósmico Cuántico Hiperrealista
- * Renderizado físico volumétrico de alta fidelidad:
- * - Capas de refracción óptica de cristal zafiro/fresnel.
- * - Núcleo de plasma cósmico líquido con cáusticas giratorias en ebullición suave.
- * - Singularity Core pulsante incandescente.
- * - Anillos giroscópicos estelares ultra-finos en 3D (perspectiva orbital).
- * - Partículas subatómicas gravitacionales flotantes.
- * - 100% LIMPIO: Cero etiquetas de texto, telemetría o badges.
+ * HyperrealisticCosmicOrb - Esfera de Cristal Hiperrealista con el Universo Adentro
+ * - Superficie óptica de vidrio zafiro con refracción Fresnel y destellos especulares multicapa.
+ * - Interior: Espacio profundo infinito con una galaxia espiral giratoria a 60 FPS.
+ * - Cúmulos de estrellas interiores centelleantes y polvo cósmico bioluminiscente.
+ * - Singularity Core incandescente en el centro con difracción estelar.
+ * - Aros de astrolabio ultra-finos y partículas subatómicas gravitacionales.
+ * - CERO ETIQUETAS: 100% puro arte óptico cinemático.
  */
 function HyperrealisticCosmicOrb() {
+  // Constelación de micro-estrellas interiores volumétricas dentro de la esfera
+  const innerStars = useMemo(() => [
+    { x: '24%', y: '28%', s: 1.8, dur: 2.1, delay: 0, color: '#ffffff' },
+    { x: '72%', y: '22%', s: 1.4, dur: 2.7, delay: 0.4, color: '#38bdf8' },
+    { x: '80%', y: '68%', s: 2.2, dur: 1.9, delay: 0.8, color: '#ffffff' },
+    { x: '28%', y: '74%', s: 1.5, dur: 2.4, delay: 1.2, color: '#c084fc' },
+    { x: '42%', y: '18%', s: 1.2, dur: 3.1, delay: 0.3, color: '#fef08a' },
+    { x: '62%', y: '78%', s: 1.7, dur: 2.3, delay: 0.9, color: '#38bdf8' },
+    { x: '16%', y: '52%', s: 1.3, dur: 2.8, delay: 0.6, color: '#ffffff' },
+    { x: '82%', y: '42%', s: 2.0, dur: 2.0, delay: 1.5, color: '#e0e7ff' },
+    { x: '35%', y: '62%', s: 1.1, dur: 3.4, delay: 0.2, color: '#a78bfa' },
+    { x: '66%', y: '36%', s: 1.6, dur: 2.2, delay: 1.1, color: '#ffffff' },
+    { x: '52%', y: '82%', s: 1.4, dur: 2.5, delay: 0.7, color: '#38bdf8' },
+    { x: '48%', y: '24%', s: 1.5, dur: 1.8, delay: 1.3, color: '#ffffff' },
+    { x: '30%', y: '38%', s: 1.0, dur: 3.0, delay: 0.5, color: '#c084fc' },
+    { x: '70%', y: '60%', s: 1.3, dur: 2.6, delay: 1.0, color: '#fef08a' }
+  ], []);
+
   return (
-    <div className="relative flex flex-col items-center justify-center w-full h-full py-1 select-none pointer-events-none">
-      <div className="relative flex items-center justify-center w-40 h-40 sm:w-48 sm:h-48">
+    <div className="relative flex flex-col items-center justify-center w-full h-full py-2 select-none pointer-events-none">
+      <div className="relative flex items-center justify-center w-44 h-44 sm:w-52 sm:h-52">
         
-        {/* 1. Sombra de oclusión gravitacional en la base con respiración */}
+        {/* 1. Sombra de oclusión gravitacional en el suelo con respiración elástica */}
         <motion.div
-          animate={{ scale: [1, 1.25, 1], opacity: [0.35, 0.65, 0.35] }}
-          transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute -bottom-3 w-28 h-5 sm:w-36 sm:h-6 rounded-[100%] bg-purple-950/70 blur-md pointer-events-none"
+          animate={{ scale: [1, 1.22, 1], opacity: [0.4, 0.7, 0.4] }}
+          transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute -bottom-4 w-32 h-6 sm:w-40 sm:h-7 rounded-[100%] bg-purple-950/80 blur-md pointer-events-none"
         />
 
-        {/* 2. Halo electromagnético exterior difuso (Atmósfera Cósmica) */}
+        {/* 2. Atmósfera de Difracción de Espacio Profundo (Halo Cósmico Exterior) */}
         <motion.div
-          animate={{ scale: [1, 1.28, 1], opacity: [0.4, 0.8, 0.4] }}
-          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute w-36 h-36 sm:w-44 sm:h-44 rounded-full bg-gradient-to-tr from-purple-600/40 via-indigo-600/25 to-cyan-400/40 blur-2xl pointer-events-none"
+          animate={{ scale: [1, 1.25, 1], opacity: [0.35, 0.75, 0.35] }}
+          transition={{ duration: 3.4, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute w-40 h-40 sm:w-48 sm:h-48 rounded-full bg-gradient-to-tr from-purple-700/40 via-indigo-600/30 to-cyan-400/40 blur-2xl pointer-events-none"
         />
 
-        {/* 3. Anillos Giroscópicos Estelares 3D (Astrolabio Cuántico de Precisión) */}
-        {/* Anillo A: Plano X-Y Inclinado con Micro-Gema Orbitante */}
+        {/* 3. Aros Giroscópicos de Astrolabio Cuántico 3D (Perspectiva Orbital Delicada) */}
+        {/* Anillo A: Plano Elíptico Ecuatorial Inclinado (Azul Cian) */}
         <motion.div
           animate={{ rotate: 360 }}
-          transition={{ duration: 9, repeat: Infinity, ease: 'linear' }}
-          className="absolute w-36 h-36 sm:w-44 sm:h-44 rounded-full border border-cyan-400/50 pointer-events-none"
+          transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
+          className="absolute w-40 h-40 sm:w-48 sm:h-48 rounded-full border border-cyan-400/40 pointer-events-none"
           style={{
-            transform: 'perspective(600px) rotateX(66deg) rotateY(18deg)',
-            boxShadow: '0 0 15px rgba(56, 189, 248, 0.3)'
+            transform: 'perspective(700px) rotateX(68deg) rotateY(16deg)',
+            boxShadow: '0 0 16px rgba(56, 189, 248, 0.3)'
           }}
         >
-          {/* Micro-fotón cian sobre el aro */}
-          <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-cyan-300 shadow-[0_0_8px_#38bdf8]" />
+          {/* Micro-gema de fotón orbitando sobre el aro */}
+          <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-cyan-200 shadow-[0_0_10px_#38bdf8]" />
         </motion.div>
 
-        {/* Anillo B: Plano Inclinado Transversal Púrpura en Contrarrotación */}
+        {/* Anillo B: Plano Transversal Púrpura en Contrarrotación */}
         <motion.div
           animate={{ rotate: -360 }}
-          transition={{ duration: 7, repeat: Infinity, ease: 'linear' }}
-          className="absolute w-32 h-32 sm:w-40 sm:h-40 rounded-full border border-purple-400/60 pointer-events-none"
+          transition={{ duration: 9, repeat: Infinity, ease: 'linear' }}
+          className="absolute w-36 h-36 sm:w-44 sm:h-44 rounded-full border border-purple-400/50 pointer-events-none"
           style={{
-            transform: 'perspective(600px) rotateX(-55deg) rotateY(34deg)',
-            boxShadow: '0 0 15px rgba(168, 85, 247, 0.35)'
+            transform: 'perspective(700px) rotateX(-58deg) rotateY(32deg)',
+            boxShadow: '0 0 16px rgba(168, 85, 247, 0.35)'
           }}
         >
-          {/* Micro-fotón púrpura */}
+          {/* Micro-fotón amatista */}
           <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-purple-200 shadow-[0_0_8px_#c084fc]" />
         </motion.div>
 
-        {/* Anillo C: Aro Ecuatorial Delgado con Punteado Tecnológico de Precisión */}
+        {/* ========================================================================= */}
+        {/* 4. ESFERA DE CRISTAL HIPERREALISTA CON EL UNIVERSO DENTRO (GLASS UNIVERSE)*/}
+        {/* ========================================================================= */}
         <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 14, repeat: Infinity, ease: 'linear' }}
-          className="absolute w-34 h-34 sm:w-42 sm:h-42 rounded-full border border-dashed border-indigo-300/40 pointer-events-none"
-          style={{ transform: 'perspective(600px) rotateX(78deg)' }}
-        />
-
-        {/* 4. ESFERA DE CRISTAL ZAFIRO & NÚCLEO DE PLASMA CÓSMICO (PBR) */}
-        <motion.div
-          animate={{ scale: [1, 1.05, 1] }}
-          transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
-          className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden flex items-center justify-center pointer-events-none"
+          animate={{ scale: [1, 1.04, 1] }}
+          transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+          className="relative w-28 h-28 sm:w-34 sm:h-34 rounded-full overflow-hidden flex items-center justify-center pointer-events-none border border-white/20"
           style={{
             boxShadow: `
-              0 0 50px rgba(124, 58, 237, 0.75),
-              0 0 25px rgba(56, 189, 248, 0.5),
-              inset 0 0 35px rgba(6, 9, 24, 0.95),
-              inset 0 12px 22px rgba(168, 85, 247, 0.7),
-              inset 0 -12px 22px rgba(56, 189, 248, 0.7),
-              inset 0 0 10px rgba(255, 255, 255, 0.45)
+              0 0 60px rgba(124, 58, 237, 0.8),
+              0 0 30px rgba(56, 189, 248, 0.5),
+              inset 0 0 45px rgba(2, 4, 15, 0.98),
+              inset 0 10px 22px rgba(168, 85, 247, 0.65),
+              inset 0 -10px 22px rgba(56, 189, 248, 0.65),
+              inset 0 0 12px rgba(255, 255, 255, 0.4)
             `,
-            background: 'radial-gradient(circle at 35% 30%, #1e1b4b 0%, #0c0a24 55%, #050714 100%)'
+            background: 'radial-gradient(circle at 50% 50%, #0d0a29 0%, #060416 65%, #010107 100%)'
           }}
         >
-          {/* Capa A: Cáusticas Giratorias de Plasma Cósmico Líquido */}
+          {/* 🌌 CAPA A: BRAZO ESPIRAL GALÁCTICO 1 (Nebulosa Púrpura & Magenta Cósmica) */}
           <motion.div
-            animate={{ rotate: 360, scale: [0.95, 1.14, 0.95] }}
+            animate={{ rotate: 360, scale: [0.95, 1.15, 0.95] }}
             transition={{
-              rotate: { duration: 6, repeat: Infinity, ease: 'linear' },
-              scale: { duration: 3, repeat: Infinity, ease: 'easeInOut' }
+              rotate: { duration: 16, repeat: Infinity, ease: 'linear' },
+              scale: { duration: 3.5, repeat: Infinity, ease: 'easeInOut' }
             }}
-            className="absolute inset-[-20%] rounded-full opacity-75 blur-[2.5px]"
+            className="absolute inset-[-25%] rounded-full opacity-80 blur-[2px]"
             style={{
-              background: 'conic-gradient(from 0deg, #7c3aed, #06b6d4, #2563eb, #a855f7, #38bdf8, #7c3aed)'
+              background: 'conic-gradient(from 0deg, #7c3aed 0deg, #c026d3 70deg, #2563eb 150deg, #06b6d4 220deg, #a855f7 300deg, #7c3aed 360deg)'
             }}
           />
 
-          {/* Capa B: Vórtice Interior Contrarrotatorio con Difracción Cuántica */}
+          {/* 🌌 CAPA B: BRAZO ESPIRAL GALÁCTICO 2 (Polvo Interestelar Contrarrotatorio) */}
           <motion.div
-            animate={{ rotate: -360, opacity: [0.5, 0.85, 0.5] }}
+            animate={{ rotate: -360, opacity: [0.55, 0.85, 0.55] }}
             transition={{
-              rotate: { duration: 8, repeat: Infinity, ease: 'linear' },
-              opacity: { duration: 2, repeat: Infinity, ease: 'easeInOut' }
+              rotate: { duration: 11, repeat: Infinity, ease: 'linear' },
+              opacity: { duration: 2.2, repeat: Infinity, ease: 'easeInOut' }
             }}
-            className="absolute inset-[-10%] rounded-full blur-[2px]"
+            className="absolute inset-[-15%] rounded-full blur-[2.5px] mix-blend-screen"
             style={{
-              background: 'radial-gradient(circle at 60% 60%, rgba(56, 189, 248, 0.85) 0%, rgba(147, 51, 234, 0.55) 45%, transparent 75%)'
+              background: 'radial-gradient(circle at 45% 45%, rgba(56, 189, 248, 0.85) 0%, rgba(168, 85, 247, 0.6) 45%, transparent 75%)'
             }}
           />
 
-          {/* Capa C: Singularity Core (Corazón de Estrella Blanca Incandescente) */}
+          {/* ✨ CAPA C: CÚMULO DE ESTRELLAS INTERIORES DENTRO DE LA BOLA DE CRISTAL */}
+          <div className="absolute inset-0 pointer-events-none">
+            {innerStars.map((st, i) => (
+              <motion.div
+                key={i}
+                animate={{
+                  opacity: [0.2, 1, 0.2],
+                  scale: [0.75, 1.35, 0.75]
+                }}
+                transition={{
+                  duration: st.dur,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                  delay: st.delay
+                }}
+                className="absolute rounded-full shadow-[0_0_6px_currentColor]"
+                style={{
+                  left: st.x,
+                  top: st.y,
+                  width: `${st.s}px`,
+                  height: `${st.s}px`,
+                  backgroundColor: st.color,
+                  color: st.color
+                }}
+              />
+            ))}
+          </div>
+
+          {/* ☀️ CAPA D: SINGULARITY CORE / NÚCLEO DE LA GALAXIA (Corazón Blanco Hiperbrillante) */}
           <motion.div
             animate={{
-              scale: [0.85, 1.28, 0.85],
-              opacity: [0.85, 1, 0.85]
+              scale: [0.85, 1.3, 0.85],
+              opacity: [0.9, 1, 0.9]
             }}
-            transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
-            className="relative z-10 w-7 h-7 sm:w-8 sm:h-8 rounded-full shadow-[0_0_20px_#ffffff,0_0_35px_#38bdf8]"
+            transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+            className="relative z-10 w-8 h-8 sm:w-9 sm:h-9 rounded-full shadow-[0_0_25px_#ffffff,0_0_50px_#38bdf8,0_0_70px_#a855f7]"
             style={{
-              background: 'radial-gradient(circle, #ffffff 0%, #a5f3fc 35%, #818cf8 70%, transparent 100%)'
+              background: 'radial-gradient(circle, #ffffff 0%, #e0f2fe 30%, #a5f3fc 55%, #818cf8 80%, transparent 100%)'
             }}
           />
 
-          {/* Capa D: Reflejo Especular Fresnel Curvado (Vidrio de Estudio de Alta Fidelidad) */}
+          {/* Cruces de Difracción de Luz Estelar del Núcleo (Lens Flare Cósmico) */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+            <motion.div
+              animate={{ opacity: [0.4, 0.85, 0.4] }}
+              transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+              className="w-16 h-[1.5px] bg-gradient-to-r from-transparent via-white to-transparent"
+            />
+            <motion.div
+              animate={{ opacity: [0.4, 0.85, 0.4] }}
+              transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+              className="h-16 w-[1.5px] bg-gradient-to-b from-transparent via-white to-transparent absolute"
+            />
+          </div>
+
+          {/* 💎 CAPA E: SUPERFICIE ÓPTICA DE VIDRIO / CRISTAL DE ESTUDIO (FRESNEL GLASS PBR) */}
+          {/* Reflejo Especular Primario Curvado (Vidrio de Lente Grueso) */}
           <div
-            className="absolute top-1 left-2 w-14 h-8 rounded-[100%] pointer-events-none"
+            className="absolute top-1.5 left-2.5 w-16 h-9 rounded-[100%] pointer-events-none z-20"
             style={{
-              background: 'radial-gradient(ellipse at 35% 25%, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.28) 40%, transparent 70%)',
-              transform: 'rotate(-24deg)'
+              background: 'radial-gradient(ellipse at 35% 25%, rgba(255, 255, 255, 0.94) 0%, rgba(255, 255, 255, 0.35) 32%, transparent 72%)',
+              transform: 'rotate(-26deg)'
             }}
           />
 
-          {/* Capa E: Rim Light Especular Inferior (Luz de Rebote Cian) */}
+          {/* Punto de Foco Especular Brillante */}
+          <div className="absolute top-3.5 left-6 w-2 h-2 rounded-full bg-white shadow-[0_0_6px_#ffffff] pointer-events-none z-20" />
+
+          {/* Rim Light Perimetral Inferior de Rebote de Cristal (Cian Eléctrico) */}
           <div
-            className="absolute bottom-1 right-2 w-12 h-6 rounded-[100%] pointer-events-none opacity-65"
+            className="absolute bottom-1 right-2.5 w-14 h-7 rounded-[100%] pointer-events-none z-20 opacity-75"
             style={{
-              background: 'radial-gradient(ellipse at 65% 75%, rgba(56, 189, 248, 0.75) 0%, transparent 65%)',
-              transform: 'rotate(15deg)'
+              background: 'radial-gradient(ellipse at 65% 75%, rgba(56, 189, 248, 0.8) 0%, transparent 68%)',
+              transform: 'rotate(16deg)'
             }}
           />
+
+          {/* Aro de Bisel Interno de Refracción de Cristal */}
+          <div className="absolute inset-0 rounded-full border border-white/20 pointer-events-none z-20" />
         </motion.div>
 
-        {/* 5. Micro-Partículas Subatómicas Gravitacionales Orbitantes */}
+        {/* 5. Polvo Estelar Subatómico Orbitando por Fuera de la Esfera */}
         {[
-          { r: 42, dur: 4.2, delay: 0, color: '#38bdf8' },
-          { r: 48, dur: 5.5, delay: 0.8, color: '#c084fc' },
-          { r: 54, dur: 6.8, delay: 1.5, color: '#ffffff' },
-          { r: 38, dur: 3.8, delay: 2.2, color: '#a855f7' }
+          { r: 48, dur: 4.8, delay: 0, color: '#38bdf8' },
+          { r: 54, dur: 6.2, delay: 0.8, color: '#c084fc' },
+          { r: 60, dur: 7.5, delay: 1.5, color: '#ffffff' },
+          { r: 42, dur: 4.0, delay: 2.2, color: '#a855f7' }
         ].map((p, idx) => (
           <motion.div
             key={idx}
@@ -540,7 +600,7 @@ function HyperrealisticCosmicOrb() {
             style={{ width: p.r * 2, height: p.r * 2 }}
           >
             <div
-              className="w-1.5 h-1.5 rounded-full shadow-[0_0_6px_currentColor]"
+              className="w-1.5 h-1.5 rounded-full shadow-[0_0_8px_currentColor]"
               style={{
                 backgroundColor: p.color,
                 color: p.color,
@@ -1245,11 +1305,11 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
               <div className="h-7 w-full flex items-center justify-center opacity-0 pointer-events-none" />
             ) : (
               /* Botones de Gestos Expresivos para Demostrar que está Viva */
-              <div className="flex items-center justify-center gap-1.5">
+              <div className="flex items-center justify-center gap-2">
                 <button
                   type="button"
                   onClick={() => triggerAction('jump')}
-                  className={`px-2.5 py-1 rounded-lg border text-[11px] font-sans font-medium transition-all cursor-pointer flex items-center gap-1 ${
+                  className={`px-3 py-1.5 rounded-xl border text-[11px] font-sans font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
                     avatarAction === 'jump'
                       ? 'bg-purple-600 border-purple-400 text-white shadow-[0_0_12px_rgba(168,85,247,0.4)]'
                       : isLight
@@ -1264,31 +1324,16 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
                 <button
                   type="button"
                   onClick={() => triggerAction('wave')}
-                  className={`px-2.5 py-1 rounded-lg border text-[11px] font-sans font-medium transition-all cursor-pointer flex items-center gap-1 ${
+                  className={`px-3 py-1.5 rounded-xl border text-[11px] font-sans font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
                     avatarAction === 'wave'
                       ? 'bg-purple-600 border-purple-400 text-white shadow-[0_0_12px_rgba(168,85,247,0.4)]'
                       : isLight
                       ? 'bg-slate-100 hover:bg-indigo-50 border-slate-200 text-slate-700 hover:text-indigo-600'
                       : 'bg-white/[0.04] hover:bg-purple-950/40 border-white/10 text-zinc-300 hover:text-white hover:border-purple-400/50'
                   }`}
-                  title="Hacer que Aura salude alegremente con la mano"
+                  title="Hacer que Aura alce la mano y volee un saludo alegre"
                 >
                   <span>👋 Saludar</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => triggerAction('glasses')}
-                  className={`px-2.5 py-1 rounded-lg border text-[11px] font-sans font-medium transition-all cursor-pointer flex items-center gap-1 ${
-                    avatarAction === 'glasses'
-                      ? 'bg-purple-600 border-purple-400 text-white shadow-[0_0_12px_rgba(168,85,247,0.4)]'
-                      : isLight
-                      ? 'bg-slate-100 hover:bg-indigo-50 border-slate-200 text-slate-700 hover:text-indigo-600'
-                      : 'bg-white/[0.04] hover:bg-purple-950/40 border-white/10 text-zinc-300 hover:text-white hover:border-purple-400/50'
-                  }`}
-                  title="Hacer que Aura se acomode las gafas inteligentes con elegancia de secretaria"
-                >
-                  <span>👓 Gafas</span>
                 </button>
               </div>
             )}

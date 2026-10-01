@@ -94,41 +94,42 @@ export default function AndroidVoiceAvatar({
   }, []);
 
   // --------------------------------------------------------------------------
-  // MÁQUINA DE ACCIONES DINÁMICAS (SALTOS, SALUDOS, GAFAS, ORATORIA)
+  // CANALES DE ANIMACIÓN DESACOPLADOS Y COMPONIBLES A 60 FPS
+  // - Habla: `isSpeaking` (boca ecualizadora activa y cabeceo empático)
+  // - Saludo: `isWaving` (alza el brazo bien alto al lado de su rostro y volea la mano)
+  // - Salto: `isJumping` (desplazamiento vertical cuántico con plasma y squash)
+  // ¡Todos ocurren de manera independiente y simultánea sin pisarse jamás!
   // --------------------------------------------------------------------------
-  const [activeAction, setActiveAction] = useState('hover'); // En reposo natural siempre flota en 'hover'
-  const [actionKey, setActionKey] = useState(0);
+  const [isWaving, setIsWaving] = useState(false);
+  const [isJumping, setIsJumping] = useState(false);
 
-  // Escuchar acciones forzadas desde botones externos o al entrar al chat
+  // Escuchar acciones forzadas desde botones externos o triggers
   useEffect(() => {
-    if (forcedAction) {
-      setActiveAction(forcedAction);
-      setActionKey(k => k + 1);
-    } else if (!isSpeaking) {
-      setActiveAction('hover');
+    if (forcedAction === 'wave') {
+      setIsWaving(true);
+      const timer = setTimeout(() => {
+        setIsWaving(false);
+        if (onActionComplete) onActionComplete();
+      }, 2600);
+      return () => clearTimeout(timer);
+    } else if (forcedAction === 'jump') {
+      setIsJumping(true);
+      const timer = setTimeout(() => {
+        setIsJumping(false);
+        if (onActionComplete) onActionComplete();
+      }, 1200);
+      return () => clearTimeout(timer);
     }
-  }, [forcedAction, isSpeaking]);
+  }, [forcedAction]);
 
-  // Manejo de habla: se activa en oratoria activa
-  useEffect(() => {
-    if (isSpeaking) {
-      setActiveAction('speaking');
-      setActionKey(k => k + 1);
-    } else if (!forcedAction) {
-      setActiveAction('hover');
-    }
-  }, [isSpeaking, forcedAction]);
-
-  // Clic en Aura: Salto cuántico seguido de saludo
+  // Clic en Aura: Salto cuántico seguido de saludo en alto
   const handleAuraClick = () => {
-    setActiveAction('jump');
-    setActionKey(k => k + 1);
+    setIsJumping(true);
     setTimeout(() => {
-      setActiveAction('wave');
-      setActionKey(k => k + 1);
+      setIsJumping(false);
+      setIsWaving(true);
       setTimeout(() => {
-        setActiveAction(isSpeaking ? 'speaking' : 'hover');
-        setActionKey(k => k + 1);
+        setIsWaving(false);
         if (onActionComplete) onActionComplete();
       }, 2600);
     }, 1200);
@@ -171,12 +172,12 @@ export default function AndroidVoiceAvatar({
       {/* 1. Aura Volumétrica Ambiental en Púrpura y Azul Cósmico */}
       <motion.div
         animate={{
-          scale: isSpeaking || activeAction === 'jump' ? [1, 1.38, 1.2, 1.3, 1] : [1, 1.08, 1],
-          opacity: isSpeaking || activeAction === 'jump' ? [0.65, 0.95, 0.75, 0.9, 0.65] : [0.3, 0.48, 0.3]
+          scale: isSpeaking || isJumping ? [1, 1.38, 1.2, 1.3, 1] : [1, 1.08, 1],
+          opacity: isSpeaking || isJumping ? [0.65, 0.95, 0.75, 0.9, 0.65] : [0.3, 0.48, 0.3]
         }}
         transition={{
-          duration: activeAction === 'jump' ? 1.1 : isSpeaking ? 1.2 : 3.5,
-          repeat: activeAction === 'jump' ? 0 : Infinity,
+          duration: isJumping ? 1.1 : isSpeaking ? 1.2 : 3.5,
+          repeat: isJumping ? 0 : Infinity,
           ease: 'easeInOut'
         }}
         className="absolute rounded-full blur-3xl pointer-events-none z-0"
@@ -205,21 +206,9 @@ export default function AndroidVoiceAvatar({
           {/* ========================================================= */}
           <defs>
             <style>{`
-              @keyframes auraArmWave {
-                0%, 100% { transform: rotate(-105deg); }
-                50% { transform: rotate(-115deg); }
-              }
-              @keyframes auraForearmWave {
-                0%, 100% { transform: rotate(115deg); }
-                50% { transform: rotate(145deg); }
-              }
-              @keyframes auraGlassesArm {
-                0%, 100% { transform: rotate(0deg); }
-                30%, 75% { transform: rotate(145deg); }
-              }
-              @keyframes auraGlassesForearm {
-                0%, 100% { transform: rotate(0deg); }
-                30%, 75% { transform: rotate(45deg); }
+              @keyframes auraArmWaveHigh {
+                0%, 100% { transform: rotate(-22deg); }
+                50% { transform: rotate(26deg); }
               }
               @keyframes auraSpeakingArm {
                 0%, 100% { transform: rotate(4deg); }
@@ -341,13 +330,12 @@ export default function AndroidVoiceAvatar({
           {/* GRUPO MAESTRO CON SALTO Y SQUASH & STRETCH A 60 FPS       */}
           {/* ========================================================= */}
           <g
-            key={actionKey}
             style={{
               transformOrigin: '105px 200px',
               transformBox: 'view-box',
-              animation: activeAction === 'jump'
+              animation: isJumping
                 ? 'auraBodyJump 1.2s cubic-bezier(0.16, 1, 0.3, 1) infinite'
-                : activeAction === 'speaking'
+                : isSpeaking
                 ? 'auraBodyHover 1.3s ease-in-out infinite'
                 : 'auraBodyHover 3.0s ease-in-out infinite'
             }}
@@ -366,7 +354,7 @@ export default function AndroidVoiceAvatar({
                 filter="url(#auraGlow)"
                 style={{
                   transformOrigin: '0px 10px',
-                  animation: activeAction === 'jump'
+                  animation: isJumping
                     ? 'auraThrusterJump 1.2s ease-in-out infinite'
                     : 'auraThrusterPlasma 1.6s ease-in-out infinite'
                 }}
@@ -382,7 +370,7 @@ export default function AndroidVoiceAvatar({
                 filter="url(#auraGlow)"
                 style={{
                   transformOrigin: '0px 10px',
-                  animation: activeAction === 'jump'
+                  animation: isJumping
                     ? 'auraThrusterJump 1.2s ease-in-out infinite'
                     : 'auraThrusterPlasma 1.2s ease-in-out infinite'
                 }}
@@ -390,7 +378,7 @@ export default function AndroidVoiceAvatar({
               <circle cx="0" cy="12" r="3.2" fill="#ffffff" />
 
               {/* ✨ CHISPAS Y PARTÍCULAS CUÁNTICAS QUE CAEN */}
-              {(activeAction === 'jump' || isSpeaking) && (
+              {(isJumping || isSpeaking) && (
                 <g>
                   <circle
                     cx="-6"
@@ -541,7 +529,7 @@ export default function AndroidVoiceAvatar({
                 style={{
                   transformOrigin: '140px 196px',
                   transformBox: 'view-box',
-                  animation: activeAction === 'jump'
+                  animation: isJumping
                     ? 'auraHandbagJump 1.2s ease-in-out infinite'
                     : 'auraHandbagSwing 2.4s ease-in-out infinite'
                 }}
@@ -587,62 +575,96 @@ export default function AndroidVoiceAvatar({
             {/* Hombrera Izquierda Base Fija al Torso (Anclada permanentemente, jamás se despega) */}
             <circle cx="70" cy="146" r="10" fill="url(#auraLapelGrad)" stroke="#a855f7" strokeWidth="1.8" />
 
-            {/* Brazo Izquierdo y Antebrazo Articulados desde el Pivote del Hombro */}
-            <g
-              style={{
-                transformOrigin: '70px 146px',
-                transformBox: 'view-box',
-                animation: activeAction === 'wave'
-                  ? 'auraArmWave 0.75s ease-in-out infinite'
-                  : activeAction === 'glasses'
-                  ? 'auraGlassesArm 2.2s ease-in-out infinite'
-                  : activeAction === 'speaking'
-                  ? 'auraSpeakingArm 1.3s ease-in-out infinite'
-                  : 'none',
-                transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
-              }}
-            >
+            {/* ========================================================= */}
+            {/* D. BRAZO IZQUIERDO Y MANO: SALUDO ALTO Y VOLEO DE MANO   */}
+            {/* ========================================================= */}
+            <g transform="translate(70, 146)">
               {/* Rótula Articular Interna */}
-              <circle cx="70" cy="146" r="6" fill="#1e1b4b" stroke="#38bdf8" strokeWidth="1.2" />
+              <circle cx="0" cy="0" r="6" fill="#1e1b4b" stroke="#38bdf8" strokeWidth="1.2" />
 
-              {/* Manga del Blazer */}
-              <line x1="70" y1="146" x2="56" y2="176" stroke="#581c87" strokeWidth="7" strokeLinecap="round" />
-              <line x1="70" y1="146" x2="56" y2="176" stroke="#8b5cf6" strokeWidth="2" strokeLinecap="round" />
+              {isWaving ? (
+                /* POSE DE SALUDO ALTO: Brazo alzado y mano voleando en alto al lado de su rostro */
+                <g>
+                  {/* Brazo Superior Levantado en Alto hacia el Codo (-24, -14) */}
+                  <line x1="0" y1="0" x2="-24" y2="-14" stroke="#581c87" strokeWidth="7.5" strokeLinecap="round" />
+                  <line x1="0" y1="0" x2="-24" y2="-14" stroke="#8b5cf6" strokeWidth="2.4" strokeLinecap="round" />
 
-              {/* Antebrazo y Mano Articulados (Con flexión y agitación) */}
-              <g
-                style={{
-                  transformOrigin: '56px 176px',
-                  transformBox: 'view-box',
-                  animation: activeAction === 'wave'
-                    ? 'auraForearmWave 0.38s ease-in-out infinite'
-                    : activeAction === 'glasses'
-                    ? 'auraGlassesForearm 2.2s ease-in-out infinite'
-                    : 'none',
-                  transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
-                }}
-              >
-                {/* Codo Biónico Púrpura */}
-                <circle cx="56" cy="176" r="4.2" fill="#1e1b4b" stroke="#38bdf8" strokeWidth="1.5" />
-                <line x1="56" y1="176" x2="44" y2="198" stroke="#1e1b4b" strokeWidth="4.5" strokeLinecap="round" />
-                <line x1="56" y1="176" x2="44" y2="198" stroke="#a855f7" strokeWidth="1.4" strokeLinecap="round" />
+                  {/* Codo Biónico Elevado */}
+                  <circle cx="-24" cy="-14" r="4.5" fill="#1e1b4b" stroke="#38bdf8" strokeWidth="1.6" />
 
-                {/* Mano Femenina Biónica con Palma y Dedos en Gesto Vivo */}
-                <circle cx="44" cy="198" r="3.2" fill="#1e1b4b" stroke="#38bdf8" strokeWidth="1" />
-                <path
-                  d="M 44 198 C 40 205 36 211 31 213 C 30 208 34 202 41 197 Z"
-                  fill="#e0e7ff"
-                  stroke="#a855f7"
-                  strokeWidth="0.8"
-                />
-                <path
-                  d="M 44 198 C 39 207 34 214 28 217"
-                  stroke="#c084fc"
-                  strokeWidth="1.4"
-                  strokeLinecap="round"
-                  fill="none"
-                />
-              </g>
+                  {/* Antebrazo y Mano que VOLEA alegremente de lado a lado */}
+                  <g
+                    style={{
+                      transformOrigin: '-24px -14px',
+                      animation: 'auraArmWaveHigh 0.5s ease-in-out infinite'
+                    }}
+                  >
+                    {/* Antebrazo hacia la Muñeca Alta (-10, -52) */}
+                    <line x1="-24" y1="-14" x2="-10" y2="-52" stroke="#1e1b4b" strokeWidth="5" strokeLinecap="round" />
+                    <line x1="-24" y1="-14" x2="-10" y2="-52" stroke="#a855f7" strokeWidth="1.8" strokeLinecap="round" />
+
+                    {/* Muñeca */}
+                    <circle cx="-10" cy="-52" r="3.4" fill="#1e1b4b" stroke="#38bdf8" strokeWidth="1.2" />
+
+                    {/* Palma Femenina Abierta con Dedos extendidos saludando (👋 Voleo) */}
+                    <g transform="translate(-10, -52)">
+                      {/* Palma de la mano */}
+                      <path
+                        d="M 0 0 C -4 -4 -7 -10 -4 -16 C -1 -18 4 -18 6 -14 C 8 -10 6 -4 0 0 Z"
+                        fill="#e0e7ff"
+                        stroke="#a855f7"
+                        strokeWidth="1"
+                      />
+                      {/* Dedos extendidos en abanico saludando alegremente */}
+                      <line x1="-3" y1="-14" x2="-7" y2="-24" stroke="#e0e7ff" strokeWidth="2" strokeLinecap="round" />
+                      <line x1="-0.5" y1="-15" x2="-2" y2="-26" stroke="#e0e7ff" strokeWidth="2" strokeLinecap="round" />
+                      <line x1="2" y1="-15" x2="3.5" y2="-25" stroke="#e0e7ff" strokeWidth="2" strokeLinecap="round" />
+                      <line x1="4.5" y1="-13" x2="7.5" y2="-22" stroke="#e0e7ff" strokeWidth="2" strokeLinecap="round" />
+                      {/* Pulgar */}
+                      <line x1="-4" y1="-6" x2="-9" y2="-10" stroke="#e0e7ff" strokeWidth="2" strokeLinecap="round" />
+
+                      {/* Destello de fotones en la mano saludando */}
+                      <circle cx="8" cy="-25" r="1.6" fill="#38bdf8" />
+                      <circle cx="-9" cy="-26" r="1.3" fill="#c084fc" />
+                    </g>
+                  </g>
+                </g>
+              ) : (
+                /* POSE EN REPOSO / ORATORIA MIENTRAS HABLA */
+                <g
+                  style={{
+                    transformOrigin: '0px 0px',
+                    animation: isSpeaking ? 'auraSpeakingArm 1.3s ease-in-out infinite' : 'none',
+                    transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
+                  }}
+                >
+                  {/* Manga del Blazer en Reposo */}
+                  <line x1="0" y1="0" x2="-14" y2="30" stroke="#581c87" strokeWidth="7" strokeLinecap="round" />
+                  <line x1="0" y1="0" x2="-14" y2="30" stroke="#8b5cf6" strokeWidth="2" strokeLinecap="round" />
+
+                  {/* Codo Biónico Púrpura */}
+                  <circle cx="-14" cy="30" r="4.2" fill="#1e1b4b" stroke="#38bdf8" strokeWidth="1.5" />
+
+                  {/* Antebrazo y Mano Colgando con Elegancia */}
+                  <line x1="-14" y1="30" x2="-26" y2="52" stroke="#1e1b4b" strokeWidth="4.5" strokeLinecap="round" />
+                  <line x1="-14" y1="30" x2="-26" y2="52" stroke="#a855f7" strokeWidth="1.4" strokeLinecap="round" />
+
+                  <circle cx="-26" cy="52" r="3.2" fill="#1e1b4b" stroke="#38bdf8" strokeWidth="1" />
+                  <path
+                    d="M -26 52 C -30 59 -34 65 -39 67 C -40 62 -36 56 -29 51 Z"
+                    fill="#e0e7ff"
+                    stroke="#a855f7"
+                    strokeWidth="0.8"
+                  />
+                  <path
+                    d="M -26 52 C -31 61 -36 68 -42 71"
+                    stroke="#c084fc"
+                    strokeWidth="1.4"
+                    strokeLinecap="round"
+                    fill="none"
+                  />
+                </g>
+              )}
             </g>
 
             {/* ========================================================= */}
@@ -652,7 +674,7 @@ export default function AndroidVoiceAvatar({
               style={{
                 transformOrigin: '105px 124px',
                 transformBox: 'view-box',
-                animation: activeAction === 'speaking'
+                animation: isSpeaking
                   ? 'auraHeadSpeaking 1.2s ease-in-out infinite'
                   : 'auraHeadTilt 3.2s ease-in-out infinite'
               }}
