@@ -3,6 +3,39 @@ import { supabase } from '../lib/supabaseClient';
 
 const LeadContext = createContext();
 
+export const PIPELINE_STATUSES = [
+  { id: 'agendada', label: '📅 Agendada', color: 'text-cyan-400 bg-cyan-950/40 border-cyan-800/60' },
+  { id: 'confirmada', label: '✅ Confirmada', color: 'text-emerald-400 bg-emerald-950/40 border-emerald-800/60' },
+  { id: 'finalizada', label: '🤝 Finalizada (Reunión Hecha)', color: 'text-purple-400 bg-purple-950/40 border-purple-800/60' },
+  { id: 'descartada', label: '❌ Descartada', color: 'text-red-400 bg-red-950/40 border-red-800/60' },
+  { id: 'cerrada', label: '🏆 Cerrada (Venta)', color: 'text-amber-400 bg-amber-950/40 border-amber-800/60' },
+];
+
+export const INITIAL_OBJECTIONS = [
+  {
+    id: 'obj-101',
+    lead_id: 'lead-prev-1',
+    client_name: 'David Arango',
+    business_name: 'Parrilla & Fuego Gourmet',
+    niche: 'Gastronomía & Bares',
+    date: '2026-09-28',
+    category: 'PRECIO', // PRECIO | TIEMPO | TERCERO | COMPLEJIDAD | OTRO
+    detail: 'Considera que la inversión inicial de desarrollo supera su presupuesto del trimestre; prefiere esperar apertura de nueva sede.',
+    actionable_learning: 'Ofrecer opción de pago fraccionado 50/25/25 o lanzar primera fase solo con comanda KDS.'
+  },
+  {
+    id: 'obj-102',
+    lead_id: 'lead-prev-2',
+    client_name: 'Camila Morales',
+    business_name: 'Studio Pilates Core',
+    niche: 'Fitness & Bienestar',
+    date: '2026-09-27',
+    category: 'TERCERO',
+    detail: 'Su socio financiero no estuvo en la reunión y prefiere no autorizar compras de software sin demo grabada en video.',
+    actionable_learning: 'Enviar siempre Loom explicativo de 2 minutos dirigido al socio que aprueba el presupuesto.'
+  }
+];
+
 const INITIAL_DEMO_LEADS = [
   {
     id: 'lead-1719001',
@@ -14,10 +47,17 @@ const INITIAL_DEMO_LEADS = [
     friction_score: 88,
     category: 'POTENCIAL', // POTENCIAL 💎 | CURIOSO 👀
     phone: '+57 312 456 7890',
-    date: '2026-09-28',
+    date: '2026-09-30',
     time: '04:00 PM',
     meet_link: 'https://meet.google.com/dyn-tzg-360',
-    status: 'agendado', // agendado | demo_realizada | cerrada | descartada
+    status: 'finalizada', // agendada | confirmada | finalizada | descartada | cerrada
+    last_confirmation_date: new Date().toISOString().split('T')[0],
+    last_confirmation_time: '10:15 AM',
+    demo_status: 'en_construccion', // no_iniciada | en_construccion | demo_finalizada | cliente_cerrado | no_vendido | cancelada
+    demo_progress: 75,
+    demo_phase: 'Frontoffice Dinámico Multi-Página',
+    demo_images: ['/proyectos/quimbayas.png'],
+    demo_notes: 'Implementando catálogo multi-toma con barra de filtros y arqueo ciego en caja.',
     created_at: new Date(Date.now() - 3600000 * 4).toISOString()
   },
   {
@@ -30,10 +70,17 @@ const INITIAL_DEMO_LEADS = [
     friction_score: 82,
     category: 'POTENCIAL',
     phone: '+57 320 987 6543',
-    date: '2026-09-29',
+    date: '2026-09-30',
     time: '11:30 AM',
     meet_link: 'https://meet.google.com/dyn-cor-val',
-    status: 'agendado',
+    status: 'finalizada',
+    last_confirmation_date: null,
+    last_confirmation_time: null,
+    demo_status: 'demo_finalizada',
+    demo_progress: 100,
+    demo_phase: 'Depuración de Mano Derecha',
+    demo_images: ['/proyectos/lorena.png'],
+    demo_notes: 'Demo aprobada con 0 fallas. Lista para llamada de propuesta económica.',
     created_at: new Date(Date.now() - 3600000 * 12).toISOString()
   },
   {
@@ -46,10 +93,19 @@ const INITIAL_DEMO_LEADS = [
     friction_score: 91,
     category: 'POTENCIAL',
     phone: '+57 301 234 5678',
-    date: '2026-09-30',
+    date: '2026-09-29',
     time: '02:30 PM',
     meet_link: 'https://meet.google.com/dyn-hpm-mat',
-    status: 'demo_realizada',
+    status: 'cerrada',
+    last_confirmation_date: '2026-09-29',
+    last_confirmation_time: '09:00 AM',
+    demo_status: 'cliente_cerrado',
+    demo_progress: 100,
+    demo_phase: 'Entrega Llave en Mano',
+    deal_amount: '$1,200 USD',
+    close_date: '2026-09-29',
+    demo_images: ['/proyectos/imperium.png'],
+    demo_notes: 'Contrato firmado con anticipo del 50%.',
     created_at: new Date(Date.now() - 3600000 * 28).toISOString()
   },
   {
@@ -65,8 +121,38 @@ const INITIAL_DEMO_LEADS = [
     date: '2026-10-02',
     time: '10:00 AM',
     meet_link: 'https://meet.google.com/dyn-crz-ret',
-    status: 'agendado',
+    status: 'agendada',
+    last_confirmation_date: null,
+    last_confirmation_time: null,
+    demo_status: 'no_iniciada',
+    demo_progress: 0,
+    demo_phase: 'Pendiente de Triaje',
+    demo_images: [],
+    demo_notes: 'Perfil dudoso. Evaluar si es curioso antes de empezar demo.',
     created_at: new Date(Date.now() - 3600000 * 48).toISOString()
+  },
+  {
+    id: 'lead-1719005',
+    client_name: 'Andrés Gil',
+    business_name: 'Hacienda San Jerónimo Cabañas',
+    profile_type: 'Dueño de Empresa',
+    niche: 'Hotelería & Glampings',
+    bottleneck: 'Overbooking recurrente entre Airbnb y reservas telefónicas; clientes llegan sin cabaña disponible',
+    friction_score: 89,
+    category: 'POTENCIAL',
+    phone: '+57 310 999 8877',
+    date: '2026-10-01',
+    time: '03:00 PM',
+    meet_link: 'https://meet.google.com/dyn-hsj-cab',
+    status: 'confirmada',
+    last_confirmation_date: new Date().toISOString().split('T')[0],
+    last_confirmation_time: '08:30 AM',
+    demo_status: 'no_iniciada',
+    demo_progress: 0,
+    demo_phase: 'Pendiente de Reunión',
+    demo_images: [],
+    demo_notes: 'Cita confirmada para hoy en la tarde.',
+    created_at: new Date(Date.now() - 3600000 * 10).toISOString()
   }
 ];
 
@@ -74,11 +160,43 @@ export function LeadProvider({ children }) {
   const [leads, setLeads] = useState(() => {
     try {
       const stored = localStorage.getItem('dynamind_leads_vault');
-      return stored ? JSON.parse(stored) : INITIAL_DEMO_LEADS;
+      const parsed = stored ? JSON.parse(stored) : INITIAL_DEMO_LEADS;
+      return parsed.map(lead => {
+        let st = lead.status;
+        if (st === 'agendado') st = 'agendada';
+        else if (st === 'demo_realizada' || st === 'realizada') st = 'finalizada';
+        else if (st === 'cerrado') st = 'cerrada';
+        else if (st === 'descartado') st = 'descartada';
+        else if (!['agendada', 'confirmada', 'finalizada', 'descartada', 'cerrada'].includes(st)) {
+          st = 'agendada';
+        }
+        let dStatus = lead.demo_status;
+        if (dStatus === 'cancelada') {
+          dStatus = 'pendiente_decision';
+        }
+        return { ...lead, status: st, demo_status: dStatus };
+      });
     } catch {
       return INITIAL_DEMO_LEADS;
     }
   });
+
+  const [objections, setObjections] = useState(() => {
+    try {
+      const stored = localStorage.getItem('dynamind_objections_history');
+      return stored ? JSON.parse(stored) : INITIAL_OBJECTIONS;
+    } catch {
+      return INITIAL_OBJECTIONS;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('dynamind_objections_history', JSON.stringify(objections));
+    } catch (e) {
+      console.warn('Storage save objections failed:', e);
+    }
+  }, [objections]);
 
   const [availableSlots] = useState([
     '08:00 AM',
@@ -184,7 +302,7 @@ export function LeadProvider({ children }) {
       time: leadData.time || '',
       meet_link,
       category,
-      status: 'agendado',
+      status: 'agendada',
       created_at: new Date().toISOString(),
       friction_score: friction
     };
@@ -220,6 +338,72 @@ export function LeadProvider({ children }) {
     } catch {}
   };
 
+  const updateLead = (id, partialData) => {
+    setLeads(prev => prev.map(lead => lead.id === id ? { ...lead, ...partialData } : lead));
+    try {
+      supabase.from('leads').update(partialData).eq('id', id).catch(() => {});
+    } catch {}
+  };
+
+  const cancelDemoProduction = (id, reason = 'Cancelada por el administrador') => {
+    updateLead(id, {
+      demo_status: 'pendiente_decision', // 🚀 Vuelve al estado del principio con naranja
+      demo_progress: 0,
+      demo_phase: 'Pendiente de Decisión',
+      demo_cancel_reason: reason,
+      demo_notes: `Producción de demo cancelada: ${reason}. Retornado al estado de decisión inicial.`
+    });
+  };
+
+  const recordDemoSold = (id, { dealAmount, notes }) => {
+    updateLead(id, {
+      demo_status: 'cliente_cerrado',
+      status: 'cerrada',
+      deal_amount: dealAmount || '$4,500,000 COP',
+      close_date: new Date().toISOString().split('T')[0],
+      demo_notes: notes || 'Venta cerrada con éxito.'
+    });
+  };
+
+  const recordDemoRejected = (id, { category, detail, learning }) => {
+    const lead = leads.find(l => l.id === id);
+    const objection = {
+      id: `obj-${Date.now()}`,
+      lead_id: id,
+      client_name: lead?.client_name || 'Cliente',
+      business_name: lead?.business_name || '',
+      niche: lead?.niche || '',
+      date: new Date().toISOString().split('T')[0],
+      category: category || 'PRECIO',
+      detail: detail || 'No especificó detalles.',
+      actionable_learning: learning || ''
+    };
+
+    setObjections(prev => [objection, ...prev]);
+
+    updateLead(id, {
+      demo_status: 'no_vendido',
+      status: 'descartada',
+      rejection_objection: objection,
+      demo_notes: `No se vendió: [${category}] ${detail}`
+    });
+  };
+
+  const deleteObjection = (objId) => {
+    setObjections(prev => prev.filter(o => o.id !== objId));
+  };
+
+  const markConfirmationSent = (id) => {
+    const now = new Date();
+    const todayStr = now.toISOString().split('T')[0];
+    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    updateLead(id, {
+      status: 'confirmada', // ⚡ El estado cambia automáticamente por sí solo a confirmada
+      last_confirmation_date: todayStr,
+      last_confirmation_time: timeStr
+    });
+  };
+
   const deleteLead = (id) => {
     setLeads(prev => prev.filter(lead => lead.id !== id));
     try {
@@ -231,16 +415,23 @@ export function LeadProvider({ children }) {
   const totalLeads = leads.length;
   const potentialLeads = leads.filter(l => l.category === 'POTENCIAL').length;
   const curiousLeads = leads.filter(l => l.category === 'CURIOSO').length;
-  const scheduledCalls = leads.filter(l => l.status === 'agendado').length;
+  const scheduledCalls = leads.filter(l => l.status === 'agendada' || l.status === 'confirmada').length;
   const closedDeals = leads.filter(l => l.status === 'cerrada').length;
   const conversionRate = totalLeads > 0 ? Math.round((potentialLeads / totalLeads) * 100) : 0;
 
   return (
     <LeadContext.Provider value={{
       leads,
+      objections,
       availableSlots,
       addLead,
       updateLeadStatus,
+      updateLead,
+      cancelDemoProduction,
+      recordDemoSold,
+      recordDemoRejected,
+      deleteObjection,
+      markConfirmationSent,
       deleteLead,
       kpis: {
         totalLeads,

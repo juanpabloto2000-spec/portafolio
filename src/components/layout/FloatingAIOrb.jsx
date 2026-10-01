@@ -1,5 +1,6 @@
 import React, { useState, Suspense } from 'react';
 import { motion } from 'framer-motion';
+import { useCMS } from '../../context/CMSContext';
 
 // 🔮 Carga bajo demanda de AURA para aligerar el bundle inicial de entrada
 const DynamindAIAssistantModal = React.lazy(() => import('../interactive/DynamindAIAssistantModal'));
@@ -50,8 +51,13 @@ class ModalErrorBoundary extends React.Component {
 }
 
 export default function FloatingAIOrb() {
+  const { cms } = useCMS();
   const [modalOpen, setModalOpen] = useState(false);
   const [isWarpSpeed, setIsWarpSpeed] = useState(false);
+
+  if (cms?.chatbot?.enabled === false) {
+    return null;
+  }
 
   return (
     <>

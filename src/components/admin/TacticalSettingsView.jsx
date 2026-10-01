@@ -1,26 +1,77 @@
 import React, { useState } from 'react';
 import { Key, Shield, Check, Terminal, ExternalLink, Server, Globe } from 'lucide-react';
 
-export default function TacticalSettingsView() {
+export default function TacticalSettingsView({ onLogout }) {
+  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [feedback, setFeedback] = useState(null);
 
   const handleUpdatePassword = (e) => {
     e.preventDefault();
-    if (!newPassword || newPassword.length < 6) {
-      setFeedback({ success: false, text: 'La clave debe tener al menos 6 caracteres.' });
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      setFeedback({ success: false, text: 'Las claves maestras no coinciden.' });
+    setFeedback(null);
+
+    const activePass = localStorage.getItem('dynamind_admin_pass') || '12345678';
+
+    // 1. Validar la contraseña actual
+    if (currentPassword !== activePass) {
+      setFeedback({ 
+        success: false, 
+        text: 'La contraseña actual ingresada es incorrecta. Permiso denegado por seguridad.' 
+      });
       return;
     }
 
+    // 2. Validar longitud mínima
+    if (!newPassword || newPassword.length < 8) {
+      setFeedback({ 
+        success: false, 
+        text: 'La nueva contraseña debe tener al menos 8 caracteres.' 
+      });
+      return;
+    }
+
+    // 3. Validar coincidencia de nueva contraseña y su confirmación
+    if (newPassword !== confirmPassword) {
+      setFeedback({ 
+        success: false, 
+        text: 'La confirmación de la nueva contraseña no coincide. Verifícala cuidadosamente.' 
+      });
+      return;
+    }
+
+    // 4. Validar que no sea idéntica a la actual
+    if (newPassword === activePass) {
+      setFeedback({ 
+        success: false, 
+        text: 'La nueva contraseña no puede ser idéntica a la contraseña actual.' 
+      });
+      return;
+    }
+
+    // 5. Guardar la nueva contraseña como ÚNICA clave activa en el sistema
     localStorage.setItem('dynamind_admin_pass', newPassword);
-    setFeedback({ success: true, text: 'Clave maestra actualizada exitosamente en el búnker.' });
+
+    // 6. Invalidar la sesión actual para obligar la re-autenticación con la nueva contraseña
+    sessionStorage.removeItem('dynamind_auth_token');
+
+    setFeedback({ 
+      success: true, 
+      text: '¡Contraseña actualizada con éxito! Cerrando sesión para validación de seguridad...' 
+    });
+
+    setCurrentPassword('');
     setNewPassword('');
     setConfirmPassword('');
+
+    // Desloguear y dirigir a la pantalla de login
+    setTimeout(() => {
+      if (onLogout) {
+        onLogout();
+      } else {
+        window.location.reload();
+      }
+    }, 1500);
   };
 
   return (
@@ -57,39 +108,51 @@ export default function TacticalSettingsView() {
 
           <form onSubmit={handleUpdatePassword} className="space-y-4 text-xs">
             <div className="space-y-1.5">
-              <label className="text-[10px] text-zinc-400 uppercase block">Nueva Clave Maestra:</label>
+              <label className="text-[10px] text-zinc-400 uppercase block">1. Contraseña Actual:</label>
+              <input
+                type="password"
+                required
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                placeholder="Ingresa la contraseña actual"
+                className="w-full px-3 py-2.5 bg-black border border-white/10 text-white focus:outline-none focus:border-cyan-400 font-mono"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-[10px] text-zinc-400 uppercase block">2. Nueva Contraseña (Mínimo 8 caracteres):</label>
               <input
                 type="password"
                 required
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="••••••••••••"
-                className="w-full px-3 py-2.5 bg-black border border-white/10 text-white focus:outline-none focus:border-white/30"
+                className="w-full px-3 py-2.5 bg-black border border-white/10 text-white focus:outline-none focus:border-cyan-400 font-mono"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] text-zinc-400 uppercase block">Confirmar Nueva Clave:</label>
+              <label className="text-[10px] text-zinc-400 uppercase block">3. Confirmar Nueva Contraseña:</label>
               <input
                 type="password"
                 required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="••••••••••••"
-                className="w-full px-3 py-2.5 bg-black border border-white/10 text-white focus:outline-none focus:border-white/30"
+                className="w-full px-3 py-2.5 bg-black border border-white/10 text-white focus:outline-none focus:border-cyan-400 font-mono"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full py-2.5 bg-white text-black font-bold uppercase tracking-wider hover:bg-platinum transition-colors"
+              className="w-full py-2.5 bg-white text-black font-bold uppercase tracking-wider hover:bg-zinc-200 transition-colors cursor-pointer"
             >
-              Guardar Nueva Clave
+              Validar y Actualizar Contraseña
             </button>
           </form>
 
           <p className="text-[10px] text-zinc-400">
-            La clave maestra por defecto es <code className="text-white">dynamind2026</code>.
+            Requiere verificación criptográfica previa. Tras actualizar la contraseña, la sesión activa se cerrará automáticamente para exigir re-autenticación.
           </p>
         </div>
 

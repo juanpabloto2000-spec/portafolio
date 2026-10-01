@@ -220,24 +220,24 @@ export default function AndroidVoiceAvatar({
           <defs>
             <style>{`
               @keyframes auraArmWave {
-                0%, 100% { transform: rotate(-52deg) translateY(-14px); }
-                50% { transform: rotate(-76deg) translateY(-20px); }
+                0%, 100% { transform: rotate(92deg); }
+                50% { transform: rotate(104deg); }
               }
               @keyframes auraForearmWave {
-                0%, 100% { transform: rotate(-25deg); }
-                50% { transform: rotate(35deg); }
+                0%, 100% { transform: rotate(26deg); }
+                50% { transform: rotate(62deg); }
               }
               @keyframes auraGlassesArm {
-                0%, 100% { transform: rotate(0deg) translateY(0); }
-                30%, 75% { transform: rotate(-50deg) translateY(-14px); }
+                0%, 100% { transform: rotate(0deg); }
+                30%, 75% { transform: rotate(145deg); }
               }
               @keyframes auraGlassesForearm {
                 0%, 100% { transform: rotate(0deg); }
-                30%, 75% { transform: rotate(40deg); }
+                30%, 75% { transform: rotate(45deg); }
               }
               @keyframes auraSpeakingArm {
                 0%, 100% { transform: rotate(4deg); }
-                50% { transform: rotate(26deg); }
+                50% { transform: rotate(24deg); }
               }
               @keyframes auraHandbagSwing {
                 0%, 100% { transform: rotate(-6deg); }

@@ -107,3 +107,127 @@ export const saveAndicasToSupabase = async (status, features) => {
     console.warn('REST PATCH warning:', e);
   }
 };
+
+/**
+ * Actualiza la contraseña del administrador del cliente en la nube sin requerir la clave actual
+ * (Poder Soberano desde Dynamind Killswitch)
+ */
+export const updateRemoteClientPassword = async (site, newPassword) => {
+  const cleanPass = String(newPassword || '').trim();
+  if (!cleanPass) throw new Error('La contraseña no puede estar vacía.');
+
+  const isKal = site.id === 'kal-discobar';
+  const isAndicas = site.id === 'andicas-bioparque' || site.id?.includes('andicas');
+
+  // 1. Sincronización KAL DISCOBAR
+  if (isKal) {
+    try {
+      await KAL_SB
+        .from('system_settings')
+        .upsert({
+          id: 'admin_auth',
+          subscription_status: cleanPass,
+          updated_at: new Date().toISOString()
+        });
+    } catch (err) {
+      console.warn('Sync KAL Supabase password:', err);
+    }
+
+    if (site.backendUrl) {
+      try {
+        await fetch(`${site.backendUrl}/api/bookings/admin/update-admin-password`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-admin-key': site.masterKey || 'PanelPassword1966@'
+          },
+          body: JSON.stringify({
+            newPassword: cleanPass,
+            currentKey: site.masterKey || 'PanelPassword1966@'
+          })
+        });
+      } catch (err) {
+        console.warn('Sync KAL Backend password:', err);
+      }
+    }
+  }
+
+  // 2. Sincronización ANDICAS / QUIMBAYAS
+  if (isAndicas) {
+    const payload = {
+      id: 'admin_auth',
+      name: 'Admin Auth Credentials',
+      type: 'active',
+      price_per_night: 0,
+      description: cleanPass
+    };
+
+    try {
+      await ANDICAS_SB.from('cabins').upsert(payload);
+    } catch (err) {
+      console.warn('Andicas SDK password upsert:', err);
+    }
+
+    try {
+      await fetch(`https://vkpzgtteqaekmnixrlxl.supabase.co/rest/v1/cabins?id=eq.admin_auth&apikey=${ANDICAS_KEY}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': ANDICAS_KEY,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ description: cleanPass, type: 'active' })
+      });
+    } catch (err) {
+      console.warn('Andicas REST password patch:', err);
+    }
+
+    if (site.backendUrl) {
+      try {
+        await fetch(`${site.backendUrl}/api/bookings/admin/update-admin-password`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-admin-key': site.masterKey || 'PanelPassword1966@'
+          },
+          body: JSON.stringify({
+            newPassword: cleanPass,
+            currentKey: site.masterKey || 'PanelPassword1966@'
+          })
+        });
+      } catch (err) {
+        console.warn('Andicas backend password update:', err);
+      }
+    }
+  }
+
+  return { success: true, message: `Contraseña de ${site.name} actualizada con éxito en la nube.` };
+};
+
+/**
+ * Consulta la contraseña activa actualmente en la nube para un cliente remoto
+ */
+export const fetchRemoteClientPassword = async (site) => {
+  const isKal = site.id === 'kal-discobar';
+  const isAndicas = site.id === 'andicas-bioparque' || site.id?.includes('andicas');
+
+  if (isKal) {
+    try {
+      const { data } = await KAL_SB.from('system_settings').select('subscription_status').eq('id', 'admin_auth').maybeSingle();
+      if (data?.subscription_status) return data.subscription_status.trim();
+    } catch (e) {
+      console.warn('Fetch KAL pass error:', e);
+    }
+  }
+
+  if (isAndicas) {
+    try {
+      const { data } = await ANDICAS_SB.from('cabins').select('description').eq('id', 'admin_auth').maybeSingle();
+      if (data?.description) return data.description.trim();
+    } catch (e) {
+      console.warn('Fetch Andicas pass error:', e);
+    }
+  }
+
+  return site.currentRemotePassword || site.masterKey || 'PanelPassword1966@';
+};

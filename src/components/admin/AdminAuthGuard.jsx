@@ -13,12 +13,6 @@ async function sha256(message) {
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-// Hashes SHA-256 canónicos de contraseñas de ingeniería
-const CANONICAL_HASHES = [
-  '0738c09f04d189db08ebb249ce35ecc41f9b7c9eeee20cdad54436cb798fad5b', // dynamind2026
-  'ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f'  // 12345678
-];
-
 const MAX_FAILED_ATTEMPTS = 5;
 const LOCKOUT_TIME_MS = 60 * 1000; // 60 segundos de enfriamiento
 
@@ -53,6 +47,16 @@ export default function AdminAuthGuard({ children }) {
     return () => clearInterval(interval);
   }, []);
 
+  // Inicialización garantizada a '12345678' para la prueba solicitada por el usuario
+  useEffect(() => {
+    if (localStorage.getItem('dynamind_pass_v12345678_reset') !== 'true') {
+      localStorage.setItem('dynamind_admin_pass', '12345678');
+      localStorage.setItem('dynamind_pass_v12345678_reset', 'true');
+      localStorage.removeItem('dynamind_login_fails');
+      localStorage.removeItem('dynamind_lockout_until');
+    }
+  }, []);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     if (lockoutRemaining > 0 || isProcessing) return;
@@ -62,15 +66,14 @@ export default function AdminAuthGuard({ children }) {
 
     try {
       const inputHash = await sha256(password);
-      const customPass = localStorage.getItem('dynamind_admin_pass');
-      let customPassHash = null;
-      if (customPass) {
-        customPassHash = await sha256(customPass);
-      }
-
-      const isUserValid = username.trim().toLowerCase() === 'admin';
-      const isPassValid = CANONICAL_HASHES.includes(inputHash) || 
-                          (customPassHash && inputHash === customPassHash);
+      
+      // La ÚNICA contraseña autorizada es la que esté activa en el sistema.
+      // Por defecto de fábrica para la prueba: '12345678'
+      const activePassword = localStorage.getItem('dynamind_admin_pass') || '12345678';
+      const activePasswordHash = await sha256(activePassword);
+      // Blindaje de seguridad estricto: ÚNICAMENTE 'AdminMaster' con mayúsculas exactas
+      const isUserValid = (username.trim() === 'AdminMaster');
+      const isPassValid = (inputHash === activePasswordHash) || (password.trim() === activePassword.trim());
 
       if (isUserValid && isPassValid) {
         // Éxito: Limpiar contadores de error
@@ -107,36 +110,35 @@ export default function AdminAuthGuard({ children }) {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-transparent flex items-center justify-center p-4 font-mono relative z-10">
-        <div className="w-full max-w-md bg-black/60 backdrop-blur-2xl border border-white/15 rounded-3xl p-8 space-y-6 shadow-[0_25px_60px_rgba(0,0,0,0.9),0_0_30px_rgba(56,189,248,0.15)] relative glow-card overflow-hidden">
+        <div className="w-full max-w-md bg-black/70 backdrop-blur-2xl border border-white/15 rounded-3xl p-8 space-y-6 shadow-[0_25px_60px_rgba(0,0,0,0.9),0_0_30px_rgba(56,189,248,0.12)] relative glow-card overflow-hidden">
           
-          {/* Brackets tácticos de titanio */}
-          <div className="absolute top-3 left-3 w-3 h-3 border-t-2 border-l-2 border-cyan-400/40 pointer-events-none" />
-          <div className="absolute top-3 right-3 w-3 h-3 border-t-2 border-r-2 border-cyan-400/40 pointer-events-none" />
-          <div className="absolute bottom-3 left-3 w-3 h-3 border-b-2 border-l-2 border-cyan-400/40 pointer-events-none" />
-          <div className="absolute bottom-3 right-3 w-3 h-3 border-b-2 border-r-2 border-cyan-400/40 pointer-events-none" />
-
-          <div className="space-y-2 border-b border-white/10 pb-5">
-            <div className="flex items-center gap-2 text-[10px] text-zinc-400 uppercase tracking-widest">
-              <Lock className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-              <span>BÚNKER OPERATIVO CENTRAL // SOBERANO</span>
+          {/* Cabecera Limpia con Logo sin fondo */}
+          <div className="space-y-3 border-b border-white/10 pb-5 text-center flex flex-col items-center">
+            <img 
+              src="/logo sin fondo.png" 
+              alt="Dynamind Logo" 
+              style={{ height: '48px', width: 'auto' }}
+              className="h-12 max-h-12 w-auto object-contain shrink-0 filter drop-shadow-[0_0_18px_rgba(56,189,248,0.4)] mb-1"
+            />
+            <div className="space-y-1">
+              <h1 className="font-display font-extrabold text-2xl text-white tracking-tight uppercase">
+                Dynamind DSB
+              </h1>
+              <p className="text-xs text-zinc-400 font-sans max-w-xs mx-auto">
+                Panel Administrativo y Centro de Control de Operaciones
+              </p>
             </div>
-            <h1 className="font-display font-extrabold text-2xl text-white tracking-tight uppercase">
-              Dynamind DSB
-            </h1>
-            <p className="text-xs text-zinc-400 font-sans">
-              Introduce las credenciales maestras de arquitectura para acceder al centro de control.
-            </p>
           </div>
 
           {lockoutRemaining > 0 && (
             <div className="p-4 bg-red-950/60 border border-red-700/80 rounded-xl text-red-300 text-xs space-y-1 animate-pulse">
               <div className="flex items-center gap-2 font-bold text-red-200 uppercase tracking-wider">
                 <ShieldAlert className="w-4 h-4 text-red-400" />
-                <span>BLOQUEO DE FUERZA BRUTA ACTIVO</span>
+                <span>ACCESO TEMPORALMENTE BLOQUEADO</span>
               </div>
               <div className="flex items-center gap-1.5 text-zinc-300 font-mono text-[11px]">
                 <Timer className="w-3.5 h-3.5 text-amber-400" />
-                <span>Tiempo de desbloqueo: {lockoutRemaining} segundos</span>
+                <span>Tiempo restante de espera: {lockoutRemaining} segundos</span>
               </div>
             </div>
           )}
@@ -150,7 +152,7 @@ export default function AdminAuthGuard({ children }) {
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-1.5">
-              <label className="text-[11px] text-zinc-400 uppercase tracking-wider">Usuario Maestro</label>
+              <label className="text-[11px] text-zinc-400 uppercase tracking-wider">Usuario</label>
               <input 
                 type="text" 
                 value={username}
@@ -163,7 +165,7 @@ export default function AdminAuthGuard({ children }) {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[11px] text-zinc-400 uppercase tracking-wider">Contraseña Táctica</label>
+              <label className="text-[11px] text-zinc-400 uppercase tracking-wider">Contraseña</label>
               <input 
                 type="password" 
                 value={password}
@@ -180,15 +182,10 @@ export default function AdminAuthGuard({ children }) {
               disabled={lockoutRemaining > 0 || isProcessing}
               className="w-full py-3.5 bg-white hover:bg-zinc-200 text-black font-sans font-bold text-xs uppercase tracking-wider rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-monolith cursor-pointer hover:scale-[1.01] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
-              <span>{isProcessing ? 'Verificando Hash...' : 'Acceder al Búnker'}</span>
+              <span>{isProcessing ? 'Verificando...' : 'Iniciar Sesión'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
-
-          <div className="pt-2 flex items-center justify-between text-[10px] text-zinc-500 font-mono">
-            <span>HASH: SHA-256 (WEB CRYPTO)</span>
-            <span>PROTECCIÓN: RATE LOCKOUT</span>
-          </div>
 
         </div>
       </div>

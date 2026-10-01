@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { motion, useScroll, useTransform, useSpring, useMotionValueEvent } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
+import { useCMS } from '../../context/CMSContext';
 
 // 120 fotogramas de alta fidelidad: equilibrio óptimo entre fluidez absoluta a 60 FPS,
 // consumo controlado de memoria VRAM (<400 MB) y cero pausas de Garbage Collector.
@@ -9,7 +10,18 @@ const TOTAL_FRAMES = 120;
 
 export default function CinematicDualVideoScrolly() {
   const { t, isLight } = useThemeLanguage();
+  const { cms } = useCMS();
   const s = t.scrolly;
+  const cmsScrolly = cms?.pages?.inicio?.scrolly;
+
+  const p1TitleText = cmsScrolly?.phase1_title || s.p1Title;
+  const p1DescText = cmsScrolly?.phase1_desc || s.p1Desc;
+  const p2TitleText = cmsScrolly?.phase2_title || s.p2Title;
+  const p2DescText = cmsScrolly?.phase2_desc || s.p2Desc;
+  const p3TitleText = cmsScrolly?.phase3_title || s.p3Title;
+  const p3DescText = cmsScrolly?.phase3_desc || s.p3Desc;
+  const p4TitleText = cmsScrolly?.phase4_title || s.p4Title;
+  const p4DescText = cmsScrolly?.phase4_desc || s.p4Desc;
 
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
@@ -247,12 +259,12 @@ export default function CinematicDualVideoScrolly() {
             <h2 className={`font-display text-xl xs:text-2xl sm:text-5xl md:text-6xl font-bold leading-snug sm:leading-tight tracking-normal uppercase ${
               isLight ? 'text-[#090d16]' : 'text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)]'
             }`}>
-              {s.p1Title}
+              {p1TitleText}
             </h2>
             <p className={`text-xs sm:text-base max-w-xl mx-auto font-sans leading-relaxed ${
               isLight ? 'text-slate-700' : 'text-zinc-200 drop-shadow-[0_2px_14px_rgba(0,0,0,0.9)]'
             }`}>
-              {s.p1Desc}
+              {p1DescText}
             </p>
           </motion.div>
 
@@ -266,12 +278,12 @@ export default function CinematicDualVideoScrolly() {
             <h2 className={`font-display text-xl xs:text-2xl sm:text-5xl md:text-6xl font-bold leading-snug sm:leading-tight tracking-normal uppercase ${
               isLight ? 'text-[#090d16]' : 'text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)]'
             }`}>
-              {s.p2Title}
+              {p2TitleText}
             </h2>
             <p className={`text-xs sm:text-base max-w-xl mx-auto font-sans leading-relaxed ${
               isLight ? 'text-slate-700' : 'text-zinc-200 drop-shadow-[0_2px_14px_rgba(0,0,0,0.9)]'
             }`}>
-              {s.p2Desc}
+              {p2DescText}
             </p>
           </motion.div>
 
@@ -288,12 +300,12 @@ export default function CinematicDualVideoScrolly() {
               <h2 className={`font-display text-xl xs:text-2xl sm:text-5xl md:text-6xl font-bold leading-snug sm:leading-tight tracking-normal uppercase ${
                 isLight ? 'text-[#090d16]' : 'text-white drop-shadow-[0_4px_30px_rgba(0,0,0,1)]'
               }`}>
-                {s.p3Title}
+                {p3TitleText}
               </h2>
               <p className={`text-xs sm:text-base max-w-xl mx-auto font-sans leading-relaxed ${
                 isLight ? 'text-slate-700' : 'text-zinc-200 drop-shadow-[0_2px_14px_rgba(0,0,0,1)]'
               }`}>
-                {s.p3Desc}
+                {p3DescText}
               </p>
             </div>
           </motion.div>
@@ -308,12 +320,12 @@ export default function CinematicDualVideoScrolly() {
             <h2 className={`font-display text-xl xs:text-2xl sm:text-5xl md:text-6xl font-bold leading-snug sm:leading-tight tracking-normal uppercase ${
               isLight ? 'text-[#090d16]' : 'text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)]'
             }`}>
-              {s.p4Title}
+              {p4TitleText}
             </h2>
             <p className={`text-xs sm:text-base max-w-xl mx-auto font-sans leading-relaxed ${
               isLight ? 'text-slate-700' : 'text-zinc-200 drop-shadow-[0_2px_14px_rgba(0,0,0,0.9)]'
             }`}>
-              {s.p4Desc}
+              {p4DescText}
             </p>
             <div className="pt-2">
               <a

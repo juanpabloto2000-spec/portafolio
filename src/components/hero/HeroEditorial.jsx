@@ -2,11 +2,18 @@ import React, { useState, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import KineticTypewriter from '../motion/KineticTypewriter';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
+import { useCMS } from '../../context/CMSContext';
 
 export default function HeroEditorial() {
   const [titleDone, setTitleDone] = useState(false);
   const heroRef = useRef(null);
   const { t, isLight } = useThemeLanguage();
+  const { cms } = useCMS();
+
+  const heroContent = cms?.pages?.inicio || {};
+  const headline = heroContent.heroTitle || t.hero.headline;
+  const subtitle = heroContent.heroSubtitle || t.hero.subtitle;
+  const ctaText = heroContent.ctaText || t.hero.ctaDiagnostico;
 
   // Parallax Curtain Lift Effect: As the user scrolls down, the Hero glides upward like an architectural curtain
   const { scrollYProgress } = useScroll({
@@ -86,8 +93,8 @@ export default function HeroEditorial() {
                 isLight ? 'text-[#090d16]' : 'text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.95)]'
               }`}>
                 <KineticTypewriter 
-                  key={`${t.hero.headline}-${isLight ? 'light' : 'dark'}`}
-                  text={t.hero.headline}
+                  key={`${headline}-${isLight ? 'light' : 'dark'}`}
+                  text={headline}
                   speed={24}
                   delay={100}
                   onComplete={() => setTitleDone(true)}
@@ -103,7 +110,7 @@ export default function HeroEditorial() {
                   isLight ? 'text-slate-700' : 'text-zinc-200/95 drop-shadow-[0_2px_14px_rgba(0,0,0,0.95)]'
                 }`}
               >
-                {t.hero.subtitle}
+                {subtitle}
               </motion.p>
 
               {/* Botones de Conversión del Hero */}
@@ -117,7 +124,7 @@ export default function HeroEditorial() {
                   href="/#/diagnostico"
                   className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 text-white font-sans text-xs font-bold uppercase tracking-wider shadow-[0_0_25px_rgba(99,102,241,0.45)] hover:shadow-[0_0_35px_rgba(168,85,247,0.6)] transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <span>{t.hero.ctaDiagnostico}</span>
+                  <span>{ctaText}</span>
                   <span className="text-sm">→</span>
                 </a>
 

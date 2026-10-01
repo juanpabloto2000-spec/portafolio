@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { LeadProvider } from './context/LeadContext';
+import { CMSProvider } from './context/CMSContext';
 import './styles/index.css';
 
 // Registro de WebMCP para compatibilidad nativa con agentes en navegadores (W3C WebML / Chrome WebMCP standard)
@@ -55,8 +56,10 @@ if (typeof navigator !== 'undefined' && navigator.modelContext?.provideContext) 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <LeadProvider>
-      <App />
-    </LeadProvider>
+    <CMSProvider>
+      <LeadProvider>
+        <App />
+      </LeadProvider>
+    </CMSProvider>
   </React.StrictMode>
 );

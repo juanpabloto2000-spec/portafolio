@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Sparkles, Send, ArrowRight, Volume2, VolumeX, BrainCircuit } from 'lucide-react';
+import { X, Sparkles, Send, ArrowRight, Volume2, VolumeX, BrainCircuit, Mic, MicOff, Radio, AlertCircle } from 'lucide-react';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import AndroidVoiceAvatar from './AndroidVoiceAvatar';
 import { reasonAuraQuery } from '../../utils/auraReasoningEngine';
@@ -17,11 +17,11 @@ const AURA_I18N = {
     welcome: '¡Hola! Soy Aura, tu asistente de ingeniería y arquitectura en Dynamind Studios. 🔮\n\nEstoy entrenada para diagnosticar los cuellos de botella de tu negocio (Gastrobar, Glamping, Clínica o Marca Personal) y recomendarte la plataforma exacta que necesitas. ¿En qué te puedo asesorar hoy?',
     promptsLabel: 'Consultas frecuentes para Aura:',
     prompts: [
-      { label: '🍽️ ¿Qué solución hay para un Gastrobar?', query: '¿Qué solución tienen para un restaurante o gastrobar con demoras en mesa?' },
-      { label: '🏨 ¿Cómo eliminar comisiones de Booking?', query: 'Tengo un glamping o cabañas, ¿cómo puedo cobrar anticipos y reservas directas sin intermediarios?' },
-      { label: '💎 ¿Cómo retener y fidelizar clientes?', query: '¿Cómo funciona su sistema de fidelización, puntos y membresías VIP?' },
-      { label: '💆‍♀️ ¿Cómo filtrar curiosos en clínicas?', query: 'Tengo una clínica o marca personal, ¿cómo filtro curiosos de WhatsApp?' },
-      { label: '⚡ ¿Cuánto tarda la entrega?', query: '¿Cuál es el tiempo de desarrollo e implementación de una plataforma completa?' }
+      { label: '🍽️ ¿Qué solución hay para un Gastrobar?', query: '¿Qué solución tienen para un restaurante o gastrobar con demoras en mesa?', replyKey: 'gastro' },
+      { label: '🏨 ¿Cómo eliminar comisiones de Booking?', query: 'Tengo un glamping o cabañas, ¿cómo puedo cobrar anticipos y reservas directas sin intermediarios?', replyKey: 'hotel' },
+      { label: '💎 ¿Cómo retener y fidelizar clientes?', query: '¿Cómo funciona su sistema de fidelización, puntos y membresías VIP?', replyKey: 'loyalty' },
+      { label: '💆‍♀️ ¿Cómo filtrar curiosos en clínicas?', query: 'Tengo una clínica o marca personal, ¿cómo filtro curiosos de WhatsApp?', replyKey: 'clinic' },
+      { label: '⚡ ¿Cuánto tarda la entrega?', query: '¿Cuál es el tiempo de desarrollo e implementación de una plataforma completa?', replyKey: 'time' }
     ],
     placeholder: 'Pregúntale a Aura sobre cuellos de botella de tu negocio...',
     listenBtn: 'Escuchar respuesta',
@@ -44,11 +44,11 @@ const AURA_I18N = {
     welcome: 'Hello! I am Aura, your engineering and architecture assistant at Dynamind Studios. 🔮\n\nI am trained to diagnose real operational bottlenecks in your business (Gastrobar, Glamping, Clinic, or Personal Brand) and recommend the exact software platform you need. How can I guide you today?',
     promptsLabel: 'Frequent questions for Aura:',
     prompts: [
-      { label: '🍽️ Solution for Gastrobars?', query: 'What solution do you offer for a restaurant or bar with ordering delays?' },
-      { label: '🏨 Eliminate Booking fees?', query: 'I run a glamping or resort, how can I accept direct bookings without commission fees?' },
-      { label: '💎 Loyalty & VIP Retention?', query: 'How does your loyalty, point accumulation and VIP membership system work?' },
-      { label: '💆‍♀️ Filter unqualified leads?', query: 'I have a clinic or brand, how do I stop wasting hours on WhatsApp price shoppers?' },
-      { label: '⚡ Delivery timeframe?', query: 'How long does development and deployment take?' }
+      { label: '🍽️ Solution for Gastrobars?', query: 'What solution do you offer for a restaurant or bar with ordering delays?', replyKey: 'gastro' },
+      { label: '🏨 Eliminate Booking fees?', query: 'I run a glamping or resort, how can I accept direct bookings without commission fees?', replyKey: 'hotel' },
+      { label: '💎 Loyalty & VIP Retention?', query: 'How does your loyalty, point accumulation and VIP membership system work?', replyKey: 'loyalty' },
+      { label: '💆‍♀️ Filter unqualified leads?', query: 'I have a clinic or brand, how do I stop wasting hours on WhatsApp price shoppers?', replyKey: 'clinic' },
+      { label: '⚡ Delivery timeframe?', query: 'How long does development and deployment take?', replyKey: 'time' }
     ],
     placeholder: 'Ask Aura about your business bottlenecks...',
     listenBtn: 'Listen to answer',
@@ -71,11 +71,11 @@ const AURA_I18N = {
     welcome: 'Bonjour ! Je suis Aura, votre assistante en ingénierie logicielle chez Dynamind Studios. 🔮\n\nJe suis entraînée pour diagnostiquer les goulots d\'étranglement de votre activité (Gastrobar, Glamping, Clinique ou Marque d\'Auteur) et vous conseiller la plateforme logicielle idéale. En quoi puis-je vous éclairer aujourd\'hui ?',
     promptsLabel: 'Questions fréquentes pour Aura :',
     prompts: [
-      { label: '🍽️ Solution pour Restaurant / Bar ?', query: 'Quelle solution pour un restaurant ou bar avec des retards de service ?' },
-      { label: '🏨 Supprimer commissions Booking ?', query: 'J\'ai un glamping, comment encaisser des réservations directes sans commissions ?' },
-      { label: '💎 Fidélisation & Membres VIP ?', query: 'Comment fonctionne votre système de fidélisation, points et adhésions VIP ?' },
-      { label: '💆‍♀️ Filtrer les curieux sur WhatsApp ?', query: 'J\'ai une clinique ou marque, comment filtrer les demandes stériles ?' },
-      { label: '⚡ Délai de livraison ?', query: 'Quel est le temps de développement et de mise en production ?' }
+      { label: '🍽️ Solution pour Restaurant / Bar ?', query: 'Quelle solution pour un restaurant ou bar avec des retards de service ?', replyKey: 'gastro' },
+      { label: '🏨 Supprimer commissions Booking ?', query: 'J\'ai un glamping, comment encaisser des réservations directes sans commissions ?', replyKey: 'hotel' },
+      { label: '💎 Fidélisation & Membres VIP ?', query: 'Comment fonctionne votre système de fidélisation, points et adhésions VIP ?', replyKey: 'loyalty' },
+      { label: '💆‍♀️ Filtrer les curieux sur WhatsApp ?', query: 'J\'ai une clinique ou marque, comment filtrer les demandes stériles ?', replyKey: 'clinic' },
+      { label: '⚡ Délai de livraison ?', query: 'Quel est le temps de développement et de mise en production ?', replyKey: 'time' }
     ],
     placeholder: 'Posez une question à Aura sur vos processus...',
     listenBtn: 'Écouter la réponse',
@@ -83,7 +83,7 @@ const AURA_I18N = {
     ctaDiagnostic: 'Démarrer le Diagnostic (45s)',
     answers: {
       gastro: 'Pour la gastronomie et les bars, nous intégrons notre Menu QR Tactile à table couplé aux commandes KDS en cuisine et à la caisse en direct. Le client commande depuis son mobile, la cuisine gère les priorités en temps réel et le paiement s\'effectue sans commissions de 20% reversées aux plateformes tierces.',
-      hotel: 'Pour l\'hôtellerie, nous supprimons les intermédiaires grâce à notre Moteur de Réservation Directe avec calendrier atomique et acompte de 50%. Les disponibilités se bloquent instantanément et les fonds arrivent directement sur votre compte bancaire.',
+      hotel: 'Pour l\'hôtellerie, nous supprimons les intermédiaires grâce à notre Moteur de Réservation Directe avec calendrier atomique et acompte de 50%. Les disponibilités se bloquent instantanément et les fonds arrivent directamente sur votre compte bancaire.',
       loyalty: 'Pour la rétention et la fidélisation, nous déployons un système de points par consommation, des abonnements VIP et un portefeuille numérique sur WhatsApp sans application à télécharger.',
       clinic: 'Pour les cliniques esthétiques et marques d\'auteur, nous déployons un Triage Visuel de 45 secondes. Au lieu d\'échanger des heures sur WhatsApp avec de simples curieux, le système qualifie l\'intérêt et ne planifie des appels qu\'avec des prospects sérieux.',
       time: 'Nous concevons et déployons des plateformes complètes en 10 à 18 jours ouvrés en code React natif, avec tableau de bord opérationnel privé et formation complète de vos équipes.',
@@ -98,11 +98,11 @@ const AURA_I18N = {
     welcome: 'Hallo! Ich bin Aura, Ihre Architektur- und Software-Assistentin bei Dynamind Studios. 🔮\n\nIch bin darauf spezialisiert, operative Engpässe in Ihrem Unternehmen (Gastronomie, Glamping, Klinik oder Autorenmarke) zu analysieren und die exakte Systemlösung zu empfehlen. Wie kann ich Sie heute beraten?',
     promptsLabel: 'Häufige Fragen an Aura:',
     prompts: [
-      { label: '🍽️ Lösung für Gastronomie / Bar?', query: 'Welche Lösung bieten Sie für ein Restaurant mit Bestellverzögerungen?' },
-      { label: '🏨 Booking-Gebühren vermeiden?', query: 'Ich betreibe ein Glamping, wie kann ich Direktbuchungen ohne Provisionen annehmen?' },
-      { label: '💎 Treuesystem & VIP-Punkte?', query: 'Wie funktioniert Ihr System für Kundenbindung, Punkte und VIP-Mitgliedschaften?' },
-      { label: '💆‍♀️ Zeitfresser in WhatsApp stoppen?', query: 'Wie filtere ich unqualifizierte Preisanfragen bei einer Klinik oder Marke?' },
-      { label: '⚡ Lieferzeit?', query: 'Wie lange dauert die vollständige Entwicklung und Implementierung?' }
+      { label: '🍽️ Lösung für Gastronomie / Bar?', query: 'Welche Lösung bieten Sie für ein Restaurant mit Bestellverzögerungen?', replyKey: 'gastro' },
+      { label: '🏨 Booking-Gebühren vermeiden?', query: 'Ich betreibe ein Glamping, wie kann ich Direktbuchungen ohne Provisionen annehmen?', replyKey: 'hotel' },
+      { label: '💎 Treuesystem & VIP-Punkte?', query: 'Wie funktioniert Ihr System für Kundenbindung, Punkte und VIP-Mitgliedschaften?', replyKey: 'loyalty' },
+      { label: '💆‍♀️ Zeitfresser in WhatsApp stoppen?', query: 'Wie filtere ich unqualifizierte Preisanfragen bei einer Klinik oder Marke?', replyKey: 'clinic' },
+      { label: '⚡ Lieferzeit?', query: 'Wie lange dauert die vollständige Entwicklung und Implementierung?', replyKey: 'time' }
     ],
     placeholder: 'Fragen Sie Aura nach Lösungen für Ihr Unternehmen...',
     listenBtn: 'Antwort anhören',
@@ -125,11 +125,11 @@ const AURA_I18N = {
     welcome: 'Olá! Eu sou Aura, sua assistente de arquitetura e engenharia na Dynamind Studios. 🔮\n\nFui treinada para diagnosticar os gargalos do seu negócio (Gastrobar, Glamping, Clínica ou Marca Pessoal) e recomendar a plataforma exata de que você precisa. Como posso te orientar hoje?',
     promptsLabel: 'Consultas frequentes para Aura:',
     prompts: [
-      { label: '🍽️ Solução para Gastronomia / Bar?', query: 'Qual a solução para restaurante ou bar com lentidão no atendimento?' },
-      { label: '🏨 Eliminar taxas do Booking?', query: 'Tenho um glamping, como posso receber reservas diretas sem pagar comissões?' },
-      { label: '💎 Retenção & Fidelização VIP?', query: 'Como funciona o sistema de fidelização, pontos e membros VIP?' },
-      { label: '💆‍♀️ Filtrar curiosos no WhatsApp?', query: 'Tenho uma clínica ou marca, como parar de perder tempo respondendo curiosos?' },
-      { label: '⚡ Prazo de entrega?', query: 'Qual o tempo de desenvolvimento e implementação completa?' }
+      { label: '🍽️ Solução para Gastronomia / Bar?', query: 'Qual a solução para restaurante ou bar com lentidão no atendimento?', replyKey: 'gastro' },
+      { label: '🏨 Eliminar taxas do Booking?', query: 'Tenho um glamping, como posso receber reservas diretas sem pagar comissões?', replyKey: 'hotel' },
+      { label: '💎 Retenção & Fidelização VIP?', query: 'Como funciona o sistema de fidelização, pontos e membros VIP?', replyKey: 'loyalty' },
+      { label: '💆‍♀️ Filtrar curiosos no WhatsApp?', query: 'Tenho uma clínica ou marca, como parar de perder tempo respondendo curiosos?', replyKey: 'clinic' },
+      { label: '⚡ Prazo de entrega?', query: 'Qual o tempo de desenvolvimento e implementação completa?', replyKey: 'time' }
     ],
     placeholder: 'Pergunte à Aura sobre gargalos do seu negócio...',
     listenBtn: 'Ouvir resposta',
@@ -152,11 +152,11 @@ const AURA_I18N = {
     welcome: 'こんにちは！Dynamind Studiosのエンジニアリング・アーキテクチャ担当AIアシスタント、オーラです。🔮\n\n飲食・ホテル・クリニック・著者ブランドの現場ボトルネックを診断し、最適な生きたソフトウェアをご案内します。本日はどのようなご相談でしょうか？',
     promptsLabel: 'よくあるご相談：',
     prompts: [
-      { label: '🍽️ 飲食・ガストロバーの解決策は？', query: '飲食店の注文遅延やオペレーション改善のソリューションは？' },
-      { label: '🏨 予約サイトの手数料をなくすには？', query: '宿泊施設でOTA手数料をゼロにして直販予約を受けるには？' },
-      { label: '💎 リピート＆VIP会員制度？', query: 'ポイント還元やVIP会員制度、リピート促進システムの仕組みは？' },
-      { label: '💆‍♀️ 冷やかし問い合わせを減らすには？', query: 'クリニックや著者ブランドで冷やかしを排除して予約を自動化するには？' },
-      { label: '⚡ 開発期間と納期は？', query: '完全なプラットフォームの開発と導入にはどれくらいかかりますか？' }
+      { label: '🍽️ 飲食・ガストロバーの解決策は？', query: '飲食店の注文遅延やオペレーション改善のソリューションは？', replyKey: 'gastro' },
+      { label: '🏨 予約サイトの手数料をなくすには？', query: '宿泊施設でOTA手数料をゼロにして直販予約を受けるには？', replyKey: 'hotel' },
+      { label: '💎 リピート＆VIP会員制度？', query: 'ポイント還元やVIP会員制度、リピート促進システムの仕組みは？', replyKey: 'loyalty' },
+      { label: '💆‍♀️ 冷やかし問い合わせを減らすには？', query: 'クリニックや著者ブランドで冷やかしを排除して予約を自動化するには？', replyKey: 'clinic' },
+      { label: '⚡ 開発期間と納期は？', query: '完全なプラットフォームの開発と導入にはどれくらいかかりますか？', replyKey: 'time' }
     ],
     placeholder: 'オーラにビジネスの課題について質問する...',
     listenBtn: '音声を再生',
@@ -185,6 +185,7 @@ function pickNaturalHumanVoice(langCode) {
   const matching = voices.filter(v => v.lang.toLowerCase().startsWith(langPrefix));
   if (!matching.length) return voices[0] || null;
 
+  // 1. Voces neuronales y naturales femeninas prioritarias por idioma
   const naturalFemale = matching.find(v => {
     const name = v.name.toLowerCase();
     const isNatural = name.includes('natural') || name.includes('neural') || name.includes('online');
@@ -192,26 +193,33 @@ function pickNaturalHumanVoice(langCode) {
                      name.includes('jenny') || name.includes('aria') || name.includes('denise') || 
                      name.includes('katja') || name.includes('francisca') || name.includes('nanami') ||
                      name.includes('elena') || name.includes('monica') || name.includes('paulina') ||
-                     name.includes('victoria') || name.includes('samantha') || name.includes('kyoko');
+                     name.includes('victoria') || name.includes('samantha') || name.includes('kyoko') ||
+                     name.includes('hortense') || name.includes('julie') || name.includes('marlene') ||
+                     name.includes('leticia') || name.includes('raquel') || name.includes('ayumi');
     return isNatural && isFemale;
   });
   if (naturalFemale) return naturalFemale;
 
+  // 2. Cualquier voz natural/neuronal disponible en el idioma
   const anyNatural = matching.find(v => {
     const name = v.name.toLowerCase();
     return name.includes('natural') || name.includes('neural') || name.includes('online');
   });
   if (anyNatural) return anyNatural;
 
+  // 3. Voces de Google de alta síntesis para el idioma
   const googleVoice = matching.find(v => v.name.toLowerCase().includes('google'));
   if (googleVoice) return googleVoice;
 
+  // 4. Voces femeninas estándar del sistema
   const femaleVoice = matching.find(v => {
     const name = v.name.toLowerCase();
     return name.includes('female') || name.includes('sabina') || name.includes('monica') || 
            name.includes('elena') || name.includes('lucia') || name.includes('paulina') ||
            name.includes('samantha') || name.includes('victoria') || name.includes('hortense') ||
-           name.includes('julie') || name.includes('hedda') || name.includes('maria') || name.includes('kyoko');
+           name.includes('julie') || name.includes('hedda') || name.includes('maria') || 
+           name.includes('katja') || name.includes('francisca') || name.includes('kyoko') || 
+           name.includes('nanami');
   });
   if (femaleVoice) return femaleVoice;
 
@@ -390,9 +398,210 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
   const [thinkingPhase, setThinkingPhase] = useState('Analizando tu caso...');
   const [avatarAction, setAvatarAction] = useState(null);
 
+  // --------------------------------------------------------------------------
+  // ENTRADA DE VOZ EN TIEMPO REAL CON SPEECH-TO-TEXT & ORBE CÓSMICO REACTIVO
+  // --------------------------------------------------------------------------
+  const [isListening, setIsListening] = useState(false);
+  const [liveTranscript, setLiveTranscript] = useState('');
+  const [listeningError, setListeningError] = useState(null);
+  const recognitionRef = useRef(null);
+  const liveTranscriptRef = useRef('');
+
   const speechRef = useRef(null);
   const audioRef = useRef(null);
+  const heartbeatRef = useRef(null);
   const chatBottomRef = useRef(null);
+  const abortControllerRef = useRef(null);
+  const isOpenRef = useRef(isOpen);
+
+  // 1. Manejador Maestro de Entrada de Voz: Solicita Permiso Explícito Primero
+  const handleToggleVoiceInput = async () => {
+    // Si ya está escuchando, el usuario decide detener y procesar la pregunta
+    if (isListening) {
+      stopVoiceRecognition(true);
+      return;
+    }
+
+    setListeningError(null);
+
+    const SpeechRecognition = typeof window !== 'undefined' 
+      ? (window.SpeechRecognition || window.webkitSpeechRecognition) 
+      : null;
+
+    if (!SpeechRecognition) {
+      setListeningError('Reconocimiento de voz no soportado en este navegador. Te sugerimos Chrome, Edge o Safari.');
+      return;
+    }
+
+    // 🔒 REQUERIMIENTO 1: Solicitar explícitamente el permiso del micrófono al usuario en el navegador
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        // Liberar inmediatamente los tracks para que SpeechRecognition acceda al hardware sin colisiones
+        stream.getTracks().forEach(track => track.stop());
+      } catch (err) {
+        console.warn('[Microphone Permission Error]:', err);
+        if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+          setListeningError('Permiso de micrófono denegado. Permite el acceso al micrófono en la barra de tu navegador para hablar con Aura.');
+        } else {
+          setListeningError('No se pudo acceder al micrófono. Por favor verifica la conexión de tus dispositivos de audio.');
+        }
+        return;
+      }
+    }
+
+    // Permiso concedido -> Proceder a iniciar el reconocimiento y transformar a Aura en el Orbe Cósmico
+    startVoiceRecognition();
+  };
+
+  // Iniciar Captura de Voz en Tiempo Real (Aura se transforma en el Orbe)
+  const startVoiceRecognition = () => {
+    setListeningError(null);
+    setLiveTranscript('');
+    liveTranscriptRef.current = '';
+
+    const SpeechRecognition = typeof window !== 'undefined' ? (window.SpeechRecognition || window.webkitSpeechRecognition) : null;
+    if (!SpeechRecognition) return;
+
+    try {
+      handleStopAllAudio();
+
+      const recognition = new SpeechRecognition();
+      recognitionRef.current = recognition;
+      recognition.continuous = true;
+      recognition.interimResults = true;
+
+      const langMap = {
+        es: 'es-CO',
+        en: 'en-US',
+        de: 'de-DE',
+        pt: 'pt-BR',
+        ja: 'ja-JP'
+      };
+      recognition.lang = langMap[currentLang] || 'es-CO';
+
+      recognition.onstart = () => {
+        // En este instante exacto, Aura se metamorfosea en el Orbe Cósmico
+        setIsListening(true);
+      };
+
+      recognition.onresult = (event) => {
+        let currentText = '';
+        for (let i = 0; i < event.results.length; i++) {
+          currentText += event.results[i][0].transcript;
+        }
+        liveTranscriptRef.current = currentText;
+        setLiveTranscript(currentText);
+        setInputText(currentText);
+      };
+
+      recognition.onerror = (event) => {
+        console.warn('[Aura Voice Input Error]:', event.error);
+        if (event.error === 'not-allowed') {
+          setListeningError('Permiso de micrófono denegado en tu navegador.');
+        } else if (event.error !== 'no-speech') {
+          setListeningError('No se detectó audio claro. Intenta de nuevo.');
+        }
+        setIsListening(false);
+      };
+
+      recognition.onend = () => {
+        // Al terminar la escucha, Aura vuelve a ser Aura
+        setIsListening(false);
+        const textToSend = liveTranscriptRef.current.trim();
+        if (textToSend) {
+          liveTranscriptRef.current = '';
+          setLiveTranscript('');
+          // Pausa cinematográfica de 350ms para que Aura se rematerialice antes de hablar
+          setTimeout(() => {
+            handleSendQuery(textToSend);
+          }, 350);
+        }
+      };
+
+      recognition.start();
+    } catch (err) {
+      console.error('Error starting recognition:', err);
+      setIsListening(false);
+    }
+  };
+
+  // Detener y enviar pregunta: Aura regresa a su forma física y luego responde
+  const stopVoiceRecognition = (sendImmediately = true) => {
+    const textToSend = liveTranscriptRef.current.trim() || liveTranscript.trim();
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch (e) {}
+      recognitionRef.current = null;
+    }
+    
+    // Aura regresa a su forma física de inmediato
+    setIsListening(false);
+
+    if (sendImmediately && textToSend) {
+      liveTranscriptRef.current = '';
+      setLiveTranscript('');
+      // Delay de 350ms para que la animación de morphing de regreso a Aura finalice antes de que empiece a hablar
+      setTimeout(() => {
+        handleSendQuery(textToSend);
+      }, 350);
+    } else {
+      liveTranscriptRef.current = '';
+      setLiveTranscript('');
+    }
+  };
+
+  // Cancelar captura de voz y devolver a Aura a su forma normal
+  const cancelVoiceRecognition = () => {
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.abort();
+      } catch (e) {}
+      recognitionRef.current = null;
+    }
+    liveTranscriptRef.current = '';
+    setIsListening(false);
+    setLiveTranscript('');
+    setInputText('');
+  };
+
+  const handleCloseModal = () => {
+    isOpenRef.current = false;
+    handleStopAllAudio();
+    cancelVoiceRecognition();
+    if (onClose) onClose();
+  };
+
+  // Sincronizar isOpenRef y cortar audio inmediatamente al cerrar
+  useEffect(() => {
+    isOpenRef.current = isOpen;
+    if (!isOpen) {
+      handleStopAllAudio();
+      cancelVoiceRecognition();
+    }
+  }, [isOpen]);
+
+  // Manejo de tecla Escape para cerrar modal cortando audio
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        handleCloseModal();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Cleanup absoluto al desmontar el componente
+  useEffect(() => {
+    isOpenRef.current = true;
+    return () => {
+      isOpenRef.current = false;
+      handleStopAllAudio();
+      cancelVoiceRecognition();
+    };
+  }, []);
 
   // Detección reactiva de resolución móvil para adaptar el tamaño del avatar
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth < 640 : false);
@@ -423,97 +632,75 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
     ]);
   }, [currentLang]);
 
-  // Precargar las voces del sintetizador como fallback
-  useEffect(() => {
-    if (typeof window === 'undefined' || !window.speechSynthesis) return;
-
-    const updateVoices = () => {
-      const v = window.speechSynthesis.getVoices();
-      if (v && v.length > 0) {
-        setVoicesLoaded(true);
-      }
-    };
-
-    updateVoices();
-    window.speechSynthesis.onvoiceschanged = updateVoices;
-
-    return () => {
-      if (typeof window !== 'undefined' && window.speechSynthesis) {
-        window.speechSynthesis.onvoiceschanged = null;
-      }
-    };
-  }, []);
-
-  // Función de Síntesis de Voz Fallback (Web Speech API)
-  const speakText = (textToSpeak) => {
-    if (typeof window === 'undefined' || !window.speechSynthesis) return;
-
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.resume();
-
-    if (!isVoiceActive) {
-      setIsSpeaking(false);
-      return;
+  // Función Central de Apagado Absoluto e Inmediato de Audio (HTML5 + Red + Cancelación)
+  const handleStopAllAudio = () => {
+    // 1. Abortar cualquier petición HTTP de síntesis en curso
+    if (abortControllerRef.current) {
+      try {
+        abortControllerRef.current.abort();
+      } catch (e) {}
+      abortControllerRef.current = null;
     }
 
-    const cleanText = textToSpeak
-      .replace(/[*_#`~]/g, '')
-      .replace(/[🔮🍽️🏨💆‍♀️⚡💎👀✓✕●•→]/g, '')
-      .replace(/\n+/g, '. ')
-      .replace(/\s+/g, ' ')
-      .trim();
-
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.lang = strings.locale;
-
-    const bestVoice = pickNaturalHumanVoice(strings.locale);
-    if (bestVoice) {
-      utterance.voice = bestVoice;
-      utterance.lang = bestVoice.lang;
+    // 2. Limpiar heartbeat
+    if (heartbeatRef.current) {
+      clearInterval(heartbeatRef.current);
+      heartbeatRef.current = null;
     }
 
-    utterance.pitch = 1.0;
-    utterance.rate = 0.96;
-    utterance.volume = 1.0;
+    // 3. Pausar, silenciar y resetear Audio HTML5 inmediatamente
+    if (audioRef.current) {
+      try {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+        audioRef.current.src = '';
+        audioRef.current.onplay = null;
+        audioRef.current.onpause = null;
+        audioRef.current.onended = null;
+        audioRef.current.onerror = null;
+      } catch (e) {}
+      audioRef.current = null;
+    }
 
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
+    // 4. Cancelar cualquier síntesis de voz residual del navegador
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      try {
+        window.speechSynthesis.cancel();
+      } catch (e) {}
+    }
 
-    speechRef.current = utterance;
-    window.speechSynthesis.resume();
-    window.speechSynthesis.speak(utterance);
+    // 5. Apagar animación de Aura de inmediato
+    setIsSpeaking(false);
   };
+
+  // Caché en memoria para evitar volver a sintetizar textos ya generados
+  const audioBlobCacheRef = useRef(new Map());
 
   // Reproductor de Audio Neuronal de Estudio Oficial (Microsoft Azure Neural)
   const playAuraAudio = (audioKey, fallbackText) => {
-    if (!isVoiceActive) {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
-      if (typeof window !== 'undefined' && window.speechSynthesis) {
-        window.speechSynthesis.cancel();
-      }
-      setIsSpeaking(false);
+    if (!isOpenRef.current || !isVoiceActive) {
+      handleStopAllAudio();
       return;
     }
 
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-      audioRef.current = null;
-    }
-    if (typeof window !== 'undefined' && window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-    }
+    handleStopAllAudio();
 
     const audioUrl = `/audio/aura/aura_${currentLang}_${audioKey}.mp3`;
     const audio = new Audio(audioUrl);
     audioRef.current = audio;
 
+    // Sincronización exacta: La animación se enciende estrictamente en onplay
     audio.onplay = () => {
-      setIsSpeaking(true);
+      if (isOpenRef.current && isVoiceActive) {
+        setIsSpeaking(true);
+      } else {
+        audio.pause();
+        setIsSpeaking(false);
+      }
+    };
+
+    audio.onpause = () => {
+      setIsSpeaking(false);
     };
 
     audio.onended = () => {
@@ -523,65 +710,227 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
 
     audio.onerror = () => {
       audioRef.current = null;
-      speakText(fallbackText);
+      setIsSpeaking(false);
+      if (fallbackText && isOpenRef.current && isVoiceActive) {
+        playDynamicAuraAudio(fallbackText);
+      }
     };
 
     const playPromise = audio.play();
     if (playPromise !== undefined) {
-      playPromise.catch(err => {
+      playPromise.catch(() => {
         audioRef.current = null;
-        speakText(fallbackText);
+        setIsSpeaking(false);
+        if (fallbackText && isOpenRef.current && isVoiceActive) {
+          playDynamicAuraAudio(fallbackText);
+        }
       });
     }
   };
 
-  // Función Central de Apagado Absoluto de Audio (HTML5 + Web Speech)
-  const handleStopAllAudio = () => {
-    if (audioRef.current) {
-      try {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
-        audioRef.current.src = '';
-      } catch (e) {}
-      audioRef.current = null;
+  // Reproductor de Voz Humana Neuronal en Vivo para Respuestas Dinámicas (Azure SalomeNeural)
+  const playDynamicAuraAudio = async (textToSpeak) => {
+    if (!isOpenRef.current || !isVoiceActive) {
+      handleStopAllAudio();
+      return;
     }
-    if (typeof window !== 'undefined' && window.speechSynthesis) {
-      try {
-        window.speechSynthesis.cancel();
-      } catch (e) {}
-    }
-    setIsSpeaking(false);
-  };
 
-  // Cierre limpio del modal cortando cualquier audio activo de inmediato
-  const handleCloseModal = () => {
     handleStopAllAudio();
-    if (onClose) onClose();
+
+    const cleanText = (textToSpeak || '')
+      .replace(/[*_#`~]/g, '')
+      .replace(/[🔮🍽️🏨💆‍♀️⚡💎👀✓✕●•→👋🚀👓😉✦]/g, '')
+      .replace(/\n+/g, '. ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    if (!cleanText) return;
+
+    const cacheKey = `${currentLang}_${cleanText}`;
+
+    // 1. Si ya está en memoria, reproducir al instante
+    if (audioBlobCacheRef.current.has(cacheKey)) {
+      if (!isOpenRef.current || !isVoiceActive) return;
+
+      const cachedUrl = audioBlobCacheRef.current.get(cacheKey);
+      const audio = new Audio(cachedUrl);
+      audioRef.current = audio;
+
+      audio.onplay = () => {
+        if (isOpenRef.current && isVoiceActive) {
+          setIsSpeaking(true);
+        } else {
+          audio.pause();
+          setIsSpeaking(false);
+        }
+      };
+      audio.onpause = () => setIsSpeaking(false);
+      audio.onended = () => {
+        setIsSpeaking(false);
+        audioRef.current = null;
+      };
+      audio.onerror = () => {
+        setIsSpeaking(false);
+        audioRef.current = null;
+      };
+
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          setIsSpeaking(false);
+          audioRef.current = null;
+        });
+      }
+      return;
+    }
+
+    // 2. Generar con Microsoft Azure Neural en vivo via endpoint local /api/aura-tts
+    try {
+      // DOGMA: NO activar setIsSpeaking(true) aquí. 
+      // La animación de los labios de Aura solo inicia cuando el audio empiece a sonar (audio.onplay).
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+      const res = await fetch('/api/aura-tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: cleanText, lang: currentLang }),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+      abortControllerRef.current = null;
+
+      if (!res.ok) {
+        throw new Error('TTS endpoint returned status ' + res.status);
+      }
+
+      // Si el usuario cerró el modal o apagó la voz mientras se generaba, abortar
+      if (!isOpenRef.current || !isVoiceActive) {
+        setIsSpeaking(false);
+        return;
+      }
+
+      const blob = await res.blob();
+      const audioUrl = URL.createObjectURL(blob);
+      audioBlobCacheRef.current.set(cacheKey, audioUrl);
+
+      // Verificación defensiva antes de instanciar Audio
+      if (!isOpenRef.current || !isVoiceActive) {
+        setIsSpeaking(false);
+        return;
+      }
+
+      const audio = new Audio(audioUrl);
+      audioRef.current = audio;
+
+      // Sincronización exacta milimétrica: La animación se enciende SOLO cuando el audio empieza a reproducirse
+      audio.onplay = () => {
+        if (isOpenRef.current && isVoiceActive) {
+          setIsSpeaking(true);
+        } else {
+          audio.pause();
+          setIsSpeaking(false);
+        }
+      };
+
+      audio.onpause = () => {
+        setIsSpeaking(false);
+      };
+
+      audio.onended = () => {
+        setIsSpeaking(false);
+        audioRef.current = null;
+      };
+
+      audio.onerror = () => {
+        setIsSpeaking(false);
+        audioRef.current = null;
+      };
+
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          setIsSpeaking(false);
+          audioRef.current = null;
+        });
+      }
+    } catch (err) {
+      // NUNCA hacer fallback a voz robótica. Si hay error o cancelación, simplemente asegurar silencio.
+      if (err.name !== 'AbortError') {
+        console.warn('[Aura Neural Voice] Síntesis finalizada o cancelada:', err.message);
+      }
+      setIsSpeaking(false);
+      abortControllerRef.current = null;
+    }
   };
 
-  // Cleanup de audio garantizado al desmontar el modal
-  useEffect(() => {
-    return () => {
-      handleStopAllAudio();
-    };
-  }, []);
-
-  // También detener si isOpen cambia a false
-  useEffect(() => {
-    if (!isOpen) {
-      handleStopAllAudio();
+  // Reproductor inteligente de mensajes: Audio de estudio oficial vs Voz Neuronal Dinámica
+  const handlePlayMessage = (msg) => {
+    if (!msg || !isOpenRef.current) return;
+    if (msg.replyKey && msg.replyKey !== 'dynamic') {
+      playAuraAudio(msg.replyKey, msg.text);
+    } else {
+      playDynamicAuraAudio(msg.text);
     }
-  }, [isOpen]);
+  };
 
-  // Manejador de Consultas con Razonamiento Cognitivo y Grounding Real
-  const handleSendQuery = async (query) => {
+  // Reproducir saludo con voz de estudio al abrir el modal o cambiar idioma
+  useEffect(() => {
+    let timer;
+    if (isOpen && isVoiceActive) {
+      timer = setTimeout(() => {
+        if (isOpenRef.current && isVoiceActive) {
+          playAuraAudio('welcome', strings.welcome);
+        }
+      }, 500);
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [isOpen, currentLang]);
+
+
+  // Detector semántico de pilares de negocio para reproducir audio humano oficial
+  const detectPresetKey = (query) => {
+    if (!query) return null;
+    const q = query.toLowerCase();
+    if (
+      q.includes('gastro') || q.includes('restauran') || q.includes('bar') || 
+      q.includes('demoras en mesa') || q.includes('kds') || q.includes('comanda') || 
+      q.includes('comida') || q.includes('essen') || q.includes('飲食')
+    ) return 'gastro';
+    if (
+      q.includes('glamping') || q.includes('booking') || q.includes('hotel') || 
+      q.includes('cabaña') || q.includes('cabin') || q.includes('airbnb') ||
+      q.includes('hospedaje') || q.includes('anticipos') || q.includes('reservas directas') ||
+      q.includes('zimmer') || q.includes('chambre') || q.includes('宿泊')
+    ) return 'hotel';
+    if (
+      q.includes('fideliz') || q.includes('loyalt') || q.includes('punto') || 
+      q.includes('puntos') || q.includes('vip') || q.includes('retenc') || 
+      q.includes('wallet') || q.includes('billetera') || q.includes('recompra') || 
+      q.includes('kundenbindung') || q.includes('リピート')
+    ) return 'loyalty';
+    if (
+      q.includes('clínic') || q.includes('clinic') || q.includes('curios') || 
+      q.includes('filtrar curiosos') || q.includes('whatsapp') || q.includes('cita') || 
+      q.includes('lead') || q.includes('termin') || q.includes('rendez-vous') || q.includes('クリニック')
+    ) return 'clinic';
+    if (
+      q.includes('tiempo') || q.includes('tarda') || q.includes('plazo') || 
+      q.includes('cuanto demora') || q.includes('delivery') || q.includes('délai') || 
+      q.includes('dauer') || q.includes('prazo') || q.includes('納期')
+    ) return 'time';
+    return null;
+  };
+
+  // Manejador de Consultas: Soporta tanto presets de estudio como inferencia cognitiva Gemini
+  const handleSendQuery = async (query, explicitReplyKey = null) => {
     if (!query || !query.trim() || isThinking) return;
 
     handleStopAllAudio();
-
-    if (typeof window !== 'undefined' && window.speechSynthesis) {
-      window.speechSynthesis.resume();
-    }
 
     const trimmedQuery = query.trim();
     const userMsg = { sender: 'user', text: trimmedQuery };
@@ -589,10 +938,35 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
     // Inmediatamente mostrar mensaje del usuario y limpiar input
     setMessages(prev => [...prev, userMsg]);
     setInputText('');
+
+    const targetKey = explicitReplyKey || detectPresetKey(trimmedQuery);
+
+    // 🎙️ CASO 1: Si es un pilar canónico oficial (Gastro, Hotel, Loyalty, Clinic, Time)
+    // Se responde con la voz humana de estudio de Azure Neural Voice oficial
+    if (targetKey && strings.answers[targetKey]) {
+      setIsThinking(true);
+      setThinkingPhase('Consultando arquitectura Dynamind...');
+      triggerAction('glasses');
+
+      setTimeout(() => {
+        setIsThinking(false);
+        const replyText = strings.answers[targetKey];
+        const aiMsg = { 
+          sender: 'ai', 
+          text: replyText, 
+          replyKey: targetKey 
+        };
+        setMessages(prev => [...prev, aiMsg]);
+        if (isVoiceActive) {
+          playAuraAudio(targetKey, replyText);
+        }
+      }, 420);
+      return;
+    }
+
+    // 🧠 CASO 2: Inferencia cognitiva abierta / personalizada con Gemini AI
     setIsThinking(true);
     setThinkingPhase('Identificando sector y variables operativas...');
-
-    // Aura gesticula para analizar (gesto de pensar o acomodarse las gafas)
     triggerAction('glasses');
 
     const phaseTimer1 = setTimeout(() => {
@@ -604,7 +978,6 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
     }, 1200);
 
     try {
-      // 🧠 Inferencia cognitiva real con Gemini AI + grounding Dynamind
       const result = await reasonAuraQuery(trimmedQuery, currentLang, messages);
 
       clearTimeout(phaseTimer1);
@@ -620,9 +993,8 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
       setMessages(prev => [...prev, aiMsg]);
       setIsThinking(false);
 
-      // Vocalizar respuesta si la voz está activa
       if (isVoiceActive) {
-        speakText(result.reply);
+        playDynamicAuraAudio(result.reply);
       }
     } catch (err) {
       clearTimeout(phaseTimer1);
@@ -632,7 +1004,7 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
       const fallbackMsg = { sender: 'ai', text: strings.answers.general, replyKey: 'general' };
       setMessages(prev => [...prev, fallbackMsg]);
       if (isVoiceActive) {
-        speakText(strings.answers.general);
+        playAuraAudio('general', strings.answers.general);
       }
     }
   };
@@ -645,7 +1017,7 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
       setIsVoiceActive(true);
       const lastAiMessage = [...messages].reverse().find(m => m.sender === 'ai');
       if (lastAiMessage) {
-        speakText(lastAiMessage.text);
+        handlePlayMessage(lastAiMessage);
       }
     }
   };
@@ -653,9 +1025,13 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-5 bg-black/85 backdrop-blur-md animate-in fade-in duration-200 font-sans">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-5 bg-black/85 backdrop-blur-md animate-in fade-in duration-200 font-sans cursor-pointer"
+      onClick={handleCloseModal}
+    >
       <div 
-        className={`relative w-full max-w-4xl border rounded-3xl shadow-2xl overflow-hidden flex flex-col sm:flex-row h-[94dvh] sm:h-[90vh] max-h-[760px] backdrop-blur-2xl transition-colors duration-300 ${
+        onClick={(e) => e.stopPropagation()}
+        className={`relative w-full max-w-4xl border rounded-3xl shadow-2xl overflow-hidden flex flex-col sm:flex-row h-[94dvh] sm:h-[90vh] max-h-[760px] backdrop-blur-2xl transition-colors duration-300 cursor-default ${
           isLight 
             ? 'bg-white/95 border-slate-200 text-slate-900 shadow-indigo-500/10' 
             : 'bg-[#060913]/98 border-purple-500/30 text-white shadow-[0_0_80px_rgba(124,58,237,0.18)]'
@@ -715,66 +1091,183 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
             </button>
           </div>
 
-          {/* Busto de AURA en Traje de Secretaria Ejecutiva Azul y Morado (Escalado ergonómico) */}
-          <div className="relative flex-1 flex items-center justify-center py-1 sm:py-2 w-full overflow-visible min-h-[170px] sm:min-h-0">
-            <AndroidVoiceAvatar 
-              size={isMobile ? 'compact-modal' : 'modal'} 
-              isSpeaking={isSpeaking} 
-              forcedAction={avatarAction}
-              onActionComplete={() => setAvatarAction(null)}
-              className="drop-shadow-[0_12px_36px_rgba(124,58,237,0.22)]"
-            />
+          {/* Busto de AURA que se Transforma en el Orbe Cósmico al Escuchar Voz */}
+          <div className="relative flex-1 flex items-center justify-center py-1 sm:py-2 w-full overflow-visible min-h-[190px] sm:min-h-[220px]">
+            <AnimatePresence mode="wait">
+              {isListening ? (
+                <motion.div
+                  key="aura-cosmic-orb"
+                  initial={{ opacity: 0, scale: 0.35, filter: 'blur(12px)' }}
+                  animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                  exit={{ opacity: 0, scale: 0.35, filter: 'blur(10px)' }}
+                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                  className="flex flex-col items-center justify-center relative w-full h-full py-2 select-none"
+                >
+                  {/* Orbe Cósmico Multidimensional (Púrpura Neón & Azul Cian) */}
+                  <div className="relative flex items-center justify-center w-36 h-36 sm:w-44 sm:h-44">
+                    {/* Anillo Exterior 3 (Azul Cian Neón con Pulsación de Ondas) */}
+                    <motion.div
+                      animate={{ scale: [1, 1.45, 1], opacity: [0.4, 0.08, 0.4] }}
+                      transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+                      className="absolute w-32 h-32 sm:w-40 sm:h-40 rounded-full border border-cyan-400/40 blur-[1px]"
+                    />
+                    {/* Anillo Giroscópico Púrpura en 3D */}
+                    <motion.div
+                      animate={{ rotate: 360, scale: [0.95, 1.08, 0.95] }}
+                      transition={{
+                        rotate: { duration: 8, repeat: Infinity, ease: 'linear' },
+                        scale: { duration: 2.2, repeat: Infinity, ease: 'easeInOut' }
+                      }}
+                      className="absolute w-28 h-28 sm:w-34 sm:h-34 rounded-full border-2 border-dashed border-purple-400/60"
+                      style={{ transform: 'rotateX(55deg)' }}
+                    />
+                    {/* Anillo Giroscópico Azul Cian en 3D Contrarrotación */}
+                    <motion.div
+                      animate={{ rotate: -360 }}
+                      transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
+                      className="absolute w-28 h-28 sm:w-34 sm:h-34 rounded-full border border-cyan-400/50"
+                      style={{ transform: 'rotateY(60deg)' }}
+                    />
+                    {/* Resplandor Halo Cósmico */}
+                    <motion.div
+                      animate={{ scale: [1, 1.25, 1], opacity: [0.6, 0.9, 0.6] }}
+                      transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
+                      className="absolute w-24 h-24 sm:w-28 sm:h-28 rounded-full blur-xl bg-gradient-to-r from-purple-500 via-indigo-500 to-cyan-400"
+                    />
+                    {/* Núcleo del Orbe Púrpura & Azul */}
+                    <motion.div
+                      animate={{ scale: [1, 1.07, 1] }}
+                      transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
+                      className="w-20 h-20 sm:w-24 sm:h-24 rounded-full shadow-[0_0_35px_rgba(168,85,247,0.85),inset_0_0_18px_rgba(56,189,248,0.85)] relative z-10 flex flex-col items-center justify-center cursor-pointer group"
+                      style={{
+                        background: 'radial-gradient(circle at 35% 35%, #ffffff 0%, #a855f7 38%, #2563eb 72%, #090d1a 100%)'
+                      }}
+                      onClick={() => stopVoiceRecognition(true)}
+                      title="Toca para terminar de hablar y enviar a Aura"
+                    >
+                      <Radio className="w-7 h-7 sm:w-8 sm:h-8 text-white animate-pulse" />
+                    </motion.div>
+                  </div>
+
+                  {/* Ecualizador de Barras de Audio Animadas */}
+                  <div className="flex items-center gap-1 mt-2">
+                    {[14, 26, 36, 22, 34, 18, 30].map((height, i) => (
+                      <motion.span
+                        key={i}
+                        animate={{ height: ['4px', `${height}px`, '4px'] }}
+                        transition={{
+                          duration: 0.75 + (i * 0.1),
+                          repeat: Infinity,
+                          ease: 'easeInOut',
+                          delay: i * 0.08
+                        }}
+                        className="w-1 bg-gradient-to-t from-purple-500 to-cyan-400 rounded-full"
+                      />
+                    ))}
+                  </div>
+
+                  {/* Etiqueta de Telemetría */}
+                  <div className="mt-1.5 text-center">
+                    <p className="text-[11px] font-mono font-bold uppercase tracking-wider text-cyan-300 flex items-center justify-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
+                      <span>Aura Escuchando...</span>
+                    </p>
+                    <p className="text-[10px] text-zinc-400 font-sans mt-0.5">
+                      Toca el orbe al terminar o haz silencio
+                    </p>
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="aura-android-buste"
+                  initial={{ opacity: 0, scale: 0.75, filter: 'blur(8px)' }}
+                  animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                  exit={{ opacity: 0, scale: 0.4, filter: 'blur(10px)' }}
+                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                  className="w-full flex items-center justify-center"
+                >
+                  <AndroidVoiceAvatar 
+                    size={isMobile ? 'compact-modal' : 'modal'} 
+                    isSpeaking={isSpeaking} 
+                    forcedAction={avatarAction}
+                    onActionComplete={() => setAvatarAction(null)}
+                    className="drop-shadow-[0_12px_36px_rgba(124,58,237,0.22)]"
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* Micro-Dock de Acciones Vivas (Salto, Saludo, Gafas) & Control de Audio */}
           <div className="w-full space-y-2 pt-1">
-            {/* Botones de Gestos Expresivos para Demostrar que está Viva */}
-            <div className="flex items-center justify-center gap-1.5">
-              <button
-                type="button"
-                onClick={() => triggerAction('jump')}
-                className={`px-2.5 py-1 rounded-lg border text-[11px] font-sans font-medium transition-all cursor-pointer flex items-center gap-1 ${
-                  avatarAction === 'jump'
-                    ? 'bg-purple-600 border-purple-400 text-white shadow-[0_0_12px_rgba(168,85,247,0.4)]'
-                    : isLight
-                    ? 'bg-slate-100 hover:bg-indigo-50 border-slate-200 text-slate-700 hover:text-indigo-600'
-                    : 'bg-white/[0.04] hover:bg-purple-950/40 border-white/10 text-zinc-300 hover:text-white hover:border-purple-400/50'
-                }`}
-                title="Hacer que Aura realice un salto cuántico antigravedad con squash & stretch"
-              >
-                <span>🚀 Saltar</span>
-              </button>
+            {isListening ? (
+              /* Controles Dinámicos mientras Aura es el Orbe */
+              <div className="flex items-center justify-center gap-2">
+                <button
+                  type="button"
+                  onClick={cancelVoiceRecognition}
+                  className="px-3 py-1.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white text-xs font-sans font-medium transition-all cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => stopVoiceRecognition(true)}
+                  className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 text-white text-xs font-sans font-bold transition-all shadow-[0_0_15px_rgba(168,85,247,0.4)] cursor-pointer flex items-center gap-1.5"
+                >
+                  <span>Enviar</span>
+                  <Send className="w-3 h-3" />
+                </button>
+              </div>
+            ) : (
+              /* Botones de Gestos Expresivos para Demostrar que está Viva */
+              <div className="flex items-center justify-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => triggerAction('jump')}
+                  className={`px-2.5 py-1 rounded-lg border text-[11px] font-sans font-medium transition-all cursor-pointer flex items-center gap-1 ${
+                    avatarAction === 'jump'
+                      ? 'bg-purple-600 border-purple-400 text-white shadow-[0_0_12px_rgba(168,85,247,0.4)]'
+                      : isLight
+                      ? 'bg-slate-100 hover:bg-indigo-50 border-slate-200 text-slate-700 hover:text-indigo-600'
+                      : 'bg-white/[0.04] hover:bg-purple-950/40 border-white/10 text-zinc-300 hover:text-white hover:border-purple-400/50'
+                  }`}
+                  title="Hacer que Aura realice un salto cuántico antigravedad con squash & stretch"
+                >
+                  <span>🚀 Saltar</span>
+                </button>
 
-              <button
-                type="button"
-                onClick={() => triggerAction('wave')}
-                className={`px-2.5 py-1 rounded-lg border text-[11px] font-sans font-medium transition-all cursor-pointer flex items-center gap-1 ${
-                  avatarAction === 'wave'
-                    ? 'bg-purple-600 border-purple-400 text-white shadow-[0_0_12px_rgba(168,85,247,0.4)]'
-                    : isLight
-                    ? 'bg-slate-100 hover:bg-indigo-50 border-slate-200 text-slate-700 hover:text-indigo-600'
-                    : 'bg-white/[0.04] hover:bg-purple-950/40 border-white/10 text-zinc-300 hover:text-white hover:border-purple-400/50'
-                }`}
-                title="Hacer que Aura salude alegremente con la mano"
-              >
-                <span>👋 Saludar</span>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => triggerAction('wave')}
+                  className={`px-2.5 py-1 rounded-lg border text-[11px] font-sans font-medium transition-all cursor-pointer flex items-center gap-1 ${
+                    avatarAction === 'wave'
+                      ? 'bg-purple-600 border-purple-400 text-white shadow-[0_0_12px_rgba(168,85,247,0.4)]'
+                      : isLight
+                      ? 'bg-slate-100 hover:bg-indigo-50 border-slate-200 text-slate-700 hover:text-indigo-600'
+                      : 'bg-white/[0.04] hover:bg-purple-950/40 border-white/10 text-zinc-300 hover:text-white hover:border-purple-400/50'
+                  }`}
+                  title="Hacer que Aura salude alegremente con la mano"
+                >
+                  <span>👋 Saludar</span>
+                </button>
 
-              <button
-                type="button"
-                onClick={() => triggerAction('glasses')}
-                className={`px-2.5 py-1 rounded-lg border text-[11px] font-sans font-medium transition-all cursor-pointer flex items-center gap-1 ${
-                  avatarAction === 'glasses'
-                    ? 'bg-purple-600 border-purple-400 text-white shadow-[0_0_12px_rgba(168,85,247,0.4)]'
-                    : isLight
-                    ? 'bg-slate-100 hover:bg-indigo-50 border-slate-200 text-slate-700 hover:text-indigo-600'
-                    : 'bg-white/[0.04] hover:bg-purple-950/40 border-white/10 text-zinc-300 hover:text-white hover:border-purple-400/50'
-                }`}
-                title="Hacer que Aura se acomode las gafas inteligentes con elegancia de secretaria"
-              >
-                <span>👓 Gafas</span>
-              </button>
-            </div>
+                <button
+                  type="button"
+                  onClick={() => triggerAction('glasses')}
+                  className={`px-2.5 py-1 rounded-lg border text-[11px] font-sans font-medium transition-all cursor-pointer flex items-center gap-1 ${
+                    avatarAction === 'glasses'
+                      ? 'bg-purple-600 border-purple-400 text-white shadow-[0_0_12px_rgba(168,85,247,0.4)]'
+                      : isLight
+                      ? 'bg-slate-100 hover:bg-indigo-50 border-slate-200 text-slate-700 hover:text-indigo-600'
+                      : 'bg-white/[0.04] hover:bg-purple-950/40 border-white/10 text-zinc-300 hover:text-white hover:border-purple-400/50'
+                  }`}
+                  title="Hacer que Aura se acomode las gafas inteligentes con elegancia de secretaria"
+                >
+                  <span>👓 Gafas</span>
+                </button>
+              </div>
+            )}
 
             {/* Control de Audio de AURA */}
             <div className="flex justify-center">
@@ -817,6 +1310,56 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
         {/* ========================================================================= */}
         <div className="relative z-10 flex-1 flex flex-col p-4 sm:p-6 overflow-hidden">
           
+          {/* ========================================================================= */}
+          {/* CÁPSULA COMPACTA DE TRANSCRIPCIÓN DE VOZ EN VIVO (CHAT DESPEJADO Y VISIBLE) */}
+          {/* ========================================================================= */}
+          <AnimatePresence>
+            {isListening && (
+              <motion.div
+                initial={{ opacity: 0, y: -12, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.98 }}
+                transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                className="mb-3 p-3 sm:p-3.5 bg-gradient-to-r from-purple-950/70 via-[#0a0f24]/80 to-cyan-950/70 border border-purple-500/40 rounded-2xl shadow-[0_0_30px_rgba(168,85,247,0.22)] backdrop-blur-xl flex items-center justify-between gap-3 shrink-0"
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="relative flex h-3 w-3 shrink-0">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-cyan-500" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-mono uppercase tracking-wider text-cyan-300 font-bold flex items-center gap-1.5">
+                      <span>Transcribiendo tu voz en tiempo real</span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
+                    </p>
+                    <p className="text-xs sm:text-sm text-white font-sans truncate italic font-medium">
+                      {liveTranscript ? `"${liveTranscript}"` : 'Habla con naturalidad, Aura te está escuchando...'}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    type="button"
+                    onClick={cancelVoiceRecognition}
+                    className="px-2.5 py-1 text-zinc-400 hover:text-white text-xs font-sans rounded-lg transition-colors cursor-pointer"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => stopVoiceRecognition(true)}
+                    disabled={!liveTranscript.trim()}
+                    className="px-3.5 py-1.5 bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white font-sans font-bold text-xs rounded-xl transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 shadow-[0_0_15px_rgba(56,189,248,0.35)]"
+                  >
+                    <span>Listo</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Zona de Mensajes del Chat con Scroll Suave */}
           <div className="flex-1 overflow-y-auto space-y-3.5 pr-2 pt-6 sm:pt-4">
             {messages.map((m, idx) => (
@@ -840,10 +1383,10 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
                         <span className="text-[10px] text-zinc-400 font-normal">· DYNAMIND AI</span>
                       </div>
 
-                      {/* Botón táctil para volver a escuchar la respuesta */}
+                      {/* Botón táctil para volver a escuchar la respuesta con voz de estudio o TTS */}
                       <button
                         type="button"
-                        onClick={() => speakText(m.text)}
+                        onClick={() => handlePlayMessage(m)}
                         className={`flex items-center gap-1 text-[11px] font-sans transition-colors cursor-pointer ${
                           isLight ? 'text-indigo-600 hover:text-indigo-700' : 'text-purple-300 hover:text-purple-200'
                         }`}
@@ -889,7 +1432,7 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
               {strings.prompts.map((qp, qIdx) => (
                 <button
                   key={qIdx}
-                  onClick={() => handleSendQuery(qp.query)}
+                  onClick={() => handleSendQuery(qp.query, qp.replyKey)}
                   className={`shrink-0 sm:shrink px-2.5 sm:px-3 py-1.5 rounded-lg border font-sans text-xs leading-snug transition-all cursor-pointer text-left whitespace-nowrap sm:whitespace-normal ${
                     isLight 
                       ? 'bg-slate-100 hover:bg-slate-200 border-slate-200 text-slate-700 hover:text-black' 
@@ -915,7 +1458,7 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
                 type="text"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                placeholder={strings.placeholder}
+                placeholder={isListening ? 'Escuchando tu voz...' : strings.placeholder}
                 disabled={isThinking}
                 className={`flex-1 px-4 py-2.5 border rounded-xl font-sans text-xs sm:text-sm leading-normal focus:outline-none transition-colors ${
                   isLight 
@@ -923,19 +1466,47 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
                     : 'bg-white/[0.04] border-white/15 text-white placeholder:text-zinc-500 focus:border-purple-400/70 focus:bg-white/[0.06]'
                 } ${isThinking ? 'opacity-60 cursor-not-allowed' : ''}`}
               />
+
+              {/* Botón de Entrada por Voz (Micrófono) con Permiso Previo y Transformación */}
+              <button
+                type="button"
+                onClick={handleToggleVoiceInput}
+                disabled={isThinking}
+                className={`p-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-center ${
+                  isListening
+                    ? 'bg-gradient-to-r from-red-600 to-purple-600 border-red-400 text-white shadow-[0_0_18px_rgba(239,68,68,0.5)] animate-pulse'
+                    : isLight
+                    ? 'bg-slate-100 hover:bg-indigo-50 border-slate-200 text-indigo-600 hover:border-indigo-300'
+                    : 'bg-white/[0.04] hover:bg-purple-950/60 border-white/15 text-purple-300 hover:text-white hover:border-purple-400/50'
+                }`}
+                title={isListening ? 'Detener y transformar de vuelta a Aura' : 'Hablar con Aura por voz (Solicita permiso al micrófono)'}
+                aria-label="Hablar con Aura por voz"
+              >
+                {isListening ? <MicOff className="w-4 h-4 text-white" /> : <Mic className="w-4 h-4" />}
+              </button>
+
+              {/* Botón de Enviar */}
               <button
                 type="submit"
-                disabled={isThinking}
+                disabled={isThinking || !inputText.trim()}
                 className={`p-2.5 rounded-xl transition-all cursor-pointer ${
                   isLight 
-                    ? 'bg-indigo-600 text-white hover:bg-indigo-700' 
-                    : 'bg-purple-600 hover:bg-purple-500 text-white shadow-[0_0_16px_rgba(168,85,247,0.35)]'
+                    ? 'bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed' 
+                    : 'bg-purple-600 hover:bg-purple-500 text-white shadow-[0_0_16px_rgba(168,85,247,0.35)] disabled:opacity-40 disabled:cursor-not-allowed'
                 } ${isThinking ? 'opacity-60 cursor-not-allowed' : ''}`}
                 aria-label="Enviar pregunta a Aura"
               >
                 <Send className="w-4 h-4" />
               </button>
             </form>
+
+            {/* Aviso de Error de Micrófono si Aplica */}
+            {listeningError && (
+              <div className="p-2.5 bg-red-950/50 border border-red-500/40 rounded-xl text-red-300 text-xs flex items-center gap-2 animate-in fade-in">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0 text-red-400" />
+                <span>{listeningError}</span>
+              </div>
+            )}
 
             <div className={`flex items-center justify-between font-sans text-xs ${
               isLight ? 'text-slate-500' : 'text-zinc-400'
