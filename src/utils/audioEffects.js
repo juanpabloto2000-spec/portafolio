@@ -145,22 +145,36 @@ export const playTap = () => soundFx.playBlip(620, 0.03);
 export const playSuccess = () => soundFx.playSuccessChord();
 
 /**
- * 🌌 CelestialAmbientDrone - Sonido Angelical & Cósmico Perpetuo de La Galaxia Dynamind
- * - Frecuencias sagradas Solfeggio 432 Hz y 528 Hz (Paz mental, orden armónico y mística cósmica).
- * - Armónicos etéreos de baja ganancia con resonancia cálida en 864 Hz y 1056 Hz.
- * - Filtro passa-bajos Biquad de 680 Hz con Q=1.6 para un tono sedoso no estridente.
- * - LFO de modulación orgánica que hace respirar a la galaxia a 60 FPS.
- * - Shimmer celestial esporádico (campanas estelares de cristal cósmico).
- * - Sonido de fondo por defecto ininterrumpido.
+ * 🌌 CelestialAmbientDrone - Sonido Angelical & Cósmico Sublime de La Galaxia Dynamind
+ * - Frecuencias sagradas Solfeggio: 432 Hz (Paz y orden cósmico), 528 Hz (Transformación y amor divino).
+ * - Armónicos de catedral celestial: 648 Hz (E5), 720 Hz (F#5), 864 Hz (A5), 1056 Hz (C6), 1296 Hz (E6).
+ * - Doble filtrado: Highpass en 180 Hz (gravedad cero, sin retumbos) + Lowpass cálido en 1150 Hz con LFO.
+ * - Shimmer de arpa celestial esporádico: micro-tonos cristalinos pentatónicos que flotan en el espacio.
+ * - Control de ciclo de vida completo: start(), stop(), toggleMute(), setMuted().
+ * - Conmutación suave y limpia cuando el usuario entra o sale de la sección de La Galaxia.
  */
 class CelestialAmbientDrone {
   constructor() {
     this.ctx = null;
     this.masterGain = null;
-    this.filter = null;
+    this.highpassFilter = null;
+    this.lowpassFilter = null;
     this.oscillators = [];
     this.isRunning = false;
+    this.isMuted = false;
     this.chimeInterval = null;
+    this.listeners = new Set();
+  }
+
+  subscribe(listener) {
+    this.listeners.add(listener);
+    return () => this.listeners.delete(listener);
+  }
+
+  notify() {
+    this.listeners.forEach((fn) => {
+      try { fn(this.isMuted, this.isRunning); } catch (e) {}
+    });
   }
 
   initContext() {
@@ -188,102 +202,173 @@ class CelestialAmbientDrone {
 
       const now = this.ctx.currentTime;
 
-      // Master Gain con fade-in celestial suave de 3.2 segundos
+      // Master Gain con rampa suave angelical
       this.masterGain = this.ctx.createGain();
+      const targetVol = this.isMuted ? 0.00001 : 0.055;
       this.masterGain.gain.setValueAtTime(0.0001, now);
-      this.masterGain.gain.exponentialRampToValueAtTime(0.045, now + 3.2);
+      this.masterGain.gain.exponentialRampToValueAtTime(targetVol, now + 2.8);
 
-      // Filtro pasa-bajos cálido para sonido sedoso y angelical
-      this.filter = this.ctx.createBiquadFilter();
-      this.filter.type = 'lowpass';
-      this.filter.frequency.setValueAtTime(680, now);
-      this.filter.Q.setValueAtTime(1.6, now);
+      // Filtro 1: Pasa-altos suave para sensación de ingravidez
+      this.highpassFilter = this.ctx.createBiquadFilter();
+      this.highpassFilter.type = 'highpass';
+      this.highpassFilter.frequency.setValueAtTime(175, now);
+      this.highpassFilter.Q.setValueAtTime(0.7, now);
 
-      // Conexión en cadena: Filtro -> MasterGain -> Destination
-      this.filter.connect(this.masterGain);
+      // Filtro 2: Pasa-bajos sedoso resonante (voz celestial)
+      this.lowpassFilter = this.ctx.createBiquadFilter();
+      this.lowpassFilter.type = 'lowpass';
+      this.lowpassFilter.frequency.setValueAtTime(1150, now);
+      this.lowpassFilter.Q.setValueAtTime(1.4, now);
+
+      // Conexión en cadena: Fuentes -> Highpass -> Lowpass -> MasterGain -> Destination
+      this.highpassFilter.connect(this.lowpassFilter);
+      this.lowpassFilter.connect(this.masterGain);
       this.masterGain.connect(this.ctx.destination);
 
-      // Frecuencias cósmicas angelicales (432Hz y 528Hz Solfeggio)
-      const celestialPitches = [
-        { freq: 216.0, type: 'sine', vol: 0.08 },    // Sub-raíz profunda
-        { freq: 432.0, type: 'sine', vol: 0.12 },    // Frecuencia sagrada 432Hz
-        { freq: 528.0, type: 'sine', vol: 0.09 },    // Frecuencia Solfeggio 528Hz
-        { freq: 648.0, type: 'sine', vol: 0.04 },    // Armónico de quinta cósmica
-        { freq: 864.0, type: 'sine', vol: 0.025 },   // Octava brillante suave
-        { freq: 1056.0, type: 'sine', vol: 0.015 }   // Shimmer etéreo sutil
+      // Polifonía celestial angélica (Solfeggio 432Hz y 528Hz + Acorde Maj9 Lydian celestial)
+      const angelicalPitches = [
+        { freq: 216.0, type: 'sine', vol: 0.06 },     // Sub-respiración etérea
+        { freq: 432.0, type: 'sine', vol: 0.11 },     // Frecuencia sagrada 432 Hz (A4)
+        { freq: 528.0, type: 'sine', vol: 0.095 },    // Frecuencia Solfeggio 528 Hz (Transformación)
+        { freq: 648.0, type: 'sine', vol: 0.045 },    // Quinta pura E5
+        { freq: 720.0, type: 'sine', vol: 0.035 },    // F#5 Lydian celestial
+        { freq: 864.0, type: 'sine', vol: 0.022 },    // Octava pura A5
+        { freq: 1056.0, type: 'sine', vol: 0.016 },   // Shimmer celestial 1056 Hz
+        { freq: 1296.0, type: 'sine', vol: 0.009 }    // Resonancia de arpa de luz E6
       ];
 
       this.oscillators = [];
 
-      celestialPitches.forEach(({ freq, type, vol }, idx) => {
+      angelicalPitches.forEach(({ freq, type, vol }, idx) => {
         const osc = this.ctx.createOscillator();
         const oscGain = this.ctx.createGain();
 
         osc.type = type;
         osc.frequency.setValueAtTime(freq, now);
 
-        // Desafinado micrométrico para coro etéreo con batimiento de fase
-        const detuneCents = (idx % 2 === 0 ? 1 : -1) * (2.5 + idx * 0.8);
+        // Batimiento de coro angelical (detuning micrométrico estéreo)
+        const detuneCents = (idx % 2 === 0 ? 1 : -1) * (2.8 + (idx % 3) * 1.2);
         osc.detune.setValueAtTime(detuneCents, now);
 
         oscGain.gain.setValueAtTime(vol, now);
 
         osc.connect(oscGain);
-        oscGain.connect(this.filter);
+        oscGain.connect(this.highpassFilter);
 
         osc.start(now);
         this.oscillators.push(osc);
       });
 
-      // LFO Lento para la respiración de la nebulosa cósmica
+      // LFO Lento de respiración cósmica (Ciclo lento de ~18 segundos)
       const lfo = this.ctx.createOscillator();
       const lfoGain = this.ctx.createGain();
-      lfo.frequency.setValueAtTime(0.07, now);
-      lfoGain.gain.setValueAtTime(180, now);
+      lfo.frequency.setValueAtTime(0.055, now);
+      lfoGain.gain.setValueAtTime(260, now);
       lfo.connect(lfoGain);
-      lfoGain.connect(this.filter.frequency);
+      lfoGain.connect(this.lowpassFilter.frequency);
       lfo.start(now);
       this.oscillators.push(lfo);
 
-      // Micro-destellos celestiales esporádicos (Campanas de cristal cósmico)
+      // Campanitas de cristal estelar (Arpa celestial esporádica)
       this.chimeInterval = setInterval(() => {
-        if (!this.isRunning || !this.ctx) return;
-        this.triggerCelestialChime();
-      }, 6500);
+        if (!this.isRunning || !this.ctx || this.isMuted) return;
+        this.triggerAngelicalHarpChime();
+      }, 5500);
 
       this.isRunning = true;
+      this.notify();
     } catch (e) {
-      console.warn('Celestial drone audio init:', e);
+      console.warn('Celestial drone audio error:', e);
     }
   }
 
-  // Micro-campana celestial de cristal cósmico
-  triggerCelestialChime() {
+  // Micro-arpegio angelical de campanas celestiales
+  triggerAngelicalHarpChime() {
     try {
-      if (!this.ctx || this.ctx.state !== 'running') return;
+      if (!this.ctx || this.ctx.state !== 'running' || this.isMuted) return;
       const now = this.ctx.currentTime;
-      const chimes = [1296, 1728, 2112, 2592];
-      const freq = chimes[Math.floor(Math.random() * chimes.length)];
+      const harpPitches = [1296, 1536, 1728, 2112, 2592];
 
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
+      // Lanzar 2 micro-tonos en cascada armónica suave
+      [0, 0.22].forEach((delay, i) => {
+        const freq = harpPitches[(Math.floor(Math.random() * harpPitches.length) + i) % harpPitches.length];
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
 
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, now);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + delay);
 
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.exponentialRampToValueAtTime(0.015, now + 0.15);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 3.5);
+        gain.gain.setValueAtTime(0.00001, now + delay);
+        gain.gain.exponentialRampToValueAtTime(0.014, now + delay + 0.12);
+        gain.gain.exponentialRampToValueAtTime(0.00001, now + delay + 3.8);
 
-      osc.connect(gain);
-      gain.connect(this.masterGain || this.ctx.destination);
+        osc.connect(gain);
+        gain.connect(this.masterGain || this.ctx.destination);
 
-      osc.start(now);
-      osc.stop(now + 3.6);
+        osc.start(now + delay);
+        osc.stop(now + delay + 3.9);
+      });
     } catch (e) {}
+  }
+
+  // Fade-out y apagado absoluto cuando el usuario sale de La Galaxia
+  stop() {
+    if (!this.isRunning) return;
+    try {
+      if (this.chimeInterval) {
+        clearInterval(this.chimeInterval);
+        this.chimeInterval = null;
+      }
+
+      if (this.masterGain && this.ctx) {
+        const now = this.ctx.currentTime;
+        this.masterGain.gain.setValueAtTime(this.masterGain.gain.value, now);
+        this.masterGain.gain.exponentialRampToValueAtTime(0.00001, now + 1.2);
+
+        setTimeout(() => {
+          this.oscillators.forEach(osc => {
+            try { osc.stop(); osc.disconnect(); } catch (e) {}
+          });
+          this.oscillators = [];
+          this.isRunning = false;
+          this.notify();
+        }, 1300);
+      } else {
+        this.oscillators.forEach(osc => {
+          try { osc.stop(); osc.disconnect(); } catch (e) {}
+        });
+        this.oscillators = [];
+        this.isRunning = false;
+        this.notify();
+      }
+    } catch (e) {
+      this.isRunning = false;
+      this.notify();
+    }
+  }
+
+  // Conmutador de Mute / Desmute
+  toggleMute() {
+    return this.setMuted(!this.isMuted);
+  }
+
+  setMuted(muted) {
+    this.isMuted = Boolean(muted);
+    if (this.masterGain && this.ctx && this.isRunning) {
+      const now = this.ctx.currentTime;
+      const target = this.isMuted ? 0.00001 : 0.055;
+      this.masterGain.gain.cancelScheduledValues(now);
+      this.masterGain.gain.setValueAtTime(this.masterGain.gain.value || 0.0001, now);
+      this.masterGain.gain.exponentialRampToValueAtTime(target, now + 0.35);
+    }
+    this.notify();
+    return this.isMuted;
   }
 }
 
 export const celestialDrone = new CelestialAmbientDrone();
 export const startCelestialGalaxyDrone = () => celestialDrone.start();
+export const stopCelestialGalaxyDrone = () => celestialDrone.stop();
+export const toggleCelestialMute = () => celestialDrone.toggleMute();
+
 

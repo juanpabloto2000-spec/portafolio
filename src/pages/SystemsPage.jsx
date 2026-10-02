@@ -37,8 +37,18 @@ import {
   Bell,
   Receipt,
   Database,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
-import { playOrbitWarp, playPlanetSelect, playTap, startCelestialGalaxyDrone } from '../utils/audioEffects';
+import { 
+  playOrbitWarp, 
+  playPlanetSelect, 
+  playTap, 
+  startCelestialGalaxyDrone, 
+  stopCelestialGalaxyDrone, 
+  toggleCelestialMute, 
+  celestialDrone 
+} from '../utils/audioEffects';
 
 const ICON_MAP = {
   Sun,
@@ -129,7 +139,18 @@ export default function SystemsPage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleNextService, handlePrevService, handleResetToGalaxy]);
 
-  // Sonido angelical y cósmico perpetuo por defecto de La Galaxia Dynamind
+  // Estado reactivo del mute del sonido celestial en la galaxia
+  const [isCelestialMuted, setIsCelestialMuted] = useState(() => celestialDrone.isMuted);
+
+  // Sincronizar estado con el singleton de audio
+  useEffect(() => {
+    const unsubscribe = celestialDrone.subscribe((muted) => {
+      setIsCelestialMuted(muted);
+    });
+    return unsubscribe;
+  }, []);
+
+  // Sonido angelical y cósmico: SOLO suena mientras se esté en La Galaxia Dynamind
   useEffect(() => {
     const handleFirstInteraction = () => {
       startCelestialGalaxyDrone();
@@ -146,13 +167,22 @@ export default function SystemsPage() {
     window.addEventListener('keydown', handleFirstInteraction, { once: true });
     window.addEventListener('mousemove', handleFirstInteraction, { once: true });
 
+    // 🛑 CUANDO EL USUARIO SALE DE LA SECCIÓN DE LA GALAXIA: APAGAR AUDIO INMEDIATAMENTE
     return () => {
       window.removeEventListener('click', handleFirstInteraction);
       window.removeEventListener('touchstart', handleFirstInteraction);
       window.removeEventListener('keydown', handleFirstInteraction);
       window.removeEventListener('mousemove', handleFirstInteraction);
+      stopCelestialGalaxyDrone();
     };
   }, []);
+
+  // Manejo del botón de altavoz (Mute / Unmute)
+  const handleToggleCelestialMute = () => {
+    playTap();
+    const nextMuted = toggleCelestialMute();
+    setIsCelestialMuted(nextMuted);
+  };
 
   // Redirección al Triage / Diagnóstico con persistencia de contexto
   const handleOpenConsulting = useCallback((service) => {
@@ -396,6 +426,35 @@ export default function SystemsPage() {
           </section>
         )}
       </main>
+
+      {/* ============================================================== */}
+      {/* 🔊 CONTROL FLOTANTE DE ALTAVOZ CELESTIAL (ABAJO A LA IZQUIERDA) */}
+      {/* ============================================================== */}
+      <div className="fixed bottom-6 left-6 z-40 select-none">
+        <button
+          type="button"
+          onClick={handleToggleCelestialMute}
+          className={`flex items-center gap-2.5 px-3.5 py-2 rounded-2xl border backdrop-blur-xl transition-all shadow-xl cursor-pointer group active:scale-95 ${
+            isCelestialMuted
+              ? 'bg-black/80 border-white/15 text-zinc-400 hover:text-white hover:border-white/30 shadow-black/50'
+              : 'bg-black/85 border-cyan-400/50 text-cyan-300 hover:text-white shadow-[0_0_25px_rgba(56,189,248,0.25)] hover:border-cyan-300'
+          }`}
+          title={isCelestialMuted ? 'Activar atmósfera celestial (clic para escuchar)' : 'Silenciar atmósfera celestial'}
+          aria-label={isCelestialMuted ? 'Activar sonido de la galaxia' : 'Silenciar sonido de la galaxia'}
+        >
+          {isCelestialMuted ? (
+            <VolumeX className="w-4 h-4 text-zinc-400 group-hover:scale-110 transition-transform" />
+          ) : (
+            <div className="relative flex items-center justify-center">
+              <Volume2 className="w-4 h-4 text-cyan-400 group-hover:scale-110 transition-transform" />
+              <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-cyan-400 animate-ping opacity-75" />
+            </div>
+          )}
+          <span className="text-[11px] font-mono font-bold tracking-wider uppercase hidden sm:inline">
+            {isCelestialMuted ? 'MUTE' : 'ATMÓSFERA CELESTIAL'}
+          </span>
+        </button>
+      </div>
 
       <FooterEditorial />
     </div>
