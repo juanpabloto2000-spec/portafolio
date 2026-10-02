@@ -7,7 +7,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Users, Calendar, Zap, Settings, ArrowLeft, 
+  Users, Calendar, Settings, ArrowLeft, 
   Layers, Clock, Bot, Globe, Search, Filter, 
   Plus, CheckCircle2, ChevronRight, Send, Smartphone,
   ShieldCheck, Lock, RefreshCw, Eye, Trash2, Key, Sliders
@@ -36,14 +36,13 @@ export default function PublicDashboardDemo() {
     return () => clearInterval(interval);
   }, []);
 
-  // 7 Secciones Canónicas Idénticas al DSB Real
+  // Secciones Canónicas de la Demo
   const navItems = [
     { id: 'pipeline', label: 'Pipeline & Métricas', icon: Users },
     { id: 'demo_factory', label: 'Fábrica de Demos & Cierres', icon: Layers },
     { id: 'calendar', label: 'Calendario Atómico', icon: Calendar },
     { id: 'bot_training', label: 'Agente WhatsApp IA', icon: Bot },
     { id: 'universal_cms', label: 'CMS Universal', icon: Globe },
-    { id: 'killswitch', label: 'Kill Switch Maestro', icon: Zap },
     { id: 'settings', label: 'Seguridad & Claves', icon: Settings },
   ];
 
@@ -145,19 +144,6 @@ export default function PublicDashboardDemo() {
     setTimeout(() => setCmsSavedToast(false), 2500);
   };
 
-  // 6. Kill Switch Maestro
-  const [killSwitchStates, setKillSwitchStates] = useState({
-    localFirst: true,
-    offlineDb: true,
-    rateLimiting: true,
-    hmacValidation: true,
-  });
-
-  const toggleKillSwitch = (key) => {
-    playTap();
-    setKillSwitchStates(prev => ({ ...prev, [key]: !prev[key] }));
-  };
-
   return (
     <div className="min-h-screen bg-transparent text-platinum flex flex-col font-mono selection:bg-white/20 relative z-10">
       
@@ -177,9 +163,6 @@ export default function PublicDashboardDemo() {
           <div className="flex items-center gap-2 shrink-0">
             <span className="font-display font-extrabold text-sm uppercase tracking-wider whitespace-nowrap bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-500 bg-clip-text text-transparent drop-shadow-[0_0_12px_rgba(99,102,241,0.3)]">
               Dynamind Studios
-            </span>
-            <span className="text-[10px] px-2 py-0.5 rounded-md bg-white/10 border border-white/10 text-cyan-300 font-bold uppercase tracking-wider hidden sm:inline">
-              Core DSB // Demo
             </span>
           </div>
         </div>
@@ -217,11 +200,6 @@ export default function PublicDashboardDemo() {
 
         {/* 🔙 RETORNO DEDICADO A OBRAS (EXACTAMENTE LO PEDIDO) */}
         <div className="flex items-center gap-3">
-          <div className="hidden lg:flex items-center gap-1.5 px-3 py-1 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs">
-            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
-            <span className="font-bold">PLANTILLA ACTIVA</span>
-          </div>
-
           <a
             href="/#/obras"
             onClick={playTap}
@@ -684,55 +662,7 @@ export default function PublicDashboardDemo() {
             )}
 
             {/* ========================================================== */}
-            {/* 6. SECCIÓN: KILL SWITCH MAESTRO                            */}
-            {/* ========================================================== */}
-            {activeTab === 'killswitch' && (
-              <motion.div
-                key="killswitch"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.2 }}
-                className="max-w-3xl space-y-4"
-              >
-                <div className="p-6 rounded-2xl bg-white/[0.025] border border-white/10 space-y-4">
-                  <div className="flex items-center gap-2">
-                    <Zap className="w-5 h-5 text-amber-400" />
-                    <h3 className="text-sm font-bold text-white uppercase tracking-wider">Interruptores de Soberanía & Blindaje</h3>
-                  </div>
-
-                  <div className="space-y-3">
-                    {[
-                      { key: 'localFirst', label: 'Modo Local-First Ininterrumpido', desc: 'Permite operar caja y folios incluso si se cae la conexión a internet.' },
-                      { key: 'offlineDb', label: 'Aislamiento de Base de Datos', desc: 'Copia réplica local encriptada de clientes y transacciones.' },
-                      { key: 'rateLimiting', label: 'Protección Anti-Bot y Rate Limiting', desc: 'Máximo 10 peticiones/minuto por IP en endpoints de contacto.' },
-                      { key: 'hmacValidation', label: 'Verificación HMAC SHA-256 en Webhooks', desc: 'Firma temporal estricta para pasarelas de pago y Meta API.' },
-                    ].map(item => (
-                      <div key={item.key} className="p-3.5 rounded-xl bg-white/[0.02] border border-white/10 flex items-center justify-between">
-                        <div>
-                          <div className="text-xs font-bold text-white">{item.label}</div>
-                          <div className="text-[11px] text-zinc-400 font-sans">{item.desc}</div>
-                        </div>
-
-                        <button
-                          onClick={() => toggleKillSwitch(item.key)}
-                          className={`w-12 h-6 rounded-full transition-colors relative p-0.5 ${
-                            killSwitchStates[item.key] ? 'bg-cyan-500' : 'bg-zinc-700'
-                          }`}
-                        >
-                          <div className={`w-5 h-5 rounded-full bg-white transition-transform ${
-                            killSwitchStates[item.key] ? 'translate-x-6' : 'translate-x-0'
-                          }`} />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
-            {/* ========================================================== */}
-            {/* 7. SECCIÓN: SEGURIDAD & CLAVES                             */}
+            {/* 6. SECCIÓN: SEGURIDAD & CLAVES                             */}
             {/* ========================================================== */}
             {activeTab === 'settings' && (
               <motion.div
