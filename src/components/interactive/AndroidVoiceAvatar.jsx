@@ -102,37 +102,61 @@ export default function AndroidVoiceAvatar({
   // --------------------------------------------------------------------------
   const [isWaving, setIsWaving] = useState(false);
   const [isJumping, setIsJumping] = useState(false);
+  const busyActionRef = React.useRef(false);
+  const auraTimersRef = React.useRef([]);
+
+  const clearAuraTimers = () => {
+    auraTimersRef.current.forEach(t => clearTimeout(t));
+    auraTimersRef.current = [];
+  };
+
+  useEffect(() => {
+    return () => clearAuraTimers();
+  }, []);
 
   // Escuchar acciones forzadas desde botones externos o triggers
   useEffect(() => {
     if (forcedAction === 'wave') {
+      clearAuraTimers();
+      setIsJumping(false);
       setIsWaving(true);
       const timer = setTimeout(() => {
         setIsWaving(false);
+        busyActionRef.current = false;
         if (onActionComplete) onActionComplete();
       }, 2600);
-      return () => clearTimeout(timer);
+      auraTimersRef.current.push(timer);
     } else if (forcedAction === 'jump') {
+      clearAuraTimers();
+      setIsWaving(false);
       setIsJumping(true);
       const timer = setTimeout(() => {
         setIsJumping(false);
+        busyActionRef.current = false;
         if (onActionComplete) onActionComplete();
       }, 1200);
-      return () => clearTimeout(timer);
+      auraTimersRef.current.push(timer);
     }
   }, [forcedAction]);
 
-  // Clic en Aura: Salto cuántico seguido de saludo en alto
+  // Clic en Aura: Salto cuántico seguido de saludo en alto con candado anti-spam
   const handleAuraClick = () => {
+    if (isJumping || isWaving || busyActionRef.current) return;
+    busyActionRef.current = true;
+    clearAuraTimers();
+
     setIsJumping(true);
-    setTimeout(() => {
+    const t1 = setTimeout(() => {
       setIsJumping(false);
       setIsWaving(true);
-      setTimeout(() => {
+      const t2 = setTimeout(() => {
         setIsWaving(false);
+        busyActionRef.current = false;
         if (onActionComplete) onActionComplete();
       }, 2600);
+      auraTimersRef.current.push(t2);
     }, 1200);
+    auraTimersRef.current.push(t1);
   };
 
   // Dimensiones según el tamaño

@@ -634,9 +634,17 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
   const chatBottomRef = useRef(null);
   const abortControllerRef = useRef(null);
   const isOpenRef = useRef(isOpen);
+  const actionTimerRef = useRef(null);
+  const isActionLockedRef = useRef(false);
 
   const handleCloseModal = () => {
     isOpenRef.current = false;
+    isActionLockedRef.current = false;
+    if (actionTimerRef.current) {
+      clearTimeout(actionTimerRef.current);
+      actionTimerRef.current = null;
+    }
+    setAvatarAction(null);
     handleStopAllAudio();
     if (onClose) onClose();
   };
@@ -684,8 +692,24 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
   }, [messages, isThinking]);
 
   const triggerAction = (act) => {
+    // Si ya hay una acción en curso, descartar clicks repetidos para evitar bugs
+    if (isActionLockedRef.current || avatarAction) return;
+
+    isActionLockedRef.current = true;
     setAvatarAction(act);
-    setTimeout(() => setAvatarAction(null), 2500);
+
+    // Cancelar cualquier temporizador residual
+    if (actionTimerRef.current) {
+      clearTimeout(actionTimerRef.current);
+    }
+
+    // Duración exacta de 1 ciclo según el gesto: salto 1300ms, saludo 2700ms
+    const duration = act === 'jump' ? 1300 : 2700;
+    actionTimerRef.current = setTimeout(() => {
+      setAvatarAction(null);
+      isActionLockedRef.current = false;
+      actionTimerRef.current = null;
+    }, duration);
   };
 
   // Inicializar o resetear conversación cuando cambia el idioma
@@ -1290,7 +1314,14 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
                     size={isMobile ? 'compact-modal' : 'modal'} 
                     isSpeaking={isSpeaking} 
                     forcedAction={avatarAction}
-                    onActionComplete={() => setAvatarAction(null)}
+                    onActionComplete={() => {
+                      setAvatarAction(null);
+                      isActionLockedRef.current = false;
+                      if (actionTimerRef.current) {
+                        clearTimeout(actionTimerRef.current);
+                        actionTimerRef.current = null;
+                      }
+                    }}
                     className="drop-shadow-[0_12px_36px_rgba(124,58,237,0.22)]"
                   />
                 </motion.div>
@@ -1308,30 +1339,36 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
               <div className="flex items-center justify-center gap-2">
                 <button
                   type="button"
+                  disabled={Boolean(avatarAction)}
                   onClick={() => triggerAction('jump')}
-                  className={`px-3 py-1.5 rounded-xl border text-[11px] font-sans font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+                  className={`px-3 py-1.5 rounded-xl border text-[11px] font-sans font-medium transition-all flex items-center gap-1.5 ${
                     avatarAction === 'jump'
-                      ? 'bg-purple-600 border-purple-400 text-white shadow-[0_0_12px_rgba(168,85,247,0.4)]'
+                      ? 'bg-purple-600 border-purple-400 text-white shadow-[0_0_12px_rgba(168,85,247,0.4)] pointer-events-none cursor-default'
+                      : avatarAction
+                      ? 'opacity-40 cursor-not-allowed pointer-events-none border-white/5 text-zinc-500'
                       : isLight
-                      ? 'bg-slate-100 hover:bg-indigo-50 border-slate-200 text-slate-700 hover:text-indigo-600'
-                      : 'bg-white/[0.04] hover:bg-purple-950/40 border-white/10 text-zinc-300 hover:text-white hover:border-purple-400/50'
+                      ? 'bg-slate-100 hover:bg-indigo-50 border-slate-200 text-slate-700 hover:text-indigo-600 cursor-pointer active:scale-95'
+                      : 'bg-white/[0.04] hover:bg-purple-950/40 border-white/10 text-zinc-300 hover:text-white hover:border-purple-400/50 cursor-pointer active:scale-95'
                   }`}
-                  title="Hacer que Aura realice un salto cuántico antigravedad con squash & stretch"
+                  title={avatarAction ? "Acción en curso..." : "Hacer que Aura realice un salto cuántico antigravedad"}
                 >
                   <span>🚀 Saltar</span>
                 </button>
 
                 <button
                   type="button"
+                  disabled={Boolean(avatarAction)}
                   onClick={() => triggerAction('wave')}
-                  className={`px-3 py-1.5 rounded-xl border text-[11px] font-sans font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+                  className={`px-3 py-1.5 rounded-xl border text-[11px] font-sans font-medium transition-all flex items-center gap-1.5 ${
                     avatarAction === 'wave'
-                      ? 'bg-purple-600 border-purple-400 text-white shadow-[0_0_12px_rgba(168,85,247,0.4)]'
+                      ? 'bg-purple-600 border-purple-400 text-white shadow-[0_0_12px_rgba(168,85,247,0.4)] pointer-events-none cursor-default'
+                      : avatarAction
+                      ? 'opacity-40 cursor-not-allowed pointer-events-none border-white/5 text-zinc-500'
                       : isLight
-                      ? 'bg-slate-100 hover:bg-indigo-50 border-slate-200 text-slate-700 hover:text-indigo-600'
-                      : 'bg-white/[0.04] hover:bg-purple-950/40 border-white/10 text-zinc-300 hover:text-white hover:border-purple-400/50'
+                      ? 'bg-slate-100 hover:bg-indigo-50 border-slate-200 text-slate-700 hover:text-indigo-600 cursor-pointer active:scale-95'
+                      : 'bg-white/[0.04] hover:bg-purple-950/40 border-white/10 text-zinc-300 hover:text-white hover:border-purple-400/50 cursor-pointer active:scale-95'
                   }`}
-                  title="Hacer que Aura alce la mano y volee un saludo alegre"
+                  title={avatarAction ? "Acción en curso..." : "Hacer que Aura alce la mano y volee un saludo alegre"}
                 >
                   <span>👋 Saludar</span>
                 </button>

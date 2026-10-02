@@ -17,8 +17,10 @@ const VisionPage = React.lazy(() => import('./pages/VisionPage'));
 const PrivacyTermsPage = React.lazy(() => import('./pages/PrivacyTermsPage'));
 const AdminDashboard = React.lazy(() => import('./components/admin/AdminDashboard'));
 const AdminAuthGuard = React.lazy(() => import('./components/admin/AdminAuthGuard'));
+const PublicDashboardDemo = React.lazy(() => import('./pages/PublicDashboardDemo'));
 
 const getPageIndex = (hash) => {
+  if (hash.startsWith('#/dashboard')) return 6;
   if (hash.startsWith('#/privacidad') || hash.startsWith('#/terminos') || hash.startsWith('#/cookies')) return 5;
   if (hash.startsWith('#/diagnostico')) return 4;
   if (hash.startsWith('#/sistemas')) return 3;
@@ -28,6 +30,7 @@ const getPageIndex = (hash) => {
 };
 
 const getPageKey = (hash) => {
+  if (hash.startsWith('#/dashboard')) return 'dashboard';
   if (hash.startsWith('#/privacidad') || hash.startsWith('#/terminos') || hash.startsWith('#/cookies')) return 'privacidad';
   if (hash.startsWith('#/diagnostico')) return 'diagnostico';
   if (hash.startsWith('#/sistemas')) return 'sistemas';
@@ -75,6 +78,22 @@ export default function App() {
               <AdminAuthGuard>
                 <AdminDashboard />
               </AdminAuthGuard>
+            </Suspense>
+          </div>
+        </div>
+      </ThemeLanguageProvider>
+    );
+  }
+
+  // 2. Ruta de Demostración Pública del Dashboard (Sin login, interactiva, retorno a /#/obras)
+  if (currentHash.startsWith('#/dashboard')) {
+    return (
+      <ThemeLanguageProvider>
+        <div className="min-h-screen bg-[#07090e] text-slate-100 overflow-x-hidden relative selection:bg-white/20">
+          <GalaxyAmbientBackground />
+          <div className="relative z-10">
+            <Suspense fallback={<CosmicPageFallback message="INICIALIZANDO DEMO PÚBLICA DEL CORE DSB..." />}>
+              <PublicDashboardDemo />
             </Suspense>
           </div>
         </div>

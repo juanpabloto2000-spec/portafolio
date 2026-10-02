@@ -65,18 +65,18 @@ const ICON_MAP = {
 // Demos reales y accesos interactivos asignados a sistemas clave
 const DEMO_REGISTRY = {
   "srv-core": {
-    url: "/#/dsb",
+    url: "/#/dashboard",
     isExternal: false,
-    label: "Probar Core DSB en Vivo",
-    badge: "Acceso Inmediato",
-    hint: "Usuario: admin | Clave: 12345678",
+    label: "Ver Demo de Dashboard",
+    badge: "Demo Pública en Vivo",
+    hint: "Simulación de KPIs y Búnker Operativo sin login",
   },
   "srv-dsb": {
-    url: "/#/dsb",
+    url: "/#/dashboard",
     isExternal: false,
-    label: "Probar Core DSB en Vivo",
-    badge: "Acceso Inmediato",
-    hint: "Usuario: admin | Clave: 12345678",
+    label: "Ver Demo de Dashboard",
+    badge: "Demo Pública en Vivo",
+    hint: "Simulación de KPIs y Búnker Operativo sin login",
   },
   "srv-pms": {
     url: "https://andicas.vercel.app/#/",
@@ -86,11 +86,11 @@ const DEMO_REGISTRY = {
     hint: "Plataforma real operando con reservas",
   },
   "srv-caja": {
-    url: "/#/dsb",
+    url: "/#/dashboard",
     isExternal: false,
-    label: "Probar Módulo de Caja & Arqueo Ciego",
-    badge: "Demo Táctico",
-    hint: "Simula turnos y calculadora de billetes",
+    label: "Ver Demo de Dashboard",
+    badge: "Demo Pública en Vivo",
+    hint: "Calculadora de billetes y arqueo ciego interactivo",
   },
   "srv-kds": {
     url: "https://menupremium.netlify.app/",

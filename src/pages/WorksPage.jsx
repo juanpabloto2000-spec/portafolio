@@ -3,7 +3,7 @@ import FooterEditorial from '../components/layout/FooterEditorial';
 import AmbientSpotlightGlow from '../components/ui/AmbientSpotlightGlow';
 import RevealSection from '../components/motion/RevealSection';
 import LuxuryProjectsSidebarShowcase from '../components/showcase/LuxuryProjectsSidebarShowcase';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, LayoutDashboard } from 'lucide-react';
 
 export default function WorksPage() {
   return (
@@ -13,7 +13,7 @@ export default function WorksPage() {
 
       <main className="flex-1 pt-20 sm:pt-24 pb-16 space-y-8 sm:space-y-10">
         
-        {/* Cabecera Editorial Principal Limpia */}
+        {/* Cabecera Editorial Principal Limpia con Botón Dedicado de Demo DSB */}
         <section className="max-w-7xl mx-auto px-6 sm:px-12 pt-2 sm:pt-4">
           <RevealSection direction="up" className="max-w-3xl space-y-4">
             <h1 className="font-display font-bold text-4xl sm:text-6xl text-white tracking-tight">
@@ -23,6 +23,20 @@ export default function WorksPage() {
               Plataformas vivas desarrolladas a la medida operando con clientes, comensales y reservas reales.
               Cero maquetas teóricas ni plantillas infladas: software de autor gobernado por código nativo y Core PMS integrado.
             </p>
+
+            {/* Botón Dedicado a la Demo de Dashboard */}
+            <div className="pt-2">
+              <a
+                href="/#/dashboard"
+                className="inline-flex items-center gap-3 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500/20 via-indigo-600/30 to-purple-600/20 hover:from-cyan-500/30 hover:via-indigo-600/40 hover:to-purple-600/30 border border-cyan-400/40 hover:border-cyan-300 text-white font-mono text-xs uppercase tracking-wider shadow-[0_0_25px_rgba(56,189,248,0.2)] hover:shadow-[0_0_35px_rgba(56,189,248,0.35)] transition-all group cursor-pointer"
+              >
+                <LayoutDashboard className="w-4 h-4 text-cyan-400 group-hover:scale-110 transition-transform" />
+                <span className="font-bold">Ver demo de dashboard</span>
+                <span className="px-2 py-0.5 rounded-full text-[10px] bg-cyan-400/20 border border-cyan-400/40 text-cyan-300 font-bold">
+                  INTERACTIVO
+                </span>
+              </a>
+            </div>
           </RevealSection>
         </section>
 

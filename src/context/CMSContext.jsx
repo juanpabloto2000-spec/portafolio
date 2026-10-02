@@ -40,7 +40,7 @@ export const DEFAULT_UNIVERSAL_CMS = {
       hash: '#/sistemas',
       heroBadge: '',
       heroTitle: 'La Galaxia Tecnológica de Software & Consultoría de IA',
-      heroSubtitle: 'Cada planeta de este universo representa un servicio de ingeniería que construimos en Dynamind. Desde sistemas operativos mayores (Core DSB en /#/dsb, PMS Hotelero, Caja con Arqueo Ciego, KDS Comandas) hasta agentes autónomos de alta conversión y blindaje (WhatsApp CRM, OCR Facturas DIAN, n8n, Auditor 24/7). Todo con código propietario entregado en tu propio GitHub sin rentas mensuales.',
+      heroSubtitle: 'Cada planeta de este universo representa un servicio de ingeniería que construimos en Dynamind. Desde sistemas operativos mayores (Core DSB Operativo, PMS Hotelero, Caja con Arqueo Ciego, KDS Comandas) hasta agentes autónomos de alta conversión y blindaje (WhatsApp CRM, OCR Facturas DIAN, n8n, Auditor 24/7). Todo con código propietario entregado en tu propio GitHub sin rentas mensuales.',
       ctaText: 'Iniciar Diagnóstico (45s)',
       whatsappNumber: '+57 300 000 0000',
       announcementBanner: '18 SISTEMAS DE SOFTWARE PROPIETARIO DESPLEGADOS',

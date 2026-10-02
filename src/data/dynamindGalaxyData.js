@@ -50,7 +50,7 @@ export const GALAXY_SERVICES = [
   // =========================================================================
   {
     id: "srv-dsb",
-    name: "Core DSB Operativo (/#/dsb)",
+    name: "Core DSB Operativo // Búnker Administrativo",
     subtitle: "Dashboard Administrativo Aislado",
     category: "sistemas",
     categoryLabel: "Sistemas Mayores",
@@ -61,10 +61,10 @@ export const GALAXY_SERVICES = [
     orbitRadius: 26,
     speed: 0.9,
     modelGlb: "earth.glb",
-    summary: "Centro de comando táctico aislado en /#/dsb con RBAC estricto desacoplado de la vista pública comercial.",
+    summary: "Centro de comando táctico aislado con RBAC estricto desacoplado de la vista pública comercial.",
     bottleneckD0: "Ceguera operativa por falta de visibilidad en tiempo real y sitios web estáticos que no tienen herramientas reales.",
     pipeline: [
-      { step: "01", title: "Aislamiento Táctico", desc: "Dashboard protegido en /#/dsb sin botones públicos." },
+      { step: "01", title: "Aislamiento Táctico", desc: "Dashboard protegido en ruta táctica sin botones públicos." },
       { step: "02", title: "RBAC Blindado", desc: "Admin Master con KPIs vs Staff con vista operativa ciega a finanzas." },
       { step: "03", title: "Front Multi-Página", desc: "Vistas dinámicas con animaciones cinemáticas a 60 FPS." },
       { step: "04", title: "Persistencia Realtime", desc: "Sincronización instantánea entre compras y panel de control." }

@@ -38,7 +38,7 @@ import {
   Receipt,
   Database,
 } from 'lucide-react';
-import { playOrbitWarp, playPlanetSelect, playTap } from '../utils/audioEffects';
+import { playOrbitWarp, playPlanetSelect, playTap, startCelestialGalaxyDrone } from '../utils/audioEffects';
 
 const ICON_MAP = {
   Sun,
@@ -129,6 +129,31 @@ export default function SystemsPage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleNextService, handlePrevService, handleResetToGalaxy]);
 
+  // Sonido angelical y cósmico perpetuo por defecto de La Galaxia Dynamind
+  useEffect(() => {
+    const handleFirstInteraction = () => {
+      startCelestialGalaxyDrone();
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
+      window.removeEventListener('mousemove', handleFirstInteraction);
+    };
+
+    startCelestialGalaxyDrone();
+
+    window.addEventListener('click', handleFirstInteraction, { once: true });
+    window.addEventListener('touchstart', handleFirstInteraction, { once: true });
+    window.addEventListener('keydown', handleFirstInteraction, { once: true });
+    window.addEventListener('mousemove', handleFirstInteraction, { once: true });
+
+    return () => {
+      window.removeEventListener('click', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
+      window.removeEventListener('mousemove', handleFirstInteraction);
+    };
+  }, []);
+
   // Redirección al Triage / Diagnóstico con persistencia de contexto
   const handleOpenConsulting = useCallback((service) => {
     if (service) {
@@ -165,7 +190,7 @@ export default function SystemsPage() {
                 {sistemasCMS?.heroSubtitle || (
                   <>
                     Cada planeta de este universo representa un servicio de ingeniería que construimos en Dynamind. 
-                    Desde <strong>sistemas operativos mayores</strong> (Core DSB en /#/dsb, PMS Hotelero, Caja con Arqueo Ciego, KDS Comandas) 
+                    Desde <strong>sistemas operativos mayores</strong> (Core DSB Operativo, PMS Hotelero, Caja con Arqueo Ciego, KDS Comandas) 
                     hasta <strong>agentes autónomos de alta conversión y blindaje</strong> (WhatsApp CRM, OCR Facturas DIAN, n8n, Auditor 24/7). 
                     Todo con código propietario entregado en tu propio GitHub sin rentas mensuales.
                   </>
@@ -328,12 +353,12 @@ export default function SystemsPage() {
                       {/* Enlace directo a demo interactiva si existe */}
                       {service.id === 'srv-dsb' || service.id === 'srv-caja' || service.id === 'srv-core' ? (
                         <a
-                          href="/#/dsb"
+                          href="/#/dashboard"
                           className="px-2.5 py-1 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400/40 text-cyan-300 hover:text-white font-bold flex items-center gap-1.5 transition-all text-[11px]"
-                          title="Entrar al Dashboard de demostración en vivo"
+                          title="Ver demo interactiva del Dashboard Operativo"
                         >
                           <LayoutDashboard className="w-3 h-3 text-cyan-400" />
-                          <span>Probar DSB</span>
+                          <span>Ver demo de dashboard</span>
                         </a>
                       ) : service.id === 'srv-pms' || service.id === 'srv-reservas' ? (
                         <a
