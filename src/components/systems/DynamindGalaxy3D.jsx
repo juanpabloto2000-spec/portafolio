@@ -1196,13 +1196,17 @@ export default function DynamindGalaxy3D({
     domElement.addEventListener("pointermove", handlePointerMove);
     domElement.addEventListener("pointerdown", handlePointerDown);
 
-    // 9. Bucle de Animación a 60 FPS con Postprocessing
-    const clock = new THREE.Clock();
+    // 9. Bucle de Animación a 60 FPS con Postprocessing (Timer de Alta Precisión)
+    let lastTime = performance.now();
+    const startTime = performance.now();
 
     const animateLoop = () => {
       animationFrameRef.current = requestAnimationFrame(animateLoop);
 
-      const delta = clock.getDelta();
+      const now = performance.now();
+      const delta = Math.min((now - lastTime) / 1000, 0.1);
+      lastTime = now;
+      const elapsedTime = (now - startTime) / 1000;
       const currentSpeed = speedMultiplier;
 
       // Rotación suave del fondo estelar y polvo cósmico
@@ -1213,9 +1217,6 @@ export default function DynamindGalaxy3D({
       if (solarDustRef.current) {
         solarDustRef.current.rotation.y += delta * 0.012;
       }
-
-      // Traslación orbital continua y actualización de efectos cinemáticos a 60 FPS
-      const elapsedTime = clock.getElapsedTime();
 
       Object.entries(celestialObjectsRef.current).forEach(([id, entry]) => {
         const { mesh, serviceData, lightTrail, rings, satellite, satelliteOrbitRadius } = entry;

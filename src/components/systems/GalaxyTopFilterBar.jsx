@@ -86,6 +86,19 @@ export default function GalaxyTopFilterBar({
 
         {/* Acciones de Navegación 3D */}
         <div className="flex items-center gap-2">
+          {/* Botón Acceso Rápido a Probar el Core DSB en Vivo */}
+          <a
+            href="/#/dsb"
+            title="Entrar al Dashboard Operativo de prueba (user: admin | pass: 12345678)"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-cyan-500/25 to-blue-600/25 hover:from-cyan-500/35 hover:to-blue-600/35 border border-cyan-400/50 hover:border-cyan-300 text-cyan-300 hover:text-white text-xs font-mono font-bold transition-all shadow-md shadow-cyan-500/20 group cursor-pointer"
+          >
+            <LayoutDashboard className="w-3.5 h-3.5 text-cyan-400 group-hover:scale-110 transition-transform" />
+            <span>PROBAR DSB</span>
+            <span className="hidden sm:inline text-[9px] bg-cyan-400/20 text-cyan-200 px-1.5 py-0.5 rounded-md font-semibold tracking-wider">
+              DEMO
+            </span>
+          </a>
+
           {/* Botón Reset a Vista Panorámica */}
           <button
             onClick={onResetToGalaxy}
@@ -109,7 +122,6 @@ export default function GalaxyTopFilterBar({
             <Eye className="w-3.5 h-3.5" />
             <span className="hidden md:inline">Órbitas</span>
           </button>
-
         </div>
       </div>
 

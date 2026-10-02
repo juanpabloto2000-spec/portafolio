@@ -324,7 +324,33 @@ export default function SystemsPage() {
                       </div>
                     </div>
 
-                    <div className="pt-3 border-t border-white/10 flex items-center justify-end text-xs font-mono">
+                    <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs font-mono">
+                      {/* Enlace directo a demo interactiva si existe */}
+                      {service.id === 'srv-dsb' || service.id === 'srv-caja' || service.id === 'srv-core' ? (
+                        <a
+                          href="/#/dsb"
+                          className="px-2.5 py-1 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400/40 text-cyan-300 hover:text-white font-bold flex items-center gap-1.5 transition-all text-[11px]"
+                          title="Entrar al Dashboard de demostración en vivo"
+                        >
+                          <LayoutDashboard className="w-3 h-3 text-cyan-400" />
+                          <span>Probar DSB</span>
+                        </a>
+                      ) : service.id === 'srv-pms' || service.id === 'srv-reservas' ? (
+                        <a
+                          href="https://andicas.vercel.app/#/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 text-amber-300 hover:text-white font-bold flex items-center gap-1.5 transition-all text-[11px]"
+                          title="Ver plataforma real en producción"
+                        >
+                          <span>Ver Demo</span>
+                        </a>
+                      ) : (
+                        <span className="text-[10px] text-neutral-500 uppercase font-mono">
+                          {service.category}
+                        </span>
+                      )}
+
                       <button
                         onClick={() => {
                           setSelectedServiceId(service.id);
@@ -332,7 +358,7 @@ export default function SystemsPage() {
                           setIsHUDOpen(true);
                           playOrbitWarp();
                         }}
-                        className="text-cyan-400 hover:text-cyan-300 font-bold flex items-center gap-1 hover:underline"
+                        className="text-cyan-400 hover:text-cyan-300 font-bold flex items-center gap-1 hover:underline cursor-pointer"
                       >
                         <span>Enfocar en 3D</span>
                         <ChevronRight className="w-3.5 h-3.5" />
