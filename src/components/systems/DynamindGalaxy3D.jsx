@@ -777,12 +777,16 @@ export default function DynamindGalaxy3D({
     composer.addPass(effectPass);
     composerRef.current = composer;
 
-    // 5. OrbitControls Art-Directed
+    // 5. OrbitControls Art-Directed & Ergonomía Táctil Móvil
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.08;
     controls.enablePan = false;
     controls.enableRotate = true;
+    controls.touches = {
+      ONE: THREE.TOUCH.ROTATE,
+      TWO: THREE.TOUCH.DOLLY_PAN,
+    };
     // Límites de ángulo: perspectiva controlada que nunca descalibra la galaxia
     controls.minPolarAngle = Math.PI * 0.20;
     controls.maxPolarAngle = Math.PI * 0.42;

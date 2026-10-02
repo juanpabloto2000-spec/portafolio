@@ -121,6 +121,31 @@ export default function DynamicDopamineQuiz() {
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [createdLead, setCreatedLead] = useState(null);
+  const [preselectedSystem, setPreselectedSystem] = useState(null);
+
+  // Detección contextual de sistema seleccionado y cálculo de ROI desde La Galaxia 3D
+  useEffect(() => {
+    try {
+      const sId = sessionStorage.getItem('dynamind_preselected_service');
+      const sName = sessionStorage.getItem('dynamind_preselected_service_name');
+      const sSavings = sessionStorage.getItem('dynamind_calculated_savings');
+      if (sId && sName) {
+        setPreselectedSystem({ id: sId, name: sName, savings: sSavings });
+
+        if (sId.includes('hotel')) {
+          setFormData(prev => ({ ...prev, niche: 'Glampings, Hoteles & Cabañas', niche_id: 'hospedaje' }));
+        } else if (sId.includes('resto') || sId.includes('kaldisco') || sId.includes('caja')) {
+          setFormData(prev => ({ ...prev, niche: 'Gastronomía, Bares & Discotecas', niche_id: 'gastro' }));
+        } else if (sId.includes('whatsapp') || sId.includes('lead')) {
+          setFormData(prev => ({ ...prev, niche: 'Marcas de Autor & High-Ticket', niche_id: 'personal' }));
+        } else if (sId.includes('invoice') || sId.includes('ocr') || sId.includes('store') || sId.includes('retail')) {
+          setFormData(prev => ({ ...prev, niche: 'Comercio, Retail & Empresas', niche_id: 'retail' }));
+        }
+      }
+    } catch (e) {
+      // Ignorar en sandbox
+    }
+  }, []);
 
   // Estado del formulario optimizado a 6 facetas concisas
   const [formData, setFormData] = useState({
@@ -350,18 +375,22 @@ export default function DynamicDopamineQuiz() {
         date: selectedDate,
         time: selectedTime,
         phone: formData.phone,
-        notes: `Web: ${formData.website_url || 'No tiene web (' + formData.no_web_reason + ')'} | Volumen: ${formData.daily_volume} | Urgencia: ${formData.urgency} | Rango: ${formData.budget_range}`
+        notes: `Sistema: ${preselectedSystem ? preselectedSystem.name + ' (' + (preselectedSystem.savings || '') + ')' : 'No especificado'} | Web: ${formData.website_url || 'No tiene web (' + formData.no_web_reason + ')'} | Volumen: ${formData.daily_volume} | Urgencia: ${formData.urgency} | Rango: ${formData.budget_range}`
       };
       const lead = await addLead(payload);
       soundFx.playSuccessChord();
       setCreatedLead(lead);
 
       // Disparar WhatsApp directamente con Juan Pablo (+57 300 892 4110)
+      const systemLine = preselectedSystem
+        ? `\n*Sistema de Interés:* ${preselectedSystem.name}\n*Impacto Proyectado:* ${preselectedSystem.savings || 'A definir en llamada'}\n`
+        : '';
+
       const waMsg = `Hola Juan Pablo, acabo de completar el diagnóstico de ingeniería en Dynamind Studios.
 
 *Proyecto:* ${formData.business_name || 'Sin nombre'}
 *Tomador de Decisión:* ${formData.client_name || 'Cliente'}
-*Sector:* ${formData.niche}
+*Sector:* ${formData.niche}${systemLine}
 *Frenos Detectados:*
 ${formData.bottlenecks && formData.bottlenecks.length > 0 ? formData.bottlenecks.map(b => `• ${b}`).join('\n') : `• ${bottleneckSummary}`}
 *Volumen Operativo:* ${formData.daily_volume}
@@ -388,7 +417,33 @@ Quedo atento para la demostración técnica de 15 minutos.`;
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       className="w-full max-w-4xl mx-auto font-sans relative"
     >
-      
+      {/* Banner Contextual si viene con Sistema Pre-seleccionado desde La Galaxia */}
+      {preselectedSystem && (
+        <div className="mb-4 p-3 bg-gradient-to-r from-amber-950/40 via-neutral-900 to-black border border-amber-500/40 rounded-2xl flex items-center justify-between gap-3 text-xs font-mono shadow-lg animate-fade-in">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shadow-[0_0_8px_#f59e0b]" />
+            <span className="text-amber-300 font-bold uppercase tracking-wide">
+              {preselectedSystem.name}
+            </span>
+            {preselectedSystem.savings && (
+              <span className="text-neutral-300 font-sans hidden sm:inline">• {preselectedSystem.savings}</span>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              sessionStorage.removeItem('dynamind_preselected_service');
+              sessionStorage.removeItem('dynamind_preselected_service_name');
+              sessionStorage.removeItem('dynamind_calculated_savings');
+              setPreselectedSystem(null);
+            }}
+            className="text-neutral-400 hover:text-white text-[11px] underline cursor-pointer shrink-0"
+          >
+            Cambiar
+          </button>
+        </div>
+      )}
+
       {/* HUD de Progreso: Stepped Facet Pipeline de 6 Nodos Cósmicos */}
       <div className="mb-8 p-4 sm:p-5 bg-[#080b13]/90 border border-white/15 rounded-3xl backdrop-blur-xl shadow-2xl relative overflow-hidden">
         

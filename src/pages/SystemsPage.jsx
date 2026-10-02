@@ -129,8 +129,14 @@ export default function SystemsPage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleNextService, handlePrevService, handleResetToGalaxy]);
 
-  // Redirección al Triage / Diagnóstico
-  const handleOpenConsulting = useCallback(() => {
+  // Redirección al Triage / Diagnóstico con persistencia de contexto
+  const handleOpenConsulting = useCallback((service) => {
+    if (service) {
+      try {
+        sessionStorage.setItem('dynamind_preselected_service', service.id);
+        sessionStorage.setItem('dynamind_preselected_service_name', service.name);
+      } catch (e) {}
+    }
     window.location.hash = '#/diagnostico';
   }, []);
 
