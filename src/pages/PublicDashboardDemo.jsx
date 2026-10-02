@@ -10,21 +10,36 @@ import {
   Users, Calendar, Settings, ArrowLeft, 
   Layers, Clock, Bot, Globe, Search, Filter, 
   Plus, CheckCircle2, ChevronRight, Send, Smartphone,
-  ShieldCheck, Lock, RefreshCw, Eye, Trash2, Key, Sliders
+  ShieldCheck, Lock, RefreshCw, Eye, Trash2, Key, Sliders, Languages
 } from 'lucide-react';
 import { playTap, playSuccess } from '../utils/audioEffects';
+import { useThemeLanguage } from '../context/ThemeLanguageContext';
+import { DASHBOARD_DEMO_TRANSLATIONS } from '../data/translationsDashboardDemo';
 
 export default function PublicDashboardDemo() {
+  const { t, language, setLanguage } = useThemeLanguage();
+  const dsbT = t?.dashboardDemo || DASHBOARD_DEMO_TRANSLATIONS[language] || DASHBOARD_DEMO_TRANSLATIONS.es;
+
   const [activeTab, setActiveTab] = useState('pipeline');
   const [currentTime, setCurrentTime] = useState('');
   const [currentDate, setCurrentDate] = useState('');
 
-  // Reloj Cronométrico BOG GMT-5 idéntico al DSB real
+  // Reloj Cronométrico BOG GMT-5 con localización dinámica de fecha
   useEffect(() => {
+    const localeMap = {
+      es: 'es-ES',
+      en: 'en-US',
+      fr: 'fr-FR',
+      de: 'de-DE',
+      pt: 'pt-BR',
+      ja: 'ja-JP',
+    };
+    const currentLocale = localeMap[language] || 'es-ES';
+
     const updateTime = () => {
       const now = new Date();
       setCurrentTime(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }));
-      const dateFormatted = now.toLocaleDateString('es-ES', { 
+      const dateFormatted = now.toLocaleDateString(currentLocale, { 
         weekday: 'short', 
         day: 'numeric', 
         month: 'short' 
@@ -34,16 +49,16 @@ export default function PublicDashboardDemo() {
     updateTime();
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [language]);
 
-  // Secciones Canónicas de la Demo
+  // Secciones Canónicas de la Demo Localizadas
   const navItems = [
-    { id: 'pipeline', label: 'Pipeline & Métricas', icon: Users },
-    { id: 'demo_factory', label: 'Fábrica de Demos & Cierres', icon: Layers },
-    { id: 'calendar', label: 'Calendario Atómico', icon: Calendar },
-    { id: 'bot_training', label: 'Agente WhatsApp IA', icon: Bot },
-    { id: 'universal_cms', label: 'CMS Universal', icon: Globe },
-    { id: 'settings', label: 'Seguridad & Claves', icon: Settings },
+    { id: 'pipeline', label: dsbT.tabs?.pipeline || 'Pipeline & Métricas', icon: Users },
+    { id: 'demo_factory', label: dsbT.tabs?.demo_factory || 'Fábrica de Demos & Cierres', icon: Layers },
+    { id: 'calendar', label: dsbT.tabs?.calendar || 'Calendario Atómico', icon: Calendar },
+    { id: 'bot_training', label: dsbT.tabs?.bot_training || 'Agente WhatsApp IA', icon: Bot },
+    { id: 'universal_cms', label: dsbT.tabs?.universal_cms || 'CMS Universal', icon: Globe },
+    { id: 'settings', label: dsbT.tabs?.settings || 'Seguridad & Claves', icon: Settings },
   ];
 
   // --------------------------------------------------------------------------
@@ -80,10 +95,12 @@ export default function PublicDashboardDemo() {
   const [demoClientName, setDemoClientName] = useState('');
   const [demoSector, setDemoSector] = useState('hotel');
   const [demoGeneratedUrl, setDemoGeneratedUrl] = useState('');
+  const [copiedDemo, setCopiedDemo] = useState(false);
 
   const handleGenerateDemo = (e) => {
     e.preventDefault();
     playSuccess();
+    setCopiedDemo(false);
     const slug = (demoClientName.trim() || 'cliente').toLowerCase().replace(/[^a-z0-9]/g, '-');
     setDemoGeneratedUrl(`https://dynamind.studio/#/demo/${slug}`);
   };
@@ -102,19 +119,35 @@ export default function PublicDashboardDemo() {
       if (copy[slotKey]) {
         delete copy[slotKey];
       } else {
-        copy[slotKey] = 'Reserva Bloqueada';
+        copy[slotKey] = dsbT.calendar?.bookedDefault || 'Reserva Bloqueada';
       }
       return copy;
     });
   };
 
-  // 4. Agente WhatsApp IA
-  const [botPrompt, setBotPrompt] = useState('Eres el asistente oficial de Dynamind Studios. Tu objetivo es cualificar clientes para desarrollo de software soberano, detectar su cuello de botella operativo (D0) y agendar llamada con Juan Pablo.');
+  // 4. Agente WhatsApp IA con localización dinámica
+  const [botPrompt, setBotPrompt] = useState(
+    () => dsbT.bot?.defaultPrompt || 'Eres el asistente oficial de Dynamind Studios. Tu objetivo es cualificar clientes para desarrollo de software soberano, detectar su cuello de botella operativo (D0) y agendar llamada con Juan Pablo.'
+  );
+
   const [chatMessages, setChatMessages] = useState([
-    { sender: 'user', text: 'Hola, me gustaría saber si desarrollan software para reservas de cabañas.' },
-    { sender: 'bot', text: '¡Hola! 🌲 Sí, construimos el Motor de Reservas Directas y PMS con calendario atómico y anticipo del 50%. ¿Cuántas cabañas tienes en operación actualmente?' }
+    { sender: 'user', text: dsbT.bot?.initialUserMsg || 'Hola, me gustaría saber si desarrollan software para reservas de cabañas.' },
+    { sender: 'bot', text: dsbT.bot?.initialBotMsg || '¡Hola! 🌲 Sí, construimos el Motor de Reservas Directas y PMS con calendario atómico y anticipo del 50%. ¿Cuántas cabañas tienes en operación actualmente?' }
   ]);
   const [chatInput, setChatInput] = useState('');
+
+  // Sincronizar mensajes iniciales y prompt al cambiar de idioma
+  useEffect(() => {
+    if (dsbT.bot?.defaultPrompt) {
+      setBotPrompt(dsbT.bot.defaultPrompt);
+    }
+    if (dsbT.bot?.initialUserMsg && dsbT.bot?.initialBotMsg) {
+      setChatMessages([
+        { sender: 'user', text: dsbT.bot.initialUserMsg },
+        { sender: 'bot', text: dsbT.bot.initialBotMsg }
+      ]);
+    }
+  }, [language]);
 
   const handleSendChatMessage = (e) => {
     e.preventDefault();
@@ -126,9 +159,11 @@ export default function PublicDashboardDemo() {
 
     setTimeout(() => {
       playSuccess();
+      const prefix = dsbT.bot?.botReplyPrefix || 'Entendido. Para';
+      const suffix = dsbT.bot?.botReplySuffix || 'implementamos una arquitectura soberana en React y Supabase con sincronización a tu cuenta bancaria. ¿Deseas agendar un diagnóstico de 45 segundos?';
       setChatMessages(prev => [
         ...prev, 
-        { sender: 'bot', text: `Entendido. Para ${userText.toLowerCase()} implementamos una arquitectura soberana en React y Supabase con sincronización a tu cuenta bancaria. ¿Deseas agendar un diagnóstico de 45 segundos?` }
+        { sender: 'bot', text: `${prefix} "${userText.toLowerCase()}", ${suffix}` }
       ]);
     }, 900);
   };
@@ -168,7 +203,7 @@ export default function PublicDashboardDemo() {
         </div>
 
         {/* ⏱️ RELOJ CRONOMÉTRICO CENTRAL DE ALTA PRECISIÓN */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden lg:flex items-center gap-3">
           <div className="px-4 py-1.5 rounded-2xl bg-gradient-to-r from-white/[0.04] via-cyan-950/20 to-white/[0.02] border border-white/10 shadow-[0_0_20px_rgba(56,189,248,0.08)] flex items-center gap-3 backdrop-blur-md group hover:border-cyan-400/40 transition-colors">
             
             {/* Indicador de pulso activo */}
@@ -193,20 +228,48 @@ export default function PublicDashboardDemo() {
 
             {/* Badge de sincronización */}
             <span className="text-[9px] px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-cyan-300 font-bold uppercase tracking-wider">
-              BOG · GMT-5
+              {dsbT.timeZoneBadge || "BOG · GMT-5"}
             </span>
           </div>
         </div>
 
-        {/* 🔙 RETORNO DEDICADO A OBRAS (EXACTAMENTE LO PEDIDO) */}
-        <div className="flex items-center gap-3">
+        {/* 🌐 SELECTOR RÁPIDO DE IDIOMA & 🔙 RETORNO DEDICADO A OBRAS */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Selector de idioma interactivo del demo */}
+          <div className="flex items-center gap-0.5 sm:gap-1 p-1 rounded-xl bg-white/[0.04] border border-white/10 backdrop-blur-md">
+            {[
+              { code: 'es', label: 'ES' },
+              { code: 'en', label: 'EN' },
+              { code: 'fr', label: 'FR' },
+              { code: 'de', label: 'DE' },
+              { code: 'pt', label: 'PT' },
+              { code: 'ja', label: 'JA' },
+            ].map((langItem) => (
+              <button
+                key={langItem.code}
+                onClick={() => {
+                  playTap();
+                  setLanguage(langItem.code);
+                }}
+                className={`px-1.5 sm:px-2 py-1 rounded-lg text-[10px] font-mono font-bold transition-all cursor-pointer ${
+                  language === langItem.code
+                    ? 'bg-cyan-500/30 text-cyan-300 border border-cyan-400/40 shadow-sm'
+                    : 'text-zinc-400 hover:text-white hover:bg-white/[0.04]'
+                }`}
+                title={`Cambiar idioma a ${langItem.label}`}
+              >
+                {langItem.label}
+              </button>
+            ))}
+          </div>
+
           <a
             href="/#/obras"
             onClick={playTap}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-white/[0.08] to-white/[0.04] border border-cyan-400/40 hover:border-cyan-300 text-white text-xs font-mono font-bold uppercase tracking-wider rounded-xl transition-all duration-200 backdrop-blur-md shadow-[0_0_15px_rgba(56,189,248,0.15)] hover:shadow-[0_0_25px_rgba(56,189,248,0.3)] cursor-pointer group"
+            className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-white/[0.08] to-white/[0.04] border border-cyan-400/40 hover:border-cyan-300 text-white text-xs font-mono font-bold uppercase tracking-wider rounded-xl transition-all duration-200 backdrop-blur-md shadow-[0_0_15px_rgba(56,189,248,0.15)] hover:shadow-[0_0_25px_rgba(56,189,248,0.3)] cursor-pointer group"
           >
             <ArrowLeft className="w-3.5 h-3.5 text-cyan-400 group-hover:-translate-x-0.5 transition-transform" />
-            <span>Volver a Obras</span>
+            <span className="hidden sm:inline">{dsbT.backToWorks || 'Volver a Obras'}</span>
           </a>
         </div>
 
@@ -223,11 +286,17 @@ export default function PublicDashboardDemo() {
           {/* Tarjeta del Operador */}
           <div className="p-3.5 bg-white/[0.025] border border-white/10 rounded-2xl space-y-1 relative overflow-hidden glow-card">
             <div className="flex items-center justify-between">
-              <span className="text-[9px] text-zinc-500 uppercase tracking-widest font-bold">OPERADOR DEMO</span>
+              <span className="text-[9px] text-zinc-500 uppercase tracking-widest font-bold">
+                {dsbT.operatorBadge || 'OPERADOR DEMO'}
+              </span>
               <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
             </div>
-            <div className="text-xs font-bold text-white uppercase truncate">Cliente Invitado</div>
-            <div className="text-[10px] text-cyan-400 font-mono">Modo Exploración Libre</div>
+            <div className="text-xs font-bold text-white uppercase truncate">
+              {dsbT.guestClient || 'Cliente Invitado'}
+            </div>
+            <div className="text-[10px] text-cyan-400 font-mono">
+              {dsbT.freeExploreMode || 'Modo Exploración Libre'}
+            </div>
           </div>
 
           {/* Navegación de Pestañas Idéntica */}
@@ -262,13 +331,15 @@ export default function PublicDashboardDemo() {
 
           {/* Banner de Contacto Técnico */}
           <div className="pt-4 border-t border-white/10 space-y-2">
-            <span className="text-[9px] text-zinc-500 uppercase tracking-wider block">Soporte Directo</span>
+            <span className="text-[9px] text-zinc-500 uppercase tracking-wider block">
+              {dsbT.supportDirect || 'Soporte Directo'}
+            </span>
             <a
               href="/#/diagnostico"
               onClick={playTap}
               className="w-full flex items-center justify-center gap-2 p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 text-xs text-zinc-300 hover:text-white transition-all"
             >
-              <span>Solicitar este Core</span>
+              <span>{dsbT.requestThisCore || 'Solicitar este Core'}</span>
               <ChevronRight className="w-3.5 h-3.5 text-cyan-400" />
             </a>
           </div>
@@ -294,31 +365,49 @@ export default function PublicDashboardDemo() {
                 {/* 4 KPIs Limpios */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div className="p-5 bg-white/[0.025] border border-white/10 rounded-2xl space-y-1">
-                    <span className="text-[10px] text-zinc-400 uppercase tracking-wider">Leads Activos</span>
+                    <span className="text-[10px] text-zinc-400 uppercase tracking-wider">
+                      {dsbT.pipeline?.kpiActiveLeads || 'Leads Activos'}
+                    </span>
                     <div className="text-2xl font-bold text-cyan-400 font-mono">{leadsList.length}</div>
-                    <span className="text-[10px] text-zinc-500">Pipeline en tiempo real</span>
+                    <span className="text-[10px] text-zinc-500">
+                      {dsbT.pipeline?.kpiActiveDesc || 'Pipeline en tiempo real'}
+                    </span>
                   </div>
 
                   <div className="p-5 bg-white/[0.025] border border-white/10 rounded-2xl space-y-1">
-                    <span className="text-[10px] text-zinc-400 uppercase tracking-wider">Demos Agendadas</span>
+                    <span className="text-[10px] text-zinc-400 uppercase tracking-wider">
+                      {dsbT.pipeline?.kpiScheduledDemos || 'Demos Agendadas'}
+                    </span>
                     <div className="text-2xl font-bold text-white font-mono">
                       {leadsList.filter(l => l.stage === 'demo').length}
                     </div>
-                    <span className="text-[10px] text-emerald-400">50% Tasa de avance</span>
+                    <span className="text-[10px] text-emerald-400">
+                      {dsbT.pipeline?.kpiScheduledDesc || '50% Tasa de avance'}
+                    </span>
                   </div>
 
                   <div className="p-5 bg-white/[0.025] border border-white/10 rounded-2xl space-y-1">
-                    <span className="text-[10px] text-zinc-400 uppercase tracking-wider">Propuestas Abiertas</span>
+                    <span className="text-[10px] text-zinc-400 uppercase tracking-wider">
+                      {dsbT.pipeline?.kpiOpenProposals || 'Propuestas Abiertas'}
+                    </span>
                     <div className="text-2xl font-bold text-white font-mono">
                       {leadsList.filter(l => l.stage === 'propuesta').length}
                     </div>
-                    <span className="text-[10px] text-amber-400">En negociación</span>
+                    <span className="text-[10px] text-amber-400">
+                      {dsbT.pipeline?.kpiOpenDesc || 'En negociación'}
+                    </span>
                   </div>
 
                   <div className="p-5 bg-white/[0.025] border border-white/10 rounded-2xl space-y-1">
-                    <span className="text-[10px] text-zinc-400 uppercase tracking-wider">Facturación Simulada</span>
-                    <div className="text-2xl font-bold text-emerald-400 font-mono">$55.000.000 COP</div>
-                    <span className="text-[10px] text-zinc-500">Valor de cartera</span>
+                    <span className="text-[10px] text-zinc-400 uppercase tracking-wider">
+                      {dsbT.pipeline?.kpiSimulatedRevenue || 'Facturación Simulada'}
+                    </span>
+                    <div className="text-2xl font-bold text-emerald-400 font-mono">
+                      {language === 'es' ? '$55.000.000 COP' : '$14,500 USD'}
+                    </div>
+                    <span className="text-[10px] text-zinc-500">
+                      {dsbT.pipeline?.kpiSimulatedDesc || 'Valor de cartera'}
+                    </span>
                   </div>
                 </div>
 
@@ -326,25 +415,27 @@ export default function PublicDashboardDemo() {
                 <div className="flex flex-wrap items-center justify-between gap-3 p-4 bg-white/[0.02] border border-white/10 rounded-2xl">
                   <div className="flex items-center gap-2">
                     <Users className="w-4 h-4 text-cyan-400" />
-                    <span className="text-xs font-bold text-white uppercase tracking-wider">Tablero Kanban de Leads</span>
+                    <span className="text-xs font-bold text-white uppercase tracking-wider">
+                      {dsbT.pipeline?.kanbanTitle || 'Tablero Kanban de Leads'}
+                    </span>
                   </div>
 
                   <button
                     onClick={handleAddSampleLead}
-                    className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400/40 text-cyan-300 text-xs font-bold transition-all"
+                    className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400/40 text-cyan-300 text-xs font-bold transition-all cursor-pointer"
                   >
                     <Plus className="w-3.5 h-3.5" />
-                    <span>+ Añadir Lead de Prueba</span>
+                    <span>{dsbT.pipeline?.addLeadBtn || '+ Añadir Lead de Prueba'}</span>
                   </button>
                 </div>
 
                 {/* Columnas Kanban Limpias */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   {[
-                    { key: 'cualificacion', label: '1. Cualificación', color: 'border-blue-500/40 text-blue-400' },
-                    { key: 'demo', label: '2. Demostración', color: 'border-cyan-500/40 text-cyan-400' },
-                    { key: 'propuesta', label: '3. Propuesta', color: 'border-amber-500/40 text-amber-400' },
-                    { key: 'cerrado', label: '4. Cerrado', color: 'border-emerald-500/40 text-emerald-400' },
+                    { key: 'cualificacion', label: dsbT.pipeline?.col1 || '1. Cualificación', color: 'border-blue-500/40 text-blue-400' },
+                    { key: 'demo', label: dsbT.pipeline?.col2 || '2. Demostración', color: 'border-cyan-500/40 text-cyan-400' },
+                    { key: 'propuesta', label: dsbT.pipeline?.col3 || '3. Propuesta', color: 'border-amber-500/40 text-amber-400' },
+                    { key: 'cerrado', label: dsbT.pipeline?.col4 || '4. Cerrado', color: 'border-emerald-500/40 text-emerald-400' },
                   ].map((col) => {
                     const colLeads = leadsList.filter(l => l.stage === col.key);
                     return (
@@ -357,14 +448,14 @@ export default function PublicDashboardDemo() {
                         <div className="space-y-2.5">
                           {colLeads.length === 0 ? (
                             <div className="p-4 border border-dashed border-white/10 rounded-xl text-center text-[10px] text-zinc-500 font-sans">
-                              Sin prospectos en esta etapa
+                              {dsbT.pipeline?.emptyCol || 'Sin prospectos en esta etapa'}
                             </div>
                           ) : (
                             colLeads.map(l => (
                               <div
                                 key={l.id}
                                 onClick={() => handleAdvanceStage(l.id)}
-                                title="Haz clic para avanzar de etapa"
+                                title={dsbT.pipeline?.advanceTooltip || "Haz clic para avanzar de etapa"}
                                 className="p-3 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 hover:border-cyan-400/40 transition-all cursor-pointer space-y-1.5 group"
                               >
                                 <div className="flex justify-between items-center text-[10px]">
@@ -375,7 +466,9 @@ export default function PublicDashboardDemo() {
                                 <div className="text-[11px] text-zinc-400 font-sans">{l.contact}</div>
                                 <div className="text-[10px] text-zinc-500 flex items-center justify-between pt-1 border-t border-white/5">
                                   <span>{l.phone}</span>
-                                  <span className="text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity">Avanzar →</span>
+                                  <span className="text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    {dsbT.pipeline?.advanceBtn || 'Avanzar →'}
+                                  </span>
                                 </div>
                               </div>
                             ))
@@ -403,17 +496,21 @@ export default function PublicDashboardDemo() {
                 <div className="p-6 rounded-2xl bg-white/[0.025] border border-white/10 space-y-4">
                   <div className="flex items-center gap-2">
                     <Layers className="w-5 h-5 text-cyan-400" />
-                    <h3 className="text-sm font-bold text-white uppercase tracking-wider">Generador de Demos Personalizadas</h3>
+                    <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                      {dsbT.demoFactory?.title || 'Generador de Demos Personalizadas'}
+                    </h3>
                   </div>
 
                   <form onSubmit={handleGenerateDemo} className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1.5">
-                        <label className="text-[10px] text-zinc-400 uppercase tracking-wide block">Nombre del Cliente / Marca</label>
+                        <label className="text-[10px] text-zinc-400 uppercase tracking-wide block">
+                          {dsbT.demoFactory?.clientNameLabel || 'Nombre del Cliente / Marca'}
+                        </label>
                         <input
                           type="text"
                           required
-                          placeholder="Ej: Glamping El Refugio"
+                          placeholder={dsbT.demoFactory?.clientNamePlaceholder || 'Ej: Glamping El Refugio'}
                           value={demoClientName}
                           onChange={(e) => setDemoClientName(e.target.value)}
                           className="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-cyan-400"
@@ -421,41 +518,47 @@ export default function PublicDashboardDemo() {
                       </div>
 
                       <div className="space-y-1.5">
-                        <label className="text-[10px] text-zinc-400 uppercase tracking-wide block">Sector / Módulo</label>
+                        <label className="text-[10px] text-zinc-400 uppercase tracking-wide block">
+                          {dsbT.demoFactory?.sectorLabel || 'Sector / Módulo'}
+                        </label>
                         <select
                           value={demoSector}
                           onChange={(e) => setDemoSector(e.target.value)}
                           className="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-400"
                         >
-                          <option value="hotel">Glamping & Hotelería (Motor de Reservas + PMS)</option>
-                          <option value="gastro">Gastrobar & Restaurante (Menú QR + KDS)</option>
-                          <option value="clinic">Clínica Estética (Triaje Visual + Odómetro)</option>
-                          <option value="brand">Marca Personal / Consultoría (Funnel de Autor)</option>
+                          <option value="hotel">{dsbT.demoFactory?.sectorHotel || 'Glamping & Hotelería (Motor de Reservas + PMS)'}</option>
+                          <option value="gastro">{dsbT.demoFactory?.sectorGastro || 'Gastrobar & Restaurante (Menú QR + KDS)'}</option>
+                          <option value="clinic">{dsbT.demoFactory?.sectorClinic || 'Clínica Estética (Triaje Visual + Odómetro)'}</option>
+                          <option value="brand">{dsbT.demoFactory?.sectorBrand || 'Marca Personal / Consultoría (Funnel de Autor)'}</option>
                         </select>
                       </div>
                     </div>
 
                     <button
                       type="submit"
-                      className="px-5 py-2.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400/40 text-cyan-300 font-bold text-xs uppercase tracking-wider transition-all"
+                      className="px-5 py-2.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400/40 text-cyan-300 font-bold text-xs uppercase tracking-wider transition-all cursor-pointer"
                     >
-                      Generar Enlace Demo
+                      {dsbT.demoFactory?.generateBtn || 'Generar Enlace Demo'}
                     </button>
                   </form>
 
                   {demoGeneratedUrl && (
                     <div className="p-4 rounded-xl bg-cyan-950/30 border border-cyan-500/30 space-y-2">
-                      <span className="text-[10px] text-cyan-300 font-bold uppercase block">Enlace de Demostración Listo:</span>
+                      <span className="text-[10px] text-cyan-300 font-bold uppercase block">
+                        {dsbT.demoFactory?.readyLabel || 'Enlace de Demostración Listo:'}
+                      </span>
                       <div className="flex items-center justify-between gap-2 p-2 bg-black/40 rounded-lg border border-white/10 text-xs font-mono text-white">
                         <span className="truncate">{demoGeneratedUrl}</span>
                         <button
                           onClick={() => {
                             navigator.clipboard.writeText(demoGeneratedUrl);
                             playSuccess();
+                            setCopiedDemo(true);
+                            setTimeout(() => setCopiedDemo(false), 2000);
                           }}
-                          className="px-2 py-1 rounded bg-white/10 hover:bg-white/20 text-[10px] text-zinc-300"
+                          className="px-2 py-1 rounded bg-white/10 hover:bg-white/20 text-[10px] text-zinc-300 transition-colors cursor-pointer"
                         >
-                          Copiar
+                          {copiedDemo ? (dsbT.demoFactory?.copiedBtn || '¡Copiado!') : (dsbT.demoFactory?.copyBtn || 'Copiar')}
                         </button>
                       </div>
                     </div>
@@ -479,18 +582,29 @@ export default function PublicDashboardDemo() {
                 <div className="flex items-center justify-between p-4 bg-white/[0.02] border border-white/10 rounded-2xl">
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-cyan-400" />
-                    <span className="text-xs font-bold text-white uppercase tracking-wider">Matriz Semanal de Citas & Reservas</span>
+                    <span className="text-xs font-bold text-white uppercase tracking-wider">
+                      {dsbT.calendar?.title || 'Matriz Semanal de Citas & Reservas'}
+                    </span>
                   </div>
-                  <span className="text-[10px] text-zinc-400 font-sans">Haz clic en un bloque para bloquear/liberar</span>
+                  <span className="text-[10px] text-zinc-400 font-sans">
+                    {dsbT.calendar?.hint || 'Haz clic en un bloque para bloquear/liberar'}
+                  </span>
                 </div>
 
                 <div className="overflow-x-auto border border-white/10 rounded-2xl bg-white/[0.015]">
                   <table className="w-full text-left text-xs font-mono">
                     <thead className="bg-white/[0.04] border-b border-white/10 text-zinc-400 text-[10px] uppercase">
                       <tr>
-                        <th className="p-3">Horario</th>
-                        {['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'].map(d => (
-                          <th key={d} className="p-3">{d}</th>
+                        <th className="p-3">{dsbT.calendar?.scheduleHeader || 'Horario'}</th>
+                        {[
+                          { key: 'Lun', label: (dsbT.calendar?.days && dsbT.calendar.days[0]) || 'Lunes' },
+                          { key: 'Mar', label: (dsbT.calendar?.days && dsbT.calendar.days[1]) || 'Martes' },
+                          { key: 'Mie', label: (dsbT.calendar?.days && dsbT.calendar.days[2]) || 'Miércoles' },
+                          { key: 'Jue', label: (dsbT.calendar?.days && dsbT.calendar.days[3]) || 'Jueves' },
+                          { key: 'Vie', label: (dsbT.calendar?.days && dsbT.calendar.days[4]) || 'Viernes' },
+                          { key: 'Sab', label: (dsbT.calendar?.days && dsbT.calendar.days[5]) || 'Sábado' },
+                        ].map(d => (
+                          <th key={d.key} className="p-3">{d.label}</th>
                         ))}
                       </tr>
                     </thead>
@@ -501,17 +615,23 @@ export default function PublicDashboardDemo() {
                           {['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'].map(day => {
                             const slotKey = `${day}-${hour}`;
                             const isBooked = Boolean(bookedSlots[slotKey]);
+                            const displaySlotText = isBooked
+                              ? (bookedSlots[slotKey] === 'Reserva Bloqueada'
+                                  ? (dsbT.calendar?.bookedDefault || 'Reserva Bloqueada')
+                                  : bookedSlots[slotKey])
+                              : (dsbT.calendar?.available || '+ Disponible');
+
                             return (
                               <td key={slotKey} className="p-2">
                                 <button
                                   onClick={() => toggleCalendarSlot(slotKey)}
-                                  className={`w-full p-2 rounded-lg text-[10px] font-sans font-medium transition-all text-left ${
+                                  className={`w-full p-2 rounded-lg text-[10px] font-sans font-medium transition-all text-left cursor-pointer ${
                                     isBooked
                                       ? 'bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 shadow-sm'
                                       : 'bg-white/[0.02] hover:bg-white/[0.05] border border-white/5 text-zinc-500 hover:text-zinc-300'
                                   }`}
                                 >
-                                  {isBooked ? bookedSlots[slotKey] : '+ Disponible'}
+                                  {displaySlotText}
                                 </button>
                               </td>
                             );
@@ -540,11 +660,15 @@ export default function PublicDashboardDemo() {
                 <div className="lg:col-span-5 p-6 rounded-2xl bg-white/[0.025] border border-white/10 space-y-4">
                   <div className="flex items-center gap-2">
                     <Bot className="w-5 h-5 text-cyan-400" />
-                    <h3 className="text-sm font-bold text-white uppercase tracking-wider">Entrenamiento de Prompt</h3>
+                    <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                      {dsbT.bot?.title || 'Entrenamiento de Prompt'}
+                    </h3>
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] text-zinc-400 uppercase tracking-wide block">Instrucción Maestra del Agente</label>
+                    <label className="text-[10px] text-zinc-400 uppercase tracking-wide block">
+                      {dsbT.bot?.promptLabel || 'Instrucción Maestra del Agente'}
+                    </label>
                     <textarea
                       rows={6}
                       value={botPrompt}
@@ -556,11 +680,11 @@ export default function PublicDashboardDemo() {
                   <button
                     onClick={() => {
                       playSuccess();
-                      alert('Instrucción del agente guardada localmente.');
+                      alert(dsbT.bot?.savedAlert || 'Instrucción del agente guardada localmente.');
                     }}
-                    className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-xs text-white font-bold transition-all"
+                    className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-xs text-white font-bold transition-all cursor-pointer"
                   >
-                    Guardar Parámetros
+                    {dsbT.bot?.saveParamsBtn || 'Guardar Parámetros'}
                   </button>
                 </div>
 
@@ -571,8 +695,12 @@ export default function PublicDashboardDemo() {
                       IA
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-white">Agente Autónomo de Pruebas</div>
-                      <span className="text-[10px] text-emerald-400">● En línea respondiendo</span>
+                      <div className="text-xs font-bold text-white">
+                        {dsbT.bot?.agentName || 'Agente Autónomo de Pruebas'}
+                      </div>
+                      <span className="text-[10px] text-emerald-400">
+                        {dsbT.bot?.agentStatus || '● En línea respondiendo'}
+                      </span>
                     </div>
                   </div>
 
@@ -591,16 +719,16 @@ export default function PublicDashboardDemo() {
                   <form onSubmit={handleSendChatMessage} className="pt-2 border-t border-white/10 flex gap-2">
                     <input
                       type="text"
-                      placeholder="Escribe un mensaje de prueba..."
+                      placeholder={dsbT.bot?.inputPlaceholder || 'Escribe un mensaje de prueba...'}
                       value={chatInput}
                       onChange={(e) => setChatInput(e.target.value)}
                       className="flex-1 bg-[#2a3942] border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-zinc-500 focus:outline-none"
                     />
                     <button
                       type="submit"
-                      className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold"
+                      className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold cursor-pointer"
                     >
-                      Enviar
+                      {dsbT.bot?.sendBtn || 'Enviar'}
                     </button>
                   </form>
                 </div>
@@ -622,12 +750,16 @@ export default function PublicDashboardDemo() {
                 <div className="p-6 rounded-2xl bg-white/[0.025] border border-white/10 space-y-4">
                   <div className="flex items-center gap-2">
                     <Globe className="w-5 h-5 text-cyan-400" />
-                    <h3 className="text-sm font-bold text-white uppercase tracking-wider">Gestión de Textos de la Web</h3>
+                    <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                      {dsbT.cms?.title || 'Gestión de Textos de la Web'}
+                    </h3>
                   </div>
 
                   <div className="space-y-4">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] text-zinc-400 uppercase tracking-wide block">Titular Hero Principal</label>
+                      <label className="text-[10px] text-zinc-400 uppercase tracking-wide block">
+                        {dsbT.cms?.heroTitleLabel || 'Titular Hero Principal'}
+                      </label>
                       <input
                         type="text"
                         value={cmsHeroTitle}
@@ -637,7 +769,9 @@ export default function PublicDashboardDemo() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-[10px] text-zinc-400 uppercase tracking-wide block">Subtítulo Descriptivo</label>
+                      <label className="text-[10px] text-zinc-400 uppercase tracking-wide block">
+                        {dsbT.cms?.heroSubtitleLabel || 'Subtítulo Descriptivo'}
+                      </label>
                       <textarea
                         rows={3}
                         value={cmsHeroSubtitle}
@@ -648,13 +782,15 @@ export default function PublicDashboardDemo() {
 
                     <button
                       onClick={handleSaveCMS}
-                      className="px-5 py-2.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400/40 text-cyan-300 font-bold text-xs uppercase tracking-wider transition-all"
+                      className="px-5 py-2.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400/40 text-cyan-300 font-bold text-xs uppercase tracking-wider transition-all cursor-pointer"
                     >
-                      Guardar Cambios (Local-First)
+                      {dsbT.cms?.saveBtn || 'Guardar Cambios (Local-First)'}
                     </button>
 
                     {cmsSavedToast && (
-                      <span className="text-xs text-emerald-400 block">✓ Cambios guardados en tiempo real.</span>
+                      <span className="text-xs text-emerald-400 block font-mono">
+                        {dsbT.cms?.savedToast || '✓ Cambios guardados en tiempo real.'}
+                      </span>
                     )}
                   </div>
                 </div>
@@ -676,12 +812,16 @@ export default function PublicDashboardDemo() {
                 <div className="p-6 rounded-2xl bg-white/[0.025] border border-white/10 space-y-4">
                   <div className="flex items-center gap-2">
                     <Settings className="w-5 h-5 text-cyan-400" />
-                    <h3 className="text-sm font-bold text-white uppercase tracking-wider">Ajustes de Credenciales Maestras</h3>
+                    <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                      {dsbT.settings?.title || 'Ajustes de Credenciales Maestras'}
+                    </h3>
                   </div>
 
                   <div className="space-y-3">
                     <div className="space-y-1">
-                      <label className="text-[10px] text-zinc-400 uppercase tracking-wide block">Usuario Administrador</label>
+                      <label className="text-[10px] text-zinc-400 uppercase tracking-wide block">
+                        {dsbT.settings?.userLabel || 'Usuario Administrador'}
+                      </label>
                       <input
                         type="text"
                         readOnly
@@ -691,7 +831,9 @@ export default function PublicDashboardDemo() {
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] text-zinc-400 uppercase tracking-wide block">Contraseña Actual Simulada</label>
+                      <label className="text-[10px] text-zinc-400 uppercase tracking-wide block">
+                        {dsbT.settings?.passLabel || 'Contraseña Actual Simulada'}
+                      </label>
                       <input
                         type="password"
                         readOnly
@@ -704,11 +846,11 @@ export default function PublicDashboardDemo() {
                       <button
                         onClick={() => {
                           playSuccess();
-                          alert('Función de actualización de clave activa en el panel de producción.');
+                          alert(dsbT.settings?.updateAlert || 'Función de actualización de clave activa en el panel de producción.');
                         }}
-                        className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs text-white font-bold transition-all"
+                        className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs text-white font-bold transition-all cursor-pointer"
                       >
-                        Actualizar Credenciales
+                        {dsbT.settings?.updateBtn || 'Actualizar Credenciales'}
                       </button>
                     </div>
                   </div>

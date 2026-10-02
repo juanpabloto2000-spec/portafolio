@@ -68,7 +68,11 @@ export default function GalaxyTopFilterBar({
   onChangeSpeed,
   showTrajectories,
   onToggleTrajectories,
+  services = GALAXY_SERVICES,
+  sysT = {},
 }) {
+  const activeServices = services && services.length > 0 ? services : GALAXY_SERVICES;
+
   return (
     <div className="w-full flex flex-col gap-3 select-none">
       {/* 1. BARRA DE TELEMETRÍA Y CONTROLES GLOBALES */}
@@ -76,11 +80,11 @@ export default function GalaxyTopFilterBar({
         <div className="flex items-center gap-2.5">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]" />
           <span className="text-white font-bold tracking-wider uppercase text-[11px] sm:text-xs">
-            18 Sistemas Operativos & Agentes
+            {sysT.systemsCount || "18 Sistemas Operativos & Agentes"}
           </span>
           <span className="text-zinc-500 hidden sm:inline">•</span>
           <span className="text-zinc-400 text-[11px] hidden sm:inline">
-            Haz clic en cualquier servicio para enfocarlo en la Galaxia 3D
+            {sysT.systemsHint || "Haz clic en cualquier servicio para enfocarlo en la Galaxia 3D"}
           </span>
         </div>
 
@@ -89,11 +93,11 @@ export default function GalaxyTopFilterBar({
           {/* Botón Reset a Vista Panorámica */}
           <button
             onClick={onResetToGalaxy}
-            title="Volver al panorama completo de la Galaxia Dynamind"
+            title={sysT.resetGalaxy || "Volver al panorama completo de la Galaxia Dynamind"}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-cyan-500/20 border border-amber-500/40 hover:border-amber-300 text-amber-300 hover:text-white text-xs font-mono font-bold transition-all shadow-sm group"
           >
             <RotateCcw className="w-3.5 h-3.5 text-amber-400 group-hover:-rotate-90 transition-transform" />
-            <span>⎌ TODA LA GALAXIA</span>
+            <span>{sysT.resetGalaxy || "⎌ TODA LA GALAXIA"}</span>
           </button>
 
           {/* Toggle de Anillos Orbitales */}
@@ -107,14 +111,14 @@ export default function GalaxyTopFilterBar({
             }`}
           >
             <Eye className="w-3.5 h-3.5" />
-            <span className="hidden md:inline">Órbitas</span>
+            <span className="hidden md:inline">{sysT.toggleOrbits || "Órbitas"}</span>
           </button>
         </div>
       </div>
 
       {/* 2. RETÍCULA UNIFORME DE LOS 18 SERVICIOS (TODOS VISIBLES A LA VEZ SIN SCROLL) */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
-        {GALAXY_SERVICES.map((service) => {
+        {activeServices.map((service) => {
           const SrvIcon = ICON_MAP[service.iconName] || Orbit;
           const isSelected = selectedServiceId === service.id;
 

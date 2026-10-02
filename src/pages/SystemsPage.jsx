@@ -11,7 +11,9 @@ import DynamindGalaxy3D from '../components/systems/DynamindGalaxy3D';
 import GalaxyTopFilterBar from '../components/systems/GalaxyTopFilterBar';
 import DynamindServiceHUD from '../components/systems/DynamindServiceHUD';
 import { useCMS } from '../context/CMSContext';
+import { useThemeLanguage } from '../context/ThemeLanguageContext';
 import { GALAXY_SERVICES } from '../data/dynamindGalaxyData';
+import { getLocalizedGalaxyServices, SYSTEMS_UI_TRANSLATIONS } from '../data/translationsSystemsGalaxy';
 import {
   Sun,
   ShieldCheck,
@@ -75,6 +77,11 @@ const ICON_MAP = {
 export default function SystemsPage() {
   const { cms } = useCMS();
   const sistemasCMS = cms?.pages?.sistemas;
+  const { t, language } = useThemeLanguage();
+  const sysT = t?.systems || SYSTEMS_UI_TRANSLATIONS[language] || SYSTEMS_UI_TRANSLATIONS.es;
+
+  // Lista de servicios localizada dinámicamente según el idioma activo
+  const services = useMemo(() => getLocalizedGalaxyServices(language, GALAXY_SERVICES), [language]);
 
   // Modo de vista: 'galaxy' (Simulación 3D Panorámica) | 'matrix' (Consola Matriz en Cuadrícula 2D)
   const [viewMode, setViewMode] = useState('galaxy');
@@ -108,19 +115,19 @@ export default function SystemsPage() {
   // Navegación secuencial por teclado (Flechas [←] y [→])
   const handleNextService = useCallback(() => {
     playOrbitWarp();
-    const cIdx = GALAXY_SERVICES.findIndex((s) => s.id === selectedServiceId);
-    const nextIdx = (cIdx + 1) % GALAXY_SERVICES.length;
-    setSelectedServiceId(GALAXY_SERVICES[nextIdx].id);
+    const cIdx = services.findIndex((s) => s.id === selectedServiceId);
+    const nextIdx = (cIdx + 1) % services.length;
+    setSelectedServiceId(services[nextIdx].id);
     setIsHUDOpen(true);
-  }, [selectedServiceId]);
+  }, [selectedServiceId, services]);
 
   const handlePrevService = useCallback(() => {
     playOrbitWarp();
-    const cIdx = GALAXY_SERVICES.findIndex((s) => s.id === selectedServiceId);
-    const prevIdx = (cIdx - 1 + GALAXY_SERVICES.length) % GALAXY_SERVICES.length;
-    setSelectedServiceId(GALAXY_SERVICES[prevIdx].id);
+    const cIdx = services.findIndex((s) => s.id === selectedServiceId);
+    const prevIdx = (cIdx - 1 + services.length) % services.length;
+    setSelectedServiceId(services[prevIdx].id);
     setIsHUDOpen(true);
-  }, [selectedServiceId]);
+  }, [selectedServiceId, services]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -207,23 +214,22 @@ export default function SystemsPage() {
           <RevealSection direction="up" className="space-y-5">
             <div className="space-y-3 max-w-4xl">
               <h1 className="font-display font-black text-4xl sm:text-6xl text-white tracking-tight leading-[1.1]">
-                {sistemasCMS?.heroTitle || (
+                {language === 'es' && sistemasCMS?.heroTitle ? (
+                  sistemasCMS.heroTitle
+                ) : (
                   <>
-                    La Galaxia Tecnológica <br className="hidden sm:block" />
+                    {sysT.heroTitle} <br className="hidden sm:block" />
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-white to-cyan-300">
-                      de Software & Consultoría de IA
+                      {sysT.heroTitleGradient}
                     </span>
                   </>
                 )}
               </h1>
               <p className="text-sm sm:text-base font-sans text-zinc-300 leading-relaxed max-w-3xl font-light">
-                {sistemasCMS?.heroSubtitle || (
-                  <>
-                    Cada planeta de este universo representa un servicio de ingeniería que construimos en Dynamind. 
-                    Desde <strong>sistemas operativos mayores</strong> (Core DSB Operativo, PMS Hotelero, Caja con Arqueo Ciego, KDS Comandas) 
-                    hasta <strong>agentes autónomos de alta conversión y blindaje</strong> (WhatsApp CRM, OCR Facturas DIAN, n8n, Auditor 24/7). 
-                    Todo con código propietario entregado en tu propio GitHub sin rentas mensuales.
-                  </>
+                {language === 'es' && sistemasCMS?.heroSubtitle ? (
+                  sistemasCMS.heroSubtitle
+                ) : (
+                  sysT.heroSubtitle
                 )}
               </p>
             </div>
@@ -243,7 +249,7 @@ export default function SystemsPage() {
                   }`}
                 >
                   <Orbit className="w-4 h-4 text-cyan-400" />
-                  <span>Galaxia</span>
+                  <span>{sysT.viewGalaxy || 'Galaxia'}</span>
                 </button>
 
                 <button
@@ -258,7 +264,7 @@ export default function SystemsPage() {
                   }`}
                 >
                   <Terminal className="w-4 h-4 text-amber-400" />
-                  <span>Tarjetas</span>
+                  <span>{sysT.viewCards || 'Tarjetas'}</span>
                 </button>
               </div>
             </div>
@@ -279,6 +285,8 @@ export default function SystemsPage() {
               onChangeSpeed={setSpeedMultiplier}
               showTrajectories={showTrajectories}
               onToggleTrajectories={() => setShowTrajectories((prev) => !prev)}
+              services={services}
+              sysT={sysT}
             />
 
             {/* 2. CONTENEDOR 100% LIMPIO DE LA GALAXIA 3D PANORÁMICA */}
@@ -298,6 +306,9 @@ export default function SystemsPage() {
                   onClose={() => setIsHUDOpen(false)}
                   onResetToGalaxy={handleResetToGalaxy}
                   onOpenConsultingModal={handleOpenConsulting}
+                  services={services}
+                  sysT={sysT}
+                  language={language}
                 />
               )}
 
@@ -308,7 +319,7 @@ export default function SystemsPage() {
                   className="absolute bottom-5 right-5 z-30 px-4 py-2.5 rounded-2xl bg-neutral-900/90 backdrop-blur-md border border-cyan-500/40 text-cyan-300 font-mono text-xs font-bold shadow-2xl hover:bg-neutral-800 transition-all flex items-center gap-2"
                 >
                   <Orbit className="w-4 h-4 text-cyan-400" />
-                  <span>Ver Ficha del Servicio</span>
+                  <span>{sysT.btnOpenHud || 'Ver Ficha del Servicio'}</span>
                 </button>
               )}
             </div>
@@ -320,7 +331,7 @@ export default function SystemsPage() {
           <section className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 space-y-6">
             {/* Cuadrícula de 18 Tarjetas de Servicio */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {GALAXY_SERVICES.map((service) => {
+              {services.map((service) => {
                 const SrvIcon = ICON_MAP[service.iconName] || Orbit;
                 const isSelected = selectedServiceId === service.id;
 
@@ -371,7 +382,7 @@ export default function SystemsPage() {
                       <div className="p-2.5 rounded-xl bg-amber-950/20 border border-amber-500/20 space-y-1 text-xs">
                         <div className="flex items-center gap-1.5 text-amber-400 font-mono font-bold text-[10px] uppercase">
                           <AlertTriangle className="w-3 h-3 text-amber-400" />
-                          Cuello de Botella (D0)
+                          {sysT.bottleneckLabel || 'Cuello de Botella (D0)'}
                         </div>
                         <p className="text-amber-200/90 text-[11px] leading-relaxed font-light">
                           {service.bottleneckD0}
@@ -388,7 +399,7 @@ export default function SystemsPage() {
                           title="Ver demo interactiva del Dashboard Operativo"
                         >
                           <LayoutDashboard className="w-3 h-3 text-cyan-400" />
-                          <span>Ver demo de dashboard</span>
+                          <span>{sysT.btnViewDashboardDemo || 'Ver demo de dashboard'}</span>
                         </a>
                       ) : service.id === 'srv-pms' || service.id === 'srv-reservas' ? (
                         <a
@@ -398,7 +409,7 @@ export default function SystemsPage() {
                           className="px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 text-amber-300 hover:text-white font-bold flex items-center gap-1.5 transition-all text-[11px]"
                           title="Ver plataforma real en producción"
                         >
-                          <span>Ver Demo</span>
+                          <span>{sysT.btnViewLiveDemo || 'Ver Demo'}</span>
                         </a>
                       ) : (
                         <span className="text-[10px] text-neutral-500 uppercase font-mono">
@@ -415,7 +426,7 @@ export default function SystemsPage() {
                         }}
                         className="text-cyan-400 hover:text-cyan-300 font-bold flex items-center gap-1 hover:underline cursor-pointer"
                       >
-                        <span>Enfocar en 3D</span>
+                        <span>{sysT.btnFocus3D || 'Enfocar en 3D'}</span>
                         <ChevronRight className="w-3.5 h-3.5" />
                       </button>
                     </div>
@@ -439,8 +450,8 @@ export default function SystemsPage() {
               ? 'bg-black/80 border-white/15 text-zinc-400 hover:text-white hover:border-white/30 shadow-black/50'
               : 'bg-black/85 border-cyan-400/50 text-cyan-300 hover:text-white shadow-[0_0_25px_rgba(56,189,248,0.25)] hover:border-cyan-300'
           }`}
-          title={isCelestialMuted ? 'Activar atmósfera celestial (clic para escuchar)' : 'Silenciar atmósfera celestial'}
-          aria-label={isCelestialMuted ? 'Activar sonido de la galaxia' : 'Silenciar sonido de la galaxia'}
+          title={isCelestialMuted ? (sysT.audioTitleUnmute || 'Activar atmósfera celestial (clic para escuchar)') : (sysT.audioTitleMute || 'Silenciar atmósfera celestial')}
+          aria-label={isCelestialMuted ? (sysT.audioTitleUnmute || 'Activar sonido de la galaxia') : (sysT.audioTitleMute || 'Silenciar sonido de la galaxia')}
         >
           {isCelestialMuted ? (
             <VolumeX className="w-4 h-4 text-zinc-400 group-hover:scale-110 transition-transform" />
@@ -451,7 +462,7 @@ export default function SystemsPage() {
             </div>
           )}
           <span className="text-[11px] font-mono font-bold tracking-wider uppercase hidden sm:inline">
-            {isCelestialMuted ? 'MUTE' : 'ATMÓSFERA CELESTIAL'}
+            {isCelestialMuted ? (sysT.audioMute || 'MUTE') : (sysT.audioActive || 'ATMÓSFERA CELESTIAL')}
           </span>
         </button>
       </div>

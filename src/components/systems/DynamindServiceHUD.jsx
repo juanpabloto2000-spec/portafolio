@@ -115,22 +115,31 @@ const DEMO_REGISTRY = {
   },
 };
 
-// Configuración de modelos de ROI por nicho de servicio
-function getROIProfile(service) {
+// Configuración de modelos de ROI por nicho de servicio con soporte multi-idioma y multi-divisa
+function getROIProfile(service, sysT = {}, language = "es") {
   const id = service.id;
-  const cat = service.category;
+  const q = sysT.roiQuestions || {};
 
   if (id === "srv-pms" || id === "srv-reservas") {
     return {
       type: "hotel",
-      label: "¿Cuántas cabañas o habitaciones gestionas?",
+      label: q.hotelLabel || "¿Cuántas cabañas o habitaciones gestionas?",
       options: [4, 8, 12, 20, 32],
-      unit: "cabañas",
+      unit: q.hotelUnit || "cabañas",
       calculate: (qty) => {
         const monthlySaas = qty * 45000 + 350000; // Cloudbeds/Sirvoy base
         const monthlyOtaLoss = qty * 380000; // ~18% comisiones Booking/Airbnb
         const totalMonthlyLost = monthlySaas + monthlyOtaLoss;
         const annualSaved = totalMonthlyLost * 12;
+        if (language !== "es") {
+          const usdAnnual = Math.round(annualSaved / 4000);
+          return {
+            monthlyLost: totalMonthlyLost,
+            annualSaved,
+            headline: `Save ~$${(usdAnnual / 1000).toFixed(1)}k USD / year`,
+            breakdown: `Eliminate $${Math.round(monthlySaas / 4000)}/mo in third-party software subscriptions and protect $${Math.round(monthlyOtaLoss / 4000)}/mo from high-commission OTAs.`,
+          };
+        }
         return {
           monthlyLost: totalMonthlyLost,
           annualSaved,
@@ -144,14 +153,23 @@ function getROIProfile(service) {
   if (id === "srv-kds" || id === "srv-caja") {
     return {
       type: "gastro",
-      label: "¿Cuántos pedidos o comandas procesas al mes?",
+      label: q.gastroLabel || "¿Cuántos pedidos o comandas procesas al mes?",
       options: [400, 1000, 2200, 4500],
-      unit: "pedidos/mes",
+      unit: q.gastroUnit || "pedidos/mes",
       calculate: (qty) => {
         const monthlyComm = qty * 1800; // comisiones de plataformas tipo Cluvi/Toast
         const monthlySaas = 280000; // suscripción fija
         const totalMonthlyLost = monthlyComm + monthlySaas;
         const annualSaved = totalMonthlyLost * 12;
+        if (language !== "es") {
+          const usdAnnual = Math.round(annualSaved / 4000);
+          return {
+            monthlyLost: totalMonthlyLost,
+            annualSaved,
+            headline: `Save ~$${(usdAnnual / 1000).toFixed(1)}k USD / year`,
+            breakdown: `Eradicate 2.5% ticketing cuts and save $${Math.round(monthlySaas / 4000)}/mo in subscription fees. Fully amortized in 3 months.`,
+          };
+        }
         return {
           monthlyLost: totalMonthlyLost,
           annualSaved,
@@ -165,14 +183,23 @@ function getROIProfile(service) {
   if (id === "srv-whatsapp" || id === "srv-lead" || id === "srv-voice") {
     return {
       type: "leads",
-      label: "¿Cuántas consultas o leads entran a tu canal al mes?",
+      label: q.leadsLabel || "¿Cuántas consultas o leads entran a tu canal al mes?",
       options: [150, 400, 900, 2000],
-      unit: "prospectos/mes",
+      unit: q.leadsUnit || "prospectos/mes",
       calculate: (qty) => {
         const lostByDelay = Math.round(qty * 0.28); // 28% abandonan por respuesta >15min
         const recoveredSales = Math.round(lostByDelay * 0.35); // conversión de recuperados
         const monthlyValue = recoveredSales * 85000; // ticket estimado
         const annualSaved = monthlyValue * 12;
+        if (language !== "es") {
+          const usdAnnual = Math.round(annualSaved / 4000);
+          return {
+            monthlyLost: monthlyValue,
+            annualSaved,
+            headline: `Recover ~$${(usdAnnual / 1000).toFixed(1)}k USD / year`,
+            breakdown: `Respond 24/7 in under 8s. Reclaim ~${lostByDelay} monthly prospects lost to competitors due to delayed replies.`,
+          };
+        }
         return {
           monthlyLost: monthlyValue,
           annualSaved,
@@ -186,13 +213,22 @@ function getROIProfile(service) {
   // Perfil por defecto: Horas operativas desperdiciadas
   return {
     type: "operations",
-    label: "¿Cuántas horas semanales pierde tu equipo en tareas manuales?",
+    label: q.opsLabel || "¿Cuántas horas semanales pierde tu equipo en tareas manuales?",
     options: [6, 14, 25, 40],
-    unit: "horas/semana",
+    unit: q.opsUnit || "horas/semana",
     calculate: (qty) => {
       const hoursPerMonth = qty * 4.3;
       const monthlyCost = hoursPerMonth * 32000; // costo hora nómina
       const annualSaved = monthlyCost * 12;
+      if (language !== "es") {
+        const usdAnnual = Math.round(annualSaved / 4000);
+        return {
+          monthlyLost: monthlyCost,
+          annualSaved,
+          headline: `Reclaim ${Math.round(qty * 52)} productive hours / year`,
+          breakdown: `Equivalent to ~$${(usdAnnual / 1000).toFixed(1)}k USD of payroll reallocated to closing sales instead of manually updating spreadsheets.`,
+        };
+      }
       return {
         monthlyLost: monthlyCost,
         annualSaved,
@@ -208,9 +244,13 @@ export default function DynamindServiceHUD({
   onClose,
   onResetToGalaxy,
   onOpenConsultingModal,
+  services = GALAXY_SERVICES,
+  sysT = {},
+  language = "es",
 }) {
+  const activeServices = services && services.length > 0 ? services : GALAXY_SERVICES;
   const service =
-    GALAXY_SERVICES.find((s) => s.id === selectedServiceId) || GALAXY_SERVICES[0];
+    activeServices.find((s) => s.id === selectedServiceId) || activeServices[0] || GALAXY_SERVICES[0];
 
   const SrvIcon = ICON_MAP[service.iconName] || Orbit;
   const demo = DEMO_REGISTRY[service.id];
@@ -219,7 +259,7 @@ export default function DynamindServiceHUD({
   const [activeTab, setActiveTab] = useState("spec");
 
   // Modelo de ROI y selector
-  const roiProfile = getROIProfile(service);
+  const roiProfile = getROIProfile(service, sysT, language);
   const [selectedOption, setSelectedOption] = useState(roiProfile.options[1] || roiProfile.options[0]);
   const roiCalculation = roiProfile.calculate(selectedOption);
 
@@ -296,7 +336,7 @@ export default function DynamindServiceHUD({
           }`}
         >
           <Cpu className="w-3.5 h-3.5 text-cyan-400" />
-          <span>Ficha Técnica</span>
+          <span>{sysT.tabSpec || "Ficha Técnica"}</span>
         </button>
 
         <button
@@ -312,7 +352,7 @@ export default function DynamindServiceHUD({
           }`}
         >
           <DollarSign className="w-3.5 h-3.5 text-amber-400" />
-          <span>Calculadora ROI</span>
+          <span>{sysT.tabRoi || "Calculadora ROI"}</span>
         </button>
       </div>
 
@@ -345,7 +385,7 @@ export default function DynamindServiceHUD({
                   className="px-3 py-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400/40 text-cyan-200 hover:text-white font-mono text-[11px] font-bold flex items-center gap-1.5 shrink-0 transition-all shadow-sm"
                 >
                   <Play className="w-3 h-3 text-cyan-400" />
-                  <span>Probar</span>
+                  <span>{sysT.btnTest || "Probar"}</span>
                   {demo.isExternal && <ExternalLink className="w-3 h-3 ml-0.5 opacity-70" />}
                 </a>
               </div>
@@ -355,7 +395,7 @@ export default function DynamindServiceHUD({
             <div className="p-3 rounded-2xl bg-amber-950/25 border border-amber-500/30 space-y-1">
               <div className="flex items-center gap-1.5 text-amber-400 font-mono text-[10px] font-bold uppercase tracking-wider">
                 <AlertTriangle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                Cuello de Botella Erradicado (D0)
+                {sysT.bottleneckErradicated || "Cuello de Botella Erradicado (D0)"}
               </div>
               <p className="text-[11px] text-amber-200/90 leading-relaxed font-sans font-light">
                 {service.bottleneckD0}
@@ -366,7 +406,7 @@ export default function DynamindServiceHUD({
             <div className="space-y-1.5">
               <div className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider font-bold flex items-center gap-1.5">
                 <Layers className="w-3 h-3 text-cyan-400" />
-                Pipeline de Implementación
+                {sysT.pipelineTitle || "Pipeline de Implementación"}
               </div>
               <div className="grid grid-cols-2 gap-1.5">
                 {service.pipeline.map((p) => (
@@ -390,7 +430,7 @@ export default function DynamindServiceHUD({
             <div className="space-y-1.5">
               <div className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider font-bold flex items-center gap-1.5">
                 <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                Capacidades Garantizadas
+                {sysT.capabilitiesTitle || "Capacidades Garantizadas"}
               </div>
               <ul className="space-y-1">
                 {service.capabilities.map((cap, i) => (
@@ -416,7 +456,7 @@ export default function DynamindServiceHUD({
                   color: service.color,
                 }}
               >
-                Soberano
+                {sysT.sovereignBadge || "Soberano"}
               </span>
             </div>
           </>
@@ -428,10 +468,10 @@ export default function DynamindServiceHUD({
             <div className="space-y-1">
               <div className="flex items-center gap-1.5 text-amber-400 font-mono text-[10px] font-bold uppercase tracking-wider">
                 <BarChart3 className="w-3.5 h-3.5" />
-                <span>Simulador de Ahorro Anti-SaaS</span>
+                <span>{sysT.roiTitle || "Simulador de Ahorro Anti-SaaS"}</span>
               </div>
               <p className="text-neutral-400 text-[11px] font-sans">
-                Calcula cuánto dinero recuperas al erradicar suscripciones mensuales y comisiones de plataformas intermediarias.
+                {sysT.roiDesc || "Calcula cuánto dinero recuperas al erradicar suscripciones mensuales y comisiones de plataformas intermediarias."}
               </p>
             </div>
 
@@ -460,7 +500,7 @@ export default function DynamindServiceHUD({
                 ))}
               </div>
               <span className="text-[10px] font-mono text-neutral-500 block text-right">
-                Volumen: {selectedOption} {roiProfile.unit}
+                {sysT.roiVolume || "Volumen:"} {selectedOption} {roiProfile.unit}
               </span>
             </div>
 
@@ -470,7 +510,7 @@ export default function DynamindServiceHUD({
 
               <div className="space-y-1">
                 <span className="text-[10px] font-mono text-amber-400 uppercase tracking-wider font-bold">
-                  Retorno de Inversión Proyectado
+                  {sysT.roiHeadlineLabel || "Retorno de Inversión Proyectado"}
                 </span>
                 <p className="text-lg sm:text-xl font-bold font-mono text-white tracking-tight">
                   {roiCalculation.headline}
@@ -482,8 +522,8 @@ export default function DynamindServiceHUD({
               </p>
 
               <div className="pt-2 border-t border-white/10 flex items-center justify-between text-[11px] font-mono">
-                <span className="text-neutral-400">Rentas Mensuales Dynamind:</span>
-                <span className="text-emerald-400 font-bold">$0 COP / mes</span>
+                <span className="text-neutral-400">{sysT.roiDynamindRentLabel || "Rentas Mensuales Dynamind:"}</span>
+                <span className="text-emerald-400 font-bold">{sysT.roiZeroRent || "$0 COP / mes"}</span>
               </div>
             </div>
           </div>
@@ -495,7 +535,7 @@ export default function DynamindServiceHUD({
         <button
           onClick={onResetToGalaxy}
           className="p-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border border-white/10 text-xs font-mono font-medium transition-colors flex items-center justify-center shrink-0 cursor-pointer"
-          title="Ver Toda la Galaxia Dynamind"
+          title={sysT.resetGalaxy || "Ver Toda la Galaxia Dynamind"}
         >
           <RotateCcw className="w-4 h-4 text-amber-400" />
         </button>
@@ -504,7 +544,7 @@ export default function DynamindServiceHUD({
           onClick={handleProceedToConsulting}
           className="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-300 hover:to-amber-500 text-black font-bold font-mono text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-[0_0_20px_rgba(245,158,11,0.3)] transition-all cursor-pointer"
         >
-          <span>{activeTab === "roi" ? "Proteger este Ahorro (45s)" : "Cotizar este Sistema"}</span>
+          <span>{activeTab === "roi" ? (sysT.btnSaveRoiCta || "Proteger este Ahorro (45s)") : (sysT.btnQuoteSpecCta || "Cotizar este Sistema")}</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </button>
       </div>

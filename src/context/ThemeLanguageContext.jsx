@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { SYSTEMS_UI_TRANSLATIONS } from '../data/translationsSystemsGalaxy';
+import { DASHBOARD_DEMO_TRANSLATIONS } from '../data/translationsDashboardDemo';
 
 const ThemeLanguageContext = createContext();
 
@@ -747,6 +749,12 @@ export const TRANSLATIONS = {
     }
   }
 };
+
+// Enriquecer dinámicamente cada diccionario con los sistemas de la galaxia y el demo dashboard
+Object.keys(TRANSLATIONS).forEach((lang) => {
+  TRANSLATIONS[lang].systems = SYSTEMS_UI_TRANSLATIONS[lang] || SYSTEMS_UI_TRANSLATIONS.es;
+  TRANSLATIONS[lang].dashboardDemo = DASHBOARD_DEMO_TRANSLATIONS[lang] || DASHBOARD_DEMO_TRANSLATIONS.es;
+});
 
 export function ThemeLanguageProvider({ children }) {
   const [theme, setTheme] = useState(() => localStorage.getItem('dynamind_theme') || 'obsidian');
