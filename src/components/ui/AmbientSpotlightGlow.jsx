@@ -1,22 +1,29 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 export default function AmbientSpotlightGlow() {
-  const [position, setPosition] = useState({ x: -1000, y: -1000 });
-  const [opacity, setOpacity] = useState(0);
+  const containerRef = useRef(null);
+  const glowRef = useRef(null);
 
   useEffect(() => {
-    let animationFrameId;
+    const glow = glowRef.current;
+    const container = containerRef.current;
+    if (!glow || !container) return;
+
+    let rafId = null;
 
     const handlePointerMove = (e) => {
-      // Inercia suave
-      animationFrameId = requestAnimationFrame(() => {
-        setPosition({ x: e.clientX, y: e.clientY });
-        setOpacity(1);
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        if (!glow || !container) return;
+        container.style.opacity = '1';
+        glow.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
       });
     };
 
     const handlePointerLeave = () => {
-      setOpacity(0);
+      if (container) {
+        container.style.opacity = '0';
+      }
     };
 
     window.addEventListener('pointermove', handlePointerMove, { passive: true });
@@ -25,25 +32,25 @@ export default function AmbientSpotlightGlow() {
     return () => {
       window.removeEventListener('pointermove', handlePointerMove);
       document.body.removeEventListener('pointerleave', handlePointerLeave);
-      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      if (rafId) cancelAnimationFrame(rafId);
     };
   }, []);
 
-  if (opacity <= 0 || position.x < 0) return null;
-
   return (
     <div
+      ref={containerRef}
       aria-hidden="true"
-      className="fixed inset-0 pointer-events-none z-30 transition-opacity duration-500 overflow-hidden"
-      style={{ opacity }}
+      className="fixed inset-0 pointer-events-none z-30 transition-opacity duration-300 overflow-hidden"
+      style={{ opacity: 0 }}
     >
       <div
-        className="absolute w-[600px] h-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full"
+        ref={glowRef}
+        className="absolute w-[500px] h-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none"
         style={{
-          left: `${position.x}px`,
-          top: `${position.y}px`,
+          left: 0,
+          top: 0,
           background: 'radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.015) 35%, transparent 70%)',
-          willChange: 'left, top',
+          willChange: 'transform',
         }}
       />
     </div>

@@ -217,8 +217,8 @@ export default function SovereignEngineeringStandards() {
             {/* CTA Final */}
             <div className="pt-4 text-center">
               <a
-                href="/#/diagnostico"
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-white text-black font-sans font-bold text-xs uppercase hover:bg-zinc-200 transition-colors shadow-monolith cursor-pointer"
+                href="#/diagnostico"
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-white text-black font-sans font-bold text-xs uppercase hover:bg-zinc-200 active:scale-95 transition-all shadow-monolith cursor-pointer"
               >
                 <span>Evaluar Mi Proyecto con Estas Garantías (45s)</span>
                 <ArrowRight className="w-4 h-4" />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 
 export default function RevealSection({
@@ -6,30 +6,20 @@ export default function RevealSection({
   className = '',
   direction = 'up',
   delay = 0,
-  duration = 0.45,
+  duration = 0.38,
   blur = false,
   ...props
 }) {
-  const [forceVisible, setForceVisible] = useState(false);
-
-  useEffect(() => {
-    // Fallback garantizado: si IntersectionObserver tarda o no se dispara en el primer render, asegura visibilidad absoluta
-    const timer = setTimeout(() => {
-      setForceVisible(true);
-    }, 60);
-    return () => clearTimeout(timer);
-  }, []);
-
   const getInitialOffsets = () => {
     switch (direction) {
       case 'up':
-        return { y: 20, x: 0 };
+        return { y: 16, x: 0 };
       case 'down':
-        return { y: -20, x: 0 };
+        return { y: -16, x: 0 };
       case 'left':
-        return { x: -25, y: 0 };
+        return { x: -20, y: 0 };
       case 'right':
-        return { x: 25, y: 0 };
+        return { x: 20, y: 0 };
       case 'none':
       default:
         return { x: 0, y: 0 };
@@ -45,19 +35,17 @@ export default function RevealSection({
         x: initialOffsets.x,
         y: initialOffsets.y,
       }}
-      animate={forceVisible ? { opacity: 1, x: 0, y: 0 } : undefined}
       whileInView={{
         opacity: 1,
         x: 0,
         y: 0,
       }}
-      viewport={{ once: true, margin: "150px" }}
+      viewport={{ once: true, amount: 0, margin: "250px 0px 250px 0px" }}
       transition={{
         duration,
         delay,
         ease: [0.16, 1, 0.3, 1],
       }}
-      style={{ willChange: 'transform, opacity' }}
       className={className}
       {...props}
     >

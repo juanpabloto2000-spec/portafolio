@@ -313,7 +313,7 @@ export default function CinematicDualVideoScrolly() {
           {/* FASE 4: 77% a 100% */}
           <motion.div
             style={{ opacity: p4Opacity, y: p4Y }}
-            className={`space-y-3 sm:space-y-6 will-change-transform absolute inset-x-0 mx-auto max-w-3xl px-4 sm:px-6 pointer-events-auto transition-all duration-300 ${
+            className={`space-y-3 sm:space-y-6 will-change-transform absolute inset-x-0 mx-auto max-w-3xl px-4 sm:px-6 pointer-events-none transition-all duration-300 ${
               isLight ? 'p-6 sm:p-8 rounded-3xl bg-white/70 backdrop-blur-2xl border border-indigo-200/60 shadow-[0_10px_35px_rgba(99,102,241,0.12)]' : ''
             }`}
           >
@@ -330,7 +330,7 @@ export default function CinematicDualVideoScrolly() {
             <div className="pt-2">
               <a
                 href="/#/diagnostico"
-                className="inline-flex items-center gap-2.5 sm:gap-3 px-6 sm:px-9 py-3.5 sm:py-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 text-white transition-all duration-300 font-sans text-xs tracking-wider font-bold rounded-xl shadow-[0_0_35px_rgba(99,102,241,0.5)] border border-white/20 hover:scale-105 transform cursor-pointer uppercase"
+                className="pointer-events-auto inline-flex items-center gap-2.5 sm:gap-3 px-6 sm:px-9 py-3.5 sm:py-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 text-white transition-all duration-300 font-sans text-xs tracking-wider font-bold rounded-xl shadow-[0_0_35px_rgba(99,102,241,0.5)] border border-white/20 hover:scale-105 transform cursor-pointer uppercase"
               >
                 <span>{s.p4Cta}</span>
                 <ArrowRight className="w-4 h-4" />

@@ -52,8 +52,8 @@ export default function GalaxyTelemetryHUD({
               </div>
 
               <a
-                href="/#/diagnostico"
-                className="shrink-0 px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 text-zinc-950 font-sans font-bold text-xs hover:brightness-110 transition-all shadow-lg shadow-amber-500/20 flex items-center gap-2 self-start lg:self-center"
+                href="#/diagnostico"
+                className="shrink-0 px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 text-zinc-950 font-sans font-bold text-xs hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-amber-500/20 flex items-center gap-2 self-start lg:self-center"
               >
                 <span>Diagnosticar Fricción Operativa (D0)</span>
                 <ArrowRight className="w-4 h-4" />
@@ -260,8 +260,8 @@ export default function GalaxyTelemetryHUD({
               
               <div className="flex items-center gap-4">
                 <a
-                  href="/#/obras"
-                  className="hover:underline font-bold flex items-center gap-1.5"
+                  href="#/obras"
+                  className="hover:underline font-bold flex items-center gap-1.5 active:scale-95"
                   style={{ color: currentStation.color }}
                 >
                   <span>Ver casos reales de este sistema en Obras</span>

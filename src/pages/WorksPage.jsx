@@ -30,8 +30,8 @@ export default function WorksPage() {
             {/* Botón Dedicado a la Demo de Dashboard */}
             <div className="pt-2">
               <a
-                href="/#/dashboard"
-                className="inline-flex items-center gap-3 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500/20 via-indigo-600/30 to-purple-600/20 hover:from-cyan-500/30 hover:via-indigo-600/40 hover:to-purple-600/30 border border-cyan-400/40 hover:border-cyan-300 text-white font-mono text-xs uppercase tracking-wider shadow-[0_0_25px_rgba(56,189,248,0.2)] hover:shadow-[0_0_35px_rgba(56,189,248,0.35)] transition-all group cursor-pointer"
+                href="#/dashboard"
+                className="inline-flex items-center gap-3 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500/20 via-indigo-600/30 to-purple-600/20 hover:from-cyan-500/30 hover:via-indigo-600/40 hover:to-purple-600/30 border border-cyan-400/40 hover:border-cyan-300 text-white font-mono text-xs uppercase tracking-wider shadow-[0_0_25px_rgba(56,189,248,0.2)] hover:shadow-[0_0_35px_rgba(56,189,248,0.35)] transition-all group cursor-pointer active:scale-95"
               >
                 <LayoutDashboard className="w-4 h-4 text-cyan-400 group-hover:scale-110 transition-transform" />
                 <span className="font-bold">{dsbDemoBtnLabel}</span>
@@ -64,8 +64,8 @@ export default function WorksPage() {
               </p>
               <div>
                 <a
-                  href="/#/diagnostico"
-                  className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-white text-black font-sans text-xs font-bold uppercase transition-all duration-300 hover:bg-zinc-200 shadow-monolith cursor-pointer"
+                  href="#/diagnostico"
+                  className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-white text-black font-sans text-xs font-bold uppercase transition-all duration-300 hover:bg-zinc-200 shadow-monolith cursor-pointer active:scale-95"
                 >
                   <span>Iniciar Diagnóstico & Agendar Demo (45s)</span>
                   <ArrowRight className="w-4 h-4" />

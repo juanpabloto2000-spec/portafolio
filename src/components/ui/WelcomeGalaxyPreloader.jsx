@@ -2,28 +2,25 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function WelcomeGalaxyPreloader({ pageKey }) {
-  // Solo se debe mostrar en la página de inicio (home), nunca en sistemas, obras o rutas internas
-  if (pageKey && pageKey !== 'home') {
-    return null;
-  }
-
-  const [isVisible, setIsVisible] = useState(() => {
-    // Si ya se mostró en esta sesión, no volver a bloquear
-    if (typeof window !== 'undefined' && sessionStorage.getItem('preloader_shown_v2')) {
-      return false;
-    }
-    return true;
-  });
+  // Se debe mostrar tanto en la página de inicio (home) como en diagnóstico
+  const isAllowedPage = pageKey === 'home' || pageKey === 'diagnostico';
+  
+  const [isVisible, setIsVisible] = useState(isAllowedPage);
   const [showLogo, setShowLogo] = useState(false);
   const videoRef = useRef(null);
 
   useEffect(() => {
-    if (!isVisible) return;
-    try {
-      sessionStorage.setItem('preloader_shown_v2', 'true');
-    } catch {}
+    if (!isAllowedPage) {
+      setIsVisible(false);
+      return;
+    }
+
+    setIsVisible(true);
+    setShowLogo(false);
+
     const video = videoRef.current;
     if (video) {
+      video.currentTime = 0;
       video.muted = true;
       video.defaultMuted = true;
       video.playsInline = true;
@@ -35,31 +32,33 @@ export default function WelcomeGalaxyPreloader({ pageKey }) {
       }
     }
 
-    // Efecto en los últimos 2 segundos: aparecer el logo con fade-in suave desde 1.6s
+    // Efecto en los últimos 2 segundos: aparecer el logo con fade-in suave desde 1.4s
     const logoTimer = setTimeout(() => {
       setShowLogo(true);
-    }, 1600);
+    }, 1400);
 
-    // Salida cinematográfica en el frame exacto de entrada al agujero (3.65s)
+    // Salida cinematográfica ágil en el frame exacto de entrada al agujero (3.35s)
     const exitTimer = setTimeout(() => {
       if (videoRef.current) {
         try { videoRef.current.pause(); } catch {}
       }
       setIsVisible(false);
-    }, 3650);
+    }, 3350);
 
     return () => {
       clearTimeout(logoTimer);
       clearTimeout(exitTimer);
     };
-  }, []);
+  }, [pageKey]);
 
-  const handleVideoEnded = () => {
-    setIsVisible(false);
-  };
+  if (!isAllowedPage && !isVisible) {
+    return null;
+  }
 
-  const handleVideoError = () => {
-    // Si hay error al cargar el video, proceder de inmediato al index
+  const handleDismiss = () => {
+    if (videoRef.current) {
+      try { videoRef.current.pause(); } catch {}
+    }
     setIsVisible(false);
   };
 
@@ -67,13 +66,11 @@ export default function WelcomeGalaxyPreloader({ pageKey }) {
     const video = videoRef.current;
     if (!video) return;
 
-    // 1. Mostrar logo con opacidad suave en los últimos 2 segundos de vuelo
-    if (video.currentTime >= 1.6 && !showLogo) {
+    if (video.currentTime >= 1.4 && !showLogo) {
       setShowLogo(true);
     }
 
-    // 2. Terminar en el frame exacto cuando la nave entra en el agujero cósmico (3.60s)
-    if (video.currentTime >= 3.60 && isVisible) {
+    if (video.currentTime >= 3.35 && isVisible) {
       try { video.pause(); } catch {}
       setIsVisible(false);
     }
@@ -83,14 +80,14 @@ export default function WelcomeGalaxyPreloader({ pageKey }) {
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          key="cinematic-preloader"
+          key={`cinematic-preloader-${pageKey}`}
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          onClick={() => setIsVisible(false)}
+          transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+          onClick={handleDismiss}
           className="fixed inset-0 z-[99999] bg-black overflow-hidden flex items-center justify-center select-none cursor-pointer w-full max-w-[100vw] h-full max-h-[100vh]"
         >
-          {/* Video a pantalla completa con encuadre adaptable (enfocado en el vórtice cósmico en móvil y centrado en desktop) */}
+          {/* Video a pantalla completa con encuadre adaptable (enfocado en el vórtice cósmico) */}
           <video
             ref={videoRef}
             src="/videos/pcarga.mp4"
@@ -98,8 +95,8 @@ export default function WelcomeGalaxyPreloader({ pageKey }) {
             muted
             playsInline
             preload="auto"
-            onEnded={handleVideoEnded}
-            onError={handleVideoError}
+            onEnded={handleDismiss}
+            onError={handleDismiss}
             onTimeUpdate={handleTimeUpdate}
             className="absolute inset-0 preloader-video pointer-events-none"
           />
@@ -107,21 +104,26 @@ export default function WelcomeGalaxyPreloader({ pageKey }) {
           {/* Viñeta cinematográfica muy sutil para dar profundidad */}
           <div className="absolute inset-0 bg-black/20 pointer-events-none" />
 
-          {/* Logo transparente apareciendo con opacidad en los últimos 2 segundos en el centro exacto */}
+          {/* Logo transparente apareciendo con opacidad en el centro exacto */}
           <AnimatePresence>
             {showLogo && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
                 animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
                 exit={{ opacity: 0, scale: 1.05 }}
-                transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
-                className="relative z-20 flex items-center justify-center p-6"
+                transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                className="relative z-20 flex flex-col items-center justify-center p-6 space-y-3"
               >
                 <img
                   src="/logo sin fondo.png"
                   alt="Dynamind Studios Logo"
                   className="w-44 xs:w-56 sm:w-72 md:w-88 h-auto object-contain drop-shadow-[0_0_40px_rgba(255,255,255,0.45)]"
                 />
+                {pageKey === 'diagnostico' && (
+                  <span className="text-[10px] sm:text-xs font-mono font-bold tracking-widest text-cyan-300 uppercase px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-400/30 backdrop-blur-md">
+                    INICIALIZANDO MOTOR DE TRIAJE OPERATIVO
+                  </span>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
@@ -129,10 +131,13 @@ export default function WelcomeGalaxyPreloader({ pageKey }) {
           {/* Botón sutil de skip / saltar por accesibilidad en la esquina inferior derecha */}
           <button
             type="button"
-            onClick={() => setIsVisible(false)}
-            className="absolute bottom-6 right-6 z-30 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white/60 hover:text-white text-[11px] font-mono tracking-widest uppercase backdrop-blur-md border border-white/10 transition-all cursor-pointer opacity-40 hover:opacity-100"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDismiss();
+            }}
+            className="absolute bottom-6 right-6 z-30 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white/70 hover:text-white text-[11px] font-mono tracking-widest uppercase backdrop-blur-md border border-white/15 transition-all cursor-pointer opacity-60 hover:opacity-100"
           >
-            Saltar
+            Saltar ✕
           </button>
         </motion.div>
       )}

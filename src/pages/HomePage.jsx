@@ -65,8 +65,8 @@ export default function HomePage() {
                 </div>
 
                 <a
-                  href="/#/diagnostico"
-                  className={`shrink-0 px-8 py-4 rounded-xl font-sans text-xs font-bold uppercase transition-all flex items-center gap-2 shadow-monolith cursor-pointer hover:scale-105 transform ${
+                  href="#/diagnostico"
+                  className={`shrink-0 px-8 py-4 rounded-xl font-sans text-xs font-bold uppercase transition-all flex items-center gap-2 shadow-monolith cursor-pointer hover:scale-105 active:scale-95 transform ${
                     isLight 
                       ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/25 hover:from-blue-500 hover:to-indigo-500'
                       : 'bg-white text-black hover:bg-zinc-200'

@@ -10,7 +10,7 @@ export default function FooterEditorial() {
   const social = cms?.social || {};
 
   return (
-    <footer id="filosofia" className={`py-24 sm:py-32 border-t relative transition-colors duration-500 ${
+    <footer id="footer" className={`py-24 sm:py-32 border-t relative transition-colors duration-500 ${
       isLight ? 'bg-slate-100/90 border-slate-200 text-slate-700' : 'bg-transparent border-white/10 text-platinum'
     }`}>
       <div className="max-w-7xl mx-auto px-6 sm:px-12 space-y-16">
@@ -61,32 +61,32 @@ export default function FooterEditorial() {
               </div>
               <ul className="space-y-2.5 text-zinc-300">
                 <li>
-                  <a href="/#/obras" className="hover:text-white transition-colors uppercase block">
+                  <a href="#/obras" className="hover:text-white active:scale-95 transition-all uppercase block cursor-pointer">
                     ▸ {t.nav.obras}
                   </a>
                 </li>
                 <li>
-                  <a href="/#/sistemas" className="hover:text-white transition-colors uppercase block">
+                  <a href="#/sistemas" className="hover:text-white active:scale-95 transition-all uppercase block cursor-pointer">
                     ▸ {t.nav.sistemas}
                   </a>
                 </li>
                 <li>
-                  <a href="/#/vision" className="hover:text-white transition-colors uppercase block">
+                  <a href="#/vision" className="hover:text-white active:scale-95 transition-all uppercase block cursor-pointer">
                     ▸ {t.nav.vision}
                   </a>
                 </li>
                 <li>
-                  <a href="/#/diagnostico" className="hover:text-white transition-colors uppercase block text-cyan-400 font-bold">
+                  <a href="#/diagnostico" className="hover:text-white active:scale-95 transition-all uppercase block text-cyan-400 font-bold cursor-pointer">
                     ▸ {t.nav.diagnostico} (45s)
                   </a>
                 </li>
                 <li className="pt-2 border-t border-white/10">
-                  <a href="/#/privacidad" className="hover:text-cyan-400 transition-colors uppercase block text-[11px] text-zinc-400">
+                  <a href="#/privacidad" className="hover:text-cyan-400 active:scale-95 transition-all uppercase block text-[11px] text-zinc-400 cursor-pointer">
                     § Políticas de Privacidad & Habeas Data
                   </a>
                 </li>
                 <li>
-                  <a href="/#/terminos" className="hover:text-cyan-400 transition-colors uppercase block text-[11px] text-zinc-400">
+                  <a href="#/terminos" className="hover:text-cyan-400 active:scale-95 transition-all uppercase block text-[11px] text-zinc-400 cursor-pointer">
                     § Términos y Condiciones
                   </a>
                 </li>
@@ -194,11 +194,11 @@ export default function FooterEditorial() {
           <div className="flex flex-wrap items-center gap-2">
             <span>© {new Date().getFullYear()} DYNAMIND STUDIOS S.A.S. — {f.rights}</span>
             <span>·</span>
-            <a href="/#/privacidad" className="hover:text-cyan-400 underline underline-offset-4 transition-colors">
+            <a href="#/privacidad" className="hover:text-cyan-400 underline underline-offset-4 transition-colors cursor-pointer">
               Privacidad & Ley 1581 (Habeas Data)
             </a>
             <span>·</span>
-            <a href="/#/terminos" className="hover:text-cyan-400 underline underline-offset-4 transition-colors">
+            <a href="#/terminos" className="hover:text-cyan-400 underline underline-offset-4 transition-colors cursor-pointer">
               Términos del Servicio
             </a>
           </div>

@@ -57,9 +57,9 @@ export default function App() {
 
       setCurrentHash(newHash);
       
-      // Desplazamiento limpio al inicio de la página salvo anclas internas
-      if (!newHash.includes('#comparativa')) {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Desplazamiento limpio al inicio de la página salvo anclas internas (instantáneo para cero lag en eventos)
+      if (!newHash.includes('#comparativa') && !newHash.includes('#filosofia')) {
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
       }
     };
 
@@ -110,7 +110,7 @@ export default function App() {
         <GalaxyAmbientBackground />
 
         {/* 🚀 Preloader Cósmico Interactivo (Index y Diagnóstico) */}
-        <WelcomeGalaxyPreloader pageKey={pageKey} />
+        <WelcomeGalaxyPreloader key={pageKey} pageKey={pageKey} />
 
         {/* 🧭 Navbar Global Fijo a Nivel de Viewport (Inamovible durante el scroll) */}
         <Navbar currentHash={currentHash} />
@@ -122,7 +122,7 @@ export default function App() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.15 }}
+              transition={{ duration: 0.1, ease: 'easeOut' }}
               className="w-full"
             >
               <Suspense fallback={<CosmicPageFallback />}>

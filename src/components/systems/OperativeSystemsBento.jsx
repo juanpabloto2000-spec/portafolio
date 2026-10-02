@@ -128,8 +128,8 @@ export default function OperativeSystemsBento() {
           </div>
 
           <a
-            href="/#/sistemas"
-            className="text-xs font-mono text-white underline underline-offset-4 hover:text-platinum flex items-center gap-1.5"
+            href="#/sistemas"
+            className="text-xs font-mono text-white underline underline-offset-4 hover:text-platinum flex items-center gap-1.5 active:scale-95"
           >
             <span>Ver Especificaciones Técnicas y Calculadora de ROI</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -209,15 +209,15 @@ export default function OperativeSystemsBento() {
 
                     <div className="flex items-center gap-2 w-full sm:w-auto">
                       <a
-                        href="/#/sistemas"
-                        className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 hover:text-white border border-white/15 font-mono text-xs uppercase transition-all text-center"
+                        href="#/sistemas"
+                        className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] active:scale-95 text-zinc-300 hover:text-white border border-white/15 font-mono text-xs uppercase transition-all text-center cursor-pointer"
                       >
                         Especificaciones
                       </a>
 
                       <a
-                        href="/#/diagnostico"
-                        className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-white text-black font-mono text-xs font-bold uppercase hover:bg-platinum transition-all flex items-center justify-center gap-1.5"
+                        href="#/diagnostico"
+                        className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-white text-black font-mono text-xs font-bold uppercase hover:bg-platinum active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                       >
                         <span>Diagnosticar</span>
                         <ArrowUpRight className="w-3.5 h-3.5" />

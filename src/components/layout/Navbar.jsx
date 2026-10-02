@@ -32,6 +32,16 @@ export default function Navbar({ currentHash = '#/' }) {
     ? 'text-black font-bold hover:text-indigo-600 hover:bg-slate-100/80 border border-transparent'
     : 'text-zinc-400 hover:text-white hover:bg-white/[0.04] border border-transparent';
 
+  const handleNav = (targetHash) => (e) => {
+    e.preventDefault();
+    soundFx.playTap();
+    setMobileMenuOpen(false);
+    if (window.location.hash !== targetHash) {
+      window.location.hash = targetHash;
+    }
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  };
+
   return (
     <>
       <header 
@@ -47,7 +57,8 @@ export default function Navbar({ currentHash = '#/' }) {
           
           {/* Logo Maestro Sin Fondo en Escala Prominente */}
           <a 
-            href="/#/" 
+            href="#/" 
+            onClick={handleNav('#/')}
             className="flex items-center group cursor-pointer py-0.5"
           >
             <img 
@@ -61,7 +72,8 @@ export default function Navbar({ currentHash = '#/' }) {
           <div className="hidden md:flex items-center gap-1.5 sm:gap-2 ml-auto text-xs font-sans font-medium tracking-wide">
             <nav className="flex items-center gap-1.5 sm:gap-2">
               <a 
-                href="/#/" 
+                href="#/" 
+                onClick={handleNav('#/')}
                 className={`px-3.5 py-1.5 rounded-xl uppercase transition-all duration-200 flex items-center gap-1.5 ${
                   isHome ? activeClasses : inactiveClasses
                 }`}
@@ -69,7 +81,8 @@ export default function Navbar({ currentHash = '#/' }) {
                 <span>{t.nav.inicio}</span>
               </a>
               <a 
-                href="/#/obras" 
+                href="#/obras" 
+                onClick={handleNav('#/obras')}
                 className={`px-3.5 py-1.5 rounded-xl uppercase transition-all duration-200 flex items-center gap-1.5 ${
                   isWorks ? activeClasses : inactiveClasses
                 }`}
@@ -77,7 +90,8 @@ export default function Navbar({ currentHash = '#/' }) {
                 <span>{t.nav.obras}</span>
               </a>
               <a 
-                href="/#/sistemas" 
+                href="#/sistemas" 
+                onClick={handleNav('#/sistemas')}
                 className={`px-3.5 py-1.5 rounded-xl uppercase transition-all duration-200 flex items-center gap-1.5 ${
                   isSystems ? activeClasses : inactiveClasses
                 }`}
@@ -85,7 +99,8 @@ export default function Navbar({ currentHash = '#/' }) {
                 <span>{t.nav.sistemas}</span>
               </a>
               <a 
-                href="/#/vision" 
+                href="#/vision" 
+                onClick={handleNav('#/vision')}
                 className={`px-3.5 py-1.5 rounded-xl uppercase transition-all duration-200 flex items-center gap-1.5 ${
                   isVision ? activeClasses : inactiveClasses
                 }`}
@@ -93,7 +108,8 @@ export default function Navbar({ currentHash = '#/' }) {
                 <span>{t.nav.vision}</span>
               </a>
               <a 
-                href="/#/diagnostico" 
+                href="#/diagnostico" 
+                onClick={handleNav('#/diagnostico')}
                 className={`px-3.5 py-1.5 rounded-xl uppercase transition-all duration-200 flex items-center gap-1.5 ${
                   isTriage ? activeClasses : inactiveClasses
                 }`}
@@ -189,8 +205,8 @@ export default function Navbar({ currentHash = '#/' }) {
           }`}>
             <nav className="flex flex-col gap-2 text-sm">
               <a 
-                href="/#/" 
-                onClick={() => setMobileMenuOpen(false)}
+                href="#/" 
+                onClick={handleNav('#/')}
                 className={`px-4 py-2.5 rounded-xl uppercase transition-all flex items-center justify-between ${
                   isHome ? activeClasses : (isLight ? 'text-black font-bold hover:text-indigo-600 hover:bg-slate-100' : 'text-zinc-400 hover:text-white')
                 }`}
@@ -198,8 +214,8 @@ export default function Navbar({ currentHash = '#/' }) {
                 <span>01. {t.nav.inicio}</span>
               </a>
               <a 
-                href="/#/obras" 
-                onClick={() => setMobileMenuOpen(false)}
+                href="#/obras" 
+                onClick={handleNav('#/obras')}
                 className={`px-4 py-2.5 rounded-xl uppercase transition-all flex items-center justify-between ${
                   isWorks ? activeClasses : (isLight ? 'text-black font-bold hover:text-indigo-600 hover:bg-slate-100' : 'text-zinc-400 hover:text-white')
                 }`}
@@ -207,8 +223,8 @@ export default function Navbar({ currentHash = '#/' }) {
                 <span>02. {t.nav.obras}</span>
               </a>
               <a 
-                href="/#/sistemas" 
-                onClick={() => setMobileMenuOpen(false)}
+                href="#/sistemas" 
+                onClick={handleNav('#/sistemas')}
                 className={`px-4 py-2.5 rounded-xl uppercase transition-all flex items-center justify-between ${
                   isSystems ? activeClasses : (isLight ? 'text-black font-bold hover:text-indigo-600 hover:bg-slate-100' : 'text-zinc-400 hover:text-white')
                 }`}
@@ -216,8 +232,8 @@ export default function Navbar({ currentHash = '#/' }) {
                 <span>03. {t.nav.sistemas}</span>
               </a>
               <a 
-                href="/#/vision" 
-                onClick={() => setMobileMenuOpen(false)}
+                href="#/vision" 
+                onClick={handleNav('#/vision')}
                 className={`px-4 py-2.5 rounded-xl uppercase transition-all flex items-center justify-between ${
                   isVision ? activeClasses : (isLight ? 'text-black font-bold hover:text-indigo-600 hover:bg-slate-100' : 'text-zinc-400 hover:text-white')
                 }`}
@@ -225,8 +241,8 @@ export default function Navbar({ currentHash = '#/' }) {
                 <span>04. {t.nav.vision}</span>
               </a>
               <a 
-                href="/#/diagnostico" 
-                onClick={() => setMobileMenuOpen(false)}
+                href="#/diagnostico" 
+                onClick={handleNav('#/diagnostico')}
                 className={`px-4 py-2.5 rounded-xl uppercase transition-all flex items-center justify-between ${
                   isTriage ? activeClasses : (isLight ? 'text-black font-bold hover:text-indigo-600 hover:bg-slate-100' : 'text-zinc-400 hover:text-white')
                 }`}

@@ -286,8 +286,8 @@ export default function InteractiveROICalculator() {
               {/* Botón de Cierre Dopamínico */}
               <div className="pt-2 sm:pt-4 space-y-3">
                 <a
-                  href="/#/diagnostico"
-                  className={`w-full min-h-[48px] py-3.5 sm:py-4 rounded-xl font-mono text-xs font-bold uppercase tracking-wider text-center flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                  href="#/diagnostico"
+                  className={`w-full min-h-[48px] py-3.5 sm:py-4 rounded-xl font-mono text-xs font-bold uppercase tracking-wider text-center flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 ${
                     isLight ? 'bg-slate-900 text-white hover:bg-black shadow-lg shadow-slate-900/10' : 'bg-white text-black hover:bg-platinum shadow-monolith'
                   }`}
                 >

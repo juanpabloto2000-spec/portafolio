@@ -121,16 +121,21 @@ export default function HeroEditorial() {
                 className="pt-2 sm:pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 max-w-md sm:max-w-none"
               >
                 <a
-                  href="/#/diagnostico"
-                  className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 text-white font-sans text-xs font-bold uppercase tracking-wider shadow-[0_0_25px_rgba(99,102,241,0.45)] hover:shadow-[0_0_35px_rgba(168,85,247,0.6)] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  href="#/diagnostico"
+                  className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 text-white font-sans text-xs font-bold uppercase tracking-wider shadow-[0_0_25px_rgba(99,102,241,0.45)] hover:shadow-[0_0_35px_rgba(168,85,247,0.6)] transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
                 >
                   <span>{ctaText}</span>
                   <span className="text-sm">→</span>
                 </a>
 
                 <a
-                  href="/#filosofia"
-                  className={`px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl font-sans text-xs font-semibold uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                  href="#filosofia"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const el = document.getElementById('filosofia');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className={`px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl font-sans text-xs font-semibold uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 ${
                     isLight 
                       ? 'bg-slate-200/80 hover:bg-slate-300 border border-slate-300 text-slate-900 shadow-sm'
                       : 'bg-white/[0.04] hover:bg-white/[0.08] border border-white/15 text-zinc-300 hover:text-white'

@@ -110,8 +110,8 @@ export default function WhyNotTraditionalWebs() {
                   {w.col2Footer}
                 </span>
                 <a
-                  href="/#/sistemas"
-                  className="inline-flex items-center gap-1.5 text-xs font-sans font-bold text-white hover:text-cyan-300 transition-colors uppercase tracking-wider"
+                  href="#/sistemas"
+                  className="inline-flex items-center gap-1.5 text-xs font-sans font-bold text-white hover:text-cyan-300 active:scale-95 transition-all uppercase tracking-wider cursor-pointer"
                 >
                   <span>{w.col2Btn}</span>
                   <ArrowRight className="w-4 h-4" />
