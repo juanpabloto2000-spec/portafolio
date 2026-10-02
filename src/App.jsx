@@ -89,10 +89,10 @@ export default function App() {
   if (currentHash.startsWith('#/dashboard')) {
     return (
       <ThemeLanguageProvider>
-        <div className="min-h-screen bg-[#07090e] text-slate-100 overflow-x-hidden relative selection:bg-white/20">
+        <div className="min-h-screen bg-transparent text-slate-100 overflow-x-hidden relative selection:bg-white/20">
           <GalaxyAmbientBackground />
           <div className="relative z-10">
-            <Suspense fallback={<CosmicPageFallback message="INICIALIZANDO DEMO PÚBLICA DEL CORE DSB..." />}>
+            <Suspense fallback={<CosmicPageFallback message="INICIALIZANDO DEMO DEL CORE DSB..." />}>
               <PublicDashboardDemo />
             </Suspense>
           </div>
