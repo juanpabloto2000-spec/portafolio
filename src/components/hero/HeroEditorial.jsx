@@ -122,7 +122,17 @@ export default function HeroEditorial() {
               >
                 <a
                   href="#/diagnostico"
-                  className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 text-white font-sans text-xs font-bold uppercase tracking-wider shadow-[0_0_25px_rgba(99,102,241,0.45)] hover:shadow-[0_0_35px_rgba(168,85,247,0.6)] transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+                  onMouseEnter={() => {
+                    try { import('../../pages/TriagePage'); } catch {}
+                  }}
+                  onTouchStart={() => {
+                    try { import('../../pages/TriagePage'); } catch {}
+                  }}
+                  className={`px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-sans text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95 ${
+                    isLight
+                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg shadow-blue-500/25'
+                      : 'bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:via-indigo-500 hover:to-purple-500 text-white shadow-[0_0_25px_rgba(99,102,241,0.45)] hover:shadow-[0_0_35px_rgba(168,85,247,0.6)]'
+                  }`}
                 >
                   <span>{ctaText}</span>
                   <span className="text-sm">→</span>

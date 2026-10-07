@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
+import { getStoreItem, setStoreItem, enqueueSyncTask, flushSyncQueue } from '../lib/offlineStorage';
 
 const LeadContext = createContext();
 
@@ -190,12 +191,27 @@ export function LeadProvider({ children }) {
     }
   });
 
+  // Hidratación asíncrona desde IndexedDB
   useEffect(() => {
-    try {
-      localStorage.setItem('dynamind_objections_history', JSON.stringify(objections));
-    } catch (e) {
-      console.warn('Storage save objections failed:', e);
+    async function hydrateFromIndexedDB() {
+      try {
+        const storedLeads = await getStoreItem('leads_vault', 'data', null);
+        if (storedLeads && Array.isArray(storedLeads) && storedLeads.length > 0) {
+          setLeads(storedLeads);
+        }
+        const storedObj = await getStoreItem('objections_vault', 'data', null);
+        if (storedObj && Array.isArray(storedObj) && storedObj.length > 0) {
+          setObjections(storedObj);
+        }
+      } catch (e) {
+        console.info('IndexedDB hydration fallback applied.');
+      }
     }
+    hydrateFromIndexedDB();
+  }, []);
+
+  useEffect(() => {
+    setStoreItem('objections_vault', objections);
   }, [objections]);
 
   const [availableSlots] = useState([
@@ -215,11 +231,7 @@ export function LeadProvider({ children }) {
   ]);
 
   useEffect(() => {
-    try {
-      localStorage.setItem('dynamind_leads_vault', JSON.stringify(leads));
-    } catch (e) {
-      console.warn('Storage save failed:', e);
-    }
+    setStoreItem('leads_vault', leads);
   }, [leads]);
 
   // Sincronización pasiva desde Supabase si hay conexión disponible
@@ -232,18 +244,31 @@ export function LeadProvider({ children }) {
           .order('created_at', { ascending: false });
 
         if (!error && data && data.length > 0) {
-          // Unir evitando duplicados
           setLeads(prev => {
             const remoteIds = new Set(data.map(d => d.id));
             const localOnly = prev.filter(p => !remoteIds.has(p.id));
-            return [...data, ...localOnly];
+            const merged = [...data, ...localOnly];
+            setStoreItem('leads_vault', merged);
+            return merged;
           });
         }
       } catch (err) {
-        console.info('Supabase leads offline/unreachable, using local vault.');
+        console.info('Supabase leads offline/unreachable, using local IndexedDB vault.');
       }
     }
     fetchRemoteLeads();
+
+    // Manejador para vaciar cola cuando vuelva la conexión
+    const handleOnline = () => {
+      flushSyncQueue(async (task) => {
+        if (task.action === 'upsert_lead') {
+          await supabase.from('leads').upsert(task.payload);
+        }
+      });
+    };
+
+    window.addEventListener('online', handleOnline);
+    return () => window.removeEventListener('online', handleOnline);
   }, []);
 
   // Función de sanitización anti-XSS estricta

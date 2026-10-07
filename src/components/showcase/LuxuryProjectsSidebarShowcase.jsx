@@ -74,7 +74,7 @@ export default function LuxuryProjectsSidebarShowcase() {
             onClick={() => handleViewMode('mobile')}
             className={`px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
               viewMode === 'mobile'
-                ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md shadow-cyan-500/25 border border-cyan-400/40'
+                ? 'bg-white text-black shadow-sm font-bold'
                 : 'text-zinc-400 hover:text-white'
             }`}
             title="Vista vertical en smartphone (9:19)"
@@ -87,7 +87,7 @@ export default function LuxuryProjectsSidebarShowcase() {
             onClick={() => handleViewMode('desktop')}
             className={`px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
               viewMode === 'desktop'
-                ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md shadow-cyan-500/25 border border-cyan-400/40'
+                ? 'bg-white text-black shadow-sm font-bold'
                 : 'text-zinc-400 hover:text-white'
             }`}
             title="Vista panorámica de escritorio"
@@ -121,10 +121,10 @@ export default function LuxuryProjectsSidebarShowcase() {
                     isSelected
                       ? (isLight
                           ? 'bg-gradient-to-r from-blue-50 to-indigo-50 border-indigo-400 text-black shadow-md ring-1 ring-indigo-400'
-                          : 'bg-gradient-to-r from-cyan-950/85 via-[#131b2e] to-purple-950/60 border-cyan-400/80 shadow-[0_0_20px_rgba(34,211,238,0.25)] ring-1 ring-cyan-400/50')
+                          : 'bg-gradient-to-r from-blue-950/80 via-[#131b2e] to-purple-950/70 border-purple-400/50 text-white shadow-[0_0_20px_rgba(168,85,247,0.25)] ring-1 ring-purple-400/40')
                       : (isLight
                           ? 'bg-slate-100/90 border-slate-200 hover:bg-white hover:border-slate-300 text-black shadow-sm'
-                          : 'bg-[#121726]/95 border-white/15 hover:bg-[#182035] hover:border-white/25 text-zinc-300 shadow-md')
+                          : 'bg-black/40 border-white/10 hover:bg-white/[0.04] hover:border-white/20 text-zinc-300 shadow-md')
                   }`}
                 >
                   <div className="min-w-0 flex-1">
@@ -136,7 +136,9 @@ export default function LuxuryProjectsSidebarShowcase() {
                       {proj.title}
                     </div>
                     <div className={`text-[10px] truncate ${
-                      isLight ? 'text-slate-600' : 'text-zinc-400'
+                      isSelected
+                        ? (isLight ? 'text-indigo-700' : 'text-purple-200')
+                        : (isLight ? 'text-slate-600' : 'text-zinc-400')
                     }`}>
                       {proj.client}
                     </div>
@@ -151,7 +153,7 @@ export default function LuxuryProjectsSidebarShowcase() {
                   ) : (
                     <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
                       isSelected 
-                        ? (isLight ? 'bg-indigo-600 shadow-[0_0_6px_#6366f1]' : 'bg-cyan-400 shadow-[0_0_8px_#22d3ee]')
+                        ? (isLight ? 'bg-indigo-600 shadow-[0_0_6px_#6366f1]' : 'bg-purple-400 shadow-[0_0_8px_#c084fc]')
                         : (isLight ? 'bg-slate-400' : 'bg-zinc-600')
                     }`} />
                   )}
@@ -168,7 +170,7 @@ export default function LuxuryProjectsSidebarShowcase() {
           }`}>
             <div className="flex items-center justify-between">
               <span className={`text-[10px] font-mono font-bold uppercase tracking-wider ${
-                isLight ? 'text-indigo-600' : 'text-cyan-400'
+                isLight ? 'text-indigo-600' : 'text-slate-200'
               }`}>
                 {currentProject.client}
               </span>
@@ -235,7 +237,7 @@ export default function LuxuryProjectsSidebarShowcase() {
 
               {/* Insignia de Telemetría de Producción Activa */}
               <div className="flex items-center gap-2 px-3 py-1.5 bg-black/80 border border-white/15 rounded-xl backdrop-blur-md shrink-0">
-                <Globe className={`w-3.5 h-3.5 ${currentProject.isUpcoming ? 'text-amber-400' : 'text-cyan-400'}`} />
+                <Globe className={`w-3.5 h-3.5 ${currentProject.isUpcoming ? 'text-amber-400' : 'text-slate-300'}`} />
                 <span className="text-[11px] font-mono text-zinc-300 font-medium">
                   {currentProject.isUpcoming ? 'En Despliegue // Q4' : 'Plataforma Web Activa'}
                 </span>
@@ -301,7 +303,7 @@ export default function LuxuryProjectsSidebarShowcase() {
                 <span className="text-[11px] text-zinc-300 font-medium">
                   {currentProject.client} — {currentProject.tagline}
                 </span>
-                <span className="text-[11px] text-cyan-400 font-bold shrink-0 ml-2">
+                <span className="text-[11px] text-white/80 font-mono font-bold shrink-0 ml-2">
                   0{currentIndex + 1} / 0{LIVE_PROJECTS.length}
                 </span>
               </div>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Terminal, ShieldCheck, Check, Play, Cpu, RefreshCw } from 'lucide-react';
+import TerminalPhosphorShader from './TerminalPhosphorShader';
 
 export default function SovereignTerminal() {
   const [activeCommand, setActiveCommand] = useState('audit:all');
@@ -35,10 +36,11 @@ export default function SovereignTerminal() {
   };
 
   return (
-    <div className="border border-white/15 bg-black/80 font-mono text-xs overflow-hidden shadow-monolith">
+    <div className="relative border border-white/15 bg-black/85 font-mono text-xs overflow-hidden shadow-monolith">
+      <TerminalPhosphorShader isRunning={isRunning} />
       
       {/* Barra de Título de Terminal */}
-      <div className="h-8 bg-zinc-950 border-b border-white/10 px-4 flex items-center justify-between">
+      <div className="relative z-10 h-8 bg-zinc-950/90 border-b border-white/10 px-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-white/20" />
@@ -55,7 +57,7 @@ export default function SovereignTerminal() {
       </div>
 
       {/* Selector de Comandos Interactivos */}
-      <div className="p-3 bg-white/[0.02] border-b border-white/10 flex flex-wrap items-center gap-2">
+      <div className="relative z-10 p-3 bg-white/[0.02] border-b border-white/10 flex flex-wrap items-center gap-2">
         <span className="text-[10px] text-zinc-500 uppercase mr-1">Comandos Disponibles:</span>
         <button
           onClick={() => handleRun('audit:all')}
@@ -90,7 +92,7 @@ export default function SovereignTerminal() {
       </div>
 
       {/* Salida de la Terminal */}
-      <div className="p-5 space-y-2 text-zinc-300 min-h-[170px] flex flex-col justify-center">
+      <div className="relative z-10 p-5 space-y-2 text-zinc-300 min-h-[170px] flex flex-col justify-center">
         {isRunning ? (
           <div className="flex items-center gap-2 text-zinc-500 py-4">
             <RefreshCw className="w-4 h-4 animate-spin text-zinc-400" />
@@ -111,7 +113,7 @@ export default function SovereignTerminal() {
       </div>
 
       {/* Línea de comando inferior */}
-      <div className="p-3 bg-black border-t border-white/10 flex items-center justify-between text-[11px] text-zinc-500">
+      <div className="relative z-10 p-3 bg-black/90 border-t border-white/10 flex items-center justify-between text-[11px] text-zinc-500">
         <div className="flex items-center gap-2">
           <span className="text-emerald-400">root@dynamind:~$</span>
           <span className="text-white animate-pulse">_</span>

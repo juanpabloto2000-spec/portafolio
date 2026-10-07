@@ -7,6 +7,7 @@ import InteractiveROICalculator from '../components/interactive/InteractiveROICa
 import FooterEditorial from '../components/layout/FooterEditorial';
 import AmbientSpotlightGlow from '../components/ui/AmbientSpotlightGlow';
 import RevealSection from '../components/motion/RevealSection';
+import EditorialMonolithBreather from '../components/editorial/EditorialMonolithBreather';
 import { ArrowRight } from 'lucide-react';
 
 import { useThemeLanguage } from '../context/ThemeLanguageContext';
@@ -39,8 +40,22 @@ export default function HomePage() {
         {/* Sección de Scroll Cinemático Dual con Motor Canvas de 240 WebP Frames */}
         <CinematicDualVideoScrolly />
 
+        {/* 🧘 Respiro Monolítico 1: Soberanía de Software */}
+        <EditorialMonolithBreather
+          quote="El software no debe ser una renta perpetua que drene tu flujo de caja. Debe ser el activo patrimonial más sólido y soberano de tu empresa."
+          author="Juan Pablo Orozco"
+          role="Chief Architect · Dynamind Studios"
+        />
+
         {/* Estándares de Ingeniería: AEO vs SEO, Ciberseguridad & Tríada de Garantías */}
         <SovereignEngineeringStandards />
+
+        {/* 🧘 Respiro Monolítico 2: Eficiencia Operativa Pura */}
+        <EditorialMonolithBreather
+          quote="Menos fricción manual. Cero intermediarios comisionistas. Operación pura en tiempo real."
+          author="Manifiesto de Ingeniería Dynamind"
+          role="Estándar Operativo 2026"
+        />
 
         {/* Calculadora Dopamínica Interactiva de Retorno & Horas Libres */}
         <InteractiveROICalculator />
@@ -66,10 +81,16 @@ export default function HomePage() {
 
                 <a
                   href="#/diagnostico"
-                  className={`shrink-0 px-8 py-4 rounded-xl font-sans text-xs font-bold uppercase transition-all flex items-center gap-2 shadow-monolith cursor-pointer hover:scale-105 active:scale-95 transform ${
+                  onMouseEnter={() => {
+                    try { import('../pages/TriagePage'); } catch {}
+                  }}
+                  onTouchStart={() => {
+                    try { import('../pages/TriagePage'); } catch {}
+                  }}
+                  className={`shrink-0 px-8 py-4 rounded-xl font-sans text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 shadow-monolith cursor-pointer hover:scale-105 active:scale-95 transform ${
                     isLight 
                       ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/25 hover:from-blue-500 hover:to-indigo-500'
-                      : 'bg-white text-black hover:bg-zinc-200'
+                      : 'bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white shadow-[0_0_25px_rgba(99,102,241,0.45)] hover:shadow-[0_0_35px_rgba(168,85,247,0.6)]'
                   }`}
                 >
                   <span>{b.cta}</span>

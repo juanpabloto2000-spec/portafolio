@@ -27,8 +27,8 @@ export const DESIGN_TOKENS = {
   surfaces: {
     card: 'bg-slate-900/60 backdrop-blur-xl border border-white/10 hover:border-white/20 transition-all duration-300',
     cardElevated: 'bg-slate-900/80 backdrop-blur-2xl border border-white/15 shadow-2xl shadow-black/50',
-    input: 'bg-black/40 border border-white/10 focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/30 text-white rounded-xl placeholder:text-slate-500 transition-all duration-200 outline-none',
-    buttonPrimary: 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-medium shadow-lg shadow-cyan-500/25 active:scale-[0.98] transition-all duration-200 rounded-xl',
+    input: 'bg-black/40 border border-white/10 focus:border-white/30 focus:ring-1 focus:ring-white/20 text-white rounded-xl placeholder:text-slate-500 transition-all duration-200 outline-none',
+    buttonPrimary: 'bg-white hover:bg-slate-100 text-black font-semibold shadow-lg shadow-black/20 active:scale-[0.98] transition-all duration-200 rounded-xl',
     buttonSecondary: 'bg-white/5 hover:bg-white/10 text-slate-200 border border-white/10 hover:border-white/20 active:scale-[0.98] transition-all duration-200 rounded-xl',
     badge: 'px-3 py-1 rounded-full text-xs font-medium tracking-wide border border-white/10 bg-white/5 text-slate-300 inline-flex items-center gap-1.5',
   },
@@ -38,7 +38,7 @@ export const DESIGN_TOKENS = {
     hero: 'font-sans font-extrabold tracking-tight text-white leading-tight',
     sectionTitle: 'font-sans font-bold tracking-tight text-white',
     body: 'font-sans text-slate-300 antialiased leading-relaxed',
-    mono: 'font-mono text-cyan-400 tracking-wider text-xs uppercase',
+    mono: 'font-mono text-slate-300 tracking-wider text-xs uppercase',
   },
 };
 

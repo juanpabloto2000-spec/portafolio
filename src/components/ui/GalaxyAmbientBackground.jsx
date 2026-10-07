@@ -22,18 +22,18 @@ export default function GalaxyAmbientBackground() {
     };
     window.addEventListener('resize', handleResize);
 
-    // 140 estrellas estelares con diferentes tonalidades cósmicas
-    const starCount = Math.min(Math.floor((width * height) / 9000), 150);
+    // 140 estrellas estelares ricas y detalladas (Identidad Galáctica Dynamind)
+    const starCount = Math.min(Math.floor((width * height) / 8500), 150);
     const stars = Array.from({ length: starCount }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
       size: Math.random() * 1.8 + 0.5,
-      speedX: (Math.random() - 0.5) * 0.18,
-      speedY: (Math.random() - 0.5) * 0.18,
+      speedX: (Math.random() - 0.5) * 0.15,
+      speedY: (Math.random() - 0.5) * 0.15,
       baseAlpha: Math.random() * 0.65 + 0.35,
       pulseSpeed: Math.random() * 0.02 + 0.008,
       phase: Math.random() * Math.PI * 2,
-      color: Math.random() > 0.4 ? '#ffffff' : Math.random() > 0.5 ? '#38bdf8' : '#fbbf24'
+      color: Math.random() > 0.4 ? '#ffffff' : Math.random() > 0.45 ? '#60a5fa' : Math.random() > 0.4 ? '#c084fc' : '#fbbf24'
     }));
 
     let frame = 0;
@@ -51,49 +51,74 @@ export default function GalaxyAmbientBackground() {
       }
       ctx.fillRect(0, 0, width, height);
 
-      // Nebulosas Cósmicas que respiran con oscilación lenta
-      let nebula1Color = 'rgba(14, 165, 233, 0.07)'; // cian vivo
-      let nebula2Color = 'rgba(168, 85, 247, 0.05)'; // violeta estelar
-      let nebula3Color = 'rgba(245, 158, 11, 0.04)';  // ámbar cósmico
+      // En modo Alabaster (Swiss), renderizamos una superficie arquitectónica serena con micro-estrellas irisadas
+      if (theme === 'alabaster') {
+        const archGrad = ctx.createLinearGradient(0, 0, 0, height);
+        archGrad.addColorStop(0, '#f8fafc');
+        archGrad.addColorStop(0.5, '#f1f5f9');
+        archGrad.addColorStop(1, '#e2e8f0');
+        ctx.fillStyle = archGrad;
+        ctx.fillRect(0, 0, width, height);
+
+        // Suave halo ambiental monolítico apenas perceptible
+        const lightGrad = ctx.createRadialGradient(width * 0.5, height * 0.1, 10, width * 0.5, height * 0.1, width * 0.7);
+        lightGrad.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+        lightGrad.addColorStop(1, 'transparent');
+        ctx.fillStyle = lightGrad;
+        ctx.fillRect(0, 0, width, height);
+
+        // En modo alabaster mostramos suaves microestrellas sutiles azul y morado
+        for (let i = 0; i < Math.floor(stars.length * 0.35); i++) {
+          const star = stars[i];
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, star.size * 0.7, 0, Math.PI * 2);
+          ctx.fillStyle = i % 2 === 0 ? 'rgba(99, 102, 241, 0.25)' : 'rgba(168, 85, 247, 0.22)';
+          ctx.fill();
+        }
+
+        animationFrameId = requestAnimationFrame(render);
+        return;
+      }
+
+      // Nebulosas Cósmicas Vivas: Azul Zafiro & Morado Estelar
+      let nebula1Color = 'rgba(37, 99, 235, 0.075)'; // azul zafiro galáctico
+      let nebula2Color = 'rgba(168, 85, 247, 0.07)';  // violeta / morado cósmico
+      let nebula3Color = 'rgba(99, 102, 241, 0.05)';  // índigo de profundidad
 
       if (theme === 'mocha') {
         nebula1Color = 'rgba(217, 119, 6, 0.08)';
         nebula2Color = 'rgba(180, 83, 9, 0.06)';
         nebula3Color = 'rgba(120, 53, 15, 0.05)';
-      } else if (theme === 'alabaster') {
-        nebula1Color = 'rgba(79, 70, 229, 0.085)'; // Índigo eléctrico IA
-        nebula2Color = 'rgba(124, 58, 237, 0.075)'; // Violeta IA intenso
-        nebula3Color = 'rgba(6, 182, 212, 0.055)';  // Cian IA luminoso
       }
 
-      // Nebulosa 1
+      // Nebulosa 1 (Azul Zafiro)
       const cx1 = width * 0.3 + Math.sin(frame * 0.002) * (width * 0.08);
       const cy1 = height * 0.4 + Math.cos(frame * 0.002) * (height * 0.08);
-      const grad1 = ctx.createRadialGradient(cx1, cy1, 10, cx1, cy1, width * 0.55);
+      const grad1 = ctx.createRadialGradient(cx1, cy1, 10, cx1, cy1, width * 0.6);
       grad1.addColorStop(0, nebula1Color);
       grad1.addColorStop(1, 'transparent');
       ctx.fillStyle = grad1;
       ctx.fillRect(0, 0, width, height);
 
-      // Nebulosa 2
+      // Nebulosa 2 (Morado Cósmico)
       const cx2 = width * 0.75 + Math.cos(frame * 0.0015) * (width * 0.1);
       const cy2 = height * 0.65 + Math.sin(frame * 0.0015) * (height * 0.1);
-      const grad2 = ctx.createRadialGradient(cx2, cy2, 10, cx2, cy2, width * 0.6);
+      const grad2 = ctx.createRadialGradient(cx2, cy2, 10, cx2, cy2, width * 0.65);
       grad2.addColorStop(0, nebula2Color);
       grad2.addColorStop(1, 'transparent');
       ctx.fillStyle = grad2;
       ctx.fillRect(0, 0, width, height);
 
-      // Nebulosa 3
+      // Nebulosa 3 (Índigo Profundo)
       const cx3 = width * 0.5 + Math.sin(frame * 0.001) * (width * 0.06);
       const cy3 = height * 0.85 + Math.cos(frame * 0.001) * (height * 0.06);
-      const grad3 = ctx.createRadialGradient(cx3, cy3, 10, cx3, cy3, width * 0.45);
+      const grad3 = ctx.createRadialGradient(cx3, cy3, 10, cx3, cy3, width * 0.5);
       grad3.addColorStop(0, nebula3Color);
       grad3.addColorStop(1, 'transparent');
       ctx.fillStyle = grad3;
       ctx.fillRect(0, 0, width, height);
 
-      // Renderizar y desplazar estrellas vivas
+      // Renderizar y desplazar estrellas detalladas con brillo oscilante
       for (let i = 0; i < stars.length; i++) {
         const star = stars[i];
         star.x += star.speedX;
@@ -105,20 +130,12 @@ export default function GalaxyAmbientBackground() {
         if (star.y > height) star.y = 0;
 
         const currentAlpha = star.baseAlpha + Math.sin(frame * star.pulseSpeed + star.phase) * 0.35;
-        const clampedAlpha = Math.max(0.15, Math.min(1, currentAlpha));
+        const clampedAlpha = Math.max(0.18, Math.min(1, currentAlpha));
 
         ctx.beginPath();
         ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-
-        if (theme === 'alabaster') {
-          // Micro-estrellas irisadas azul y púrpura IA sobre lienzo claro
-          const starTone = i % 2 === 0 ? '99, 102, 241' : '168, 85, 247';
-          ctx.fillStyle = `rgba(${starTone}, ${clampedAlpha * 0.6})`;
-        } else {
-          ctx.fillStyle = star.color;
-          ctx.globalAlpha = clampedAlpha;
-        }
-
+        ctx.fillStyle = star.color;
+        ctx.globalAlpha = clampedAlpha;
         ctx.fill();
         ctx.globalAlpha = 1;
       }

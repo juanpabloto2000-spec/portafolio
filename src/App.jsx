@@ -9,9 +9,8 @@ import FloatingAIOrb from './components/layout/FloatingAIOrb';
 import WelcomeGalaxyPreloader from './components/ui/WelcomeGalaxyPreloader';
 import CosmicPageFallback from './components/ui/CosmicPageFallback';
 
-// ⚡ Code-Splitting Dinámico: Rutas pesadas cargadas bajo demanda con edge caching
 const WorksPage = React.lazy(() => import('./pages/WorksPage'));
-import SystemsPage from './pages/SystemsPage';
+const SystemsPage = React.lazy(() => import('./pages/SystemsPage'));
 const TriagePage = React.lazy(() => import('./pages/TriagePage'));
 const VisionPage = React.lazy(() => import('./pages/VisionPage'));
 const PrivacyTermsPage = React.lazy(() => import('./pages/PrivacyTermsPage'));
@@ -43,6 +42,11 @@ export default function App() {
   const [currentHash, setCurrentHash] = useState(() => window.location.hash || '#/');
   const prevIndexRef = useRef(getPageIndex(window.location.hash || '#/'));
   const [direction, setDirection] = useState(1);
+  const [isPreloaderActive, setIsPreloaderActive] = useState(() => {
+    const hash = window.location.hash || '#/';
+    const key = getPageKey(hash);
+    return key === 'home' || key === 'diagnostico';
+  });
 
   useEffect(() => {
     const handleHashChange = () => {
@@ -59,7 +63,7 @@ export default function App() {
       
       // Desplazamiento limpio al inicio de la página salvo anclas internas (instantáneo para cero lag en eventos)
       if (!newHash.includes('#comparativa') && !newHash.includes('#filosofia')) {
-        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
       }
     };
 
@@ -109,11 +113,18 @@ export default function App() {
         {/* 🌌 Capa Ambiental Cósmica Galaxia a 60 FPS */}
         <GalaxyAmbientBackground />
 
-        {/* 🚀 Preloader Cósmico Interactivo (Index y Diagnóstico) */}
-        <WelcomeGalaxyPreloader key={pageKey} pageKey={pageKey} />
+        {/* 🚀 Preloader Cósmico Interactivo (Home y Diagnóstico) */}
+        <WelcomeGalaxyPreloader pageKey={pageKey} onLoadingChange={setIsPreloaderActive} />
 
-        {/* 🧭 Navbar Global Fijo a Nivel de Viewport (Inamovible durante el scroll) */}
-        <Navbar currentHash={currentHash} />
+        {/* 🧭 Navbar Global Fijo a Nivel de Viewport (Oculto totalmente durante la pantalla de carga) */}
+        <div
+          className={`transition-opacity duration-300 ${
+            isPreloaderActive ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          }`}
+          aria-hidden={isPreloaderActive}
+        >
+          <Navbar currentHash={currentHash} />
+        </div>
 
         <div className="relative z-10">
           <AnimatePresence mode="wait" initial={false}>

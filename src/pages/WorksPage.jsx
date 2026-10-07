@@ -31,11 +31,11 @@ export default function WorksPage() {
             <div className="pt-2">
               <a
                 href="#/dashboard"
-                className="inline-flex items-center gap-3 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500/20 via-indigo-600/30 to-purple-600/20 hover:from-cyan-500/30 hover:via-indigo-600/40 hover:to-purple-600/30 border border-cyan-400/40 hover:border-cyan-300 text-white font-mono text-xs uppercase tracking-wider shadow-[0_0_25px_rgba(56,189,248,0.2)] hover:shadow-[0_0_35px_rgba(56,189,248,0.35)] transition-all group cursor-pointer active:scale-95"
+                className="inline-flex items-center gap-3 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-blue-600/25 via-indigo-600/30 to-purple-600/25 hover:from-blue-600/35 hover:via-indigo-600/40 hover:to-purple-600/35 border border-purple-400/40 hover:border-purple-300 text-white font-mono text-xs uppercase tracking-wider shadow-[0_0_25px_rgba(99,102,241,0.25)] hover:shadow-[0_0_35px_rgba(168,85,247,0.4)] transition-all group cursor-pointer active:scale-95"
               >
-                <LayoutDashboard className="w-4 h-4 text-cyan-400 group-hover:scale-110 transition-transform" />
-                <span className="font-bold">{dsbDemoBtnLabel}</span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] bg-cyan-400/20 border border-cyan-400/40 text-cyan-300 font-bold">
+                <LayoutDashboard className="w-4 h-4 text-purple-300 group-hover:scale-110 transition-transform" />
+                <span className="font-semibold text-white">{dsbDemoBtnLabel}</span>
+                <span className="px-2 py-0.5 rounded-full text-[10px] bg-purple-500/20 border border-purple-400/40 text-purple-200 font-mono font-semibold">
                   LIVE
                 </span>
               </a>

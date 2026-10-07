@@ -46,7 +46,7 @@ Quedo atento para la sesión estratégica de 15 minutos.`;
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-[100050] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-300">
       
       <div className="relative w-full max-w-lg bg-obsidian border border-white/20 rounded-2xl p-6 sm:p-8 space-y-6 shadow-monolith">
         

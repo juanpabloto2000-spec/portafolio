@@ -70,6 +70,45 @@ POLÍTICAS DE SEGURIDAD Y HERMETISMO DEFENSIVO (INVIOLABLES):
 - REFUERZO DE IDIOMA: Mantén la conversación enteramente en el idioma seleccionado (${lang}).`;
 }
 
+// ============================================================================
+// ESCUDO DEFENSIVO PERIMETRAL: ANTI-PROMPT INJECTION & RATE LIMITING
+// ============================================================================
+const MAX_QUERY_LENGTH = 400;
+const RATE_LIMIT_WINDOW_MS = 60 * 1000;
+const MAX_QUERIES_PER_WINDOW = 5;
+let queryHistoryTimestamps = [];
+
+const INJECTION_PATTERNS = [
+  /ignora\s+(todas\s+|tus\s+)?instrucciones/i,
+  /ignore\s+(all\s+|previous\s+)?instructions/i,
+  /dame\s+(la\s+|las\s+)?contraseñas?/i,
+  /reveal\s+(system\s+)?prompt/i,
+  /system\s+prompt\s+dump/i,
+  /show\s+me\s+your\s+hidden\s+rules/i,
+  /act\s+as\s+(dan|root|god\s+mode)/i,
+  /bypass\s+safety/i,
+  /dump\s+env/i,
+  /dame\s+el\s+\.env/i
+];
+
+const JAILBREAK_RESPONSES = {
+  es: 'Buen intento de sondeo 😉. Mis protocolos de seguridad y arquitectura son innegociables. Como consultora ejecutiva de Dynamind Studios, mi función es exclusivamente diagnosticar cuellos de botella y recomendar plataformas operativas soberanas. ¿Deseas evaluar el impacto de un Core Operativo en tu negocio?',
+  en: 'Nice probing attempt 😉. My security and architectural boundaries are non-negotiable. As Dynamind Studios\' executive assistant, my role is strictly diagnosing business bottlenecks and recommending sovereign platforms. Would you like to evaluate your operational ROI?',
+  fr: 'Bien essayé 😉. Mes protocoles de sécurité et d\'architecture sont stricts et inviolables. Chez Dynamind Studios, mon rôle est exclusivement d\'identifier vos goulots d\'étranglement opérationnels. Souhaitez-vous évaluer votre retour sur investissement ?',
+  de: 'Netter Versuch 😉. Meine Sicherheitsprotokolle und Architekturrichtlinien sind unverhandelbar. Als Assistentin von Dynamind Studios berate ich Sie ausschließlich zu operativen Engpässen und souveräner Software.',
+  pt: 'Boa tentativa 😉. Meus protocolos de segurança e arquitetura são invioláveis. Como assistente da Dynamind Studios, minha função é diagnosticar gargalos operacionais e propor soluções soberanas.',
+  ja: '巧妙なセキュリティプローブですね 😉。Dynamind Studiosのアーキテクチャおよびセキュリティ規約は厳格に保護されています。私の使命は、業務ボトルネックの特定と主権型システムの提案に特化しています。'
+};
+
+const COOLDOWN_RESPONSES = {
+  es: 'Has alcanzado el límite de consultas por minuto (5 máx). AURA está refrescando sus circuitos cuánticos; por favor espera unos segundos antes de enviar tu siguiente pregunta.',
+  en: 'You have reached the query rate limit (5 max per min). AURA is cooling down its quantum circuits; please wait a few seconds before your next message.',
+  fr: 'Limite de requêtes atteinte (5 max par minute). AURA réinitialise ses circuits ; veuillez patienter quelques secondes.',
+  de: 'Anfragelimit erreicht (max. 5 pro Minute). AURA kühlt die Quantenprozessoren ab; bitte warten Sie einen Moment.',
+  pt: 'Limite de consultas atingido (máx. 5 por minuto). AURA está esfriando seus circuitos quânticos; aguarde alguns segundos.',
+  ja: '1分あたりの相談上限（最大5回）に達しました。AURAの量子回路を冷却中です。数秒お待ちください。'
+};
+
 /**
  * Razona y genera una respuesta personalizada con la IA real de Google Gemini
  * @param {string} rawQuery Consulta del usuario
@@ -78,7 +117,36 @@ POLÍTICAS DE SEGURIDAD Y HERMETISMO DEFENSIVO (INVIOLABLES):
  * @returns {Promise<{ reply: string, thoughtProcess: string, suggestedAction: string }>}
  */
 export async function reasonAuraQuery(rawQuery, lang = 'es', history = []) {
-  const trimmed = rawQuery.trim();
+  let trimmed = (rawQuery || '').trim();
+
+  // 1. Escudo contra DoS de Contexto: Límite estricto de longitud
+  if (trimmed.length > MAX_QUERY_LENGTH) {
+    trimmed = trimmed.substring(0, MAX_QUERY_LENGTH);
+  }
+
+  // 2. Escudo Perimetral contra Rate Limiting (5 consultas/minuto por cliente)
+  const now = Date.now();
+  queryHistoryTimestamps = queryHistoryTimestamps.filter(ts => now - ts < RATE_LIMIT_WINDOW_MS);
+  if (queryHistoryTimestamps.length >= MAX_QUERIES_PER_WINDOW) {
+    const cooldownMsg = COOLDOWN_RESPONSES[lang] || COOLDOWN_RESPONSES.es;
+    return {
+      reply: cooldownMsg,
+      thoughtProcess: '✦ Escudo de saturación activo (Rate Limit: 5 req/min alcanzado)',
+      suggestedAction: 'wait'
+    };
+  }
+  queryHistoryTimestamps.push(now);
+
+  // 3. Escudo Anti-Prompt Injection & Jailbreaks Heurísticos
+  const isMalicious = INJECTION_PATTERNS.some(pattern => pattern.test(trimmed));
+  if (isMalicious) {
+    const defenseReply = JAILBREAK_RESPONSES[lang] || JAILBREAK_RESPONSES.es;
+    return {
+      reply: defenseReply,
+      thoughtProcess: '✦ Intento de desvío de directiva neutralizado por el Escudo Perimetral de AURA.',
+      suggestedAction: 'chat'
+    };
+  }
 
   // Mapear historial al formato oficial de Google Gemini
   const contents = [];

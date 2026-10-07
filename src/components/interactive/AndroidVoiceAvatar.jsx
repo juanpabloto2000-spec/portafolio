@@ -193,11 +193,11 @@ export default function AndroidVoiceAvatar({
         perspective: '900px'
       }}
     >
-      {/* 1. Aura Volumétrica Ambiental en Púrpura y Azul Cósmico */}
+      {/* 1. Aura Volumétrica Ambiental en Titanio Espacial con Acentos Fotónicos Violeta y Cian */}
       <motion.div
         animate={{
           scale: isSpeaking || isJumping ? [1, 1.38, 1.2, 1.3, 1] : [1, 1.08, 1],
-          opacity: isSpeaking || isJumping ? [0.65, 0.95, 0.75, 0.9, 0.65] : [0.3, 0.48, 0.3]
+          opacity: isSpeaking || isJumping ? [0.65, 0.95, 0.75, 0.9, 0.65] : [0.35, 0.52, 0.35]
         }}
         transition={{
           duration: isJumping ? 1.1 : isSpeaking ? 1.2 : 3.5,
@@ -208,7 +208,7 @@ export default function AndroidVoiceAvatar({
         style={{
           width: dimensions.w * 0.95,
           height: dimensions.h * 0.95,
-          background: 'radial-gradient(circle, rgba(168,85,247,0.52) 0%, rgba(59,130,246,0.4) 45%, rgba(99,102,241,0.15) 70%, transparent 80%)'
+          background: 'radial-gradient(circle, rgba(168,85,247,0.35) 0%, rgba(56,189,248,0.25) 42%, rgba(15,23,42,0.3) 70%, transparent 85%)'
         }}
       />
 
@@ -222,7 +222,7 @@ export default function AndroidVoiceAvatar({
       >
         <svg
           viewBox="0 0 210 275"
-          className="w-full h-full filter drop-shadow-[0_16px_36px_rgba(124,58,237,0.3)] pointer-events-none overflow-visible"
+          className="w-full h-full filter drop-shadow-[0_16px_36px_rgba(124,58,237,0.25)] pointer-events-none overflow-visible"
           xmlns="http://www.w3.org/2000/svg"
         >
           {/* ========================================================= */}
@@ -283,70 +283,172 @@ export default function AndroidVoiceAvatar({
               }
             `}</style>
 
-            {/* Gradiente Chasis Principal (Azul Noche Profundo & Púrpura) */}
+            {/* ========================================================= */}
+            {/* MATERIALES METÁLICOS PBR INDUSTRIALES (ESPACIO NEGRO/CROMO) */}
+            {/* ========================================================= */}
+
+            {/* 1. Titanio Gris Aeroespacial Cepillado (Chasis Estructural) */}
             <linearGradient id="auraChassisGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#1e1b4b" />
-              <stop offset="45%" stopColor="#0f172a" />
+              <stop offset="0%" stopColor="#3f3f46" />
+              <stop offset="18%" stopColor="#52525b" />
+              <stop offset="35%" stopColor="#71717a" />
+              <stop offset="48%" stopColor="#a1a1aa" />
+              <stop offset="52%" stopColor="#d4d4d8" />
+              <stop offset="58%" stopColor="#a1a1aa" />
+              <stop offset="78%" stopColor="#52525b" />
+              <stop offset="100%" stopColor="#3f3f46" />
+            </linearGradient>
+
+            {/* 2. Cromo Espejo Pulido de Alto Brillo (Biselados y Articulaciones) */}
+            <linearGradient id="pbrChromeMirror" x1="0%" y1="0%" x2="100%" y2="50%">
+              <stop offset="0%" stopColor="#ffffff" />
+              <stop offset="22%" stopColor="#e4e4e7" />
+              <stop offset="38%" stopColor="#ffffff" />
+              <stop offset="55%" stopColor="#71717a" />
+              <stop offset="72%" stopColor="#d4d4d8" />
+              <stop offset="85%" stopColor="#a1a1aa" />
+              <stop offset="100%" stopColor="#ffffff" />
+            </linearGradient>
+
+            {/* 3. Traje Blazer y Chasis Completo en Titanio Gris Metálico (Gunmetal Titanium Satinado) */}
+            <linearGradient id="auraSuitGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#3f3f46" />
+              <stop offset="18%" stopColor="#52525b" />
+              <stop offset="35%" stopColor="#71717a" />
+              <stop offset="48%" stopColor="#a1a1aa" />
+              <stop offset="54%" stopColor="#d4d4d8" />
+              <stop offset="60%" stopColor="#a1a1aa" />
+              <stop offset="70%" stopColor="#71717a" />
+              <stop offset="85%" stopColor="#52525b" />
+              <stop offset="100%" stopColor="#3f3f46" />
+            </linearGradient>
+
+            {/* 4. Solapas de Blazer y Acentos Ejecutivos en Titanio Púrpura Metalizado PBR */}
+            <linearGradient id="auraLapelGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#1e0836" />
+              <stop offset="20%" stopColor="#3b0764" />
+              <stop offset="38%" stopColor="#581c87" />
+              <stop offset="50%" stopColor="#7c3aed" />
+              <stop offset="60%" stopColor="#a855f7" />
+              <stop offset="70%" stopColor="#c084fc" />
+              <stop offset="82%" stopColor="#6b21a8" />
+              <stop offset="100%" stopColor="#1e0836" />
+            </linearGradient>
+
+            {/* 5. Blusa y Manos en Titanio Gris Metálico Uniforme PBR */}
+            <linearGradient id="auraBlouseGrad" x1="0%" y1="0%" x2="70%" y2="100%">
+              <stop offset="0%" stopColor="#3f3f46" />
+              <stop offset="25%" stopColor="#52525b" />
+              <stop offset="45%" stopColor="#71717a" />
+              <stop offset="60%" stopColor="#a1a1aa" />
+              <stop offset="75%" stopColor="#71717a" />
+              <stop offset="90%" stopColor="#52525b" />
+              <stop offset="100%" stopColor="#3f3f46" />
+            </linearGradient>
+
+            {/* 6. Gorro / Chignon Biónico en Titanio Púrpura Metalizado PBR */}
+            <linearGradient id="auraBunGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#1e0836" />
+              <stop offset="20%" stopColor="#3b0764" />
+              <stop offset="40%" stopColor="#6b21a8" />
+              <stop offset="52%" stopColor="#9333ea" />
+              <stop offset="60%" stopColor="#c084fc" />
+              <stop offset="68%" stopColor="#f3e8ff" />
+              <stop offset="80%" stopColor="#7c3aed" />
               <stop offset="100%" stopColor="#2e1065" />
             </linearGradient>
 
-            {/* Gradiente Traje de Secretaria Ejecutiva (Púrpura Imperial a Índigo Real) */}
-            <linearGradient id="auraSuitGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#6d28d9" />
-              <stop offset="40%" stopColor="#581c87" />
-              <stop offset="100%" stopColor="#312e81" />
-            </linearGradient>
-
-            {/* Gradiente Solapa de Blazer (Morado Vibrante Satinado) */}
-            <linearGradient id="auraLapelGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#8b5cf6" />
-              <stop offset="50%" stopColor="#7c3aed" />
-              <stop offset="100%" stopColor="#4c1d95" />
-            </linearGradient>
-
-            {/* Gradiente Blusa Interior Ejecutiva Cuello V (Blanco Perla Tecnológico) */}
-            <linearGradient id="auraBlouseGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#ffffff" />
-              <stop offset="70%" stopColor="#e0e7ff" />
-              <stop offset="100%" stopColor="#c7d2fe" />
-            </linearGradient>
-
-            {/* Gradiente Chignon / Recogido Ejecutivo Biónico */}
-            <linearGradient id="auraBunGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#7c3aed" />
-              <stop offset="50%" stopColor="#4c1d95" />
-              <stop offset="100%" stopColor="#1e1b4b" />
-            </linearGradient>
-
-            {/* Gradiente Casco/Chasis de Cabeza Femenina (Azul Cobalto & Violeta Oscuro) */}
+            {/* 7. Casco/Chasis de Cabeza en Titanio Gris Metálico Uniforme */}
             <linearGradient id="auraHeadGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#1e1b4b" />
-              <stop offset="35%" stopColor="#312e81" />
-              <stop offset="70%" stopColor="#4c1d95" />
-              <stop offset="100%" stopColor="#0f172a" />
+              <stop offset="0%" stopColor="#3f3f46" />
+              <stop offset="18%" stopColor="#52525b" />
+              <stop offset="35%" stopColor="#71717a" />
+              <stop offset="48%" stopColor="#a1a1aa" />
+              <stop offset="54%" stopColor="#d4d4d8" />
+              <stop offset="60%" stopColor="#a1a1aa" />
+              <stop offset="70%" stopColor="#71717a" />
+              <stop offset="85%" stopColor="#52525b" />
+              <stop offset="100%" stopColor="#3f3f46" />
             </linearGradient>
 
-            {/* Gradiente Montura de Gafas Inteligentes */}
-            <linearGradient id="auraGlassesGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#a855f7" />
-              <stop offset="50%" stopColor="#38bdf8" />
-              <stop offset="100%" stopColor="#c084fc" />
+            {/* 7A. Iris Ocular en Púrpura Fotónico Luminous */}
+            <radialGradient id="auraIrisGrad" cx="35%" cy="35%" r="65%">
+              <stop offset="0%" stopColor="#ffffff" />
+              <stop offset="25%" stopColor="#f3e8ff" />
+              <stop offset="48%" stopColor="#c084fc" />
+              <stop offset="70%" stopColor="#9333ea" />
+              <stop offset="88%" stopColor="#6b21a8" />
+              <stop offset="100%" stopColor="#3b0764" />
+            </radialGradient>
+
+            {/* 7B. Visera Panorámica en Cristal Zafiro Negro Pulido */}
+            <linearGradient id="auraVisorGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#050505" />
+              <stop offset="50%" stopColor="#0f0f11" />
+              <stop offset="100%" stopColor="#050505" />
             </linearGradient>
 
-            {/* Gradiente Bolso de Mano Cibernético */}
+            {/* 8. Montura de Gafas Cat-Eye en Titanio Púrpura Metalizado & Cromo */}
+            <linearGradient id="auraGlassesGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#2e1065" />
+              <stop offset="25%" stopColor="#581c87" />
+              <stop offset="45%" stopColor="#7c3aed" />
+              <stop offset="55%" stopColor="#c084fc" />
+              <stop offset="65%" stopColor="#f5d0fe" />
+              <stop offset="80%" stopColor="#9333ea" />
+              <stop offset="100%" stopColor="#3b0764" />
+            </linearGradient>
+
+            {/* 8B. Pincel / Stylus Biónico en Titanio Púrpura & Cromo Líquido */}
+            <linearGradient id="auraPincelGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#1e0836" />
+              <stop offset="20%" stopColor="#3b0764" />
+              <stop offset="42%" stopColor="#6b21a8" />
+              <stop offset="54%" stopColor="#9333ea" />
+              <stop offset="64%" stopColor="#c084fc" />
+              <stop offset="72%" stopColor="#f3e8ff" />
+              <stop offset="85%" stopColor="#7c3aed" />
+              <stop offset="100%" stopColor="#2e1065" />
+            </linearGradient>
+
+            {/* 9. Bolso de Mano Cibernético en Titanio Ciruela Púrpura PBR & Cromo */}
             <linearGradient id="auraBagGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#7c3aed" />
-              <stop offset="50%" stopColor="#581c87" />
-              <stop offset="100%" stopColor="#1e1b4b" />
+              <stop offset="0%" stopColor="#150524" />
+              <stop offset="22%" stopColor="#2e0854" />
+              <stop offset="45%" stopColor="#581c87" />
+              <stop offset="55%" stopColor="#7c3aed" />
+              <stop offset="65%" stopColor="#4c1d95" />
+              <stop offset="85%" stopColor="#24073d" />
+              <stop offset="100%" stopColor="#150524" />
             </linearGradient>
 
-            {/* Filtro de Resplandor Neón */}
+            {/* 10. Tobera Antigravedad en Tungsteno Tratado y Titanio Gris */}
+            <linearGradient id="auraNozzleGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#27272a" />
+              <stop offset="35%" stopColor="#3f3f46" />
+              <stop offset="60%" stopColor="#52525b" />
+              <stop offset="85%" stopColor="#3f3f46" />
+              <stop offset="100%" stopColor="#27272a" />
+            </linearGradient>
+
+            {/* FILTROS PBR NATIVOS DE ALTA FIDELIDAD */}
+            {/* A. Resplandor Especular */}
             <filter id="auraGlow" x="-30%" y="-30%" width="160%" height="160%">
-              <feGaussianBlur stdDeviation="3.2" result="blur" />
+              <feGaussianBlur stdDeviation="2.4" result="blur" />
               <feMerge>
                 <feMergeNode in="blur" />
                 <feMergeNode in="SourceGraphic" />
               </feMerge>
+            </filter>
+
+            {/* B. Relieve Físico Especular para Metal CNC */}
+            <filter id="pbrMetalBevel" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur in="SourceAlpha" stdDeviation="1.5" result="blur" />
+              <feSpecularLighting in="blur" surfaceScale="2.5" specularConstant="1.2" specularExponent="22" lightingColor="#ffffff" result="specOut">
+                <fePointLight x="60" y="40" z="140" />
+              </feSpecularLighting>
+              <feComposite in="specOut" in2="SourceAlpha" operator="in" result="specIn" />
+              <feComposite in="SourceGraphic" in2="specIn" operator="arithmetic" k1="0" k2="1" k3="0.8" k4="0" />
             </filter>
           </defs>
 
@@ -368,13 +470,14 @@ export default function AndroidVoiceAvatar({
             {/* A. PROPULSOR / BASE ANTI-GRAVEDAD CON CHORRO DE PLASMA     */}
             {/* ========================================================= */}
             <g transform="translate(105, 206)">
-              {/* Llama de Plasma Violeta Reactiva */}
+              {/* Llama de Plasma Violeta Sutil */}
               <ellipse
                 cx="0"
                 cy="16"
-                rx="18"
-                ry="10"
+                rx="16"
+                ry="9"
                 fill="#a855f7"
+                opacity="0.75"
                 filter="url(#auraGlow)"
                 style={{
                   transformOrigin: '0px 10px',
@@ -384,12 +487,12 @@ export default function AndroidVoiceAvatar({
                 }}
               />
 
-              {/* Núcleo de Plasma Azul Cian */}
+              {/* Núcleo de Plasma Azul Cian Fotónico */}
               <ellipse
                 cx="0"
                 cy="14"
-                rx="11"
-                ry="6"
+                rx="10"
+                ry="5"
                 fill="#38bdf8"
                 filter="url(#auraGlow)"
                 style={{
@@ -399,156 +502,211 @@ export default function AndroidVoiceAvatar({
                     : 'auraThrusterPlasma 1.2s ease-in-out infinite'
                 }}
               />
-              <circle cx="0" cy="12" r="3.2" fill="#ffffff" />
+              <circle cx="0" cy="12" r="3" fill="#ffffff" />
 
-              {/* ✨ CHISPAS Y PARTÍCULAS CUÁNTICAS QUE CAEN */}
+              {/* ✨ CHISPAS Y PARTÍCULAS CUÁNTICAS SUTILES */}
               {(isJumping || isSpeaking) && (
                 <g>
                   <circle
                     cx="-6"
                     cy="20"
-                    r="2"
+                    r="1.8"
                     fill="#38bdf8"
                     style={{ animation: 'auraParticleDrop 0.5s ease-out infinite' }}
                   />
                   <circle
                     cx="0"
                     cy="22"
-                    r="2.5"
+                    r="2.2"
                     fill="#ffffff"
                     style={{ animation: 'auraParticleDrop 0.45s ease-out infinite 0.15s' }}
                   />
                   <circle
                     cx="6"
                     cy="20"
-                    r="2"
+                    r="1.8"
                     fill="#c084fc"
                     style={{ animation: 'auraParticleDrop 0.52s ease-out infinite 0.08s' }}
                   />
                 </g>
               )}
 
-              {/* Tobera Mecánica Ensamblada Directamente a la Falda */}
+              {/* Tobera Mecánica en Tungsteno Pulido y Cromo Espejo */}
               <path
                 d="M -15 0 L -10 11 L 10 11 L 15 0 Z"
-                fill="#1e1b4b"
-                stroke="#8b5cf6"
+                fill="url(#auraNozzleGrad)"
+                stroke="url(#pbrChromeMirror)"
                 strokeWidth="1.8"
               />
-              <line x1="-9" y1="5" x2="9" y2="5" stroke="#38bdf8" strokeWidth="1.4" />
+              <line x1="-13" y1="1" x2="13" y2="1" stroke="#ffffff" strokeWidth="0.8" opacity="0.6" />
+              <line x1="-9" y1="5" x2="9" y2="5" stroke="#38bdf8" strokeWidth="1.5" filter="url(#auraGlow)" />
+              <line x1="-7" y1="8" x2="7" y2="8" stroke="#a855f7" strokeWidth="1.2" />
             </g>
 
             {/* ========================================================= */}
-            {/* B. TORSO: TRAJE DE SECRETARIA EJECUTIVA (BLAZER & BLUSA)  */}
+            {/* B. TORSO: TRAJE EJECUTIVO EN TITANIO NEGRO ESPACIAL PBR   */}
             {/* ========================================================= */}
             <g transform="translate(105, 164)">
-              {/* Falda de Tubo / Cadera Ejecutiva Biónica */}
+              {/* Falda de Tubo / Cadera Biónica en Titanio Gris con Biseles de Cromo */}
               <path
                 d="M -22 22 L 22 22 L 15 42 L -15 42 Z"
                 fill="url(#auraSuitGrad)"
-                stroke="#8b5cf6"
-                strokeWidth="1.6"
+                stroke="url(#pbrChromeMirror)"
+                strokeWidth="1.8"
               />
-              {/* Cinturón Delgado Ejecutivo con Hebilla de Gema */}
-              <rect x="-21" y="20" width="42" height="5" rx="1.5" fill="#0f172a" stroke="#a855f7" strokeWidth="1" />
-              <circle cx="0" cy="22.5" r="2.8" fill="#38bdf8" filter="url(#auraGlow)" />
+              {/* Ranuras de ensamblaje de blindaje lateral (Panel Lines) */}
+              <line x1="-12" y1="24" x2="-8" y2="40" stroke="#27272a" strokeWidth="1.4" />
+              <line x1="-11" y1="24" x2="-7" y2="40" stroke="#a855f7" strokeWidth="1.2" opacity="0.85" filter="url(#auraGlow)" />
+              <line x1="12" y1="24" x2="8" y2="40" stroke="#27272a" strokeWidth="1.4" />
+              <line x1="11" y1="24" x2="7" y2="40" stroke="#a855f7" strokeWidth="1.2" opacity="0.85" filter="url(#auraGlow)" />
+              {/* Ribete Inferior de la Falda en Titanio Púrpura Metalizado */}
+              <line x1="-14" y1="41" x2="14" y2="41" stroke="url(#auraLapelGrad)" strokeWidth="1.8" strokeLinecap="round" />
+              <line x1="-13" y1="41" x2="13" y2="41" stroke="#ffffff" strokeWidth="0.6" opacity="0.75" strokeLinecap="round" />
 
-              {/* Base del Blazer Ejecutivo */}
+              {/* Cinturón en Titanio Púrpura Metalizado con Hebilla de Cromo y Diodo Zafiro */}
+              <rect x="-21" y="20" width="42" height="5" rx="1.5" fill="url(#auraLapelGrad)" stroke="url(#pbrChromeMirror)" strokeWidth="1" />
+              <line x1="-20" y1="21" x2="20" y2="21" stroke="#ffffff" strokeWidth="0.6" opacity="0.8" />
+              <rect x="-6" y="19" width="12" height="7" rx="2" fill="url(#pbrChromeMirror)" stroke="#a855f7" strokeWidth="1" />
+              <circle cx="0" cy="22.5" r="2" fill="#38bdf8" filter="url(#auraGlow)" />
+
+              {/* Base del Blazer Ejecutivo en Titanio Gris Metálico */}
               <path
                 d="M -30 -26 L 30 -26 L 22 22 L -22 22 Z"
                 fill="url(#auraSuitGrad)"
-                stroke="#7c3aed"
+                stroke="url(#pbrChromeMirror)"
                 strokeWidth="1.8"
               />
+              {/* Bisel de luz superior del blazer */}
+              <line x1="-28" y1="-25" x2="28" y2="-25" stroke="#ffffff" strokeWidth="0.8" opacity="0.65" />
 
-              {/* Cuello y Garganta Biónica Elegante Conectada Continuamente */}
+              {/* Cuello y Garganta Biónica en Titanio Gris con Conexión Óptica */}
               <rect
                 x="-9"
                 y="-40"
                 width="18"
                 height="15"
                 rx="4"
-                fill="#1e1b4b"
-                stroke="#8b5cf6"
+                fill="url(#auraChassisGrad)"
+                stroke="url(#pbrChromeMirror)"
                 strokeWidth="1.4"
               />
-              <line x1="-7" y1="-34" x2="7" y2="-34" stroke="#38bdf8" strokeWidth="1.2" />
-              <line x1="-7" y1="-30" x2="7" y2="-30" stroke="#a855f7" strokeWidth="1.2" />
+              <line x1="-7" y1="-34" x2="7" y2="-34" stroke="#38bdf8" strokeWidth="1.4" filter="url(#auraGlow)" />
+              <line x1="-7" y1="-30" x2="7" y2="-30" stroke="#a855f7" strokeWidth="1.4" filter="url(#auraGlow)" />
 
-              {/* Cuello Camisero Blanco de Secretaria */}
+              {/* Cuello Camisero en Titanio Gris Metálico */}
               <path
                 d="M -16 -26 L -7 -38 L 0 -26 L 7 -38 L 16 -26 Z"
-                fill="#ffffff"
-                stroke="#c7d2fe"
-                strokeWidth="1"
+                fill="url(#auraSuitGrad)"
+                stroke="url(#pbrChromeMirror)"
+                strokeWidth="1.2"
               />
 
-              {/* Blusa Interior Escote en V (Blanco Perla) */}
+              {/* Blusa Interior Escote en V en Titanio Gris Metálico */}
               <path
                 d="M -13 -26 L 13 -26 L 0 -4 Z"
-                fill="url(#auraBlouseGrad)"
-                stroke="#c7d2fe"
+                fill="url(#auraSuitGrad)"
+                stroke="url(#pbrChromeMirror)"
                 strokeWidth="0.8"
               />
 
-              {/* Broche / Corbata Cuántica Estelar de Secretaria */}
+              {/* Broche / Corbata Cuántica Estelar con Núcleo Incandescente Cian */}
               <g transform="translate(0, -14)">
-                <polygon points="0,-4 3.5,0 0,6 -3.5,0" fill="#38bdf8" filter="url(#auraGlow)" />
+                <polygon points="0,-4 3.5,0 0,6 -3.5,0" fill="#38bdf8" stroke="url(#pbrChromeMirror)" strokeWidth="0.8" filter="url(#auraGlow)" />
                 <circle cx="0" cy="0" r="1.5" fill="#ffffff" />
               </g>
 
-              {/* Solapa Izquierda del Blazer (Corte Ejecutivo Cruzado) */}
+              {/* Solapa Izquierda del Blazer en Cromo & Grafito con Bisel Metálico */}
               <path
                 d="M -30 -26 L -10 -26 L -2 -4 L -18 10 L -25 -6 Z"
                 fill="url(#auraLapelGrad)"
-                stroke="#a855f7"
-                strokeWidth="1.4"
+                stroke="url(#pbrChromeMirror)"
+                strokeWidth="1.6"
               />
-              {/* Solapa Derecha del Blazer */}
+              <path
+                d="M -28 -24 L -11 -24 L -4 -4 L -17 8 L -24 -6 Z"
+                stroke="#ffffff"
+                strokeWidth="0.6"
+                opacity="0.55"
+                fill="none"
+              />
+
+              {/* Solapa Derecha del Blazer en Cromo & Grafito */}
               <path
                 d="M 30 -26 L 10 -26 L 2 -4 L 18 10 L 25 -6 Z"
                 fill="url(#auraLapelGrad)"
-                stroke="#a855f7"
-                strokeWidth="1.4"
+                stroke="url(#pbrChromeMirror)"
+                strokeWidth="1.6"
+              />
+              <path
+                d="M 28 -24 L 11 -24 L 4 -4 L 17 8 L 24 -6 Z"
+                stroke="#ffffff"
+                strokeWidth="0.6"
+                opacity="0.55"
+                fill="none"
               />
 
-              {/* Botones Biónicos Dorados/Cian del Traje */}
-              <circle cx="0" cy="6" r="2" fill="#38bdf8" stroke="#8b5cf6" strokeWidth="0.8" />
-              <circle cx="0" cy="14" r="2" fill="#38bdf8" stroke="#8b5cf6" strokeWidth="0.8" />
+              {/* Botones Biónicos de Cromo Espejo con Diodo LED Cian Fotónico */}
+              <circle cx="0" cy="6" r="2.4" fill="url(#pbrChromeMirror)" stroke="#a855f7" strokeWidth="0.8" />
+              <circle cx="0" cy="6" r="1.1" fill="#38bdf8" filter="url(#auraGlow)" />
+              <circle cx="0" cy="14" r="2.4" fill="url(#pbrChromeMirror)" stroke="#a855f7" strokeWidth="0.8" />
+              <circle cx="0" cy="14" r="1.1" fill="#38bdf8" filter="url(#auraGlow)" />
 
-              {/* Pañuelo de Bolsillo Ejecutivo en el Pecho */}
-              <path d="M -23 -14 L -16 -14 L -19 -18 Z" fill="#38bdf8" opacity="0.9" />
+              {/* Pañuelo de Bolsillo Ejecutivo en Seda Fotónica Cian */}
+              <path d="M -23 -14 L -16 -14 L -19 -18 Z" fill="#38bdf8" filter="url(#auraGlow)" opacity="0.95" />
             </g>
 
             {/* ========================================================= */}
-            {/* C. BRAZO DERECHO & BOLSO (INERCIA PENDULAR A 60 FPS)      */}
+            {/* C. BRAZO DERECHO & BOLSO (PBR TITANIO, CROMO & PÉNDULO)   */}
             {/* ========================================================= */}
             <g>
-              {/* Hombrera Ejecutiva de la Manga Derecha */}
-              <circle cx="140" cy="146" r="10" fill="url(#auraLapelGrad)" stroke="#a855f7" strokeWidth="1.8" />
+              {/* Hombrera Ejecutiva de la Manga Derecha (Blindaje CNC Mecanizado) */}
+              <circle cx="140" cy="146" r="10.5" fill="url(#auraChassisGrad)" stroke="url(#pbrChromeMirror)" strokeWidth="1.8" filter="url(#pbrMetalBevel)" />
+              <circle cx="140" cy="146" r="8" fill="none" stroke="#ffffff" strokeWidth="0.6" opacity="0.65" />
+              <circle cx="140" cy="146" r="5.5" fill="url(#auraLapelGrad)" stroke="#38bdf8" strokeWidth="0.8" />
+              <circle cx="140" cy="146" r="2" fill="#38bdf8" opacity="0.8" />
               
-              {/* Manga del Blazer (Brazo doblado sosteniendo el bolso) */}
+              {/* Manga del Blazer (Brazo doblado sosteniendo el bolso - Nano-tejido Titánico) */}
               <path
                 d="M 140 146 L 152 176 L 140 196"
-                stroke="#581c87"
-                strokeWidth="7"
+                stroke="url(#auraSuitGrad)"
+                strokeWidth="7.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="none"
+              />
+              {/* Franja de Acento Púrpura Metalizado PBR en el Brazo */}
+              <path
+                d="M 140 146 L 152 176 L 140 196"
+                stroke="url(#auraLapelGrad)"
+                strokeWidth="3.2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 fill="none"
               />
               <path
                 d="M 140 146 L 152 176 L 140 196"
-                stroke="#8b5cf6"
-                strokeWidth="2"
+                stroke="url(#pbrChromeMirror)"
+                strokeWidth="1.2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 fill="none"
               />
+              {/* Filete de luz especular superior en manga */}
+              <path
+                d="M 140 146 L 152 176 L 140 196"
+                stroke="#ffffff"
+                strokeWidth="0.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                opacity="0.75"
+                fill="none"
+              />
 
-              {/* Muñeca y Mano Femenina Sujetando el Asa */}
-              <circle cx="140" cy="196" r="4.2" fill="#e0e7ff" stroke="#7c3aed" strokeWidth="1.2" />
+              {/* Rótula de Muñeca y Mano Sujetando el Asa */}
+              <circle cx="140" cy="196" r="4.5" fill="url(#pbrChromeMirror)" stroke="#a855f7" strokeWidth="1" />
+              <circle cx="140" cy="196" r="2.5" fill="url(#auraChassisGrad)" />
 
-              {/* 👜 BOLSO DE MANO DE DISEÑADORA CON PÉNDULO FÍSICO */}
+              {/* 👜 BOLSO DE MANO DE DISEÑADORA CON PÉNDULO FÍSICO (PBR TITANIO NEGRO & CROMO) */}
               <g
                 style={{
                   transformOrigin: '140px 196px',
@@ -558,16 +716,24 @@ export default function AndroidVoiceAvatar({
                     : 'auraHandbagSwing 2.4s ease-in-out infinite'
                 }}
               >
-                {/* Asa Curva del Bolso */}
+                {/* Asa Curva del Bolso en Cromo Espejo Mecanizado */}
                 <path
-                  d="M 133 196 C 133 182 147 182 147 196"
-                  stroke="#c084fc"
-                  strokeWidth="2.4"
+                  d="M 133 196 C 133 181 147 181 147 196"
+                  stroke="url(#pbrChromeMirror)"
+                  strokeWidth="2.8"
+                  fill="none"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M 133 196 C 133 181 147 181 147 196"
+                  stroke="#ffffff"
+                  strokeWidth="0.8"
+                  opacity="0.8"
                   fill="none"
                   strokeLinecap="round"
                 />
 
-                {/* Cuerpo del Bolso Ejecutivo */}
+                {/* Cuerpo del Bolso Ejecutivo en PBR Titanio Negro */}
                 <rect
                   x="125"
                   y="196"
@@ -575,86 +741,141 @@ export default function AndroidVoiceAvatar({
                   height="24"
                   rx="4"
                   fill="url(#auraBagGrad)"
-                  stroke="#a855f7"
+                  stroke="url(#pbrChromeMirror)"
                   strokeWidth="1.6"
+                  filter="url(#pbrMetalBevel)"
+                />
+                {/* Bisel interno de luz especular en el cuerpo del bolso */}
+                <rect
+                  x="126"
+                  y="197"
+                  width="28"
+                  height="22"
+                  rx="3"
+                  fill="none"
+                  stroke="#ffffff"
+                  strokeWidth="0.6"
+                  opacity="0.45"
                 />
 
-                {/* Solapa / Broche del Bolso */}
+                {/* Solapa / Broche del Bolso en Cromo & Grafito */}
                 <path
                   d="M 125 196 L 155 196 L 152 207 L 128 207 Z"
-                  fill="#6d28d9"
-                  stroke="#c084fc"
-                  strokeWidth="1"
+                  fill="url(#auraLapelGrad)"
+                  stroke="url(#pbrChromeMirror)"
+                  strokeWidth="1.2"
                 />
+                <line x1="128" y1="206" x2="152" y2="206" stroke="#ffffff" strokeWidth="0.6" opacity="0.7" />
 
-                {/* Cerradura Metálica de Lujo (Gema Azul Cian) */}
-                <rect x="136.5" y="205" width="7" height="5" rx="1.5" fill="#0f172a" stroke="#38bdf8" strokeWidth="1" />
-                <circle cx="140" cy="207.5" r="1.5" fill="#38bdf8" filter="url(#auraGlow)" />
+                {/* Cerradura Metálica de Lujo con Gema Zafiro Cian */}
+                <rect x="136" y="204.5" width="8" height="5.5" rx="1.5" fill="url(#pbrChromeMirror)" stroke="#38bdf8" strokeWidth="1" />
+                <circle cx="140" cy="207.2" r="1.6" fill="#38bdf8" filter="url(#auraGlow)" />
+                <circle cx="140" cy="207.2" r="0.6" fill="#ffffff" />
 
-                {/* Pespunte / Costura Biónica del Bolso */}
-                <line x1="128" y1="216" x2="152" y2="216" stroke="#38bdf8" strokeWidth="0.8" strokeDasharray="2 1.5" opacity="0.8" />
+                {/* Pespunte / Costura Biónica Grabada con Láser */}
+                <line x1="128" y1="216" x2="152" y2="216" stroke="#38bdf8" strokeWidth="0.8" strokeDasharray="2 1.5" opacity="0.85" />
               </g>
             </g>
 
-            {/* Hombrera Izquierda Base Fija al Torso (Anclada permanentemente, jamás se despega) */}
-            <circle cx="70" cy="146" r="10" fill="url(#auraLapelGrad)" stroke="#a855f7" strokeWidth="1.8" />
+            {/* Hombrera Izquierda Base Fija al Torso (Blindaje CNC Mecanizado Anclado) */}
+            <circle cx="70" cy="146" r="10.5" fill="url(#auraChassisGrad)" stroke="url(#pbrChromeMirror)" strokeWidth="1.8" filter="url(#pbrMetalBevel)" />
+            <circle cx="70" cy="146" r="8" fill="none" stroke="#ffffff" strokeWidth="0.6" opacity="0.65" />
+            <circle cx="70" cy="146" r="5.5" fill="url(#auraLapelGrad)" stroke="#38bdf8" strokeWidth="0.8" />
+            <circle cx="70" cy="146" r="2" fill="#38bdf8" opacity="0.8" />
 
             {/* ========================================================= */}
             {/* D. BRAZO IZQUIERDO Y MANO: SALUDO ALTO Y VOLEO DE MANO   */}
             {/* ========================================================= */}
             <g transform="translate(70, 146)">
-              {/* Rótula Articular Interna */}
-              <circle cx="0" cy="0" r="6" fill="#1e1b4b" stroke="#38bdf8" strokeWidth="1.2" />
+              {/* Rótula Articular Interna en Cromo Espejo con Cojinete */}
+              <circle cx="0" cy="0" r="6.5" fill="url(#auraChassisGrad)" stroke="url(#pbrChromeMirror)" strokeWidth="1.6" />
+              <circle cx="0" cy="0" r="3.5" fill="url(#pbrChromeMirror)" />
+              <circle cx="0" cy="0" r="1.5" fill="#38bdf8" />
 
               {isWaving ? (
-                /* POSE DE SALUDO ALTO: Brazo alzado y mano voleando en alto al lado de su rostro */
+                /* POSE DE SALUDO ALTO CON EL PINCEL: Brazo alzado sosteniendo el pincel biónico en alto mientras volea alegremente */
                 <g>
                   {/* Brazo Superior Levantado en Alto hacia el Codo (-24, -14) */}
-                  <line x1="0" y1="0" x2="-24" y2="-14" stroke="#581c87" strokeWidth="7.5" strokeLinecap="round" />
-                  <line x1="0" y1="0" x2="-24" y2="-14" stroke="#8b5cf6" strokeWidth="2.4" strokeLinecap="round" />
+                  <line x1="0" y1="0" x2="-24" y2="-14" stroke="url(#auraSuitGrad)" strokeWidth="7.5" strokeLinecap="round" />
+                  <line x1="0" y1="0" x2="-24" y2="-14" stroke="url(#auraLapelGrad)" strokeWidth="3.2" strokeLinecap="round" />
+                  <line x1="0" y1="0" x2="-24" y2="-14" stroke="url(#pbrChromeMirror)" strokeWidth="1.2" strokeLinecap="round" />
+                  <line x1="0" y1="0" x2="-24" y2="-14" stroke="#ffffff" strokeWidth="0.6" strokeLinecap="round" opacity="0.75" />
 
-                  {/* Codo Biónico Elevado */}
-                  <circle cx="-24" cy="-14" r="4.5" fill="#1e1b4b" stroke="#38bdf8" strokeWidth="1.6" />
+                  {/* Codo Biónico Elevado (Rótula Mecanizada CNC) */}
+                  <circle cx="-24" cy="-14" r="5" fill="url(#auraChassisGrad)" stroke="url(#pbrChromeMirror)" strokeWidth="1.6" filter="url(#pbrMetalBevel)" />
+                  <circle cx="-24" cy="-14" r="2.5" fill="url(#pbrChromeMirror)" />
+                  <circle cx="-24" cy="-14" r="1.2" fill="#38bdf8" />
 
-                  {/* Antebrazo y Mano que VOLEA alegremente de lado a lado */}
+                  {/* Antebrazo y Mano que VOLEA alzando el Pincel Biónico PBR */}
                   <g
                     style={{
                       transformOrigin: '-24px -14px',
                       animation: 'auraArmWaveHigh 0.5s ease-in-out infinite'
                     }}
                   >
-                    {/* Antebrazo hacia la Muñeca Alta (-10, -52) */}
-                    <line x1="-24" y1="-14" x2="-10" y2="-52" stroke="#1e1b4b" strokeWidth="5" strokeLinecap="round" />
-                    <line x1="-24" y1="-14" x2="-10" y2="-52" stroke="#a855f7" strokeWidth="1.8" strokeLinecap="round" />
+                    {/* Antebrazo hacia la Muñeca Alta (-10, -52) - Vástago de Titanio */}
+                    <line x1="-24" y1="-14" x2="-10" y2="-52" stroke="url(#auraChassisGrad)" strokeWidth="5.2" strokeLinecap="round" />
+                    <line x1="-24" y1="-14" x2="-10" y2="-52" stroke="url(#pbrChromeMirror)" strokeWidth="1.8" strokeLinecap="round" />
+                    <line x1="-24" y1="-14" x2="-10" y2="-52" stroke="#38bdf8" strokeWidth="0.8" strokeLinecap="round" opacity="0.85" />
 
-                    {/* Muñeca */}
-                    <circle cx="-10" cy="-52" r="3.4" fill="#1e1b4b" stroke="#38bdf8" strokeWidth="1.2" />
+                    {/* Rótula de Muñeca en Cromo Espejo */}
+                    <circle cx="-10" cy="-52" r="3.8" fill="url(#pbrChromeMirror)" stroke="#38bdf8" strokeWidth="1.2" />
+                    <circle cx="-10" cy="-52" r="1.5" fill="#38bdf8" />
 
-                    {/* Palma Femenina Abierta con Dedos extendidos saludando (👋 Voleo) */}
+                    {/* Mano Biónica y Pincel / Stylus Púrpura Alzado en Saludo */}
                     <g transform="translate(-10, -52)">
-                      {/* Palma de la mano */}
+                      {/* CUERPO DEL PINCEL EN PÚRPURA METALIZADO PBR (Alzado en Alto) */}
+                      <line x1="-8" y1="-38" x2="2" y2="-72" stroke="url(#auraPincelGrad)" strokeWidth="5.2" strokeLinecap="round" filter="url(#pbrMetalBevel)" />
+                      <line x1="-7" y1="-39" x2="1" y2="-71" stroke="#ffffff" strokeWidth="0.9" strokeLinecap="round" opacity="0.8" />
+                      {/* Anillos de agarre del pincel en Cromo Espejo */}
+                      <circle cx="-4" cy="-50" r="3" fill="none" stroke="url(#pbrChromeMirror)" strokeWidth="1" />
+                      <circle cx="-1.5" cy="-60" r="2.8" fill="none" stroke="url(#pbrChromeMirror)" strokeWidth="1" />
+
+                      {/* Virola del Pincel en Cromo Pulido */}
+                      <ellipse cx="2" cy="-72" rx="3.4" ry="2.2" transform="rotate(-15, 2, -72)" fill="url(#pbrChromeMirror)" stroke="#ffffff" strokeWidth="0.8" />
+
+                      {/* Cerda / Punta Afilada del Pincel Fotónico */}
+                      <path d="M 0 -72 Q 3 -80 4 -86 Q 5 -79 3 -72 Z" fill="url(#pbrChromeMirror)" stroke="#ffffff" strokeWidth="0.8" filter="url(#pbrMetalBevel)" />
+                      {/* Diodo Láser Fotónico en la Punta del Pincel */}
+                      <circle cx="4" cy="-86" r="2.4" fill="#38bdf8" filter="url(#auraGlow)" />
+                      <circle cx="4" cy="-86" r="1" fill="#ffffff" />
+                      <circle cx="7" cy="-89" r="1.5" fill="#c084fc" filter="url(#auraGlow)" />
+                      <circle cx="0" cy="-90" r="1.2" fill="#38bdf8" filter="url(#auraGlow)" />
+
+                      {/* Palma de la mano en Titanio Gris Metálico con Borde Cromo sosteniendo el Pincel */}
                       <path
                         d="M 0 0 C -4 -4 -7 -10 -4 -16 C -1 -18 4 -18 6 -14 C 8 -10 6 -4 0 0 Z"
-                        fill="#e0e7ff"
-                        stroke="#a855f7"
-                        strokeWidth="1"
+                        fill="url(#auraSuitGrad)"
+                        stroke="url(#pbrChromeMirror)"
+                        strokeWidth="1.2"
                       />
-                      {/* Dedos extendidos en abanico saludando alegremente */}
-                      <line x1="-3" y1="-14" x2="-7" y2="-24" stroke="#e0e7ff" strokeWidth="2" strokeLinecap="round" />
-                      <line x1="-0.5" y1="-15" x2="-2" y2="-26" stroke="#e0e7ff" strokeWidth="2" strokeLinecap="round" />
-                      <line x1="2" y1="-15" x2="3.5" y2="-25" stroke="#e0e7ff" strokeWidth="2" strokeLinecap="round" />
-                      <line x1="4.5" y1="-13" x2="7.5" y2="-22" stroke="#e0e7ff" strokeWidth="2" strokeLinecap="round" />
-                      {/* Pulgar */}
-                      <line x1="-4" y1="-6" x2="-9" y2="-10" stroke="#e0e7ff" strokeWidth="2" strokeLinecap="round" />
+                      {/* Bisel especular en la palma */}
+                      <path
+                        d="M -2 -2 C -5 -6 -5 -11 -3 -14"
+                        stroke="#ffffff"
+                        strokeWidth="0.6"
+                        opacity="0.75"
+                        fill="none"
+                      />
 
-                      {/* Destello de fotones en la mano saludando */}
-                      <circle cx="8" cy="-25" r="1.6" fill="#38bdf8" />
-                      <circle cx="-9" cy="-26" r="1.3" fill="#c084fc" />
+                      {/* Dedos articulados envolviendo con elegancia el pincel */}
+                      <line x1="-3" y1="-14" x2="-6" y2="-22" stroke="url(#pbrChromeMirror)" strokeWidth="2.2" strokeLinecap="round" />
+                      <line x1="-0.5" y1="-15" x2="-2" y2="-24" stroke="url(#pbrChromeMirror)" strokeWidth="2.2" strokeLinecap="round" />
+                      <line x1="2" y1="-15" x2="3.5" y2="-23" stroke="url(#pbrChromeMirror)" strokeWidth="2.2" strokeLinecap="round" />
+                      <line x1="4.5" y1="-13" x2="7" y2="-20" stroke="url(#pbrChromeMirror)" strokeWidth="2.2" strokeLinecap="round" />
+                      {/* Pulgar */}
+                      <line x1="-4" y1="-6" x2="-8" y2="-10" stroke="url(#pbrChromeMirror)" strokeWidth="2.2" strokeLinecap="round" />
+
+                      {/* Brillos especulares en yemas de los dedos */}
+                      <circle cx="-6" cy="-22" r="0.8" fill="#ffffff" />
+                      <circle cx="-2" cy="-24" r="0.8" fill="#ffffff" />
+                      <circle cx="3.5" cy="-23" r="0.8" fill="#ffffff" />
+                      <circle cx="7" cy="-20" r="0.8" fill="#ffffff" />
                     </g>
                   </g>
                 </g>
               ) : (
-                /* POSE EN REPOSO / ORATORIA MIENTRAS HABLA */
+                /* POSE EN REPOSO / ORATORIA: BRAZO SOSTENIENDO EL PINCEL PÚRPURA METALIZADO (DIAGONAL ELEGANTE) */
                 <g
                   style={{
                     transformOrigin: '0px 0px',
@@ -663,30 +884,67 @@ export default function AndroidVoiceAvatar({
                   }}
                 >
                   {/* Manga del Blazer en Reposo */}
-                  <line x1="0" y1="0" x2="-14" y2="30" stroke="#581c87" strokeWidth="7" strokeLinecap="round" />
-                  <line x1="0" y1="0" x2="-14" y2="30" stroke="#8b5cf6" strokeWidth="2" strokeLinecap="round" />
+                  <line x1="0" y1="0" x2="-14" y2="30" stroke="url(#auraSuitGrad)" strokeWidth="7.5" strokeLinecap="round" />
+                  <line x1="0" y1="0" x2="-14" y2="30" stroke="url(#auraLapelGrad)" strokeWidth="3.2" strokeLinecap="round" />
+                  <line x1="0" y1="0" x2="-14" y2="30" stroke="url(#pbrChromeMirror)" strokeWidth="1.2" strokeLinecap="round" />
+                  <line x1="0" y1="0" x2="-14" y2="30" stroke="#ffffff" strokeWidth="0.6" opacity="0.75" strokeLinecap="round" />
 
-                  {/* Codo Biónico Púrpura */}
-                  <circle cx="-14" cy="30" r="4.2" fill="#1e1b4b" stroke="#38bdf8" strokeWidth="1.5" />
+                  {/* Codo Biónico en Titanio y Cromo */}
+                  <circle cx="-14" cy="30" r="4.8" fill="url(#auraChassisGrad)" stroke="url(#pbrChromeMirror)" strokeWidth="1.6" filter="url(#pbrMetalBevel)" />
+                  <circle cx="-14" cy="30" r="2.2" fill="url(#pbrChromeMirror)" />
+                  <circle cx="-14" cy="30" r="1" fill="#38bdf8" />
 
-                  {/* Antebrazo y Mano Colgando con Elegancia */}
-                  <line x1="-14" y1="30" x2="-26" y2="52" stroke="#1e1b4b" strokeWidth="4.5" strokeLinecap="round" />
-                  <line x1="-14" y1="30" x2="-26" y2="52" stroke="#a855f7" strokeWidth="1.4" strokeLinecap="round" />
+                  {/* Antebrazo hacia la Muñeca */}
+                  <line x1="-14" y1="30" x2="-26" y2="52" stroke="url(#auraChassisGrad)" strokeWidth="4.8" strokeLinecap="round" />
+                  <line x1="-14" y1="30" x2="-26" y2="52" stroke="url(#pbrChromeMirror)" strokeWidth="1.6" strokeLinecap="round" />
+                  <line x1="-14" y1="30" x2="-26" y2="52" stroke="#38bdf8" strokeWidth="0.7" opacity="0.8" strokeLinecap="round" />
 
-                  <circle cx="-26" cy="52" r="3.2" fill="#1e1b4b" stroke="#38bdf8" strokeWidth="1" />
+                  {/* Rótula de Muñeca */}
+                  <circle cx="-26" cy="52" r="3.5" fill="url(#pbrChromeMirror)" stroke="#38bdf8" strokeWidth="1.2" />
+
+                  {/* ======================================================= */}
+                  {/* EL PINCEL / STYLUS BIÓNICO EN PÚRPURA METALIZADO PBR    */}
+                  {/* ======================================================= */}
+                  {/* Mango Cilíndrico del Pincel en Titanio Púrpura Metalizado */}
+                  <line x1="-20" y1="44" x2="-54" y2="72" stroke="url(#auraPincelGrad)" strokeWidth="5.5" strokeLinecap="round" filter="url(#pbrMetalBevel)" />
+                  {/* Filete especular de luz a lo largo del cuerpo del pincel */}
+                  <line x1="-20" y1="43" x2="-53" y2="70" stroke="#ffffff" strokeWidth="1" opacity="0.85" strokeLinecap="round" />
+                  {/* Anillos grabados de agarre ergonómico en cromo */}
+                  <circle cx="-32" cy="54" r="3.2" fill="none" stroke="url(#pbrChromeMirror)" strokeWidth="1" />
+                  <circle cx="-40" cy="61" r="3" fill="none" stroke="url(#pbrChromeMirror)" strokeWidth="1" />
+                  <line x1="-46" y1="63.5" x2="-44" y2="68.5" stroke="#38bdf8" strokeWidth="1.2" filter="url(#auraGlow)" />
+
+                  {/* Virola / Casquillo del Pincel en Cromo Espejo Pulido */}
+                  <ellipse cx="-52" cy="70" rx="3.6" ry="2.4" transform="rotate(38, -52, 70)" fill="url(#pbrChromeMirror)" stroke="#ffffff" strokeWidth="0.9" />
+
+                  {/* Punta Afilada / Cerda Stylus del Pincel Caligráfico */}
                   <path
-                    d="M -26 52 C -30 59 -34 65 -39 67 C -40 62 -36 56 -29 51 Z"
-                    fill="#e0e7ff"
-                    stroke="#a855f7"
-                    strokeWidth="0.8"
+                    d="M -50 68 Q -59 75 -66 84 Q -56 79 -53 73 Z"
+                    fill="url(#pbrChromeMirror)"
+                    stroke="#ffffff"
+                    strokeWidth="0.9"
+                    filter="url(#pbrMetalBevel)"
+                  />
+                  {/* Diodo Emisor Láser y Aura Fotónica en la Punta del Pincel */}
+                  <circle cx="-66" cy="84" r="2.4" fill="#38bdf8" filter="url(#auraGlow)" />
+                  <circle cx="-66" cy="84" r="1" fill="#ffffff" />
+                  <circle cx="-66" cy="84" r="4.2" fill="none" stroke="#c084fc" strokeWidth="0.8" opacity="0.75" filter="url(#auraGlow)" />
+
+                  {/* Mano en Reposo en Titanio Gris Metálico Sujetando el Pincel */}
+                  <path
+                    d="M -26 52 C -29 57 -33 62 -37 63 C -38 59 -35 54 -28 50 Z"
+                    fill="url(#auraSuitGrad)"
+                    stroke="url(#pbrChromeMirror)"
+                    strokeWidth="1.1"
                   />
                   <path
-                    d="M -26 52 C -31 61 -36 68 -42 71"
-                    stroke="#c084fc"
-                    strokeWidth="1.4"
+                    d="M -26 52 C -30 58 -34 64 -39 66"
+                    stroke="url(#pbrChromeMirror)"
+                    strokeWidth="1.6"
                     strokeLinecap="round"
                     fill="none"
                   />
+                  <line x1="-27" y1="52" x2="-33" y2="61" stroke="#ffffff" strokeWidth="0.6" opacity="0.75" />
                 </g>
               )}
             </g>
@@ -704,82 +962,132 @@ export default function AndroidVoiceAvatar({
               }}
             >
               <g transform="translate(105, 86)">
-                {/* Chignon / Recogido Ejecutivo Biónico */}
+                {/* ======================================================= */}
+                {/* EL GORRO / CHIGNON BIÓNICO EN PÚRPURA METALIZADO PBR    */}
+                {/* ======================================================= */}
                 <g transform="translate(0, -34)">
+                  {/* Cúpula / Domo Superior del Gorro en Púrpura Metalizado */}
                   <ellipse
                     cx="0"
                     cy="0"
-                    rx="20"
-                    ry="12"
+                    rx="22"
+                    ry="13"
                     fill="url(#auraBunGrad)"
-                    stroke="#8b5cf6"
+                    stroke="#c084fc"
                     strokeWidth="1.8"
+                    filter="url(#pbrMetalBevel)"
                   />
+                  {/* Filete de luz especular superior en gorro */}
                   <path
-                    d="M -16 2 Q 0 -6 16 2"
-                    stroke="#38bdf8"
-                    strokeWidth="2"
+                    d="M -18 -4 C -9 -12 9 -12 18 -4"
+                    stroke="#ffffff"
+                    strokeWidth="0.9"
+                    opacity="0.85"
+                    fill="none"
+                  />
+                  {/* Corona / Anillo de Acabado Metálico Violeta Brillante */}
+                  <path
+                    d="M -18 3 Q 0 -5 18 3"
+                    stroke="#c084fc"
+                    strokeWidth="2.4"
                     fill="none"
                     strokeLinecap="round"
                     filter="url(#auraGlow)"
                   />
-                  <circle cx="0" cy="-2" r="2" fill="#ffffff" />
+                  {/* Corona central de cromo espejo con gema violeta */}
+                  <circle cx="0" cy="-2" r="3" fill="url(#pbrChromeMirror)" stroke="#c084fc" strokeWidth="1" />
+                  <circle cx="0" cy="-2" r="1.4" fill="#a855f7" />
                 </g>
 
-                {/* Contorno del Chasis Craneal Femenino y Elegante */}
+                {/* Contorno del Chasis Craneal en Titanio Gris Metálico Unificado */}
                 <path
                   d="M -34 -20 C -34 -44 34 -44 34 -20 C 34 8 28 32 0 38 C -28 32 -34 8 -34 -20 Z"
-                  fill="url(#auraHeadGrad)"
-                  stroke="#8b5cf6"
+                  fill="url(#auraSuitGrad)"
+                  stroke="url(#pbrChromeMirror)"
                   strokeWidth="2.2"
                 />
-
-                {/* Placa Frontal Superior Estilizada en Morado Brillante */}
+                {/* Filete sutil de luz superior en el chasis */}
                 <path
-                  d="M -26 -28 C -14 -40 14 -40 26 -28 C 16 -34 -16 -34 -26 -28 Z"
-                  fill="#7c3aed"
-                  stroke="#a855f7"
-                  strokeWidth="1"
-                  opacity="0.9"
+                  d="M -32 -22 C -32 -42 32 -42 32 -22"
+                  stroke="#ffffff"
+                  strokeWidth="0.6"
+                  opacity="0.45"
+                  fill="none"
                 />
 
-                {/* Auriculares / Pendientes Biónicos Ejecutivos a los Lados */}
+                {/* Banda / Visera Frontal del Gorro en Titanio Púrpura Metalizado PBR */}
+                <path
+                  d="M -26 -28 C -14 -40 14 -40 26 -28 C 16 -34 -16 -34 -26 -28 Z"
+                  fill="url(#auraBunGrad)"
+                  stroke="#c084fc"
+                  strokeWidth="1.6"
+                  filter="url(#pbrMetalBevel)"
+                />
+                <path
+                  d="M -22 -29 C -12 -38 12 -38 22 -29"
+                  stroke="#ffffff"
+                  strokeWidth="0.8"
+                  opacity="0.85"
+                  fill="none"
+                />
+
+                {/* Auriculares / Pendientes Biónicos Ejecutivos en Púrpura Metalizado & Cromo */}
                 <g transform="translate(-36, -6)">
-                  <rect x="-4" y="-12" width="7" height="24" rx="3.5" fill="#1e1b4b" stroke="#38bdf8" strokeWidth="1.6" />
-                  <circle cx="-0.5" cy="0" r="2.2" fill="#a855f7" filter="url(#auraGlow)" />
+                  <rect x="-4" y="-12" width="7" height="24" rx="3.5" fill="url(#auraBunGrad)" stroke="url(#pbrChromeMirror)" strokeWidth="1.4" filter="url(#pbrMetalBevel)" />
+                  <line x1="-0.5" y1="-10" x2="-0.5" y2="10" stroke="#ffffff" strokeWidth="0.6" opacity="0.7" />
+                  <circle cx="-0.5" cy="0" r="2.2" fill="#c084fc" filter="url(#auraGlow)" />
                 </g>
                 <g transform="translate(36, -6)">
-                  <rect x="-3" y="-12" width="7" height="24" rx="3.5" fill="#1e1b4b" stroke="#38bdf8" strokeWidth="1.6" />
-                  <circle cx="0.5" cy="0" r="2.2" fill="#a855f7" filter="url(#auraGlow)" />
+                  <rect x="-3" y="-12" width="7" height="24" rx="3.5" fill="url(#auraBunGrad)" stroke="url(#pbrChromeMirror)" strokeWidth="1.4" filter="url(#pbrMetalBevel)" />
+                  <line x1="0.5" y1="-10" x2="0.5" y2="10" stroke="#ffffff" strokeWidth="0.6" opacity="0.7" />
+                  <circle cx="0.5" cy="0" r="2.2" fill="#c084fc" filter="url(#auraGlow)" />
                 </g>
 
-                {/* Visera Panorámica de Cristal Oscuro y Pulido */}
+                {/* Visera Panorámica de Cristal Zafiro Negro con Bisel de Cromo */}
                 <rect
                   x="-27"
                   y="-20"
                   width="54"
                   height="40"
                   rx="12"
-                  fill="#060913"
-                  stroke="#6366f1"
+                  fill="#050505"
+                  stroke="url(#pbrChromeMirror)"
                   strokeWidth="1.6"
                 />
+                {/* Bisel interno de cristal fotónico con aura violeta elegante */}
+                <rect
+                  x="-26"
+                  y="-19"
+                  width="52"
+                  height="38"
+                  rx="11"
+                  fill="none"
+                  stroke="#c084fc"
+                  strokeWidth="0.9"
+                  opacity="0.55"
+                  filter="url(#auraGlow)"
+                />
 
-                {/* Reflejo Especular Superior de Cristal */}
+                {/* Reflejos Especulares Multicapa de Cristal Templado */}
                 <path
                   d="M -21 -16 L 16 -16 C 21 -16 21 -12 16 -12 L -21 -12 Z"
                   fill="#ffffff"
-                  opacity="0.14"
+                  opacity="0.25"
+                />
+                <path
+                  d="M -23 -8 L -18 -8 L -24 4 L -25 4 Z"
+                  fill="#ffffff"
+                  opacity="0.16"
                 />
 
                 {/* ======================================================= */}
-                {/* MAQUILLAJE FEMENINO Y RUBOR EN MEJILLAS                */}
+                {/* TOQUE SUTIL DE CALIDEZ Y VIDA EN MEJILLAS (NO GAMER)   */}
                 {/* ======================================================= */}
-                <ellipse cx="-16" cy="7" rx="5.5" ry="2.6" fill="#f472b6" opacity="0.32" filter="url(#auraGlow)" />
-                <ellipse cx="16" cy="7" rx="5.5" ry="2.6" fill="#f472b6" opacity="0.32" filter="url(#auraGlow)" />
+                <ellipse cx="-16" cy="7" rx="5.5" ry="2.6" fill="#f472b6" opacity="0.3" filter="url(#auraGlow)" />
+                <ellipse cx="16" cy="7" rx="5.5" ry="2.6" fill="#f472b6" opacity="0.3" filter="url(#auraGlow)" />
 
                 {/* ======================================================= */}
-                {/* OJOS FEMENINOS CON PESTAÑAS LARGAS Y PARPADEO           */}
+                {/* 👁️ OJOS METÁLICOS DE ALTA PRECISIÓN EN PÚRPURA BRILLANTE */}
                 {/* ======================================================= */}
                 <g filter="url(#auraGlow)">
                   {/* Ojo Izquierdo */}
@@ -788,25 +1096,30 @@ export default function AndroidVoiceAvatar({
                     transition={{ duration: 0.1 }}
                     style={{ transformOrigin: '-11px -4px' }}
                   >
-                    {/* Pestañas Superiores Gruesas y Curvas */}
+                    {/* Contorno y Pestañas en Titanio con Micro-Acentos */}
                     <path
                       d="M -20 -9 C -14 -15 -7 -14 -2 -9"
-                      stroke="#38bdf8"
+                      stroke="#e4e4e7"
                       strokeWidth="2.4"
                       strokeLinecap="round"
                       fill="none"
                     />
-                    <line x1="-20" y1="-9" x2="-24" y2="-13" stroke="#a855f7" strokeWidth="1.6" strokeLinecap="round" />
-                    <line x1="-18" y1="-12" x2="-21" y2="-16" stroke="#38bdf8" strokeWidth="1.4" strokeLinecap="round" />
-                    <line x1="-14" y1="-14" x2="-15" y2="-18" stroke="#c084fc" strokeWidth="1.2" strokeLinecap="round" />
+                    <line x1="-20" y1="-9" x2="-24" y2="-13" stroke="#c084fc" strokeWidth="1.8" strokeLinecap="round" />
+                    <line x1="-18" y1="-12" x2="-21" y2="-16" stroke="#a855f7" strokeWidth="1.4" strokeLinecap="round" />
+                    <line x1="-14" y1="-14" x2="-15" y2="-18" stroke="#e9d5ff" strokeWidth="1.2" strokeLinecap="round" />
 
-                    {/* Iris Morado / Azul Cian */}
-                    <ellipse cx="-11" cy="-4" rx="7.5" ry="8.5" fill="#4338ca" />
-                    <circle cx="-11" cy="-4" r="5.2" fill="#38bdf8" />
-                    <circle cx="-11" cy="-4" r="2.8" fill="#1e1b4b" />
-                    {/* Destellos Especulares */}
+                    {/* Sensor Óptico / Iris en Púrpura Fotónico Radiante */}
+                    <ellipse cx="-11" cy="-4" rx="7.5" ry="8.5" fill="#2e0854" />
+                    <ellipse cx="-11" cy="-4" rx="6.4" ry="7.4" fill="url(#auraIrisGrad)" />
+                    {/* Anillo Óptico Biónico Interior */}
+                    <circle cx="-11" cy="-4" r="4.2" fill="none" stroke="#e9d5ff" strokeWidth="0.8" opacity="0.85" />
+                    {/* Pupila Central en Violeta Profundo */}
+                    <circle cx="-11" cy="-4" r="2.7" fill="#180527" />
+                    <circle cx="-11" cy="-4" r="1.3" fill="#c084fc" />
+                    {/* Destellos Especulares de Lente (Mirada Expresiva) */}
                     <circle cx="-9" cy="-6" r="2.4" fill="#ffffff" />
-                    <circle cx="-13" cy="-2" r="1.1" fill="#ffffff" opacity="0.85" />
+                    <circle cx="-13" cy="-2" r="1.2" fill="#ffffff" opacity="0.9" />
+                    <circle cx="-10" cy="-2" r="0.7" fill="#f3e8ff" />
                   </motion.g>
 
                   {/* Ojo Derecho */}
@@ -815,65 +1128,99 @@ export default function AndroidVoiceAvatar({
                     transition={{ duration: 0.1 }}
                     style={{ transformOrigin: '11px -4px' }}
                   >
-                    {/* Pestañas Superiores Gruesas y Curvas */}
+                    {/* Contorno y Pestañas en Titanio con Micro-Acentos */}
                     <path
                       d="M 2 -9 C 7 -14 14 -15 20 -9"
-                      stroke="#38bdf8"
+                      stroke="#e4e4e7"
                       strokeWidth="2.4"
                       strokeLinecap="round"
                       fill="none"
                     />
-                    <line x1="20" y1="-9" x2="24" y2="-13" stroke="#a855f7" strokeWidth="1.6" strokeLinecap="round" />
-                    <line x1="18" y1="-12" x2="21" y2="-16" stroke="#38bdf8" strokeWidth="1.4" strokeLinecap="round" />
-                    <line x1="14" y1="-14" x2="15" y2="-18" stroke="#c084fc" strokeWidth="1.2" strokeLinecap="round" />
+                    <line x1="20" y1="-9" x2="24" y2="-13" stroke="#c084fc" strokeWidth="1.8" strokeLinecap="round" />
+                    <line x1="18" y1="-12" x2="21" y2="-16" stroke="#a855f7" strokeWidth="1.4" strokeLinecap="round" />
+                    <line x1="14" y1="-14" x2="15" y2="-18" stroke="#e9d5ff" strokeWidth="1.2" strokeLinecap="round" />
 
-                    {/* Iris Morado / Azul Cian */}
-                    <ellipse cx="11" cy="-4" rx="7.5" ry="8.5" fill="#4338ca" />
-                    <circle cx="11" cy="-4" r="5.2" fill="#38bdf8" />
-                    <circle cx="11" cy="-4" r="2.8" fill="#1e1b4b" />
-                    {/* Destellos Especulares */}
+                    {/* Sensor Óptico / Iris en Púrpura Fotónico Radiante */}
+                    <ellipse cx="11" cy="-4" rx="7.5" ry="8.5" fill="#2e0854" />
+                    <ellipse cx="11" cy="-4" rx="6.4" ry="7.4" fill="url(#auraIrisGrad)" />
+                    {/* Anillo Óptico Biónico Interior */}
+                    <circle cx="11" cy="-4" r="4.2" fill="none" stroke="#e9d5ff" strokeWidth="0.8" opacity="0.85" />
+                    {/* Pupila Central en Violeta Profundo */}
+                    <circle cx="11" cy="-4" r="2.7" fill="#180527" />
+                    <circle cx="11" cy="-4" r="1.3" fill="#c084fc" />
+                    {/* Destellos Especulares de Lente (Mirada Expresiva) */}
                     <circle cx="13" cy="-6" r="2.4" fill="#ffffff" />
-                    <circle cx="9" cy="-2" r="1.1" fill="#ffffff" opacity="0.85" />
+                    <circle cx="9" cy="-2" r="1.2" fill="#ffffff" opacity="0.9" />
+                    <circle cx="12" cy="-2" r="0.7" fill="#f3e8ff" />
                   </motion.g>
                 </g>
 
                 {/* ======================================================= */}
-                {/* 👓 GAFAS EJECUTIVAS INTELIGENTES DE SECRETARIA          */}
+                {/* 👓 GAFAS EJECUTIVAS EN PÚRPURA METALIZADO PBR           */}
                 {/* ======================================================= */}
                 <g>
-                  {/* Lente Izquierda Tintada con Montura Cat-Eye */}
+                  {/* Lente Izquierda Clara con Tratamiento Antirreflejo Violeta */}
                   <path
                     d="M -23 -13 L -3 -11 C -2 1 -6 6 -12 6 C -19 6 -24 1 -23 -13 Z"
-                    fill="rgba(56, 189, 248, 0.12)"
+                    fill="rgba(124, 58, 237, 0.08)"
                     stroke="url(#auraGlassesGrad)"
-                    strokeWidth="1.8"
+                    strokeWidth="2.2"
+                    filter="url(#pbrMetalBevel)"
                   />
-                  {/* Reflejo Angular en el Cristal Izquierdo */}
-                  <line x1="-20" y1="-8" x2="-8" y2="3" stroke="#ffffff" strokeWidth="1" opacity="0.45" strokeLinecap="round" />
+                  {/* Bisel interno especular en lente izquierda */}
+                  <path
+                    d="M -21 -11 L -5 -9 C -4 0 -7 4 -12 4 C -17 4 -22 0 -21 -11 Z"
+                    fill="none"
+                    stroke="#ffffff"
+                    strokeWidth="0.75"
+                    opacity="0.85"
+                  />
+                  {/* Reflejos Angulares Especulares de Cristal Pulido */}
+                  <line x1="-20" y1="-8" x2="-8" y2="3" stroke="#ffffff" strokeWidth="1.2" opacity="0.7" strokeLinecap="round" />
+                  <line x1="-16" y1="-10" x2="-10" y2="-4" stroke="#c084fc" strokeWidth="1" opacity="0.85" strokeLinecap="round" />
 
-                  {/* Lente Derecha Tintada con Montura Cat-Eye */}
+                  {/* Lente Derecha Clara con Tratamiento Antirreflejo Violeta */}
                   <path
                     d="M 3 -11 L 23 -13 C 24 1 19 6 12 6 C 6 6 2 1 3 -11 Z"
-                    fill="rgba(56, 189, 248, 0.12)"
+                    fill="rgba(124, 58, 237, 0.08)"
                     stroke="url(#auraGlassesGrad)"
-                    strokeWidth="1.8"
+                    strokeWidth="2.2"
+                    filter="url(#pbrMetalBevel)"
                   />
-                  {/* Reflejo Angular en el Cristal Derecho */}
-                  <line x1="7" y1="-8" x2="19" y2="3" stroke="#ffffff" strokeWidth="1" opacity="0.45" strokeLinecap="round" />
+                  {/* Bisel interno especular en lente derecha */}
+                  <path
+                    d="M 5 -9 L 21 -11 C 22 0 17 4 12 4 C 7 4 4 0 5 -9 Z"
+                    fill="none"
+                    stroke="#ffffff"
+                    strokeWidth="0.75"
+                    opacity="0.85"
+                  />
+                  {/* Reflejos Angulares Especulares de Cristal Pulido */}
+                  <line x1="7" y1="-8" x2="19" y2="3" stroke="#ffffff" strokeWidth="1.2" opacity="0.7" strokeLinecap="round" />
+                  <line x1="10" y1="-4" x2="16" y2="-10" stroke="#c084fc" strokeWidth="1" opacity="0.85" strokeLinecap="round" />
 
-                  {/* Puente Central Elegante de las Gafas */}
-                  <path d="M -3 -8 Q 0 -11 3 -8" stroke="#c084fc" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+                  {/* Puente Central Elegante en Titanio Púrpura Metalizado */}
+                  <path d="M -3 -8 Q 0 -11 3 -8" stroke="url(#auraGlassesGrad)" strokeWidth="2.4" fill="none" strokeLinecap="round" />
+                  <path d="M -3 -8 Q 0 -11 3 -8" stroke="#ffffff" strokeWidth="0.75" fill="none" strokeLinecap="round" opacity="0.85" />
 
-                  {/* Patillas de las Gafas Hacia las Orejas */}
-                  <line x1="-23" y1="-12" x2="-32" y2="-10" stroke="#a855f7" strokeWidth="1.6" strokeLinecap="round" />
-                  <line x1="23" y1="-12" x2="32" y2="-10" stroke="#a855f7" strokeWidth="1.6" strokeLinecap="round" />
+                  {/* Patillas de las Gafas en Titanio Púrpura Metalizado */}
+                  <line x1="-23" y1="-12" x2="-32" y2="-10" stroke="url(#auraGlassesGrad)" strokeWidth="2" strokeLinecap="round" />
+                  <line x1="-23" y1="-12" x2="-32" y2="-10" stroke="#ffffff" strokeWidth="0.6" strokeLinecap="round" opacity="0.75" />
+                  <line x1="23" y1="-12" x2="32" y2="-10" stroke="url(#auraGlassesGrad)" strokeWidth="2" strokeLinecap="round" />
+                  <line x1="23" y1="-12" x2="32" y2="-10" stroke="#ffffff" strokeWidth="0.6" strokeLinecap="round" opacity="0.75" />
+
+                  {/* Puntos Cat-Eye en las Esquinas Exteriores de las Gafas */}
+                  <circle cx="-23" cy="-13" r="1.8" fill="#c084fc" filter="url(#auraGlow)" />
+                  <circle cx="23" cy="-13" r="1.8" fill="#c084fc" filter="url(#auraGlow)" />
+                  <circle cx="-23" cy="-13" r="0.7" fill="#ffffff" />
+                  <circle cx="23" cy="-13" r="0.7" fill="#ffffff" />
                 </g>
 
                 {/* ======================================================= */}
                 {/* BOCA / SINTETIZADOR FONO-REACTIVO DINÁMICO              */}
                 {/* ======================================================= */}
                 {isSpeaking ? (
-                  // Ecualizador Dinámico de Voz cuando AURA habla
+                  // Ecualizador Dinámico de Voz cuando AURA habla (Fotónico)
                   <g transform="translate(0, 15)" filter="url(#auraGlow)">
                     <motion.line
                       x1="-10"
@@ -932,17 +1279,17 @@ export default function AndroidVoiceAvatar({
                     />
                   </g>
                 ) : (
-                  // Labios Femeninos y Sonrisa Amable de Asistente en Reposo
+                  // Labios Femeninos y Sonrisa Amable con Tenue Toque Rosa Cálido
                   <g transform="translate(0, 15)">
                     <path
                       d="M -6 -1 Q 0 4 6 -1"
                       fill="none"
                       stroke="#f472b6"
-                      strokeWidth="2"
+                      strokeWidth="1.8"
                       strokeLinecap="round"
-                      opacity="0.9"
+                      opacity="0.85"
                     />
-                    <circle cx="0" cy="1.5" r="1" fill="#ffffff" opacity="0.75" />
+                    <circle cx="0" cy="1.5" r="1" fill="#ffffff" opacity="0.8" />
                   </g>
                 )}
               </g>

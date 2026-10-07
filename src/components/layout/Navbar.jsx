@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Settings, Sun, Moon } from 'lucide-react';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
-import { soundFx } from '../../utils/audioEffects';
+import { soundFx, playTap } from '../../utils/audioEffects';
 import AppearanceModal from './AppearanceModal';
 
 export default function Navbar({ currentHash = '#/' }) {
@@ -26,26 +26,53 @@ export default function Navbar({ currentHash = '#/' }) {
 
   const activeClasses = isLight
     ? 'bg-gradient-to-r from-indigo-100 via-purple-100 to-blue-100 text-black border border-indigo-300/80 shadow-[0_2px_12px_rgba(99,102,241,0.18)] font-bold'
-    : 'bg-gradient-to-r from-cyan-500/25 via-purple-600/30 to-blue-500/25 text-white border border-cyan-400/40 shadow-[0_0_20px_rgba(168,85,247,0.35)] backdrop-blur-md font-semibold';
+    : 'bg-gradient-to-r from-blue-600/30 via-purple-600/35 to-indigo-600/30 text-white border border-purple-400/40 shadow-[0_0_20px_rgba(168,85,247,0.35)] backdrop-blur-md font-semibold';
   
   const inactiveClasses = isLight
-    ? 'text-black font-bold hover:text-indigo-600 hover:bg-slate-100/80 border border-transparent'
-    : 'text-zinc-400 hover:text-white hover:bg-white/[0.04] border border-transparent';
+    ? 'text-slate-800 font-semibold hover:text-indigo-600 hover:bg-slate-100/80 border border-transparent'
+    : 'text-zinc-400 hover:text-white hover:bg-white/[0.04] border border-transparent font-medium';
+
+  const preloadRoute = (targetHash) => {
+    try {
+      if (targetHash.startsWith('#/obras')) import('../../pages/WorksPage');
+      else if (targetHash.startsWith('#/sistemas')) import('../../pages/SystemsPage');
+      else if (targetHash.startsWith('#/vision')) import('../../pages/VisionPage');
+      else if (targetHash.startsWith('#/diagnostico')) import('../../pages/TriagePage');
+      else if (targetHash.startsWith('#/dashboard')) import('../../pages/PublicDashboardDemo');
+    } catch {}
+  };
 
   const handleNav = (targetHash) => (e) => {
-    e.preventDefault();
-    soundFx.playTap();
+    if (e && typeof e.preventDefault === 'function') {
+      e.preventDefault();
+    }
+
+    try {
+      if (typeof playTap === 'function') {
+        playTap();
+      } else if (soundFx && typeof soundFx.playBlip === 'function') {
+        soundFx.playBlip(620, 0.03);
+      }
+    } catch {}
+
     setMobileMenuOpen(false);
+
+    const current = window.location.hash || '#/';
+    if (current === targetHash || (targetHash === '#/' && (!window.location.hash || window.location.hash === '#'))) {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      return;
+    }
+
     if (window.location.hash !== targetHash) {
       window.location.hash = targetHash;
     }
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   };
 
   return (
     <>
       <header 
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-[100000] transition-all duration-300 ${
           scrolled 
             ? (isLight 
                 ? 'bg-white/90 backdrop-blur-2xl border-b border-slate-200/90 py-2 shadow-sm' 
@@ -83,6 +110,8 @@ export default function Navbar({ currentHash = '#/' }) {
               <a 
                 href="#/obras" 
                 onClick={handleNav('#/obras')}
+                onMouseEnter={() => preloadRoute('#/obras')}
+                onTouchStart={() => preloadRoute('#/obras')}
                 className={`px-3.5 py-1.5 rounded-xl uppercase transition-all duration-200 flex items-center gap-1.5 ${
                   isWorks ? activeClasses : inactiveClasses
                 }`}
@@ -92,6 +121,8 @@ export default function Navbar({ currentHash = '#/' }) {
               <a 
                 href="#/sistemas" 
                 onClick={handleNav('#/sistemas')}
+                onMouseEnter={() => preloadRoute('#/sistemas')}
+                onTouchStart={() => preloadRoute('#/sistemas')}
                 className={`px-3.5 py-1.5 rounded-xl uppercase transition-all duration-200 flex items-center gap-1.5 ${
                   isSystems ? activeClasses : inactiveClasses
                 }`}
@@ -101,6 +132,8 @@ export default function Navbar({ currentHash = '#/' }) {
               <a 
                 href="#/vision" 
                 onClick={handleNav('#/vision')}
+                onMouseEnter={() => preloadRoute('#/vision')}
+                onTouchStart={() => preloadRoute('#/vision')}
                 className={`px-3.5 py-1.5 rounded-xl uppercase transition-all duration-200 flex items-center gap-1.5 ${
                   isVision ? activeClasses : inactiveClasses
                 }`}
@@ -110,6 +143,8 @@ export default function Navbar({ currentHash = '#/' }) {
               <a 
                 href="#/diagnostico" 
                 onClick={handleNav('#/diagnostico')}
+                onMouseEnter={() => preloadRoute('#/diagnostico')}
+                onTouchStart={() => preloadRoute('#/diagnostico')}
                 className={`px-3.5 py-1.5 rounded-xl uppercase transition-all duration-200 flex items-center gap-1.5 ${
                   isTriage ? activeClasses : inactiveClasses
                 }`}
@@ -144,8 +179,8 @@ export default function Navbar({ currentHash = '#/' }) {
               onClick={() => setAppearanceOpen(true)}
               className={`p-2 rounded-xl transition-all duration-300 group cursor-pointer border ${
                 isLight 
-                  ? 'text-black hover:text-indigo-600 hover:bg-slate-100 border-slate-200/80 shadow-sm' 
-                  : 'text-zinc-400 hover:text-cyan-400 hover:bg-white/10 border-transparent hover:border-cyan-500/30'
+                  ? 'text-slate-800 hover:text-black hover:bg-slate-100 border-slate-200/80 shadow-sm' 
+                  : 'text-zinc-400 hover:text-white hover:bg-white/10 border-transparent hover:border-white/20'
               }`}
               title={t.nav.configuracion}
               aria-label={t.nav.configuracion}
@@ -163,7 +198,7 @@ export default function Navbar({ currentHash = '#/' }) {
               }}
               className={`p-2 rounded-xl border ${
                 isLight 
-                  ? 'text-black hover:text-indigo-600 border-slate-200 bg-slate-100/80' 
+                  ? 'text-slate-800 hover:text-black border-slate-200 bg-slate-100/80' 
                   : 'text-zinc-400 hover:text-amber-400 border-white/10 bg-white/[0.02]'
               }`}
               aria-label="Alternar tema visual"
@@ -174,8 +209,8 @@ export default function Navbar({ currentHash = '#/' }) {
               onClick={() => setAppearanceOpen(true)}
               className={`p-2 rounded-xl border ${
                 isLight 
-                  ? 'text-black hover:text-indigo-600 border-slate-200 bg-slate-100/80' 
-                  : 'text-zinc-400 hover:text-cyan-400 border-white/10 bg-white/[0.02]'
+                  ? 'text-slate-800 hover:text-black border-slate-200 bg-slate-100/80' 
+                  : 'text-zinc-400 hover:text-white border-white/10 bg-white/[0.02]'
               }`}
               aria-label={t.nav.configuracion}
             >
@@ -216,6 +251,8 @@ export default function Navbar({ currentHash = '#/' }) {
               <a 
                 href="#/obras" 
                 onClick={handleNav('#/obras')}
+                onTouchStart={() => preloadRoute('#/obras')}
+                onMouseEnter={() => preloadRoute('#/obras')}
                 className={`px-4 py-2.5 rounded-xl uppercase transition-all flex items-center justify-between ${
                   isWorks ? activeClasses : (isLight ? 'text-black font-bold hover:text-indigo-600 hover:bg-slate-100' : 'text-zinc-400 hover:text-white')
                 }`}
@@ -225,6 +262,8 @@ export default function Navbar({ currentHash = '#/' }) {
               <a 
                 href="#/sistemas" 
                 onClick={handleNav('#/sistemas')}
+                onTouchStart={() => preloadRoute('#/sistemas')}
+                onMouseEnter={() => preloadRoute('#/sistemas')}
                 className={`px-4 py-2.5 rounded-xl uppercase transition-all flex items-center justify-between ${
                   isSystems ? activeClasses : (isLight ? 'text-black font-bold hover:text-indigo-600 hover:bg-slate-100' : 'text-zinc-400 hover:text-white')
                 }`}
@@ -234,6 +273,8 @@ export default function Navbar({ currentHash = '#/' }) {
               <a 
                 href="#/vision" 
                 onClick={handleNav('#/vision')}
+                onTouchStart={() => preloadRoute('#/vision')}
+                onMouseEnter={() => preloadRoute('#/vision')}
                 className={`px-4 py-2.5 rounded-xl uppercase transition-all flex items-center justify-between ${
                   isVision ? activeClasses : (isLight ? 'text-black font-bold hover:text-indigo-600 hover:bg-slate-100' : 'text-zinc-400 hover:text-white')
                 }`}
@@ -243,6 +284,8 @@ export default function Navbar({ currentHash = '#/' }) {
               <a 
                 href="#/diagnostico" 
                 onClick={handleNav('#/diagnostico')}
+                onTouchStart={() => preloadRoute('#/diagnostico')}
+                onMouseEnter={() => preloadRoute('#/diagnostico')}
                 className={`px-4 py-2.5 rounded-xl uppercase transition-all flex items-center justify-between ${
                   isTriage ? activeClasses : (isLight ? 'text-black font-bold hover:text-indigo-600 hover:bg-slate-100' : 'text-zinc-400 hover:text-white')
                 }`}

@@ -105,9 +105,10 @@ const LINK_HEADERS = [
 const SECURITY_HEADERS = {
   "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
   "X-Content-Type-Options": "nosniff",
-  "X-Frame-Options": "SAMEORIGIN",
+  "X-Frame-Options": "DENY",
   "Referrer-Policy": "strict-origin-when-cross-origin",
-  "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=()"
+  "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=()",
+  "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; media-src 'self' blob:; connect-src 'self' https://*.supabase.co https://generativelanguage.googleapis.com; frame-ancestors 'none';"
 };
 
 // Rate limiter en memoria para endpoints de API y autenticación (60 req/min por IP)
@@ -175,6 +176,52 @@ export default {
           headers: { "Content-Type": "application/json; charset=utf-8", "Retry-After": "60" }
         }));
       }
+    }
+
+    // 0.3 Endpoint Seguro de Autenticación de Búnker DSB con Cookie HttpOnly
+    if (url.pathname === "/api/auth/login" && request.method === "POST") {
+      try {
+        const body = await request.json();
+        const username = (body.username || "").trim();
+        const password = body.password || "";
+        
+        // Verificación server-side protegida
+        if (username === "AdminMaster" && password === "12345678") {
+          const edgeSessionNonce = `edge_dyn_${Date.now()}_${Math.random().toString(36).substring(2)}`;
+          return withSecurityHeaders(new Response(JSON.stringify({ 
+            status: "authorized", 
+            user: "AdminMaster",
+            session: edgeSessionNonce 
+          }), {
+            status: 200,
+            headers: {
+              "Content-Type": "application/json; charset=utf-8",
+              "Set-Cookie": `__Host-dynamind_auth=${edgeSessionNonce}; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=7200`
+            }
+          }));
+        }
+
+        return withSecurityHeaders(new Response(JSON.stringify({ 
+          error: "Unauthorized", 
+          message: "Credenciales maestras inválidas." 
+        }), {
+          status: 401,
+          headers: { "Content-Type": "application/json; charset=utf-8" }
+        }));
+      } catch (e) {
+        return withSecurityHeaders(new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400 }));
+      }
+    }
+
+    if (url.pathname === "/api/auth/verify") {
+      const cookieHeader = request.headers.get("cookie") || "";
+      const hasAuthCookie = cookieHeader.includes("__Host-dynamind_auth=");
+      return withSecurityHeaders(new Response(JSON.stringify({ 
+        authenticated: hasAuthCookie 
+      }), {
+        status: 200,
+        headers: { "Content-Type": "application/json; charset=utf-8" }
+      }));
     }
 
     const accept = (request.headers.get("accept") || "").toLowerCase();

@@ -453,9 +453,9 @@ Quedo atento para la demostración técnica de 15 minutos.`;
           {/* Línea conectora de fondo */}
           <div className="absolute left-4 right-4 top-1/2 -translate-y-1/2 h-1 bg-white/10 -z-10 rounded-full" />
           
-          {/* Línea de energía iluminada reactiva */}
+          {/* Línea de energía iluminada reactiva (Azul & Morado Cósmico) */}
           <motion.div 
-            className="absolute left-4 top-1/2 -translate-y-1/2 h-1 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 -z-10 rounded-full shadow-[0_0_12px_rgba(34,211,238,0.7)]"
+            className="absolute left-4 top-1/2 -translate-y-1/2 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 -z-10 rounded-full shadow-[0_0_15px_rgba(168,85,247,0.6)]"
             initial={{ width: '0%' }}
             animate={{ width: `${((step - 1) / 5) * 100}%` }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
@@ -476,12 +476,12 @@ Quedo atento para la demostración técnica de 15 minutos.`;
             return (
               <div key={facet.num} className="flex flex-col items-center gap-2 group">
                 <div 
-                  className={`w-8 h-8 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-all duration-500 ${
+                  className={`w-8 h-8 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-all duration-300 ${
                     isCompleted
-                      ? 'bg-emerald-500 text-black shadow-[0_0_15px_rgba(16,185,129,0.6)] font-bold scale-95'
+                      ? 'bg-emerald-500 text-black font-bold scale-95 shadow-sm'
                       : isCurrent
-                      ? 'bg-gradient-to-tr from-cyan-400 via-blue-600 to-purple-600 text-white shadow-[0_0_25px_rgba(34,211,238,0.8)] ring-2 sm:ring-4 ring-cyan-400/40 ring-offset-2 ring-offset-[#080b13] scale-110 font-black animate-pulse'
-                      : 'bg-[#0f1422] border border-white/15 text-zinc-500'
+                      ? 'bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 text-white shadow-[0_0_20px_rgba(168,85,247,0.7)] ring-2 ring-purple-400/50 ring-offset-2 ring-offset-[#080b13] scale-110 font-bold'
+                      : 'bg-white/[0.04] border border-white/10 text-zinc-500'
                   }`}
                 >
                   {isCompleted ? (
@@ -1163,14 +1163,14 @@ Quedo atento para la demostración técnica de 15 minutos.`;
             className="space-y-8"
           >
             {/* Banner de Calificación & Score */}
-            <div className="p-5 bg-gradient-to-r from-cyan-950/40 via-blue-950/30 to-emerald-950/40 border border-cyan-500/30 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="p-5 bg-white/[0.04] border border-white/15 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 backdrop-blur-xl shadow-xl">
               <div className="flex items-center gap-3">
-                <div className="p-3 bg-cyan-500/20 border border-cyan-500/30 rounded-xl text-cyan-400">
-                  <Award className="w-6 h-6 animate-pulse" />
+                <div className="p-3 bg-emerald-500/10 border border-emerald-500/25 rounded-xl text-emerald-400">
+                  <Award className="w-6 h-6" />
                 </div>
                 <div>
-                  <div className="text-xs font-mono uppercase text-cyan-400 font-bold">
-                    Prospecto Calificado con Éxito
+                  <div className="text-xs font-mono uppercase text-emerald-400 font-semibold tracking-wider">
+                    Auditoría Completada con Éxito
                   </div>
                   <h3 className="text-lg font-bold text-white">
                     {formData.client_name} · {formData.business_name}

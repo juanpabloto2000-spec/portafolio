@@ -11,8 +11,8 @@ export default function WhyNotTraditionalWebs() {
   return (
     <section id="filosofia" className="py-24 sm:py-32 relative overflow-hidden bg-transparent">
       
-      {/* Halo de Plasma Convectivo de Fondo (Efecto de Color del Hero) */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-[500px] h-[300px] bg-gradient-to-tr from-cyan-500/10 via-purple-600/10 to-amber-500/5 blur-[100px] rounded-full pointer-events-none" />
+      {/* Halo de Luz Monolítico de Fondo (Soberano y Sereno) */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-[500px] h-[300px] bg-gradient-to-tr from-blue-600/5 via-indigo-600/5 to-white/5 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 sm:px-12 space-y-20 relative z-10">
         
@@ -71,11 +71,11 @@ export default function WhyNotTraditionalWebs() {
               </div>
             </div>
 
-            {/* Lado B: El Enfoque Dynamind de Otra Galaxia */}
-            <div className="p-6 sm:p-10 rounded-3xl bg-[#061017]/95 border border-cyan-400/40 backdrop-blur-2xl space-y-6 flex flex-col justify-between shadow-[0_20px_50px_rgba(0,0,0,0.85),0_0_30px_rgba(34,211,238,0.12)]">
+            {/* Lado B: El Enfoque Dynamind de Ingeniería Soberana */}
+            <div className="p-6 sm:p-10 rounded-3xl bg-[#080b13]/95 border border-white/20 backdrop-blur-2xl space-y-6 flex flex-col justify-between shadow-[0_20px_50px_rgba(0,0,0,0.85)]">
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-cyan-500/25 border border-cyan-400/50 flex items-center justify-center text-cyan-300 shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/25 flex items-center justify-center text-white shrink-0">
                     <CheckCircle2 className="w-5 h-5" />
                   </div>
                   <div>
@@ -91,27 +91,27 @@ export default function WhyNotTraditionalWebs() {
 
                 <div className="space-y-3 pt-2 font-sans text-xs text-zinc-300">
                   <div className="flex items-start gap-2.5">
-                    <span className="text-cyan-400 font-bold shrink-0">✓</span>
+                    <span className="text-white font-bold shrink-0">✓</span>
                     <span><strong>{w.col2Item1Title}</strong> {w.col2Item1Text}</span>
                   </div>
                   <div className="flex items-start gap-2.5">
-                    <span className="text-cyan-400 font-bold shrink-0">✓</span>
+                    <span className="text-white font-bold shrink-0">✓</span>
                     <span><strong>{w.col2Item2Title}</strong> {w.col2Item2Text}</span>
                   </div>
                   <div className="flex items-start gap-2.5">
-                    <span className="text-cyan-400 font-bold shrink-0">✓</span>
+                    <span className="text-white font-bold shrink-0">✓</span>
                     <span><strong>{w.col2Item3Title}</strong> {w.col2Item3Text}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-cyan-500/30 flex items-center justify-between">
-                <span className="text-xs font-sans text-cyan-300 font-bold">
+              <div className="pt-4 border-t border-white/15 flex items-center justify-between">
+                <span className="text-xs font-sans text-slate-200 font-semibold">
                   {w.col2Footer}
                 </span>
                 <a
                   href="#/sistemas"
-                  className="inline-flex items-center gap-1.5 text-xs font-sans font-bold text-white hover:text-cyan-300 active:scale-95 transition-all uppercase tracking-wider cursor-pointer"
+                  className="inline-flex items-center gap-1.5 text-xs font-sans font-bold text-white hover:text-slate-300 active:scale-95 transition-all uppercase tracking-wider cursor-pointer"
                 >
                   <span>{w.col2Btn}</span>
                   <ArrowRight className="w-4 h-4" />

@@ -5,7 +5,7 @@ export default function ProjectDetailModal({ project, onClose }) {
   if (!project) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[100050] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
       
       <div className="relative w-full max-w-3xl bg-obsidian border border-white/20 shadow-monolith font-mono text-xs max-h-[90vh] overflow-y-auto">
         

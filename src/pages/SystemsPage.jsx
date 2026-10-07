@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import FooterEditorial from '../components/layout/FooterEditorial';
 import AmbientSpotlightGlow from '../components/ui/AmbientSpotlightGlow';
 import RevealSection from '../components/motion/RevealSection';
-import DynamindGalaxy3D from '../components/systems/DynamindGalaxy3D';
+const DynamindGalaxy3D = React.lazy(() => import('../components/systems/DynamindGalaxy3D'));
 import GalaxyTopFilterBar from '../components/systems/GalaxyTopFilterBar';
 import DynamindServiceHUD from '../components/systems/DynamindServiceHUD';
 import { useCMS } from '../context/CMSContext';
@@ -291,13 +291,19 @@ export default function SystemsPage() {
 
             {/* 2. CONTENEDOR 100% LIMPIO DE LA GALAXIA 3D PANORÁMICA */}
             <div className="relative w-full h-[640px] sm:h-[760px] rounded-3xl border border-white/10 overflow-hidden shadow-[0_25px_80px_rgba(0,0,0,0.9)] bg-neutral-950">
-              {/* MOTOR 3D THREE.JS: VISTA PANORÁMICA ART-DIRECTED */}
-              <DynamindGalaxy3D
-                selectedServiceId={selectedServiceId}
-                onSelectService={handleSelectService}
-                speedMultiplier={speedMultiplier}
-                showTrajectories={showTrajectories}
-              />
+              <React.Suspense fallback={
+                <div className="w-full h-full flex flex-col items-center justify-center bg-black/80 font-mono text-xs text-cyan-400 gap-3">
+                  <div className="w-8 h-8 rounded-full border-2 border-cyan-400/20 border-t-cyan-400 animate-spin" />
+                  <span className="tracking-widest uppercase text-[11px] text-cyan-300/80">INICIALIZANDO MOTOR CÓSMICO THREE.JS...</span>
+                </div>
+              }>
+                <DynamindGalaxy3D
+                  selectedServiceId={selectedServiceId}
+                  onSelectService={handleSelectService}
+                  speedMultiplier={speedMultiplier}
+                  showTrajectories={showTrajectories}
+                />
+              </React.Suspense>
 
               {/* PANEL HOLOGRÁFICO ULTRA-LIMPIO DEL SERVICIO SELECCIONADO */}
               {isHUDOpen && (

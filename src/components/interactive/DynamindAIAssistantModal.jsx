@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Sparkles, Send, ArrowRight, Volume2, VolumeX, BrainCircuit, Radio } from 'lucide-react';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import AndroidVoiceAvatar from './AndroidVoiceAvatar';
+import Aura3DViewer from './Aura3DViewer';
 import { reasonAuraQuery } from '../../utils/auraReasoningEngine';
 
 // --------------------------------------------------------------------------
@@ -1209,7 +1210,7 @@ export default function DynamindAIAssistantModal({ isOpen, onClose }) {
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-5 bg-black/85 backdrop-blur-md animate-in fade-in duration-200 font-sans cursor-pointer"
+      className="fixed inset-0 z-[100050] flex items-center justify-center p-2.5 sm:p-5 bg-black/85 backdrop-blur-md animate-in fade-in duration-200 font-sans cursor-pointer"
       onClick={handleCloseModal}
     >
       <div 

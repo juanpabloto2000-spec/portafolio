@@ -367,24 +367,24 @@ export default function DynamindServiceHUD({
 
             {/* Banner de Demo en Vivo si existe */}
             {demo && (
-              <div className="p-2.5 rounded-2xl bg-gradient-to-r from-cyan-950/40 to-blue-950/40 border border-cyan-500/30 flex items-center justify-between gap-2">
+              <div className="p-2.5 rounded-2xl bg-white/[0.05] border border-white/15 flex items-center justify-between gap-2 shadow-md backdrop-blur-md">
                 <div className="space-y-0.5 min-w-0">
                   <div className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                    <span className="text-[10px] font-mono text-cyan-300 uppercase tracking-wider font-bold truncate">
+                    <span className="w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_6px_#fff]" />
+                    <span className="text-[10px] font-mono text-white uppercase tracking-wider font-semibold truncate">
                       {demo.badge}
                     </span>
                   </div>
-                  <p className="text-[10px] text-neutral-300 font-sans truncate">{demo.hint}</p>
+                  <p className="text-[10px] text-zinc-300 font-sans truncate">{demo.hint}</p>
                 </div>
 
                 <a
                   href={demo.url}
                   target={demo.isExternal ? "_blank" : "_self"}
                   rel={demo.isExternal ? "noopener noreferrer" : undefined}
-                  className="px-3 py-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400/40 text-cyan-200 hover:text-white font-mono text-[11px] font-bold flex items-center gap-1.5 shrink-0 transition-all shadow-sm"
+                  className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-black font-mono text-[11px] font-bold flex items-center gap-1.5 shrink-0 transition-all shadow-sm cursor-pointer"
                 >
-                  <Play className="w-3 h-3 text-cyan-400" />
+                  <Play className="w-3 h-3 text-black fill-black" />
                   <span>{sysT.btnTest || "Probar"}</span>
                   {demo.isExternal && <ExternalLink className="w-3 h-3 ml-0.5 opacity-70" />}
                 </a>

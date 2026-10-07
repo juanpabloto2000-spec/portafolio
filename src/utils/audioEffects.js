@@ -16,6 +16,11 @@ class AudioManager {
     }
   }
 
+  // Tap táctico ágil
+  playTap() {
+    this.playBlip(620, 0.03);
+  }
+
   // Bip suave y sutil de interfaz táctica al hacer clic en opciones
   playBlip(freq = 520, duration = 0.04) {
     try {

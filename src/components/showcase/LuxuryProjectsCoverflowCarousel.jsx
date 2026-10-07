@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { LIVE_PROJECTS } from '../../data/liveProjects';
 import { ChevronLeft, ChevronRight, ExternalLink, Play, Sparkles, Globe, Image as ImageIcon, ShieldCheck } from 'lucide-react';
 import { soundFx } from '../../utils/audioEffects';
+import LiquidChromaticBorder from '../ui/LiquidChromaticBorder';
 
 export default function LuxuryProjectsCoverflowCarousel({ onSelectProjectDemo }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -65,10 +66,11 @@ export default function LuxuryProjectsCoverflowCarousel({ onSelectProjectDemo })
         </div>
       </div>
 
-      {/* Tarjeta Panorámica 3D Destacada */}
-      <div className="relative overflow-hidden rounded-3xl border border-white/15 bg-white/[0.025] backdrop-blur-xl shadow-2xl">
-        <AnimatePresence mode="wait">
-          <motion.div
+      {/* Tarjeta Panorámica 3D Destacada con Shader de Refracción Líquida */}
+      <LiquidChromaticBorder className="rounded-3xl">
+        <div className="relative overflow-hidden rounded-3xl border border-white/15 bg-white/[0.025] backdrop-blur-xl shadow-2xl">
+          <AnimatePresence mode="wait">
+            <motion.div
             key={currentProject.id}
             initial={{ opacity: 0, scale: 0.98, x: 25 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
@@ -277,6 +279,7 @@ export default function LuxuryProjectsCoverflowCarousel({ onSelectProjectDemo })
           </motion.div>
         </AnimatePresence>
       </div>
+    </LiquidChromaticBorder>
 
       {/* Tira Inferior de Miniaturas Sincronizadas (7 Proyectos) */}
       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">

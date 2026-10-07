@@ -61,22 +61,22 @@ export default function FloatingSocialsDock() {
 
   return (
     <div 
-      className="fixed bottom-6 left-6 z-40 flex flex-col items-start select-none no-print"
+      className="fixed bottom-4 left-4 sm:bottom-6 sm:left-6 z-40 flex flex-col items-start select-none no-print"
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
     >
       {/* Burbujas Flotantes Desplegables con Física Spring */}
       <AnimatePresence>
         {isOpen && (
-          <div className="flex flex-col-reverse items-center gap-2.5 mb-3 pl-1">
+          <div className="flex flex-col-reverse items-center gap-2 mb-2 sm:gap-2.5 sm:mb-3 pl-0.5 sm:pl-1">
             {socialItems.map((item, index) => {
               const IconComp = item.icon;
               return (
                 <motion.div
                   key={item.id}
-                  initial={{ opacity: 0, y: 15, scale: 0.6 }}
+                  initial={{ opacity: 0, y: 12, scale: 0.6 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 12, scale: 0.6 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.6 }}
                   transition={{ 
                     type: 'spring', 
                     stiffness: 450, 
@@ -86,7 +86,7 @@ export default function FloatingSocialsDock() {
                   className="relative group flex items-center justify-center"
                 >
                   {/* Tooltip lateral */}
-                  <span className={`absolute left-14 px-3 py-1 rounded-xl backdrop-blur-md text-xs font-mono font-bold border shadow-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap ${
+                  <span className={`absolute left-11 sm:left-14 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-xl backdrop-blur-md text-[10px] sm:text-xs font-mono font-bold border shadow-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap ${
                     isLight 
                       ? 'bg-white/95 text-slate-900 border-slate-200' 
                       : 'bg-black/95 text-white border-white/20'
@@ -100,13 +100,13 @@ export default function FloatingSocialsDock() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={item.name}
-                    className={`w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer shadow-xl ${
+                    className={`w-9 h-9 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer shadow-xl ${
                       isLight 
                         ? 'bg-white text-slate-700 border border-slate-200 hover:text-white' 
                         : 'bg-[#090b14] text-zinc-300 border border-white/15'
                     } ${item.hoverClass}`}
                   >
-                    <IconComp className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
+                    <IconComp className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover:scale-110" />
                   </a>
                 </motion.div>
               );
@@ -115,20 +115,20 @@ export default function FloatingSocialsDock() {
         )}
       </AnimatePresence>
 
-      {/* Botón Gatillo Principal */}
+      {/* Botón Gatillo Principal: Micro-botón en móvil (<640px) y tamaño completo en desktop */}
       <motion.button
         type="button"
         whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.92 }}
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-13 h-13 sm:w-14 sm:h-14 rounded-full border backdrop-blur-xl flex items-center justify-center shadow-2xl cursor-pointer group focus:outline-none transition-all duration-300 ${
+        className={`w-10 h-10 sm:w-14 sm:h-14 rounded-full border backdrop-blur-xl flex items-center justify-center shadow-2xl cursor-pointer group focus:outline-none transition-all duration-300 ${
           isLight 
             ? 'bg-white/95 border-slate-200 text-slate-800 hover:text-indigo-600 hover:border-indigo-400 hover:shadow-[0_0_22px_rgba(99,102,241,0.25)]' 
             : 'bg-[#090b14] border-white/20 text-zinc-300 hover:text-white hover:border-cyan-400/60 hover:shadow-[0_0_22px_rgba(34,211,238,0.35)]'
         }`}
         aria-label="Abrir canales sociales"
       >
-        <Share2 className={`w-5 h-5 transition-transform duration-300 group-hover:rotate-12 ${
+        <Share2 className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover:rotate-12 ${
           isLight ? 'group-hover:text-indigo-600' : 'group-hover:text-cyan-400'
         }`} />
       </motion.button>

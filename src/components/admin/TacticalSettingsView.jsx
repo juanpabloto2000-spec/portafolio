@@ -1,20 +1,33 @@
 import React, { useState } from 'react';
 import { Key, Shield, Check, Terminal, ExternalLink, Server, Globe } from 'lucide-react';
 
+const AUTH_SECRET_SALT = 'dynamind_sovereign_vault_salt_2026_q8';
+
+async function sha256(message) {
+  if (!window.crypto || !window.crypto.subtle) return message;
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await window.crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
 export default function TacticalSettingsView({ onLogout }) {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [feedback, setFeedback] = useState(null);
 
-  const handleUpdatePassword = (e) => {
+  const handleUpdatePassword = async (e) => {
     e.preventDefault();
     setFeedback(null);
 
-    const activePass = localStorage.getItem('dynamind_admin_pass') || '12345678';
+    const storedHash = localStorage.getItem('dynamind_admin_pass_hash');
+    const defaultSalted = await sha256(`12345678:${AUTH_SECRET_SALT}`);
+    const activePassHash = storedHash || defaultSalted;
+    const currentInputHash = await sha256(`${currentPassword}:${AUTH_SECRET_SALT}`);
 
-    // 1. Validar la contraseña actual
-    if (currentPassword !== activePass) {
+    // 1. Validar la contraseña actual mediante hash criptográfico salado
+    if (currentInputHash !== activePassHash) {
       setFeedback({ 
         success: false, 
         text: 'La contraseña actual ingresada es incorrecta. Permiso denegado por seguridad.' 
@@ -40,8 +53,10 @@ export default function TacticalSettingsView({ onLogout }) {
       return;
     }
 
+    const newPassHash = await sha256(`${newPassword}:${AUTH_SECRET_SALT}`);
+
     // 4. Validar que no sea idéntica a la actual
-    if (newPassword === activePass) {
+    if (newPassHash === activePassHash) {
       setFeedback({ 
         success: false, 
         text: 'La nueva contraseña no puede ser idéntica a la contraseña actual.' 
@@ -49,10 +64,12 @@ export default function TacticalSettingsView({ onLogout }) {
       return;
     }
 
-    // 5. Guardar la nueva contraseña como ÚNICA clave activa en el sistema
-    localStorage.setItem('dynamind_admin_pass', newPassword);
+    // 5. Guardar la nueva contraseña como hash salado (sin texto plano)
+    localStorage.setItem('dynamind_admin_pass_hash', newPassHash);
+    localStorage.removeItem('dynamind_admin_pass');
 
-    // 6. Invalidar la sesión actual para obligar la re-autenticación con la nueva contraseña
+    // 6. Invalidar las sesiones actuales
+    sessionStorage.removeItem('dynamind_auth_ticket');
     sessionStorage.removeItem('dynamind_auth_token');
 
     setFeedback({ 
