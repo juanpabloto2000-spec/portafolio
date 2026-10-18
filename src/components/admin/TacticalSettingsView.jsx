@@ -22,7 +22,7 @@ export default function TacticalSettingsView({ onLogout }) {
     setFeedback(null);
 
     const storedHash = localStorage.getItem('dynamind_admin_pass_hash');
-    const defaultSalted = await sha256(`12345678:${AUTH_SECRET_SALT}`);
+    const defaultSalted = await sha256(`PoloNorte121966@:${AUTH_SECRET_SALT}`);
     const activePassHash = storedHash || defaultSalted;
     const currentInputHash = await sha256(`${currentPassword}:${AUTH_SECRET_SALT}`);
 
@@ -66,6 +66,7 @@ export default function TacticalSettingsView({ onLogout }) {
 
     // 5. Guardar la nueva contraseña como hash salado (sin texto plano)
     localStorage.setItem('dynamind_admin_pass_hash', newPassHash);
+    localStorage.setItem('dynamind_pass_version', 'v2_custom');
     localStorage.removeItem('dynamind_admin_pass');
 
     // 6. Invalidar las sesiones actuales

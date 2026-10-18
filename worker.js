@@ -186,7 +186,8 @@ export default {
         const password = body.password || "";
         
         // Verificación server-side protegida
-        if (username === "AdminMaster" && password === "12345678") {
+        const isUserValid = (username.toLowerCase() === "adminmaster" || username.toLowerCase() === "admin");
+        if (isUserValid && password === "PoloNorte121966@") {
           const edgeSessionNonce = `edge_dyn_${Date.now()}_${Math.random().toString(36).substring(2)}`;
           return withSecurityHeaders(new Response(JSON.stringify({ 
             status: "authorized", 

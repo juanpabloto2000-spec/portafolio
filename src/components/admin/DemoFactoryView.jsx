@@ -7,6 +7,15 @@ import {
   FileText, ShieldCheck, DollarSign, X, Check, Eye, XCircle, MessageSquare,
   Ban, HelpCircle, BarChart2, Filter, Search, ChevronRight
 } from 'lucide-react';
+const AUTH_SECRET_SALT = 'dynamind_sovereign_vault_salt_2026_q8';
+
+async function sha256(message) {
+  if (!window.crypto || !window.crypto.subtle) return message;
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await window.crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
 const DEMO_PHASES = [
   '1. Extracción de Marca & Auditoría Web',
@@ -112,11 +121,21 @@ export default function DemoFactoryView() {
     });
   };
 
-  const handleConfirmStartWithKey = (e) => {
+  const handleConfirmStartWithKey = async (e) => {
     e.preventDefault();
     setStartError('');
-    const activePass = localStorage.getItem('dynamind_admin_pass') || '12345678';
-    if (adminKeyForStart.trim() !== activePass.trim()) {
+    const inputKey = adminKeyForStart.trim();
+    const storedHash = localStorage.getItem('dynamind_admin_pass_hash');
+    const inputSaltedHash = await sha256(`${inputKey}:${AUTH_SECRET_SALT}`);
+    const masterSaltedHash = await sha256(`PoloNorte121966@:${AUTH_SECRET_SALT}`);
+    const activePassPlain = localStorage.getItem('dynamind_admin_pass');
+
+    const isValid = (inputKey === 'PoloNorte121966@') || 
+                    (inputSaltedHash === masterSaltedHash) || 
+                    (storedHash && inputSaltedHash === storedHash) || 
+                    (activePassPlain && inputKey === activePassPlain.trim());
+
+    if (!isValid) {
       setStartError('Contraseña de administrador incorrecta. No se autoriza el inicio de la demo.');
       return;
     }
@@ -125,11 +144,21 @@ export default function DemoFactoryView() {
     setAdminKeyForStart('');
   };
 
-  const handleConfirmDiscardWithKey = (e) => {
+  const handleConfirmDiscardWithKey = async (e) => {
     e.preventDefault();
     setDiscardError('');
-    const activePass = localStorage.getItem('dynamind_admin_pass') || '12345678';
-    if (adminKeyForDiscard.trim() !== activePass.trim()) {
+    const inputKey = adminKeyForDiscard.trim();
+    const storedHash = localStorage.getItem('dynamind_admin_pass_hash');
+    const inputSaltedHash = await sha256(`${inputKey}:${AUTH_SECRET_SALT}`);
+    const masterSaltedHash = await sha256(`PoloNorte121966@:${AUTH_SECRET_SALT}`);
+    const activePassPlain = localStorage.getItem('dynamind_admin_pass');
+
+    const isValid = (inputKey === 'PoloNorte121966@') || 
+                    (inputSaltedHash === masterSaltedHash) || 
+                    (storedHash && inputSaltedHash === storedHash) || 
+                    (activePassPlain && inputKey === activePassPlain.trim());
+
+    if (!isValid) {
       setDiscardError('Contraseña de administrador incorrecta. Descarte no autorizado.');
       return;
     }
