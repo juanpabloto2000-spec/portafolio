@@ -1,9 +1,19 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
+import { festiveThemeStore } from '../../services/festiveThemeStore';
 
 export default function GalaxyAmbientBackground() {
   const canvasRef = useRef(null);
   const { theme } = useThemeLanguage();
+  const [festiveTheme, setFestiveTheme] = useState(() => festiveThemeStore.getFestiveConfig().themeId);
+
+  useEffect(() => {
+    const unsubscribe = festiveThemeStore.subscribe(
+      (newConfig) => setFestiveTheme(newConfig.themeId),
+      null
+    );
+    return unsubscribe;
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -41,11 +51,13 @@ export default function GalaxyAmbientBackground() {
     const render = () => {
       frame++;
 
-      // Base oscura cósmica según el tema
+      // Base oscura cósmica según el tema o festividad
       if (theme === 'mocha') {
         ctx.fillStyle = '#140d0a';
       } else if (theme === 'alabaster') {
         ctx.fillStyle = '#f8fafc';
+      } else if (festiveTheme === 'halloween') {
+        ctx.fillStyle = '#09060e'; // Obsidian violeta Halloween
       } else {
         ctx.fillStyle = '#030508'; // Obsidian profundo
       }
@@ -80,12 +92,16 @@ export default function GalaxyAmbientBackground() {
         return;
       }
 
-      // Nebulosas Cósmicas Vivas: Azul Zafiro & Morado Estelar
+      // Nebulosas Cósmicas Vivas: Azul Zafiro & Morado Estelar (o Halloween Calabaza & Violeta)
       let nebula1Color = 'rgba(37, 99, 235, 0.075)'; // azul zafiro galáctico
       let nebula2Color = 'rgba(168, 85, 247, 0.07)';  // violeta / morado cósmico
       let nebula3Color = 'rgba(99, 102, 241, 0.05)';  // índigo de profundidad
 
-      if (theme === 'mocha') {
+      if (festiveTheme === 'halloween') {
+        nebula1Color = 'rgba(249, 115, 22, 0.085)'; // calabaza brûlée
+        nebula2Color = 'rgba(168, 85, 247, 0.08)';  // violeta espectral
+        nebula3Color = 'rgba(234, 88, 12, 0.055)'; // fuego fatuo ámbar
+      } else if (theme === 'mocha') {
         nebula1Color = 'rgba(217, 119, 6, 0.08)';
         nebula2Color = 'rgba(180, 83, 9, 0.06)';
         nebula3Color = 'rgba(120, 53, 15, 0.05)';

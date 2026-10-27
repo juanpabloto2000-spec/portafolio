@@ -3,12 +3,45 @@ import { Menu, X, Settings, Sun, Moon } from 'lucide-react';
 import { useThemeLanguage } from '../../context/ThemeLanguageContext';
 import { soundFx, playTap } from '../../utils/audioEffects';
 import AppearanceModal from './AppearanceModal';
+import { festiveThemeStore } from '../../services/festiveThemeStore';
 
 export default function Navbar({ currentHash = '#/' }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [appearanceOpen, setAppearanceOpen] = useState(false);
   const { t, theme, toggleTheme, isLight } = useThemeLanguage();
+
+  const [hasTopBanner, setHasTopBanner] = useState(() => {
+    try {
+      const isDismissed = sessionStorage.getItem('dynamind_top_banner_dismissed_v1') === 'true';
+      const config = festiveThemeStore.getPromoBannerConfig();
+      return config.active && !isDismissed;
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    const handleVisibility = (e) => {
+      setHasTopBanner(Boolean(e.detail?.visible));
+    };
+    window.addEventListener('dynamind_banner_visibility_change', handleVisibility);
+
+    const unsubscribe = festiveThemeStore.subscribe(
+      null,
+      (newBanner) => {
+        try {
+          const isDismissed = sessionStorage.getItem('dynamind_top_banner_dismissed_v1') === 'true';
+          setHasTopBanner(newBanner.active && !isDismissed);
+        } catch {}
+      }
+    );
+
+    return () => {
+      window.removeEventListener('dynamind_banner_visibility_change', handleVisibility);
+      unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -72,7 +105,7 @@ export default function Navbar({ currentHash = '#/' }) {
   return (
     <>
       <header 
-        className={`fixed top-0 left-0 right-0 z-[100000] transition-all duration-300 ${
+        className={`fixed ${hasTopBanner ? 'top-9 sm:top-10' : 'top-0'} left-0 right-0 z-[100000] transition-all duration-300 ${
           scrolled 
             ? (isLight 
                 ? 'bg-white/90 backdrop-blur-2xl border-b border-slate-200/90 py-2 shadow-sm' 

@@ -2,12 +2,15 @@ import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ThemeLanguageProvider } from './context/ThemeLanguageContext';
 import GalaxyAmbientBackground from './components/ui/GalaxyAmbientBackground';
+import FestiveAmbientEffects from './components/themes/FestiveAmbientEffects';
+import TopBanner from './components/layout/TopBanner';
 import Navbar from './components/layout/Navbar';
 import HomePage from './pages/HomePage';
 import FloatingSocialsDock from './components/layout/FloatingSocialsDock';
 import FloatingAIOrb from './components/layout/FloatingAIOrb';
 import WelcomeGalaxyPreloader from './components/ui/WelcomeGalaxyPreloader';
 import CosmicPageFallback from './components/ui/CosmicPageFallback';
+import { festiveThemeStore } from './services/festiveThemeStore';
 
 const WorksPage = React.lazy(() => import('./pages/WorksPage'));
 const SystemsPage = React.lazy(() => import('./pages/SystemsPage'));
@@ -105,6 +108,18 @@ export default function App() {
     );
   }
 
+  useEffect(() => {
+    // Sincronizar data-festive-theme en el html para variables CSS y paleta
+    const config = festiveThemeStore.getFestiveConfig();
+    document.documentElement.setAttribute('data-festive-theme', config.themeId);
+
+    const unsubscribe = festiveThemeStore.subscribe((newConfig) => {
+      document.documentElement.setAttribute('data-festive-theme', newConfig.themeId);
+    }, null);
+
+    return unsubscribe;
+  }, []);
+
   const pageKey = getPageKey(currentHash);
 
   return (
@@ -113,8 +128,14 @@ export default function App() {
         {/* 🌌 Capa Ambiental Cósmica Galaxia a 60 FPS */}
         <GalaxyAmbientBackground />
 
+        {/* 🎆 Efectos Ambientales de Temporada (Halloween / Niebla y Murciélagos a 60 FPS) */}
+        <FestiveAmbientEffects />
+
         {/* 🚀 Preloader Cósmico Interactivo (Home y Diagnóstico) */}
         <WelcomeGalaxyPreloader pageKey={pageKey} onLoadingChange={setIsPreloaderActive} />
+
+        {/* 📢 Cintillo Promocional Fijado sobre la Navbar (Estrictamente Condicional) */}
+        <TopBanner />
 
         {/* 🧭 Navbar Global Fijo a Nivel de Viewport (Oculto totalmente durante la pantalla de carga) */}
         <div

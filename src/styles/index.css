@@ -417,3 +417,29 @@ html.radius-rounded a.shadow-monolith {
   scrollbar-width: none;
 }
 
+/* ========================================================== */
+/* TEMÁTICA FESTIVA DINÁMICA: CYBER-GOTHIC HALLOWEEN          */
+/* ========================================================== */
+html[data-festive-theme="halloween"] {
+  --festive-primary: #f97316;
+  --festive-glow: rgba(249, 115, 22, 0.45);
+  --festive-secondary: #a855f7;
+  --festive-bg: #09060e;
+  --festive-surface: #100b17;
+  background-color: #09060e !important;
+}
+
+html[data-festive-theme="halloween"] .glow-card {
+  border-color: rgba(249, 115, 22, 0.22) !important;
+  box-shadow: 0 0 25px rgba(249, 115, 22, 0.08) !important;
+}
+
+html[data-festive-theme="halloween"] .shadow-monolith {
+  box-shadow: 0 0 35px rgba(249, 115, 22, 0.35) !important;
+}
+
+html[data-festive-theme="halloween"] a.bg-gradient-to-r:not(.bg-white):not([class*="red"]) {
+  background-image: linear-gradient(to right, #ea580c, #f97316, #a855f7) !important;
+}
+
+

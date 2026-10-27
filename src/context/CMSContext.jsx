@@ -6,22 +6,22 @@ export const DEFAULT_UNIVERSAL_CMS = {
     inicio: {
       name: 'Página de Inicio (Home)',
       hash: '#/',
-      heroBadge: 'ESTUDIO DE INGENIERÍA DE SOFTWARE SOBERANO',
-      heroTitle: 'Estudio de Ingeniería de Software para Negocios Reales',
-      heroSubtitle: 'Diseñamos y programamos software propietario, motores de reserva atómicos, KDS para cocina y cajas con arqueo ciego que erradican las comisiones abusivas y el caos operativo.',
+      heroBadge: 'AUTOMATIZACIONES & AGENTES DE IA SOBERANOS',
+      heroTitle: 'Erradicamos Cuellos de Botella con Automatizaciones y Agentes de IA Soberanos.',
+      heroSubtitle: 'En Dynamind construimos flujos de automatización de alta velocidad y agentes de IA autónomos 24/7 que resuelven los cuellos de botella de tu negocio — liberando cientos de horas de gestión manual, agilizando tus ventas y asegurando tu facturación con dashboards operativos aislados (Core PMS).',
       ctaText: 'Iniciar Diagnóstico (45s)',
       whatsappNumber: '+57 300 000 0000',
-      announcementBanner: '⚡ NUEVA SUITE 2026: 17 SISTEMAS PROPIETARIOS CON IA DESPLEGADOS',
+      announcementBanner: '⚡ SUITE DE AUTOMATIZACIONES & AGENTES DE IA 24/7 DESPLEGADOS',
       bannerActive: true,
       scrolly: {
-        phase1_title: '01. Diagnóstico Clínico en 45 Segundos',
-        phase1_desc: 'Identificamos el cuello de botella D0 que está drenando el margen de tu operación.',
-        phase2_title: '02. Arquitectura Soberana por Capas',
-        phase2_desc: 'Cero WordPress inflado ni plantillas alquiladas. Código nativo de alta ingeniería.',
-        phase3_title: '03. Core Operativo & Dashboard Aislado',
-        phase3_desc: 'KDS, arqueo ciego, comandas y motores de reserva blindados para control total.',
-        phase4_title: '04. Cinemática 60 FPS & Despliegue',
-        phase4_desc: 'Experiencias ultra-fluidas que convierten visitantes en reservas y pedidos directos.'
+        phase1_title: '01. Detección Quirúrgica de Cuellos de Botella',
+        phase1_desc: 'El verdadero servicio de Dynamind es erradicar el cuello de botella que frena tu facturación: saturación de mensajes, fugas en agendamientos, fricción en cobros y caos operativo manual.',
+        phase2_title: '02. Automatizaciones de Negocio de Alta Velocidad',
+        phase2_desc: 'Conectamos tus canales de venta, WhatsApp, CRM y pasarelas de pago con pipelines automatizados que eliminan la intervención humana repetitiva y operan en milisegundos.',
+        phase3_title: '03. Agentes de IA Autónomos Entrenados 24/7',
+        phase3_desc: 'Desplegamos agentes inteligentes conversacionales y operativos que filtran prospectos, responden objeciones, agendan citas y ejecutan cobros de forma autónoma sin descanso.',
+        phase4_title: '04. Soberanía Operativa & Crecimiento Escalable',
+        phase4_desc: 'Tu empresa convertida en una maquinaria de alto rendimiento a 60 FPS con dashboards privados (/#/dsb). Cero rentas a plataformas abusivas, 100% control de tus activos de software.'
       }
     },
     obras: {

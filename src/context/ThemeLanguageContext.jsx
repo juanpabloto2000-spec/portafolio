@@ -27,8 +27,8 @@ export const TRANSLATIONS = {
       close: 'Aplicar y Cerrar'
     },
     hero: {
-      headline: 'En Dynamind no diseñamos sitios estéticos, muertos y sin función.',
-      subtitle: 'Construimos herramientas de software vivas con dashboards operativos aislados (Core PMS), código nativo a 60 FPS, agendadores atómicos y pasarelas directas que liberan al dueño de negocio y al mentor de cientos de horas de fricción manual.',
+      headline: 'Erradicamos Cuellos de Botella con Automatizaciones y Agentes de IA Soberanos.',
+      subtitle: 'En Dynamind construimos flujos de automatización de alta velocidad y agentes de IA autónomos 24/7 que resuelven los cuellos de botella de tu negocio — liberando cientos de horas de gestión manual, agilizando tus ventas y asegurando tu facturación con dashboards operativos aislados (Core PMS).',
       ctaDiagnostico: 'Diagnosticar Mi Proyecto (45s)',
       ctaFilosofia: 'Por Qué No Webs Tradicionales',
       scrollPrompt: 'Desliza para explorar'
@@ -50,7 +50,7 @@ export const TRANSLATIONS = {
       col1Item3Text: 'Sin caja por turnos, sin arqueo ciego, sin comandas ni folios.',
       col1Result: 'Resultado: Un gasto publicitario estéril que no aporta soluciones operativas reales.',
       col2Tag: 'Ingeniería de Otra Galaxia',
-      col2Title: 'Sistemas Soberanos Vivos a 60 FPS',
+      col2Title: 'Automatizaciones & Agentes Vivos a 60 FPS',
       col2Desc: 'Infraestructura reactiva de micro-latencia construida en React nativo y Tailwind puro. Carga instantánea en menos de 0.8 segundos con micro-físicas cinemáticas y búnker operativo privado.',
       col2Item1Title: 'AEO (Answer Engine Optimization):',
       col2Item1Text: 'Grafos semánticos JSON-LD citados por ChatGPT, Perplexity y Gemini.',
@@ -62,14 +62,14 @@ export const TRANSLATIONS = {
       col2Btn: 'Conocer los 17 Sistemas'
     },
     scrolly: {
-      p1Title: 'Ingeniería Más Allá de lo Terrenal',
-      p1Desc: 'Erradicamos plantillas muertas, plugins vulnerables y webs decorativas. Construimos ecosistemas digitales vivos gobernados por software de alto rendimiento.',
-      p2Title: 'Control Operativo en Tiempo Real',
-      p2Desc: 'Dashboards de administración aislados (/#/dsb), agendamiento atómico, arqueo ciego y pasarelas directas. Cero fricción manual, 100% soberanía sobre tu facturación.',
-      p3Title: 'Resolución Autónoma en Milisegundos',
-      p3Desc: 'Entras al hiperespacio del rendimiento. Tus cuellos de botella se evaporan a 60 FPS con tiempos de carga bajo 0.8s y retención semántica AEO para motores de IA.',
-      p4Title: 'Escalabilidad Infinita Sin Dependencias',
-      p4Desc: 'Infraestructura blindada con ciberseguridad defensiva, 1 mes de soporte proactivo y 6 meses de garantía incondicional de funcionamiento perfecto.',
+      p1Title: 'Solución Quirúrgica a Cuellos de Botella',
+      p1Desc: 'El verdadero servicio de Dynamind es erradicar el cuello de botella que frena tu facturación: saturación de mensajes, fugas en agendamientos, fricción en cobros y caos operativo manual.',
+      p2Title: 'Automatizaciones de Negocio de Alta Velocidad',
+      p2Desc: 'Conectamos tus canales de venta, WhatsApp, CRM y pasarelas de pago con pipelines automatizados que eliminan la intervención humana repetitiva y operan en milisegundos.',
+      p3Title: 'Agentes de IA Autónomos Entrenados 24/7',
+      p3Desc: 'Desplegamos agentes inteligentes conversacionales y operativos que filtran prospectos, responden objeciones, agendan citas y ejecutan cobros de forma autónoma sin descanso.',
+      p4Title: 'Soberanía Operativa & Crecimiento Escalable',
+      p4Desc: 'Tu empresa convertida en una maquinaria de alto rendimiento a 60 FPS con dashboards privados (/#/dsb). Cero rentas a plataformas abusivas, 100% control de tus activos de software.',
       p4Cta: 'Diagnosticar Mi Proyecto (45s)'
     },
     standards: {
@@ -151,8 +151,8 @@ export const TRANSLATIONS = {
       close: 'Apply & Close'
     },
     hero: {
-      headline: 'At Dynamind we do not design aesthetic, dead and functionless websites.',
-      subtitle: 'We build living software tools with isolated operational dashboards (Core PMS), native 60 FPS code, atomic schedulers, and direct checkout gateways that liberate the business owner from hundreds of hours of manual friction.',
+      headline: 'We Eradicate Operational Bottlenecks with Autonomous AI Agents & Automations.',
+      subtitle: 'At Dynamind we build high-speed business automations and autonomous 24/7 AI agents that solve your company’s core bottlenecks — reclaiming hundreds of manual hours, streamlining sales, and securing your revenue with isolated operational dashboards (Core PMS).',
       ctaDiagnostico: 'Start Diagnostic (45s)',
       ctaFilosofia: 'Why Not Traditional Websites',
       scrollPrompt: 'Scroll to explore'
@@ -174,7 +174,7 @@ export const TRANSLATIONS = {
       col1Item3Text: 'No shift cash register, no blind audits, no order tickets or client folios.',
       col1Result: 'Result: Sterile ad spend that provides zero real operational solutions.',
       col2Tag: 'Next-Galaxy Engineering',
-      col2Title: 'Living Sovereign Systems at 60 FPS',
+      col2Title: 'Living Sovereign Automations & Agents at 60 FPS',
       col2Desc: 'Micro-latency reactive infrastructure crafted in native React and pure Tailwind. Instant load in under 0.8 seconds with cinematic physics and private operational búnker.',
       col2Item1Title: 'AEO (Answer Engine Optimization):',
       col2Item1Text: 'Deep semantic JSON-LD knowledge graphs cited by ChatGPT, Perplexity, and Gemini.',
@@ -186,15 +186,15 @@ export const TRANSLATIONS = {
       col2Btn: 'Explore the 17 Systems'
     },
     scrolly: {
-      p1Title: 'Engineering Beyond the Terrestrial',
-      p1Desc: 'We eradicate dead templates, vulnerable plugins, and decorative websites. We build living digital ecosystems governed by high-performance software.',
-      p2Title: 'Real-Time Operational Control',
-      p2Desc: 'Isolated admin dashboards (/#/dsb), atomic scheduling, blind audits, and direct payment gateways. Zero manual friction, 100% billing sovereignty.',
-      p3Title: 'Autonomous Resolution in Milliseconds',
-      p3Desc: 'Enter the hyperspace of performance. Your bottlenecks evaporate at 60 FPS with load times under 0.8s and semantic AEO retention for AI engines.',
-      p4Title: 'Infinite Scalability Without Dependencies',
-      p4Desc: 'Hardened infrastructure with defensive cybersecurity, 1 month proactive support, and 6 months unconditional guarantee of flawless operation.',
-      p4Cta: 'Diagnose My Project (45s)'
+      p1Title: 'Surgical Resolution to Operational Bottlenecks',
+      p1Desc: 'Dynamind’s core service is eliminating the bottleneck choking your business revenue: message saturation, dropped booking leads, payment friction, and chaotic manual workflows.',
+      p2Title: 'High-Speed Business Automations',
+      p2Desc: 'We connect your sales channels, WhatsApp, CRM, and payment gateways through automated pipelines that eliminate repetitive manual labor and execute in milliseconds.',
+      p3Title: 'Autonomous 24/7 AI Agents',
+      p3Desc: 'We deploy conversational and operational intelligence agents that qualify leads, handle objections, book appointments, and close transactions unattended day and night.',
+      p4Title: 'Operational Sovereignty & Scalable Growth',
+      p4Desc: 'Your business operating as a 60 FPS high-performance machine with isolated admin búnkers (/#/dsb). Zero third-party platform rents, 100% software asset sovereignty.',
+      p4Cta: 'Diagnose Bottleneck (45s)'
     },
     standards: {
       tag: 'Sovereign Engineering Protocol // 2026',
