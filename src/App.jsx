@@ -51,6 +51,7 @@ export default function App() {
     return key === 'home' || key === 'diagnostico';
   });
 
+  // 1. Hook de escucha de navegación por hash
   useEffect(() => {
     const handleHashChange = () => {
       const newHash = window.location.hash || '#/';
@@ -64,7 +65,7 @@ export default function App() {
 
       setCurrentHash(newHash);
       
-      // Desplazamiento limpio al inicio de la página salvo anclas internas (instantáneo para cero lag en eventos)
+      // Desplazamiento limpio al inicio de la página salvo anclas internas
       if (!newHash.includes('#comparativa') && !newHash.includes('#filosofia')) {
         window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
       }
@@ -74,7 +75,19 @@ export default function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  // 1. Ruta Administrativa Aislada (DSB) con Atmósfera Galáctica Cósmica
+  // 2. Hook incondicional de sincronización de temática festiva (Regla estricta de React Hooks)
+  useEffect(() => {
+    const config = festiveThemeStore.getFestiveConfig();
+    document.documentElement.setAttribute('data-festive-theme', config.themeId);
+
+    const unsubscribe = festiveThemeStore.subscribe((newConfig) => {
+      document.documentElement.setAttribute('data-festive-theme', newConfig.themeId);
+    }, null);
+
+    return unsubscribe;
+  }, []);
+
+  // 3. Ruta Administrativa Aislada (DSB) con Búnker Criptográfico
   if (currentHash.startsWith('#/dsb') || currentHash.startsWith('#/admin')) {
     return (
       <ThemeLanguageProvider>
@@ -92,7 +105,7 @@ export default function App() {
     );
   }
 
-  // 2. Ruta de Demostración Pública del Dashboard (Sin login, interactiva, retorno a /#/obras)
+  // 4. Ruta de Demostración Pública del Dashboard (Sin login, interactiva, retorno a /#/obras)
   if (currentHash.startsWith('#/dashboard')) {
     return (
       <ThemeLanguageProvider>
@@ -107,18 +120,6 @@ export default function App() {
       </ThemeLanguageProvider>
     );
   }
-
-  useEffect(() => {
-    // Sincronizar data-festive-theme en el html para variables CSS y paleta
-    const config = festiveThemeStore.getFestiveConfig();
-    document.documentElement.setAttribute('data-festive-theme', config.themeId);
-
-    const unsubscribe = festiveThemeStore.subscribe((newConfig) => {
-      document.documentElement.setAttribute('data-festive-theme', newConfig.themeId);
-    }, null);
-
-    return unsubscribe;
-  }, []);
 
   const pageKey = getPageKey(currentHash);
 
