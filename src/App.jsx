@@ -137,15 +137,8 @@ export default function App() {
         {/* 📢 Cintillo Promocional Fijado sobre la Navbar (Estrictamente Condicional) */}
         <TopBanner />
 
-        {/* 🧭 Navbar Global Fijo a Nivel de Viewport (Oculto totalmente durante la pantalla de carga) */}
-        <div
-          className={`transition-opacity duration-300 ${
-            isPreloaderActive ? 'opacity-0 pointer-events-none' : 'opacity-100'
-          }`}
-          aria-hidden={isPreloaderActive}
-        >
-          <Navbar currentHash={currentHash} />
-        </div>
+        {/* 🧭 Navbar Global Fijo a Nivel de Viewport (Siempre visible e interactivo a 60 FPS) */}
+        <Navbar currentHash={currentHash} />
 
         <div className="relative z-10">
           <AnimatePresence mode="wait" initial={false}>

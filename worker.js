@@ -341,13 +341,16 @@ export default {
       }));
     }
 
-    // 4. HTML Responses: Inject Vary: Accept and RFC 8288 Link Headers
+    // 4. HTML Responses: Inject Vary: Accept, RFC 8288 Link Headers, and ensure latest bundle cache invalidation
     const contentType = response.headers.get("content-type") || "";
     if (contentType.includes("text/html")) {
       const headers = new Headers(response.headers);
       headers.set("Vary", "Accept");
       headers.set("Link", LINK_HEADERS);
       headers.set("Access-Control-Allow-Origin", "*");
+      headers.set("Cache-Control", "no-cache, no-store, must-revalidate");
+      headers.set("Pragma", "no-cache");
+      headers.set("Expires", "0");
       return withSecurityHeaders(new Response(response.body, {
         status: response.status,
         statusText: response.statusText,

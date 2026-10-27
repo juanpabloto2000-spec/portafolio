@@ -2,16 +2,27 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function WelcomeGalaxyPreloader({ pageKey = 'home', onLoadingChange }) {
-  // Se muestra siempre tanto en la página de inicio (home) como en diagnóstico
   const isAllowedPage = pageKey === 'home' || pageKey === 'diagnostico';
   
-  const [isVisible, setIsVisible] = useState(isAllowedPage);
+  // Guard de sesión: Solo se reproduce UNA vez por sesión del visitante
+  const hasSeenPreloader = () => {
+    try {
+      return sessionStorage.getItem('dynamind_galaxy_preloader_seen_v2') === 'true';
+    } catch {
+      return false;
+    }
+  };
+
+  const [isVisible, setIsVisible] = useState(() => isAllowedPage && !hasSeenPreloader());
   const [isDismissing, setIsDismissing] = useState(false);
   const [showLogo, setShowLogo] = useState(false);
   const videoRef = useRef(null);
 
   const handleDismiss = () => {
     setIsDismissing(true);
+    try {
+      sessionStorage.setItem('dynamind_galaxy_preloader_seen_v2', 'true');
+    } catch {}
     if (videoRef.current) {
       try { videoRef.current.pause(); } catch {}
     }
@@ -22,7 +33,7 @@ export default function WelcomeGalaxyPreloader({ pageKey = 'home', onLoadingChan
   };
 
   useEffect(() => {
-    if (!isAllowedPage) {
+    if (!isAllowedPage || hasSeenPreloader()) {
       setIsVisible(false);
       setIsDismissing(false);
       if (typeof onLoadingChange === 'function') {
@@ -38,6 +49,12 @@ export default function WelcomeGalaxyPreloader({ pageKey = 'home', onLoadingChan
       onLoadingChange(true);
     }
 
+    // Si el usuario hace scroll o interactúa con el teclado, salir de inmediato sin fricción
+    const handleUserInteraction = () => handleDismiss();
+    window.addEventListener('wheel', handleUserInteraction, { passive: true, once: true });
+    window.addEventListener('touchmove', handleUserInteraction, { passive: true, once: true });
+    window.addEventListener('keydown', handleUserInteraction, { passive: true, once: true });
+
     const video = videoRef.current;
     if (video) {
       video.currentTime = 0;
@@ -46,25 +63,29 @@ export default function WelcomeGalaxyPreloader({ pageKey = 'home', onLoadingChan
       video.playsInline = true;
       const playPromise = video.play();
       if (playPromise !== undefined) {
-        playPromise.catch((err) => {
-          console.debug('Autoplay fallback notice:', err);
+        playPromise.catch(() => {
+          // Si autoplay está restringido, desvanecer sin bloquear
+          handleDismiss();
         });
       }
     }
 
-    // Efecto a los 1.4s: aparecer el logo con fade-in suave
+    // Efecto a los 700ms: aparecer el logo con fade-in suave
     const logoTimer = setTimeout(() => {
       setShowLogo(true);
-    }, 1400);
+    }, 700);
 
-    // Salida cinematográfica ágil a los 3.35s
+    // Salida cinematográfica ágil a los 1.8s (cero bloqueo, ágil y elegante)
     const exitTimer = setTimeout(() => {
       handleDismiss();
-    }, 3350);
+    }, 1850);
 
     return () => {
       clearTimeout(logoTimer);
       clearTimeout(exitTimer);
+      window.removeEventListener('wheel', handleUserInteraction);
+      window.removeEventListener('touchmove', handleUserInteraction);
+      window.removeEventListener('keydown', handleUserInteraction);
     };
   }, [pageKey, isAllowedPage]);
 
@@ -72,16 +93,16 @@ export default function WelcomeGalaxyPreloader({ pageKey = 'home', onLoadingChan
     const video = videoRef.current;
     if (!video) return;
 
-    if (video.currentTime >= 1.4 && !showLogo) {
+    if (video.currentTime >= 0.7 && !showLogo) {
       setShowLogo(true);
     }
 
-    if (video.currentTime >= 3.35 && isVisible) {
+    if (video.currentTime >= 1.85 && isVisible) {
       handleDismiss();
     }
   };
 
-  if (!isAllowedPage && !isVisible && !isDismissing) {
+  if (!isAllowedPage || (!isVisible && !isDismissing)) {
     return null;
   }
 
@@ -95,7 +116,7 @@ export default function WelcomeGalaxyPreloader({ pageKey = 'home', onLoadingChan
           exit={{ opacity: 0 }}
           transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
           onClick={handleDismiss}
-          className={`fixed inset-0 z-[200000] bg-black overflow-hidden flex items-center justify-center select-none cursor-pointer w-full max-w-[100vw] h-full max-h-[100vh] ${
+          className={`fixed inset-0 z-[90000] bg-black/95 overflow-hidden flex items-center justify-center select-none cursor-pointer w-full max-w-[100vw] h-full max-h-[100vh] ${
             isDismissing ? 'pointer-events-none' : ''
           }`}
         >

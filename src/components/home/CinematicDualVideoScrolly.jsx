@@ -221,6 +221,23 @@ export default function CinematicDualVideoScrolly() {
         isLight ? 'bg-[#f8fafc]' : 'bg-transparent'
       }`}>
         
+        {/* Layer 0: Frame Inicial de Respaldo Ultrarrápido (Cero parpadeo mientras arranca el canvas) */}
+        <img
+          src="/scrolly_frames/frame_0001.webp"
+          alt="Dynamind Command Center Preview"
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0"
+          style={{
+            WebkitMaskImage: isLight
+              ? 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 8%, black 18%, black 82%, rgba(0,0,0,0.7) 92%, transparent 100%)'
+              : 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 8%, black 18%, black 82%, rgba(0,0,0,0.5) 92%, transparent 100%)',
+            maskImage: isLight
+              ? 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.7) 8%, black 18%, black 82%, rgba(0,0,0,0.7) 92%, transparent 100%)'
+              : 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 8%, black 18%, black 82%, rgba(0,0,0,0.5) 92%, transparent 100%)',
+            filter: isLight ? 'brightness(1.15) contrast(1.05) saturate(1.25)' : 'none'
+          }}
+        />
+
         {/* Layer 1: Motor Canvas de 120 Fotogramas WebP con máscara de desvanecimiento suave */}
         <canvas
           ref={canvasRef}
