@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Bot, Send, Sparkles, Check, RefreshCw, MessageSquare, 
   Settings2, ShieldAlert, Cpu, CheckCheck, User, Save,
-  Clock, Globe, Phone, Radio, Zap, AlertCircle
+  Clock, Globe, Phone, Radio, Zap, AlertCircle, Download, Workflow
 } from 'lucide-react';
+import masterWorkflowJson from '../../../dynamind_n8n_master_workflow.json';
 
 const DEFAULT_SYSTEM_PROMPT = `Eres el Agente Táctico de Calificación de Dynamind Studios.
 Tu misión es entablar una conversación breve y quirúrgica con los prospectos que llegan por WhatsApp o anuncios de Instagram.
@@ -126,7 +127,19 @@ export default function WhatsAppAgentTrainingView() {
     setTimeout(() => setPingStatus(null), 4000);
   };
 
-  // Motor de respuesta reactivo del simulador
+  const handleDownloadN8nWorkflow = () => {
+    const blob = new Blob([JSON.stringify(masterWorkflowJson, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'dynamind_n8n_master_workflow_v2.5.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  // Motor de respuesta reactivo del simulador (adaptado según botTone)
   const handleSendMessage = (e) => {
     e?.preventDefault();
     if (!inputText.trim()) return;
@@ -145,19 +158,27 @@ export default function WhatsAppAgentTrainingView() {
 
     setTimeout(() => {
       let botResponse = '';
+      const prefix =
+        botTone === 'executive'
+          ? '👔 [Análisis ROI]: '
+          : botTone === 'empathic'
+          ? '✨ ¡Con todo gusto! '
+          : botTone === 'direct'
+          ? '⚡ Directo al grano: '
+          : '';
 
       if (query.includes('precio') || query.includes('cuanto') || query.includes('costo') || query.includes('vale')) {
-        botResponse = 'En Dynamind desarrollamos plataformas propietarias por capas de ingeniería, sin plantillas genéricas. Para estructurar tu solución exacta y cotización certera, realizamos el diagnóstico de 45 segundos o una sesión de 15 min en Google Meet con Juan Pablo. ¿Cuál es tu sector?';
+        botResponse = `${prefix}En Dynamind desarrollamos arquitecturas propietarias a medida, sin plantillas genéricas. Para estructurar tu inversión exacta según tu cuello de botella (D0), realizamos el diagnóstico de 45s o una sesión de 15 min en Google Meet con Juan. ¿Cuál es tu sector?`;
       } else if (query.includes('glamping') || query.includes('hotel') || query.includes('cabaña')) {
-        botResponse = 'Excelente sector. En alojamientos nuestro motor atómico erradica las comisiones del 18-25% de Booking y el overbooking en festivos con anticipo del 50%. ¿Te gustaría ver la demo funcionando?';
+        botResponse = `${prefix}En hotelería y glamping nuestro PMS atómico erradica las comisiones del 18-25% de Booking y el overbooking en festivos con anticipo verificado. ¿Te gustaría ver la demo en vivo?`;
       } else if (query.includes('restaurante') || query.includes('bar') || query.includes('comida') || query.includes('gastro')) {
-        botResponse = 'Para gastronomía implementamos comandas digitales KDS para cocina, caja por turnos con arqueo ciego y menú interactivo sin comisiones a terceros. ¿Manejan consumo en mesa o delivery?';
+        botResponse = `${prefix}Para gastronomía implementamos comandas digitales KDS para cocina, caja por turnos con arqueo ciego por denominaciones y menú interactivo sin comisiones. ¿Manejan consumo en mesa o delivery?`;
       } else if (query.includes('clinica') || query.includes('spa') || query.includes('diente') || query.includes('cita')) {
-        botResponse = 'En clínicas y spas filtramos curiosos en WhatsApp y cobramos depósito de compromiso para reducir no-shows a menos del 4%. ¿Cuántos pacientes atienden a la semana?';
-      } else if (query.includes('si') || query.includes('claro') || query.includes('demo') || query.includes('agendar')) {
-        botResponse = 'Excelente. Puedes agendar tu sesión técnica 1 a 1 directamente en https://dynamind.studios/#/diagnostico. ¿Prefieres horario de mañana o tarde?';
+        botResponse = `${prefix}En clínicas y spas calificamos prospectos en WhatsApp 24/7 con memoria contextual en n8n y recordatorio automático a las 8:00 AM para reducir inasistencias a menos del 4%. ¿Cuántos pacientes atienden por semana?`;
+      } else if (query.includes('si') || query.includes('claro') || query.includes('demo') || query.includes('agendar') || query.includes('confirmo')) {
+        botResponse = `${prefix}Excelente. Puedes agendar tu sesión técnica 1 a 1 directamente en https://dynamind.co/#/diagnostico con creación instantánea de sala Google Meet. ¿Prefieres horario de mañana o tarde?`;
       } else {
-        botResponse = `Entendido. Considerando tu planteamiento, podemos coordinar una sesión técnica de 15 minutos en Google Meet directamente con nuestro Lead Architect Juan Pablo. ¿Qué día de esta semana te queda mejor?`;
+        botResponse = `${prefix}Entendido. Considerando tu planteamiento, podemos coordinar una sesión técnica de 15 minutos en Google Meet directamente con nuestro Director de Ingeniería Juan. ¿Qué día de esta semana te queda mejor?`;
       }
 
       setMessages(prev => [
@@ -396,6 +417,42 @@ export default function WhatsAppAgentTrainingView() {
               >
                 Probar Ping
               </button>
+            </div>
+
+            {/* Arquitectura Maestra n8n v2.5 Hardened */}
+            <div className="pt-3 border-t border-white/10 space-y-2.5">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-1.5 text-[11px] text-emerald-400 font-bold">
+                  <Workflow className="w-3.5 h-3.5" />
+                  <span>Arquitectura n8n v2.5 Hardened ({masterWorkflowJson?.nodes?.length || 21} nodos activos)</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleDownloadN8nWorkflow}
+                  className="px-3 py-1.5 bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/40 text-cyan-300 font-bold text-[11px] rounded-xl cursor-pointer transition-colors flex items-center gap-1.5"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Exportar Workflow (.json)</span>
+                </button>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10px] font-sans text-zinc-400">
+                <div className="p-2 rounded-lg bg-black/40 border border-white/5">
+                  <span className="text-cyan-300 font-mono font-bold block">Flujo 1 · Triaje & Meet</span>
+                  Anti-Bot 422 Gate + Google Calendar Meet + Supabase (`retryOnFail x3`).
+                </div>
+                <div className="p-2 rounded-lg bg-black/40 border border-white/5">
+                  <span className="text-amber-300 font-mono font-bold block">Flujo 2 · Cron 8:00 AM</span>
+                  Recordatorio matutino automático zona Bogotá + estado `reminder_sent`.
+                </div>
+                <div className="p-2 rounded-lg bg-black/40 border border-white/5">
+                  <span className="text-purple-300 font-mono font-bold block">Flujo 3 · Agente Aura 24/7</span>
+                  Filtro Anti-Bucle (`fromMe`) + Gemini 2.5 Flash + Memoria (10 turnos) + Tool Catálogo.
+                </div>
+                <div className="p-2 rounded-lg bg-black/40 border border-white/5">
+                  <span className="text-rose-300 font-mono font-bold block">Flujo 4 · Guardián SRE</span>
+                  `Error Trigger` global con alerta crítica instantánea al WhatsApp de Juan.
+                </div>
+              </div>
             </div>
           </div>
 

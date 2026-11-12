@@ -595,8 +595,19 @@ export default function DynamindGalaxy3D({
   const solarDustRef = useRef(null);
   const animationFrameRef = useRef(null);
   const hoveredServiceRef = useRef(null);
+  const speedMultiplierRef = useRef(speedMultiplier);
+  const onSelectServiceRef = useRef(onSelectService);
+
+  useEffect(() => {
+    speedMultiplierRef.current = speedMultiplier;
+  }, [speedMultiplier]);
+
+  useEffect(() => {
+    onSelectServiceRef.current = onSelectService;
+  }, [onSelectService]);
 
   const [hoveredService, setHoveredService] = useState(null);
+  const [webglError, setWebglError] = useState(false);
 
   // Posición Panorámica Art-Directed Canónica: Todos los 18 planetas uniformemente visibles
   const PANORAMA_CAM_POS = new THREE.Vector3(0, 118, 168);
@@ -610,8 +621,24 @@ export default function DynamindGalaxy3D({
     const container = mountRef.current;
     if (!container) return;
 
+    let isDisposed = false;
     const width = container.clientWidth || window.innerWidth;
     const height = container.clientHeight || window.innerHeight;
+
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        antialias: false,
+        alpha: true,
+        powerPreference: "high-performance",
+        stencil: false,
+        depth: true,
+      });
+    } catch (err) {
+      console.warn("[DynamindGalaxy3D] WebGL initialization fallback:", err);
+      setWebglError(true);
+      return;
+    }
 
     // 1. Escena
     const scene = new THREE.Scene();
@@ -747,13 +774,6 @@ export default function DynamindGalaxy3D({
     cameraRef.current = camera;
 
     // 3. Renderer WebGL (Clamped DPR 1.5x para 60 FPS constantes en pantallas Retina/4K)
-    const renderer = new THREE.WebGLRenderer({
-      antialias: false,
-      alpha: true,
-      powerPreference: "high-performance",
-      stencil: false,
-      depth: true,
-    });
     renderer.setSize(width, height);
     renderer.setPixelRatio(getClampedPixelRatio(1.5));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -821,9 +841,18 @@ export default function DynamindGalaxy3D({
     textureLoader.load(
       "/assets/solar/textures/lensflare0.png",
       (flare0) => {
+        if (isDisposed) {
+          flare0.dispose();
+          return;
+        }
         textureLoader.load(
           "/assets/solar/textures/lensflare1.png",
           (flare1) => {
+            if (isDisposed) {
+              flare0.dispose();
+              flare1.dispose();
+              return;
+            }
             const lensflare = new Lensflare();
             lensflare.addElement(new LensflareElement(flare0, 110, 0, new THREE.Color(0xffffff)));
             lensflare.addElement(new LensflareElement(flare1, 38, 0.3, new THREE.Color(0xfbbf24)));
@@ -1195,9 +1224,9 @@ export default function DynamindGalaxy3D({
       if (intersects.length > 0) {
         const hit = intersects[0].object;
         const srvId = hit.userData?.id;
-        if (srvId && onSelectService) {
+        if (srvId && onSelectServiceRef.current) {
           playPlanetSelect();
-          onSelectService(srvId);
+          onSelectServiceRef.current(srvId);
         }
       }
     };
@@ -1212,7 +1241,7 @@ export default function DynamindGalaxy3D({
     let isSceneVisible = true;
 
     const animateLoop = () => {
-      if (!isSceneVisible) {
+      if (!isSceneVisible || isDisposed) {
         animationFrameRef.current = null;
         return;
       }
@@ -1222,7 +1251,7 @@ export default function DynamindGalaxy3D({
       const delta = Math.min((now - lastTime) / 1000, 0.1);
       lastTime = now;
       const elapsedTime = (now - startTime) / 1000;
-      const currentSpeed = speedMultiplier;
+      const currentSpeed = speedMultiplierRef.current;
 
       // Rotación suave del fondo estelar y polvo cósmico
       starField.rotation.y += delta * 0.0025;
@@ -1306,16 +1335,23 @@ export default function DynamindGalaxy3D({
 
     animateLoop();
 
-    const cleanupVisibilityObserver = createVisibilityObserver(container, (visible) => {
-      isSceneVisible = visible;
-      if (visible && !animationFrameRef.current) {
-        lastTime = performance.now();
-        animateLoop();
-      } else if (!visible && animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-        animationFrameRef.current = null;
+    const visibilityGuard = createVisibilityObserver(
+      container,
+      () => {
+        isSceneVisible = true;
+        if (!animationFrameRef.current) {
+          lastTime = performance.now();
+          animateLoop();
+        }
+      },
+      () => {
+        isSceneVisible = false;
+        if (animationFrameRef.current) {
+          cancelAnimationFrame(animationFrameRef.current);
+          animationFrameRef.current = null;
+        }
       }
-    });
+    );
 
     // 10. Resize
     const handleResize = () => {
@@ -1332,8 +1368,11 @@ export default function DynamindGalaxy3D({
     window.addEventListener("resize", handleResize, { passive: true });
 
     return () => {
+      isDisposed = true;
       isSceneVisible = false;
-      if (cleanupVisibilityObserver) cleanupVisibilityObserver();
+      if (visibilityGuard && typeof visibilityGuard.disconnect === "function") {
+        visibilityGuard.disconnect();
+      }
       if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
       window.removeEventListener("resize", handleResize);
       domElement.removeEventListener("pointermove", handlePointerMove);
@@ -1365,13 +1404,17 @@ export default function DynamindGalaxy3D({
       }
       if (composerRef.current) {
         composerRef.current.dispose();
+        composerRef.current = null;
       }
       if (rendererRef.current) {
         if (rendererRef.current.domElement && rendererRef.current.domElement.parentNode === container) {
           container.removeChild(rendererRef.current.domElement);
         }
         rendererRef.current.dispose();
+        rendererRef.current = null;
       }
+      celestialObjectsRef.current = {};
+      sceneRef.current = null;
     };
   }, []);
 
@@ -1428,6 +1471,17 @@ export default function DynamindGalaxy3D({
     <div className="relative w-full h-full min-h-[580px] overflow-hidden select-none bg-[#020617]">
       {/* Canvas 3D de Three.js */}
       <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
+
+      {webglError && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-neutral-950/95 p-6 text-center z-20">
+          <p className="font-mono text-xs uppercase tracking-widest text-amber-400 mb-2">
+            Modo Compatibilidad Gráfica Activo
+          </p>
+          <p className="text-sm text-zinc-300 max-w-md">
+            Selecciona cualquier sistema en la barra superior o cambia a la vista de Tarjetas para explorar la arquitectura.
+          </p>
+        </div>
+      )}
 
       {/* Tooltip flotante al pasar el mouse por cualquier planeta visible */}
       {hoveredService && (

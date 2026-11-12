@@ -58,40 +58,63 @@ export default function AndroidVoiceAvatar({
     };
   }, []);
 
-  // Coordenadas del puntero para 3D Parallax Tilt
+  // Coordenadas del puntero para 3D Parallax Tilt y Eye-Tracking Fotónico
   const [pointer, setPointer] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
-    let animationFrameId;
+    let animationFrameId = null;
     let targetX = 0;
     let targetY = 0;
     let currentX = 0;
     let currentY = 0;
-
-    const handleMouseMove = (e) => {
-      const { innerWidth, innerHeight } = window;
-      targetX = (e.clientX / innerWidth) * 2 - 1;
-      targetY = (e.clientY / innerHeight) * 2 - 1;
-    };
+    let isRunning = false;
 
     const updateSpring = () => {
-      currentX += (targetX - currentX) * 0.08;
-      currentY += (targetY - currentY) * 0.08;
+      if (document.hidden) {
+        isRunning = false;
+        return;
+      }
+      const dx = targetX - currentX;
+      const dy = targetY - currentY;
+      currentX += dx * 0.1;
+      currentY += dy * 0.1;
+
       setPointer({
         x: Math.max(-1, Math.min(1, currentX)),
         y: Math.max(-1, Math.min(1, currentY))
       });
-      animationFrameId = requestAnimationFrame(updateSpring);
+
+      if (Math.abs(dx) > 0.0015 || Math.abs(dy) > 0.0015) {
+        animationFrameId = requestAnimationFrame(updateSpring);
+      } else {
+        isRunning = false;
+      }
+    };
+
+    const handleMouseMove = (e) => {
+      if (document.hidden) return;
+      const { innerWidth, innerHeight } = window;
+      targetX = (e.clientX / innerWidth) * 2 - 1;
+      targetY = (e.clientY / innerHeight) * 2 - 1;
+      if (!isRunning) {
+        isRunning = true;
+        animationFrameId = requestAnimationFrame(updateSpring);
+      }
     };
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    animationFrameId = requestAnimationFrame(updateSpring);
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
-      cancelAnimationFrame(animationFrameId);
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
     };
   }, []);
+
+  // Desplazamiento ocular fotónico (Eye-Tracking) con paralaje diferencial córnea/pupila
+  const eyeOffsetX = pointer.x * 2.1;
+  const eyeOffsetY = pointer.y * 1.45;
+  const pupilOffsetX = pointer.x * 0.55;
+  const pupilOffsetY = pointer.y * 0.4;
 
   // --------------------------------------------------------------------------
   // CANALES DE ANIMACIÓN DESACOPLADOS Y COMPONIBLES A 60 FPS
@@ -371,21 +394,42 @@ export default function AndroidVoiceAvatar({
               <stop offset="100%" stopColor="#3f3f46" />
             </linearGradient>
 
-            {/* 7A. Iris Ocular en Púrpura Fotónico Luminous */}
-            <radialGradient id="auraIrisGrad" cx="35%" cy="35%" r="65%">
+            {/* 7A. Iris Ocular en Púrpura Fotónico Luminous Multicapa */}
+            <radialGradient id="auraIrisGrad" cx="35%" cy="32%" r="68%">
               <stop offset="0%" stopColor="#ffffff" />
-              <stop offset="25%" stopColor="#f3e8ff" />
-              <stop offset="48%" stopColor="#c084fc" />
-              <stop offset="70%" stopColor="#9333ea" />
-              <stop offset="88%" stopColor="#6b21a8" />
-              <stop offset="100%" stopColor="#3b0764" />
+              <stop offset="18%" stopColor="#f3e8ff" />
+              <stop offset="38%" stopColor="#d8b4fe" />
+              <stop offset="56%" stopColor="#a855f7" />
+              <stop offset="76%" stopColor="#7e22ce" />
+              <stop offset="92%" stopColor="#4c1d95" />
+              <stop offset="100%" stopColor="#1e0538" />
             </radialGradient>
 
-            {/* 7B. Visera Panorámica en Cristal Zafiro Negro Pulido */}
+            {/* 7B. Visera Panorámica en Cristal Zafiro Negro Pulido con Profundidad Óptica */}
+            <radialGradient id="auraVisorDepthGrad" cx="50%" cy="38%" r="72%">
+              <stop offset="0%" stopColor="#160f24" />
+              <stop offset="45%" stopColor="#09070e" />
+              <stop offset="82%" stopColor="#050507" />
+              <stop offset="100%" stopColor="#020203" />
+            </radialGradient>
             <linearGradient id="auraVisorGrad" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#050505" />
               <stop offset="50%" stopColor="#0f0f11" />
               <stop offset="100%" stopColor="#050505" />
+            </linearGradient>
+
+            {/* 7C. Subsurface Scattering Cálido de Mejillas y Seda Labial 3D */}
+            <radialGradient id="auraCheekSubsurfaceGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#f472b6" stopOpacity="0.48" />
+              <stop offset="55%" stopColor="#ec4899" stopOpacity="0.22" />
+              <stop offset="100%" stopColor="#be185d" stopOpacity="0" />
+            </radialGradient>
+            <linearGradient id="auraLipGlossGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#fb7185" />
+              <stop offset="35%" stopColor="#f472b6" />
+              <stop offset="52%" stopColor="#fbcfe8" />
+              <stop offset="72%" stopColor="#ec4899" />
+              <stop offset="100%" stopColor="#db2777" />
             </linearGradient>
 
             {/* 8. Montura de Gafas Cat-Eye en Titanio Púrpura Metalizado & Cromo */}
@@ -1043,16 +1087,35 @@ export default function AndroidVoiceAvatar({
                   <circle cx="0.5" cy="0" r="2.2" fill="#c084fc" filter="url(#auraGlow)" />
                 </g>
 
-                {/* Visera Panorámica de Cristal Zafiro Negro con Bisel de Cromo */}
+                {/* Oclusión Ambiental Bajo la Barbilla y Borde de Visera */}
+                <path
+                  d="M -22 31 Q 0 39 22 31"
+                  fill="none"
+                  stroke="#09090b"
+                  strokeWidth="2.2"
+                  opacity="0.45"
+                  strokeLinecap="round"
+                />
+
+                {/* Visera Panorámica de Cristal Zafiro Negro con Profundidad Óptica y Bisel de Cromo */}
                 <rect
                   x="-27"
                   y="-20"
                   width="54"
                   height="40"
                   rx="12"
-                  fill="#050505"
+                  fill="url(#auraVisorDepthGrad)"
                   stroke="url(#pbrChromeMirror)"
                   strokeWidth="1.6"
+                />
+                {/* Sombra Interna Superior de Profundidad en la Cavidad del Visor */}
+                <path
+                  d="M -25 -12 C -14 -19 14 -19 25 -12"
+                  fill="none"
+                  stroke="#000000"
+                  strokeWidth="2.8"
+                  opacity="0.65"
+                  strokeLinecap="round"
                 />
                 {/* Bisel interno de cristal fotónico con aura violeta elegante */}
                 <rect
@@ -1068,11 +1131,19 @@ export default function AndroidVoiceAvatar({
                   filter="url(#auraGlow)"
                 />
 
-                {/* Reflejos Especulares Multicapa de Cristal Templado */}
+                {/* Reflejos Especulares Multicapa de Cristal Zafiro Curvo */}
                 <path
                   d="M -21 -16 L 16 -16 C 21 -16 21 -12 16 -12 L -21 -12 Z"
                   fill="#ffffff"
-                  opacity="0.25"
+                  opacity="0.22"
+                />
+                <path
+                  d="M -20 -17.5 Q 0 -19.2 18 -17.5"
+                  fill="none"
+                  stroke="#ffffff"
+                  strokeWidth="0.7"
+                  opacity="0.5"
+                  strokeLinecap="round"
                 />
                 <path
                   d="M -23 -8 L -18 -8 L -24 4 L -25 4 Z"
@@ -1081,22 +1152,51 @@ export default function AndroidVoiceAvatar({
                 />
 
                 {/* ======================================================= */}
-                {/* TOQUE SUTIL DE CALIDEZ Y VIDA EN MEJILLAS (NO GAMER)   */}
+                {/* SUBSURFACE SCATTERING EN MEJILLAS (CALIDEZ ORGÁNICA)    */}
                 {/* ======================================================= */}
-                <ellipse cx="-16" cy="7" rx="5.5" ry="2.6" fill="#f472b6" opacity="0.3" filter="url(#auraGlow)" />
-                <ellipse cx="16" cy="7" rx="5.5" ry="2.6" fill="#f472b6" opacity="0.3" filter="url(#auraGlow)" />
+                <ellipse cx="-16" cy="7.5" rx="6.8" ry="3.4" fill="url(#auraCheekSubsurfaceGrad)" filter="url(#auraGlow)" />
+                <ellipse cx="16" cy="7.5" rx="6.8" ry="3.4" fill="url(#auraCheekSubsurfaceGrad)" filter="url(#auraGlow)" />
 
                 {/* ======================================================= */}
-                {/* 👁️ OJOS METÁLICOS DE ALTA PRECISIÓN EN PÚRPURA BRILLANTE */}
+                {/* 👁️ OJOS METÁLICOS DE ALTA PRECISIÓN CON EYE-TRACKING   */}
                 {/* ======================================================= */}
                 <g filter="url(#auraGlow)">
                   {/* Ojo Izquierdo */}
                   <motion.g
-                    animate={{ scaleY: blink ? 0.08 : 1 }}
-                    transition={{ duration: 0.1 }}
+                    animate={{ scaleY: blink ? 0.06 : 1 }}
+                    transition={{ duration: 0.09 }}
                     style={{ transformOrigin: '-11px -4px' }}
                   >
-                    {/* Contorno y Pestañas en Titanio con Micro-Acentos */}
+                    {/* Esclerótica Oscura Profunda y Sombra Palpebral */}
+                    <ellipse cx="-11" cy="-4" rx="8.1" ry="9.0" fill="#120322" opacity="0.85" />
+
+                    {/* Grupo de Iris y Pupila con Seguimiento Ocular Reactivo (Eye-Tracking) */}
+                    <g transform={`translate(${eyeOffsetX}, ${eyeOffsetY})`}>
+                      {/* Anillo Limbal Exterior Oscuro (Realismo Óptico) */}
+                      <ellipse cx="-11" cy="-4" rx="7.5" ry="8.5" fill="#230542" stroke="#4c1d95" strokeWidth="0.5" />
+                      {/* Estroma del Iris en Púrpura Fotónico Multicapa */}
+                      <ellipse cx="-11" cy="-4" rx="6.5" ry="7.5" fill="url(#auraIrisGrad)" />
+                      {/* Micro-Fibras Radiales del Iris (Profundidad Cristalina) */}
+                      <circle cx="-11" cy="-4" r="5.3" fill="none" stroke="#f3e8ff" strokeWidth="0.45" strokeDasharray="1.1 1.6" opacity="0.55" />
+                      {/* Anillo Óptico Biónico Interior */}
+                      <circle cx="-11" cy="-4" r="4.2" fill="none" stroke="#e9d5ff" strokeWidth="0.8" opacity="0.88" />
+                      {/* Pupila Central con Micro-Paralaje Diferencial */}
+                      <g transform={`translate(${pupilOffsetX}, ${pupilOffsetY})`}>
+                        <circle cx="-11" cy="-4" r="2.8" fill="#11021c" />
+                        <circle cx="-11" cy="-4" r="2.1" fill="none" stroke="#a855f7" strokeWidth="0.45" opacity="0.7" />
+                        <circle cx="-11" cy="-4" r="1.25" fill="#c084fc" opacity="0.92" />
+                      </g>
+                    </g>
+
+                    {/* Destellos Especulares de Córnea Húmeda (Ángulo Cenital 45° Semi-Anclado) */}
+                    <g transform={`translate(${eyeOffsetX * 0.35}, ${eyeOffsetY * 0.35})`}>
+                      <circle cx="-8.8" cy="-6.2" r="2.35" fill="#ffffff" />
+                      <circle cx="-13.2" cy="-1.8" r="1.15" fill="#ffffff" opacity="0.9" />
+                      <circle cx="-10.2" cy="-1.6" r="0.65" fill="#f3e8ff" opacity="0.95" />
+                      <path d="M -14.2 -6.5 Q -11 -8.5 -7.8 -6.5" fill="none" stroke="#ffffff" strokeWidth="0.55" opacity="0.5" strokeLinecap="round" />
+                    </g>
+
+                    {/* Contorno Palpebral Superior y Pestañas en Titanio con Micro-Acentos */}
                     <path
                       d="M -20 -9 C -14 -15 -7 -14 -2 -9"
                       stroke="#e4e4e7"
@@ -1104,31 +1204,55 @@ export default function AndroidVoiceAvatar({
                       strokeLinecap="round"
                       fill="none"
                     />
+                    <path
+                      d="M -19.5 -8.2 C -14 -13.8 -7 -12.8 -2.5 -8.2"
+                      stroke="#1e0836"
+                      strokeWidth="0.9"
+                      strokeLinecap="round"
+                      fill="none"
+                      opacity="0.7"
+                    />
                     <line x1="-20" y1="-9" x2="-24" y2="-13" stroke="#c084fc" strokeWidth="1.8" strokeLinecap="round" />
                     <line x1="-18" y1="-12" x2="-21" y2="-16" stroke="#a855f7" strokeWidth="1.4" strokeLinecap="round" />
                     <line x1="-14" y1="-14" x2="-15" y2="-18" stroke="#e9d5ff" strokeWidth="1.2" strokeLinecap="round" />
-
-                    {/* Sensor Óptico / Iris en Púrpura Fotónico Radiante */}
-                    <ellipse cx="-11" cy="-4" rx="7.5" ry="8.5" fill="#2e0854" />
-                    <ellipse cx="-11" cy="-4" rx="6.4" ry="7.4" fill="url(#auraIrisGrad)" />
-                    {/* Anillo Óptico Biónico Interior */}
-                    <circle cx="-11" cy="-4" r="4.2" fill="none" stroke="#e9d5ff" strokeWidth="0.8" opacity="0.85" />
-                    {/* Pupila Central en Violeta Profundo */}
-                    <circle cx="-11" cy="-4" r="2.7" fill="#180527" />
-                    <circle cx="-11" cy="-4" r="1.3" fill="#c084fc" />
-                    {/* Destellos Especulares de Lente (Mirada Expresiva) */}
-                    <circle cx="-9" cy="-6" r="2.4" fill="#ffffff" />
-                    <circle cx="-13" cy="-2" r="1.2" fill="#ffffff" opacity="0.9" />
-                    <circle cx="-10" cy="-2" r="0.7" fill="#f3e8ff" />
                   </motion.g>
 
                   {/* Ojo Derecho */}
                   <motion.g
-                    animate={{ scaleY: blink ? 0.08 : 1 }}
-                    transition={{ duration: 0.1 }}
+                    animate={{ scaleY: blink ? 0.06 : 1 }}
+                    transition={{ duration: 0.09 }}
                     style={{ transformOrigin: '11px -4px' }}
                   >
-                    {/* Contorno y Pestañas en Titanio con Micro-Acentos */}
+                    {/* Esclerótica Oscura Profunda y Sombra Palpebral */}
+                    <ellipse cx="11" cy="-4" rx="8.1" ry="9.0" fill="#120322" opacity="0.85" />
+
+                    {/* Grupo de Iris y Pupila con Seguimiento Ocular Reactivo (Eye-Tracking) */}
+                    <g transform={`translate(${eyeOffsetX}, ${eyeOffsetY})`}>
+                      {/* Anillo Limbal Exterior Oscuro (Realismo Óptico) */}
+                      <ellipse cx="11" cy="-4" rx="7.5" ry="8.5" fill="#230542" stroke="#4c1d95" strokeWidth="0.5" />
+                      {/* Estroma del Iris en Púrpura Fotónico Multicapa */}
+                      <ellipse cx="11" cy="-4" rx="6.5" ry="7.5" fill="url(#auraIrisGrad)" />
+                      {/* Micro-Fibras Radiales del Iris (Profundidad Cristalina) */}
+                      <circle cx="11" cy="-4" r="5.3" fill="none" stroke="#f3e8ff" strokeWidth="0.45" strokeDasharray="1.1 1.6" opacity="0.55" />
+                      {/* Anillo Óptico Biónico Interior */}
+                      <circle cx="11" cy="-4" r="4.2" fill="none" stroke="#e9d5ff" strokeWidth="0.8" opacity="0.88" />
+                      {/* Pupila Central con Micro-Paralaje Diferencial */}
+                      <g transform={`translate(${pupilOffsetX}, ${pupilOffsetY})`}>
+                        <circle cx="11" cy="-4" r="2.8" fill="#11021c" />
+                        <circle cx="11" cy="-4" r="2.1" fill="none" stroke="#a855f7" strokeWidth="0.45" opacity="0.7" />
+                        <circle cx="11" cy="-4" r="1.25" fill="#c084fc" opacity="0.92" />
+                      </g>
+                    </g>
+
+                    {/* Destellos Especulares de Córnea Húmeda (Ángulo Cenital 45° Semi-Anclado) */}
+                    <g transform={`translate(${eyeOffsetX * 0.35}, ${eyeOffsetY * 0.35})`}>
+                      <circle cx="13.2" cy="-6.2" r="2.35" fill="#ffffff" />
+                      <circle cx="8.8" cy="-1.8" r="1.15" fill="#ffffff" opacity="0.9" />
+                      <circle cx="11.8" cy="-1.6" r="0.65" fill="#f3e8ff" opacity="0.95" />
+                      <path d="M 7.8 -6.5 Q 11 -8.5 14.2 -6.5" fill="none" stroke="#ffffff" strokeWidth="0.55" opacity="0.5" strokeLinecap="round" />
+                    </g>
+
+                    {/* Contorno Palpebral Superior y Pestañas en Titanio con Micro-Acentos */}
                     <path
                       d="M 2 -9 C 7 -14 14 -15 20 -9"
                       stroke="#e4e4e7"
@@ -1136,22 +1260,17 @@ export default function AndroidVoiceAvatar({
                       strokeLinecap="round"
                       fill="none"
                     />
+                    <path
+                      d="M 2.5 -8.2 C 7 -12.8 14 -13.8 19.5 -8.2"
+                      stroke="#1e0836"
+                      strokeWidth="0.9"
+                      strokeLinecap="round"
+                      fill="none"
+                      opacity="0.7"
+                    />
                     <line x1="20" y1="-9" x2="24" y2="-13" stroke="#c084fc" strokeWidth="1.8" strokeLinecap="round" />
                     <line x1="18" y1="-12" x2="21" y2="-16" stroke="#a855f7" strokeWidth="1.4" strokeLinecap="round" />
                     <line x1="14" y1="-14" x2="15" y2="-18" stroke="#e9d5ff" strokeWidth="1.2" strokeLinecap="round" />
-
-                    {/* Sensor Óptico / Iris en Púrpura Fotónico Radiante */}
-                    <ellipse cx="11" cy="-4" rx="7.5" ry="8.5" fill="#2e0854" />
-                    <ellipse cx="11" cy="-4" rx="6.4" ry="7.4" fill="url(#auraIrisGrad)" />
-                    {/* Anillo Óptico Biónico Interior */}
-                    <circle cx="11" cy="-4" r="4.2" fill="none" stroke="#e9d5ff" strokeWidth="0.8" opacity="0.85" />
-                    {/* Pupila Central en Violeta Profundo */}
-                    <circle cx="11" cy="-4" r="2.7" fill="#180527" />
-                    <circle cx="11" cy="-4" r="1.3" fill="#c084fc" />
-                    {/* Destellos Especulares de Lente (Mirada Expresiva) */}
-                    <circle cx="13" cy="-6" r="2.4" fill="#ffffff" />
-                    <circle cx="9" cy="-2" r="1.2" fill="#ffffff" opacity="0.9" />
-                    <circle cx="12" cy="-2" r="0.7" fill="#f3e8ff" />
                   </motion.g>
                 </g>
 
@@ -1217,11 +1336,12 @@ export default function AndroidVoiceAvatar({
                 </g>
 
                 {/* ======================================================= */}
-                {/* BOCA / SINTETIZADOR FONO-REACTIVO DINÁMICO              */}
+                {/* BOCA / SINTETIZADOR FONO-REACTIVO DINÁMICO 3D           */}
                 {/* ======================================================= */}
                 {isSpeaking ? (
-                  // Ecualizador Dinámico de Voz cuando AURA habla (Fotónico)
+                  // Ecualizador Dinámico de Voz cuando AURA habla (Fotónico con Halo Resonante)
                   <g transform="translate(0, 15)" filter="url(#auraGlow)">
+                    <ellipse cx="0" cy="0" rx="13" ry="5.5" fill="#a855f7" opacity="0.18" />
                     <motion.line
                       x1="-10"
                       y1="0"
@@ -1279,17 +1399,43 @@ export default function AndroidVoiceAvatar({
                     />
                   </g>
                 ) : (
-                  // Labios Femeninos y Sonrisa Amable con Tenue Toque Rosa Cálido
-                  <g transform="translate(0, 15)">
+                  // Labios Femeninos 3D Satinados con Arco de Cupido Sutil y Brillo Especular
+                  <g transform="translate(0, 14.8)">
+                    {/* Sombra suave bajo el labio inferior */}
                     <path
-                      d="M -6 -1 Q 0 4 6 -1"
+                      d="M -4.2 2.4 Q 0 4.6 4.2 2.4"
+                      fill="none"
+                      stroke="#000000"
+                      strokeWidth="1.2"
+                      strokeLinecap="round"
+                      opacity="0.45"
+                    />
+                    {/* Volumen del labio inferior satinado */}
+                    <path
+                      d="M -5.8 -0.8 Q 0 4.4 5.8 -0.8 Q 0 2.2 -5.8 -0.8 Z"
+                      fill="url(#auraLipGlossGrad)"
+                      opacity="0.72"
+                    />
+                    {/* Línea de sonrisa principal y comisuras definidas */}
+                    <path
+                      d="M -6.4 -1.1 Q -3 0.6 0 0.4 Q 3 0.6 6.4 -1.1"
+                      fill="none"
+                      stroke="url(#auraLipGlossGrad)"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      opacity="0.95"
+                    />
+                    <path
+                      d="M -6.2 -1 Q 0 3.8 6.2 -1"
                       fill="none"
                       stroke="#f472b6"
-                      strokeWidth="1.8"
+                      strokeWidth="1.4"
                       strokeLinecap="round"
-                      opacity="0.85"
+                      opacity="0.88"
                     />
-                    <circle cx="0" cy="1.5" r="1" fill="#ffffff" opacity="0.8" />
+                    {/* Destello especular húmedo en el centro del labio inferior */}
+                    <ellipse cx="0" cy="1.55" rx="2.1" ry="0.65" fill="#ffffff" opacity="0.82" />
+                    <circle cx="-1.6" cy="1.2" r="0.45" fill="#fbcfe8" opacity="0.75" />
                   </g>
                 )}
               </g>
