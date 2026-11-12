@@ -97,19 +97,31 @@ export const DEFAULT_UNIVERSAL_CMS = {
 
 const CMSContext = createContext();
 
+// Sanitizador contra Prototype Pollution (__proto__, constructor, prototype)
+function safeParseCMS(jsonString) {
+  return JSON.parse(jsonString, (key, value) => {
+    if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+      return undefined;
+    }
+    return value;
+  });
+}
+
 export function CMSProvider({ children }) {
   const [cms, setCms] = useState(() => {
     try {
       const stored = localStorage.getItem('dynamind_universal_cms_v2');
       if (stored) {
-        const parsed = JSON.parse(stored);
-        return {
-          ...DEFAULT_UNIVERSAL_CMS,
-          ...parsed,
-          pages: { ...DEFAULT_UNIVERSAL_CMS.pages, ...(parsed.pages || {}) },
-          social: { ...DEFAULT_UNIVERSAL_CMS.social, ...(parsed.social || {}) },
-          chatbot: { ...DEFAULT_UNIVERSAL_CMS.chatbot, ...(parsed.chatbot || {}) }
-        };
+        const parsed = safeParseCMS(stored);
+        if (parsed && typeof parsed === 'object') {
+          return {
+            ...DEFAULT_UNIVERSAL_CMS,
+            ...parsed,
+            pages: { ...DEFAULT_UNIVERSAL_CMS.pages, ...(parsed.pages || {}) },
+            social: { ...DEFAULT_UNIVERSAL_CMS.social, ...(parsed.social || {}) },
+            chatbot: { ...DEFAULT_UNIVERSAL_CMS.chatbot, ...(parsed.chatbot || {}) }
+          };
+        }
       }
     } catch (e) {
       console.warn('Error reading CMS from storage:', e);

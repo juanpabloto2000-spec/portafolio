@@ -1,38 +1,46 @@
-import React, { useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef } from 'react';
+import { motion, useMotionValue, useSpring, useMotionTemplate, useReducedMotion } from 'framer-motion';
 
 export default function Tilt3DCard({ children, className = '', intensity = 10, ...props }) {
   const cardRef = useRef(null);
-  const [rotateX, setRotateX] = useState(0);
-  const [rotateY, setRotateY] = useState(0);
-  const [glarePosition, setGlarePosition] = useState({ x: 50, y: 50, opacity: 0 });
+  const prefersReducedMotion = useReducedMotion();
+
+  // MotionValues directos en GPU (Cero re-renders de React a 60/120 FPS)
+  const rawRotateX = useMotionValue(0);
+  const rawRotateY = useMotionValue(0);
+  const glareX = useMotionValue(50);
+  const glareY = useMotionValue(50);
+  const glareOpacity = useMotionValue(0);
+
+  const springConfig = { stiffness: 300, damping: 26, mass: 0.5 };
+  const rotateX = useSpring(rawRotateX, springConfig);
+  const rotateY = useSpring(rawRotateY, springConfig);
+  const smoothGlareOpacity = useSpring(glareOpacity, { stiffness: 260, damping: 30 });
+
+  const glareBackground = useMotionTemplate`radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255, 255, 255, 0.24) 0%, transparent 60%)`;
 
   const handleMouseMove = (e) => {
-    if (!cardRef.current) return;
+    if (prefersReducedMotion || !cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    
+
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
 
-    const rotX = ((y - centerY) / centerY) * -intensity;
-    const rotY = ((x - centerX) / centerX) * intensity;
-
-    setRotateX(rotX);
-    setRotateY(rotY);
-
-    setGlarePosition({
-      x: (x / rect.width) * 100,
-      y: (y / rect.height) * 100,
-      opacity: 0.12,
-    });
+    rawRotateX.set(((y - centerY) / centerY) * -intensity);
+    rawRotateY.set(((x - centerX) / centerX) * intensity);
+    glareX.set((x / rect.width) * 100);
+    glareY.set((y / rect.height) * 100);
+    glareOpacity.set(0.12);
   };
 
   const handleMouseLeave = () => {
-    setRotateX(0);
-    setRotateY(0);
-    setGlarePosition(prev => ({ ...prev, opacity: 0 }));
+    rawRotateX.set(0);
+    rawRotateY.set(0);
+    glareOpacity.set(0);
   };
 
   return (
@@ -40,16 +48,10 @@ export default function Tilt3DCard({ children, className = '', intensity = 10, .
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      animate={{
-        rotateX,
-        rotateY,
-      }}
-      transition={{
-        type: 'spring',
-        stiffness: 300,
-        damping: 25,
-      }}
       style={{
+        rotateX: prefersReducedMotion ? 0 : rotateX,
+        rotateY: prefersReducedMotion ? 0 : rotateY,
+        transformPerspective: 1000,
         transformStyle: 'preserve-3d',
       }}
       className={`relative overflow-hidden ${className}`}
@@ -57,12 +59,13 @@ export default function Tilt3DCard({ children, className = '', intensity = 10, .
     >
       {children}
 
-      {/* Sutil resplandor especular dinámico */}
-      <div
-        className="pointer-events-none absolute inset-0 transition-opacity duration-300"
+      {/* Sutil resplandor especular dinámico acelerado por compositor */}
+      <motion.div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
         style={{
-          opacity: glarePosition.opacity,
-          background: `radial-gradient(circle at ${glarePosition.x}% ${glarePosition.y}%, rgba(255, 255, 255, 0.25) 0%, transparent 60%)`,
+          opacity: smoothGlareOpacity,
+          background: glareBackground,
         }}
       />
     </motion.div>

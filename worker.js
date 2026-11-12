@@ -108,17 +108,71 @@ const SECURITY_HEADERS = {
   "X-Frame-Options": "DENY",
   "Referrer-Policy": "strict-origin-when-cross-origin",
   "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=()",
-  "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; media-src 'self' blob:; connect-src 'self' https://*.supabase.co https://generativelanguage.googleapis.com; frame-ancestors 'none';"
+  "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; media-src 'self' blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://generativelanguage.googleapis.com; worker-src 'self' blob:; frame-ancestors 'none';"
 };
 
 // Rate limiter en memoria para endpoints de API y autenticación (60 req/min por IP)
 const RATE_LIMIT_CACHE = new Map();
 const RATE_LIMIT_WINDOW_MS = 60 * 1000;
 const MAX_REQUESTS_PER_WINDOW = 60;
+const MAX_RATE_LIMIT_ENTRIES = 5000;
+
+const EDGE_AUTH_SALT = "dynamind_sovereign_vault_salt_2026_q8";
+const MASTER_PASS_SALTED_HASH = "888337bb9586edb35b258c656e030173bac263de324468ffd74a907bfcf24a82";
+
+function constantTimeEqual(a, b) {
+  if (typeof a !== "string" || typeof b !== "string") return false;
+  const len = Math.max(a.length, b.length);
+  let diff = a.length ^ b.length;
+  for (let i = 0; i < len; i++) {
+    const charA = i < a.length ? a.charCodeAt(i) : 0;
+    const charB = i < b.length ? b.charCodeAt(i) : 0;
+    diff |= charA ^ charB;
+  }
+  return diff === 0;
+}
+
+async function sha256Hex(message) {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
+  return Array.from(new Uint8Array(hashBuffer))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+async function createSignedEdgeSession(secret) {
+  const randBytes = new Uint8Array(16);
+  crypto.getRandomValues(randBytes);
+  const nonce = Array.from(randBytes).map((b) => b.toString(16).padStart(2, "0")).join("");
+  const exp = Date.now() + 2 * 3600 * 1000;
+  const payload = `edge_dyn_${exp}_${nonce}`;
+  const sig = await sha256Hex(`${payload}:${secret}`);
+  return `${payload}.${sig}`;
+}
+
+async function verifySignedEdgeSession(token, secret) {
+  if (!token || typeof token !== "string" || !token.includes(".")) return false;
+  const [payload, sig] = token.split(".");
+  if (!payload || !sig || !payload.startsWith("edge_dyn_")) return false;
+  const parts = payload.split("_");
+  const exp = parseInt(parts[2] || "0", 10);
+  if (!exp || Date.now() > exp) return false;
+  const expectedSig = await sha256Hex(`${payload}:${secret}`);
+  return constantTimeEqual(sig, expectedSig);
+}
 
 function isRateLimited(clientIp) {
   if (!clientIp) return false;
   const now = Date.now();
+  if (RATE_LIMIT_CACHE.size > MAX_RATE_LIMIT_ENTRIES) {
+    for (const [ip, record] of RATE_LIMIT_CACHE.entries()) {
+      if (now > record.resetAt) RATE_LIMIT_CACHE.delete(ip);
+    }
+    if (RATE_LIMIT_CACHE.size > MAX_RATE_LIMIT_ENTRIES) {
+      const oldestKey = RATE_LIMIT_CACHE.keys().next().value;
+      if (oldestKey) RATE_LIMIT_CACHE.delete(oldestKey);
+    }
+  }
   const entry = RATE_LIMIT_CACHE.get(clientIp) || { count: 0, resetAt: now + RATE_LIMIT_WINDOW_MS };
   if (now > entry.resetAt) {
     entry.count = 1;
@@ -178,26 +232,31 @@ export default {
       }
     }
 
-    // 0.3 Endpoint Seguro de Autenticación de Búnker DSB con Cookie HttpOnly
+    // 0.3 Endpoint Seguro de Autenticación de Búnker DSB con Cookie HttpOnly Firmada
     if (url.pathname === "/api/auth/login" && request.method === "POST") {
       try {
         const body = await request.json();
-        const username = (body.username || "").trim();
-        const password = body.password || "";
-        
-        // Verificación server-side protegida
+        const username = String(body.username || "").trim();
+        const password = String(body.password || "");
+        const signingSecret = (env && env.AUTH_SIGNING_SECRET) || EDGE_AUTH_SALT;
+        const expectedPassHash = (env && env.ADMIN_PASS_HASH) || MASTER_PASS_SALTED_HASH;
+
+        const inputSaltedHash = await sha256Hex(`${password}:${EDGE_AUTH_SALT}`);
         const isUserValid = (username.toLowerCase() === "adminmaster" || username.toLowerCase() === "admin");
-        if (isUserValid && password === "PoloNorte121966@") {
-          const edgeSessionNonce = `edge_dyn_${Date.now()}_${Math.random().toString(36).substring(2)}`;
+        const isPassValid = constantTimeEqual(inputSaltedHash, expectedPassHash);
+
+        if (isUserValid && isPassValid) {
+          const signedToken = await createSignedEdgeSession(signingSecret);
           return withSecurityHeaders(new Response(JSON.stringify({ 
             status: "authorized", 
             user: "AdminMaster",
-            session: edgeSessionNonce 
+            session: signedToken 
           }), {
             status: 200,
             headers: {
               "Content-Type": "application/json; charset=utf-8",
-              "Set-Cookie": `__Host-dynamind_auth=${edgeSessionNonce}; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=7200`
+              "Cache-Control": "no-store",
+              "Set-Cookie": `__Host-dynamind_auth=${signedToken}; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=7200`
             }
           }));
         }
@@ -207,7 +266,7 @@ export default {
           message: "Credenciales maestras inválidas." 
         }), {
           status: 401,
-          headers: { "Content-Type": "application/json; charset=utf-8" }
+          headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" }
         }));
       } catch (e) {
         return withSecurityHeaders(new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400 }));
@@ -216,12 +275,15 @@ export default {
 
     if (url.pathname === "/api/auth/verify") {
       const cookieHeader = request.headers.get("cookie") || "";
-      const hasAuthCookie = cookieHeader.includes("__Host-dynamind_auth=");
+      const signingSecret = (env && env.AUTH_SIGNING_SECRET) || EDGE_AUTH_SALT;
+      const match = cookieHeader.match(/(?:^|;\s*)__Host-dynamind_auth=([^;]+)/);
+      const token = match ? match[1].trim() : "";
+      const isAuthenticated = await verifySignedEdgeSession(token, signingSecret);
       return withSecurityHeaders(new Response(JSON.stringify({ 
-        authenticated: hasAuthCookie 
+        authenticated: isAuthenticated 
       }), {
         status: 200,
-        headers: { "Content-Type": "application/json; charset=utf-8" }
+        headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" }
       }));
     }
 

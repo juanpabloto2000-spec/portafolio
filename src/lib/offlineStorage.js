@@ -11,6 +11,21 @@ const STORES = ['leads_vault', 'objections_vault', 'cms_vault', 'audit_vault', '
 // Mapa de suscriptores reactivos en memoria
 const subscribers = new Map();
 
+// Parseo seguro contra Prototype Pollution en almacenamiento local
+function safeJsonParse(raw, fallback) {
+  if (!raw) return fallback;
+  try {
+    return JSON.parse(raw, (key, value) => {
+      if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+        return undefined;
+      }
+      return value;
+    });
+  } catch {
+    return fallback;
+  }
+}
+
 function getDB() {
   return new Promise((resolve, reject) => {
     if (typeof window === 'undefined' || !window.indexedDB) {
@@ -53,31 +68,19 @@ export async function getStoreItem(storeName, key = 'data', fallbackValue = null
           resolve(req.result);
         } else {
           // Intentar fallback si no existe aún en IndexedDB
-          try {
-            const raw = localStorage.getItem(`dynamind_${storeName}`);
-            resolve(raw ? JSON.parse(raw) : fallbackValue);
-          } catch {
-            resolve(fallbackValue);
-          }
+          const raw = localStorage.getItem(`dynamind_${storeName}`);
+          resolve(safeJsonParse(raw, fallbackValue));
         }
       };
 
       req.onerror = () => {
-        try {
-          const raw = localStorage.getItem(`dynamind_${storeName}`);
-          resolve(raw ? JSON.parse(raw) : fallbackValue);
-        } catch {
-          resolve(fallbackValue);
-        }
+        const raw = localStorage.getItem(`dynamind_${storeName}`);
+        resolve(safeJsonParse(raw, fallbackValue));
       };
     });
   } catch (err) {
-    try {
-      const raw = localStorage.getItem(`dynamind_${storeName}`);
-      return raw ? JSON.parse(raw) : fallbackValue;
-    } catch {
-      return fallbackValue;
-    }
+    const raw = localStorage.getItem(`dynamind_${storeName}`);
+    return safeJsonParse(raw, fallbackValue);
   }
 }
 

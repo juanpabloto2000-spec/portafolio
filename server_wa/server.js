@@ -14,9 +14,57 @@ import path from 'path';
 
 const app = express();
 const PORT = process.env.PORT || 8080;
+const WA_API_KEY = process.env.WA_API_KEY || '';
 
-app.use(cors());
-app.use(express.json());
+// Sanitizador HTML contra XSS reflejado/almacenado
+function escapeHtml(unsafe) {
+  return String(unsafe || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+// Rate limiter defensivo por IP (30 req/min)
+const waRateLimitMap = new Map();
+function isWaRateLimited(ip) {
+  const now = Date.now();
+  const entry = waRateLimitMap.get(ip) || { count: 0, resetAt: now + 60000 };
+  if (now > entry.resetAt) {
+    entry.count = 1;
+    entry.resetAt = now + 60000;
+  } else {
+    entry.count += 1;
+  }
+  waRateLimitMap.set(ip, entry);
+  return entry.count > 30;
+}
+
+app.disable('x-powered-by');
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  next();
+});
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (
+      !origin ||
+      origin.includes('localhost') ||
+      origin.includes('127.0.0.1') ||
+      origin.includes('workers.dev') ||
+      origin.includes('dynamind')
+    ) {
+      callback(null, true);
+    } else {
+      callback(new Error('Origin not allowed by Dynamind CORS Guard'));
+    }
+  }
+}));
+app.use(express.json({ limit: '16kb' }));
 
 let sock = null;
 let currentQR = null;
@@ -110,7 +158,7 @@ app.get('/qr', async (req, res) => {
             <div class="badge">CONECTADO // ONLINE</div>
             <h2 style="margin: 0 0 10px 0; text-transform: uppercase;">Dynamind WA Gateway</h2>
             <p style="color: #a1a1aa; font-size: 13px;">WhatsApp ya está vinculado y activo para enviar recordatorios y mensajes.</p>
-            <p style="color: #38bdf8; font-size: 12px;">ID: ${connectedUser?.id || 'Sesión Activa'}</p>
+            <p style="color: #38bdf8; font-size: 12px;">ID: ${escapeHtml(connectedUser?.id || 'Sesión Activa')}</p>
           </div>
         </body>
       </html>
@@ -179,14 +227,26 @@ app.get('/status', (req, res) => {
 // Endpoint compatible 100% con Evolution API
 // POST /message/sendText/:instance
 app.post(['/message/sendText/:instance', '/message/sendText'], async (req, res) => {
+  const clientIp = req.ip || req.socket?.remoteAddress || 'unknown';
+  if (isWaRateLimited(clientIp)) {
+    return res.status(429).json({ error: 'Demasiadas solicitudes. Intenta nuevamente en un minuto.' });
+  }
+
+  if (WA_API_KEY) {
+    const providedKey = req.headers['apikey'] || req.headers['x-api-key'] || '';
+    if (providedKey !== WA_API_KEY) {
+      return res.status(401).json({ error: 'No autorizado: API Key inválida.' });
+    }
+  }
+
   if (connectionStatus !== 'connected' || !sock) {
     return res.status(503).json({
       error: 'WhatsApp no está conectado todavía. Escanea el código QR primero en http://localhost:' + PORT + '/qr'
     });
   }
 
-  const { number, text } = req.body;
-  if (!number || !text) {
+  const { number, text } = req.body || {};
+  if (!number || !text || typeof text !== 'string') {
     return res.status(400).json({ error: 'Faltan parámetros: "number" y "text" son obligatorios.' });
   }
 
@@ -195,26 +255,31 @@ app.post(['/message/sendText/:instance', '/message/sendText'], async (req, res) 
     if (cleanNumber.startsWith('3') && cleanNumber.length === 10) {
       cleanNumber = '57' + cleanNumber;
     }
+    if (cleanNumber.length < 8 || cleanNumber.length > 15) {
+      return res.status(400).json({ error: 'Formato de número telefónico inválido.' });
+    }
+    const safeText = text.trim().slice(0, 4096);
     const jid = `${cleanNumber}@s.whatsapp.net`;
 
     console.log(`[Dynamind WA] Enviando mensaje a ${jid}...`);
-    const sent = await sock.sendMessage(jid, { text });
+    const sent = await sock.sendMessage(jid, { text: safeText });
     console.log(`[Dynamind WA] ¡Mensaje enviado con éxito a ${jid}! ID: ${sent.key.id}`);
 
     res.json({
       success: true,
       messageId: sent.key.id,
       to: jid,
-      text: text
+      text: safeText
     });
   } catch (error) {
     console.error('[Dynamind WA] Error enviando mensaje:', error);
-    res.status(500).json({ error: error.message || 'Error al enviar mensaje' });
+    res.status(500).json({ error: 'Error interno al enviar mensaje por WhatsApp.' });
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`\n🚀 [Dynamind WA Gateway] Servidor local corriendo en http://localhost:${PORT}`);
+const HOST = process.env.HOST || '127.0.0.1';
+app.listen(PORT, HOST, () => {
+  console.log(`\n🚀 [Dynamind WA Gateway] Servidor local corriendo en http://${HOST}:${PORT}`);
   console.log(`👉 Abre en tu navegador para escanear el QR: http://localhost:${PORT}/qr\n`);
   startWhatsApp();
 });

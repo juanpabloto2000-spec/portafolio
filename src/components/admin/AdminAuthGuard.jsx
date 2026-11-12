@@ -1,12 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { Lock, ShieldCheck, Terminal, AlertTriangle, ArrowRight, ShieldAlert, Timer } from 'lucide-react';
 
-// Criptografía Web Crypto API con Salting para Grado Bancario
+// Criptografía Web Crypto API con Salting para Grado Bancario (Zero Plaintext Exposure)
 const AUTH_SECRET_SALT = 'dynamind_sovereign_vault_salt_2026_q8';
+const MASTER_PASS_SALTED_HASH = '888337bb9586edb35b258c656e030173bac263de324468ffd74a907bfcf24a82';
+
+// Comparación en tiempo constante (mitigación de Timing Attacks)
+function constantTimeEqual(a, b) {
+  if (typeof a !== 'string' || typeof b !== 'string') return false;
+  const len = Math.max(a.length, b.length);
+  let diff = a.length ^ b.length;
+  for (let i = 0; i < len; i++) {
+    const charA = i < a.length ? a.charCodeAt(i) : 0;
+    const charB = i < b.length ? b.charCodeAt(i) : 0;
+    diff |= charA ^ charB;
+  }
+  return diff === 0;
+}
 
 async function sha256(message) {
   if (!window.crypto || !window.crypto.subtle) {
-    return message;
+    return '';
   }
   const msgBuffer = new TextEncoder().encode(message);
   const hashBuffer = await window.crypto.subtle.digest('SHA-256', msgBuffer);
@@ -14,15 +28,20 @@ async function sha256(message) {
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-// Genera un ticket de sesión efímero firmado con expiración (2 horas)
+// Genera un ticket de sesión efímero firmado con expiración (2 horas) y entropía CSPRNG
 async function generateSovereignTicket(username) {
-  const nonce = Math.random().toString(36).substring(2) + Date.now().toString(36);
+  const randomBytes = new Uint8Array(16);
+  if (window.crypto && window.crypto.getRandomValues) {
+    window.crypto.getRandomValues(randomBytes);
+  }
+  const csprngHex = Array.from(randomBytes).map(b => b.toString(16).padStart(2, '0')).join('');
+  const nonce = `${csprngHex}_${Date.now().toString(36)}`;
   const exp = Date.now() + 2 * 3600 * 1000;
   const sig = await sha256(`${username}:${nonce}:${exp}:${AUTH_SECRET_SALT}`);
   return JSON.stringify({ uid: username, nonce, exp, sig });
 }
 
-// Verifica la firma criptográfica y la vigencia temporal del ticket
+// Verifica la firma criptográfica en tiempo constante y la vigencia temporal del ticket
 async function verifySovereignTicket(ticketStr) {
   if (!ticketStr) return false;
   try {
@@ -30,7 +49,7 @@ async function verifySovereignTicket(ticketStr) {
     if (!data.uid || !data.nonce || !data.exp || !data.sig) return false;
     if (Date.now() > data.exp) return false;
     const expectedSig = await sha256(`${data.uid}:${data.nonce}:${data.exp}:${AUTH_SECRET_SALT}`);
-    return data.sig === expectedSig;
+    return Boolean(expectedSig) && constantTimeEqual(data.sig, expectedSig);
   } catch {
     return false;
   }
@@ -80,13 +99,12 @@ export default function AdminAuthGuard({ children }) {
     return () => clearInterval(interval);
   }, []);
 
-  // Migración segura e invalidación de caché: garantizar que la clave maestra activa sea PoloNorte121966@
+  // Migración segura e invalidación de caché sin exposición de texto plano en el bundle
   useEffect(() => {
-    async function initSaltedPass() {
+    function initSaltedPass() {
       const passVersion = localStorage.getItem('dynamind_pass_version');
-      if (passVersion !== 'v2_polonorte') {
-        const defaultSalted = await sha256(`PoloNorte121966@:${AUTH_SECRET_SALT}`);
-        localStorage.setItem('dynamind_admin_pass_hash', defaultSalted);
+      if (passVersion !== 'v2_polonorte' && passVersion !== 'v2_custom') {
+        localStorage.setItem('dynamind_admin_pass_hash', MASTER_PASS_SALTED_HASH);
         localStorage.setItem('dynamind_pass_version', 'v2_polonorte');
         // Purgar credenciales planas antiguas si existían
         localStorage.removeItem('dynamind_admin_pass');
@@ -118,14 +136,15 @@ export default function AdminAuthGuard({ children }) {
         // En modo local/desconectado, se utiliza el motor criptográfico cliente
       }
 
-      // 2. Verificación criptográfica con sal
+      // 2. Verificación criptográfica con sal y comparación en tiempo constante
       const inputSaltedHash = await sha256(`${password}:${AUTH_SECRET_SALT}`);
       const storedSaltedHash = localStorage.getItem('dynamind_admin_pass_hash');
-      const masterSaltedHash = await sha256(`PoloNorte121966@:${AUTH_SECRET_SALT}`);
       
       const cleanUser = username.trim().toLowerCase();
       const isUserValid = (cleanUser === 'adminmaster' || cleanUser === 'admin');
-      const isPassValid = serverGranted || (inputSaltedHash === masterSaltedHash) || (storedSaltedHash && inputSaltedHash === storedSaltedHash);
+      const matchesMaster = Boolean(inputSaltedHash) && constantTimeEqual(inputSaltedHash, MASTER_PASS_SALTED_HASH);
+      const matchesStored = Boolean(inputSaltedHash && storedSaltedHash) && constantTimeEqual(inputSaltedHash, storedSaltedHash);
+      const isPassValid = serverGranted || matchesMaster || matchesStored;
 
       if (isUserValid && isPassValid) {
         // Éxito: Generar ticket efímero firmado

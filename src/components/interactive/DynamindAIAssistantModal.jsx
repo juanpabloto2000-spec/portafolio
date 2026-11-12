@@ -296,7 +296,9 @@ function ModalCosmicStarfield() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    let animationFrameId;
+    let animationFrameId = null;
+    let isTabVisible = !document.hidden;
+    const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
     let width = (canvas.width = canvas.parentElement?.clientWidth || 900);
     let height = (canvas.height = canvas.parentElement?.clientHeight || 700);
 
@@ -305,7 +307,19 @@ function ModalCosmicStarfield() {
       width = canvas.width = canvas.parentElement.clientWidth;
       height = canvas.height = canvas.parentElement.clientHeight;
     };
-    window.addEventListener('resize', handleResize);
+
+    const handleVisibilityChange = () => {
+      isTabVisible = !document.hidden;
+      if (isTabVisible && !animationFrameId && !prefersReducedMotion) {
+        animationFrameId = requestAnimationFrame(render);
+      } else if (!isTabVisible && animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+    };
+
+    window.addEventListener('resize', handleResize, { passive: true });
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     const starCount = 140;
     const stars = Array.from({ length: starCount }, () => ({
@@ -366,14 +380,19 @@ function ModalCosmicStarfield() {
         ctx.globalAlpha = 1;
       }
 
-      animationFrameId = requestAnimationFrame(render);
+      if (!prefersReducedMotion && isTabVisible) {
+        animationFrameId = requestAnimationFrame(render);
+      } else {
+        animationFrameId = null;
+      }
     };
 
     render();
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      cancelAnimationFrame(animationFrameId);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
     };
   }, []);
 

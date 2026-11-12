@@ -259,7 +259,7 @@ export default function KillSwitchPanel() {
               <span className="uppercase">{activeSite.status === 'unpaid' ? 'SUSPENDIDO (MORA)' : 'ACTIVO (EN SERVICIO)'}</span>
             </div>
             <div className="text-[11px] text-zinc-400 pt-1">
-              Dominio: <a href={activeSite.domain} target="_blank" rel="noreferrer" className="underline text-zinc-300">{activeSite.domain}</a>
+              Dominio: <a href={activeSite.domain} target="_blank" rel="noopener noreferrer" className="underline text-zinc-300">{activeSite.domain}</a>
             </div>
           </div>
 

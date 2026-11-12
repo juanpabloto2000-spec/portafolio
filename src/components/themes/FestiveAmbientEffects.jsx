@@ -33,7 +33,9 @@ export default function FestiveAmbientEffects() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    let animId;
+    let animId = null;
+    let isTabVisible = !document.hidden;
+    const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
@@ -42,7 +44,19 @@ export default function FestiveAmbientEffects() {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
     };
-    window.addEventListener('resize', handleResize);
+
+    const handleVisibilityChange = () => {
+      isTabVisible = !document.hidden;
+      if (isTabVisible && !animId && !prefersReducedMotion) {
+        animId = requestAnimationFrame(render);
+      } else if (!isTabVisible && animId) {
+        cancelAnimationFrame(animId);
+        animId = null;
+      }
+    };
+
+    window.addEventListener('resize', handleResize, { passive: true });
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     // 24 fuegos fatuos flotantes ámbar y morados bioluminiscentes
     const orbs = Array.from({ length: 24 }, () => ({
@@ -90,14 +104,19 @@ export default function FestiveAmbientEffects() {
         ctx.fill();
       }
 
-      animId = requestAnimationFrame(render);
+      if (!prefersReducedMotion && isTabVisible) {
+        animId = requestAnimationFrame(render);
+      } else {
+        animId = null;
+      }
     };
 
     render();
 
     return () => {
-      cancelAnimationFrame(animId);
+      if (animId) cancelAnimationFrame(animId);
       window.removeEventListener('resize', handleResize);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [isHalloween, isEnabled]);
 

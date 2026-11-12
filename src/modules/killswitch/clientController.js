@@ -34,6 +34,8 @@ export const ANDICAS_SB = createClient(
   }
 );
 
+const REMOTE_MASTER_KEY = import.meta.env.VITE_REMOTE_MASTER_KEY || '';
+
 export const DEFAULT_CLIENT_SITES = [
   {
     id: 'kal-discobar',
@@ -41,7 +43,7 @@ export const DEFAULT_CLIENT_SITES = [
     clientCompany: 'KAL Discobar',
     domain: 'https://kal-discobar.vercel.app',
     backendUrl: 'https://kal-discobar-backend.onrender.com',
-    masterKey: 'PanelPassword1966@',
+    masterKey: REMOTE_MASTER_KEY,
     status: 'active', // 'active' | 'unpaid'
     lastCheck: new Date().toISOString(),
     features: {
@@ -57,7 +59,7 @@ export const DEFAULT_CLIENT_SITES = [
     clientCompany: 'Andicas Eco-Resort',
     domain: 'https://andicas.vercel.app',
     backendUrl: 'https://andicas-backend.onrender.com',
-    masterKey: 'PanelPassword1966@',
+    masterKey: REMOTE_MASTER_KEY,
     status: 'active', // 'active' | 'unpaid'
     lastCheck: new Date().toISOString(),
     features: {
@@ -139,11 +141,11 @@ export const updateRemoteClientPassword = async (site, newPassword) => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-admin-key': site.masterKey || 'PanelPassword1966@'
+            'x-admin-key': site.masterKey || REMOTE_MASTER_KEY
           },
           body: JSON.stringify({
             newPassword: cleanPass,
-            currentKey: site.masterKey || 'PanelPassword1966@'
+            currentKey: site.masterKey || REMOTE_MASTER_KEY
           })
         });
       } catch (err) {
@@ -188,11 +190,11 @@ export const updateRemoteClientPassword = async (site, newPassword) => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-admin-key': site.masterKey || 'PanelPassword1966@'
+            'x-admin-key': site.masterKey || REMOTE_MASTER_KEY
           },
           body: JSON.stringify({
             newPassword: cleanPass,
-            currentKey: site.masterKey || 'PanelPassword1966@'
+            currentKey: site.masterKey || REMOTE_MASTER_KEY
           })
         });
       } catch (err) {
@@ -229,5 +231,5 @@ export const fetchRemoteClientPassword = async (site) => {
     }
   }
 
-  return site.currentRemotePassword || site.masterKey || 'PanelPassword1966@';
+  return site.currentRemotePassword || site.masterKey || '••••••••••••';
 };

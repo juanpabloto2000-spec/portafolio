@@ -103,7 +103,7 @@ export default function FooterEditorial() {
                     <a 
                       href={`https://wa.me/${(social.whatsapp_number || '+573122952165').replace(/[^0-9]/g, '')}?text=Hola%20Dynamind%20Studios%2C%20quiero%20hacer%20un%20diagn%C3%B3stico%20de%20mi%20empresa`}
                       target="_blank" 
-                      rel="noreferrer" 
+                      rel="noopener noreferrer" 
                       className="flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors group"
                     >
                       <Phone className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
@@ -127,7 +127,7 @@ export default function FooterEditorial() {
                     <a 
                       href={social.instagram_url || 'https://www.instagram.com/dynamind.studios/'}
                       target="_blank" 
-                      rel="noreferrer" 
+                      rel="noopener noreferrer" 
                       className="flex items-center gap-2 hover:text-white transition-colors"
                     >
                       <Instagram className="w-3.5 h-3.5 text-zinc-400" />
@@ -141,7 +141,7 @@ export default function FooterEditorial() {
                     <a 
                       href={social.linkedin_url || 'https://linkedin.com/company/dynamind-studios'}
                       target="_blank" 
-                      rel="noreferrer" 
+                      rel="noopener noreferrer" 
                       className="flex items-center gap-2 hover:text-white transition-colors"
                     >
                       <Linkedin className="w-3.5 h-3.5 text-zinc-400" />
@@ -155,7 +155,7 @@ export default function FooterEditorial() {
                     <a 
                       href={social.github_url || 'https://github.com/juanpabloto2000-spec'}
                       target="_blank" 
-                      rel="noreferrer" 
+                      rel="noopener noreferrer" 
                       className="flex items-center gap-2 hover:text-white transition-colors"
                     >
                       <Github className="w-3.5 h-3.5 text-zinc-400" />
@@ -169,7 +169,7 @@ export default function FooterEditorial() {
                     <a 
                       href={social.youtube_url || 'https://youtube.com/@dynamindstudios'}
                       target="_blank" 
-                      rel="noreferrer" 
+                      rel="noopener noreferrer" 
                       className="flex items-center gap-2 hover:text-white transition-colors"
                     >
                       <Youtube className="w-3.5 h-3.5 text-zinc-400" />

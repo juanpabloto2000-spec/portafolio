@@ -401,7 +401,7 @@ ${formData.bottlenecks && formData.bottlenecks.length > 0 ? formData.bottlenecks
 Quedo atento para la demostración técnica de 15 minutos.`;
 
       const waUrl = `https://wa.me/573122952165?text=${encodeURIComponent(waMsg)}`;
-      window.open(waUrl, '_blank');
+      window.open(waUrl, '_blank', 'noopener,noreferrer');
     } catch (err) {
       console.error('Error registrando lead:', err);
     } finally {

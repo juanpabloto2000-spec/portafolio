@@ -12,6 +12,7 @@ import { EffectComposer, RenderPass, EffectPass, BloomEffect } from "postprocess
 import { Lensflare, LensflareElement } from "three/examples/jsm/objects/Lensflare.js";
 import { GALAXY_SERVICES } from "../../data/dynamindGalaxyData";
 import { playPlanetSelect, playOrbitWarp } from "../../utils/audioEffects";
+import { getClampedPixelRatio, createVisibilityObserver } from "../../utils/webglPerformanceGuard";
 
 // ============================================================================
 // GENERADOR DE TEXTURAS PROCEDURALES HD (2048x1024)
@@ -593,6 +594,7 @@ export default function DynamindGalaxy3D({
   const cosmicDustRef = useRef(null);
   const solarDustRef = useRef(null);
   const animationFrameRef = useRef(null);
+  const hoveredServiceRef = useRef(null);
 
   const [hoveredService, setHoveredService] = useState(null);
 
@@ -744,7 +746,7 @@ export default function DynamindGalaxy3D({
     camera.lookAt(PANORAMA_LOOK_AT);
     cameraRef.current = camera;
 
-    // 3. Renderer WebGL
+    // 3. Renderer WebGL (Clamped DPR 1.5x para 60 FPS constantes en pantallas Retina/4K)
     const renderer = new THREE.WebGLRenderer({
       antialias: false,
       alpha: true,
@@ -753,9 +755,11 @@ export default function DynamindGalaxy3D({
       depth: true,
     });
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(getClampedPixelRatio(1.5));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
-    container.innerHTML = "";
+    while (container.firstChild) {
+      container.removeChild(container.firstChild);
+    }
     container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
@@ -1128,7 +1132,10 @@ export default function DynamindGalaxy3D({
 
         if (srvId && celestialObjectsRef.current[srvId]) {
           container.style.cursor = "pointer";
-          setHoveredService(srvId);
+          if (hoveredServiceRef.current !== srvId) {
+            hoveredServiceRef.current = srvId;
+            setHoveredService(srvId);
+          }
 
           if (currentHoverMesh !== hit) {
             // Restaurar previo
@@ -1154,7 +1161,10 @@ export default function DynamindGalaxy3D({
 
       // Sin intersección
       container.style.cursor = "default";
-      setHoveredService(null);
+      if (hoveredServiceRef.current !== null) {
+        hoveredServiceRef.current = null;
+        setHoveredService(null);
+      }
       if (currentHoverMesh) {
         if (currentHoverMesh.material && currentHoverMesh.material.emissive) {
           const prevSrv = currentHoverMesh.userData?.serviceData;
@@ -1196,11 +1206,16 @@ export default function DynamindGalaxy3D({
     domElement.addEventListener("pointermove", handlePointerMove);
     domElement.addEventListener("pointerdown", handlePointerDown);
 
-    // 9. Bucle de Animación a 60 FPS con Postprocessing (Timer de Alta Precisión)
+    // 9. Bucle de Animación a 60 FPS con Postprocessing y Guardián de Visibilidad GPU
     let lastTime = performance.now();
     const startTime = performance.now();
+    let isSceneVisible = true;
 
     const animateLoop = () => {
+      if (!isSceneVisible) {
+        animationFrameRef.current = null;
+        return;
+      }
       animationFrameRef.current = requestAnimationFrame(animateLoop);
 
       const now = performance.now();
@@ -1291,24 +1306,59 @@ export default function DynamindGalaxy3D({
 
     animateLoop();
 
+    const cleanupVisibilityObserver = createVisibilityObserver(container, (visible) => {
+      isSceneVisible = visible;
+      if (visible && !animationFrameRef.current) {
+        lastTime = performance.now();
+        animateLoop();
+      } else if (!visible && animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+    });
+
     // 10. Resize
     const handleResize = () => {
       if (!container || !renderer || !camera || !composer) return;
       const newW = container.clientWidth;
       const newH = container.clientHeight;
+      if (!newW || !newH) return;
       camera.aspect = newW / newH;
       camera.updateProjectionMatrix();
       renderer.setSize(newW, newH);
       composer.setSize(newW, newH);
     };
 
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", handleResize, { passive: true });
 
     return () => {
-      cancelAnimationFrame(animationFrameRef.current);
+      isSceneVisible = false;
+      if (cleanupVisibilityObserver) cleanupVisibilityObserver();
+      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
       window.removeEventListener("resize", handleResize);
       domElement.removeEventListener("pointermove", handlePointerMove);
       domElement.removeEventListener("pointerdown", handlePointerDown);
+
+      if (controls) {
+        controls.dispose();
+      }
+
+      // Liberación recursiva de VRAM (Geometrías, Materiales PBR y Texturas Canvas 1024x512)
+      scene.traverse((obj) => {
+        if (obj.geometry) {
+          obj.geometry.dispose();
+        }
+        if (obj.material) {
+          const materials = Array.isArray(obj.material) ? obj.material : [obj.material];
+          materials.forEach((mat) => {
+            if (mat.map) mat.map.dispose();
+            if (mat.emissiveMap) mat.emissiveMap.dispose();
+            if (mat.bumpMap) mat.bumpMap.dispose();
+            if (mat.roughnessMap) mat.roughnessMap.dispose();
+            mat.dispose();
+          });
+        }
+      });
 
       if (cosmicEnvMap) {
         cosmicEnvMap.dispose();
@@ -1316,8 +1366,10 @@ export default function DynamindGalaxy3D({
       if (composerRef.current) {
         composerRef.current.dispose();
       }
-      if (rendererRef.current && rendererRef.current.domElement) {
-        container.removeChild(rendererRef.current.domElement);
+      if (rendererRef.current) {
+        if (rendererRef.current.domElement && rendererRef.current.domElement.parentNode === container) {
+          container.removeChild(rendererRef.current.domElement);
+        }
         rendererRef.current.dispose();
       }
     };

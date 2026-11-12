@@ -337,7 +337,11 @@ html.theme-alabaster ::-webkit-scrollbar-thumb:hover {
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 1.25rem; /* 20px */
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    transform 0.26s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.26s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.26s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.26s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glow-card:hover {
@@ -442,5 +446,25 @@ html[data-festive-theme="halloween"] .shadow-monolith {
 html[data-festive-theme="halloween"] a.bg-gradient-to-r:not(.bg-white):not([class*="red"]) {
   background-image: linear-gradient(to right, #ea580c, #f97316, #a855f7) !important;
 }
+
+/* ========================================================== */
+/* ACCESIBILIDAD Y RENDIMIENTO: PREFERS-REDUCED-MOTION        */
+/* ========================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .hyperframe-laser {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+}
+
 
 

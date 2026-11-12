@@ -8,9 +8,22 @@ import { festiveThemeStore } from '../../services/festiveThemeStore';
 import { FESTIVE_THEMES } from '../../data/festiveThemesData';
 
 const AUTH_SECRET_SALT = 'dynamind_sovereign_vault_salt_2026_q8';
+const MASTER_PASS_SALTED_HASH = '888337bb9586edb35b258c656e030173bac263de324468ffd74a907bfcf24a82';
+
+function constantTimeEqual(a, b) {
+  if (typeof a !== 'string' || typeof b !== 'string') return false;
+  const len = Math.max(a.length, b.length);
+  let diff = a.length ^ b.length;
+  for (let i = 0; i < len; i++) {
+    const charA = i < a.length ? a.charCodeAt(i) : 0;
+    const charB = i < b.length ? b.charCodeAt(i) : 0;
+    diff |= charA ^ charB;
+  }
+  return diff === 0;
+}
 
 async function sha256(message) {
-  if (!window.crypto || !window.crypto.subtle) return message;
+  if (!window.crypto || !window.crypto.subtle) return '';
   const msgBuffer = new TextEncoder().encode(message);
   const hashBuffer = await window.crypto.subtle.digest('SHA-256', msgBuffer);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
@@ -76,11 +89,10 @@ export default function TacticalSettingsView({ onLogout }) {
     setFeedback(null);
 
     const storedHash = localStorage.getItem('dynamind_admin_pass_hash');
-    const defaultSalted = await sha256(`PoloNorte121966@:${AUTH_SECRET_SALT}`);
-    const activePassHash = storedHash || defaultSalted;
+    const activePassHash = storedHash || MASTER_PASS_SALTED_HASH;
     const currentInputHash = await sha256(`${currentPassword}:${AUTH_SECRET_SALT}`);
 
-    if (currentInputHash !== activePassHash) {
+    if (!currentInputHash || !constantTimeEqual(currentInputHash, activePassHash)) {
       setFeedback({ 
         success: false, 
         text: 'La contraseña actual ingresada es incorrecta. Permiso denegado por seguridad.' 

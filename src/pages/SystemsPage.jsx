@@ -445,9 +445,9 @@ export default function SystemsPage() {
       </main>
 
       {/* ============================================================== */}
-      {/* 🔊 CONTROL FLOTANTE DE ALTAVOZ CELESTIAL (ABAJO A LA IZQUIERDA) */}
+      {/* 🔊 CONTROL FLOTANTE DE ALTAVOZ CELESTIAL (AL LADO DEL DOCK SOCIAL) */}
       {/* ============================================================== */}
-      <div className="fixed bottom-6 left-6 z-40 select-none">
+      <div className="fixed bottom-4 left-16 sm:bottom-6 sm:left-20 z-40 select-none">
         <button
           type="button"
           onClick={handleToggleCelestialMute}
