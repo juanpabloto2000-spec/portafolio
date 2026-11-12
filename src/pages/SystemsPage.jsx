@@ -95,8 +95,8 @@ export default function SystemsPage() {
   // Velocidad orbital (0 = pausa, 1 = normal, 2.5 = acelerada)
   const [speedMultiplier, setSpeedMultiplier] = useState(1);
 
-  // Visibilidad del panel de información del servicio
-  const [isHUDOpen, setIsHUDOpen] = useState(true);
+  // Visibilidad del panel de información del servicio (inicia minimizado en vista panorámica para dejar el 100% del lienzo 3D libre para rotar/zoom, y se abre al hacer clic en cualquier planeta)
+  const [isHUDOpen, setIsHUDOpen] = useState(false);
 
   // Manejador de selección de servicio
   const handleSelectService = useCallback((serviceId) => {
@@ -109,7 +109,7 @@ export default function SystemsPage() {
   const handleResetToGalaxy = useCallback(() => {
     playOrbitWarp();
     setSelectedServiceId('srv-core');
-    setIsHUDOpen(true);
+    setIsHUDOpen(false);
   }, []);
 
   // Navegación secuencial por teclado (Flechas [←] y [→])
